@@ -23,7 +23,7 @@ typedef struct jaeger_sampler {
     int (*is_sampled)(const uint64_t trace_id[2], sds operation);
 } jaeger_sampler;
 
-#define SAMPLER_SUBCLASS \
+#define SAMPLER_SUBCLASS                                                       \
     int (*is_sampled)(const uint64_t trace_id[2], sds operation)
 
 typedef struct jaeger_const_sampler {

@@ -17,8 +17,8 @@
 #ifndef JAEGERTRACINGC_TIME_H
 #define JAEGERTRACINGC_TIME_H
 
-#include <time.h>
 #include "jaegertracingc/common.h"
+#include <time.h>
 
 #define JAEGERTRACINGC_NANOSECONDS_PER_SECOND 1000000000
 
@@ -26,9 +26,8 @@ typedef struct timespec jaeger_duration;
 
 void jaeger_duration_now(jaeger_duration* duration);
 
-int jaeger_duration_subtract(
-    const jaeger_duration* lhs,
-    const jaeger_duration* rhs,
-    jaeger_duration* result);
+int jaeger_duration_subtract(const jaeger_duration* lhs,
+                             const jaeger_duration* rhs,
+                             jaeger_duration* result);
 
 #endif  // JAEGERTRACINGC_TIME_H

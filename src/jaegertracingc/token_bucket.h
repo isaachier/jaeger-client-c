@@ -22,8 +22,9 @@
 
 typedef struct jaeger_token_bucket jaeger_token_bucket;
 
-jaeger_token_bucket* jaeger_token_bucket_init(
-    const jaeger_alloc* alloc, double credits_per_second, double max_balance);
+jaeger_token_bucket* jaeger_token_bucket_init(const jaeger_alloc* alloc,
+                                              double credits_per_second,
+                                              double max_balance);
 
 int jaeger_token_bucket_check_credit(jaeger_token_bucket* tok, double cost);
 

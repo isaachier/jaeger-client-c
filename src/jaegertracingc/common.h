@@ -17,7 +17,7 @@
 #ifndef JAEGERTRACINGC_COMMON_H
 #define JAEGERTRACINGC_COMMON_H
 
-#include <stddef.h>
 #include <sds.h>
+#include <stddef.h>
 
 #endif  // JAEGERTRACINGC_COMMON_H

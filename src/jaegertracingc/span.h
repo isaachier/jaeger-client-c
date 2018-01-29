@@ -21,10 +21,10 @@
 
 struct jaeger_tracer;
 
-#define DEFINE_LIST(inner) \
-    typedef struct jaeger_##inner##_list { \
-        jaeger_##inner data; \
-        struct jaeger_##inner##_list* next; \
+#define DEFINE_LIST(inner)                                                     \
+    typedef struct jaeger_##inner##_list {                                     \
+        jaeger_##inner data;                                                   \
+        struct jaeger_##inner##_list* next;                                    \
     } jaeger_##inner##_list
 
 typedef struct jaeger_key_value {
@@ -35,7 +35,7 @@ typedef struct jaeger_key_value {
 DEFINE_LIST(key_value);
 
 typedef struct jaeger_span_context {
-    uint64_t trace_id[2];  /* trace_id[0] = hi, trace_id[1] = lo */
+    uint64_t trace_id[2]; /* trace_id[0] = hi, trace_id[1] = lo */
     uint64_t span_id;
     uint64_t parent_id;
     uint8_t flags;
@@ -67,4 +67,4 @@ typedef struct jaeger_span {
 
 #undef DEFINE_LIST
 
-#endif  /* JAEGERTRACINGC_SPAN_H */
+#endif /* JAEGERTRACINGC_SPAN_H */

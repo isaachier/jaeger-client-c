@@ -33,8 +33,9 @@ struct jaeger_token_bucket {
     jaeger_duration last_tick;
 };
 
-jaeger_token_bucket* jaeger_token_bucket_init(
-    const jaeger_alloc* alloc, double credits_per_second, double max_balance)
+jaeger_token_bucket* jaeger_token_bucket_init(const jaeger_alloc* alloc,
+                                              double credits_per_second,
+                                              double max_balance)
 {
     assert(alloc != NULL);
     jaeger_token_bucket* tok = alloc->malloc(sizeof(jaeger_token_bucket));
@@ -56,10 +57,10 @@ int jaeger_token_bucket_check_credit(jaeger_token_bucket* tok, double cost)
     jaeger_duration interval;
     const int result =
         jaeger_duration_subtract(&current_time, &tok->last_tick, &interval);
-    (void) result;
+    (void)result;
     assert(result == 0);
     const double diff =
-        (((double) interval.tv_nsec) / NS_PER_S + interval.tv_sec) *
+        (((double)interval.tv_nsec) / NS_PER_S + interval.tv_sec) *
         tok->credits_per_second;
     tok->balance = MIN(tok->max_balance, tok->balance + diff);
     tok->last_tick = current_time;
