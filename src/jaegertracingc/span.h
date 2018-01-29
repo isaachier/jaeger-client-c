@@ -17,54 +17,53 @@
 #ifndef JAEGERTRACINGC_SPAN_H
 #define JAEGERTRACINGC_SPAN_H
 
-#include <stddef.h>
-#include <sds.h>
+#include "jaegertracingc/common.h"
 
-struct jaegertracing_tracer;
+struct jaeger_tracer;
 
 #define DEFINE_LIST(inner) \
-    typedef struct jaegertracing_##inner##_list { \
-        jaegertracing_##inner data; \
-        struct jaegertracing_##inner##_list* next; \
-    } jaegertracing_##inner##_list
+    typedef struct jaeger_##inner##_list { \
+        jaeger_##inner data; \
+        struct jaeger_##inner##_list* next; \
+    } jaeger_##inner##_list
 
-typedef struct jaegertracing_key_value {
+typedef struct jaeger_key_value {
     sds key;
     sds value;
-} jaegertracing_key_value;
+} jaeger_key_value;
 
 DEFINE_LIST(key_value);
 
-typedef struct jaegertracing_span_context {
+typedef struct jaeger_span_context {
     uint64_t trace_id[2];  /* trace_id[0] = hi, trace_id[1] = lo */
     uint64_t span_id;
     uint64_t parent_id;
     uint8_t flags;
-    jaegertracing_key_value_list* baggage;
+    jaeger_key_value_list* baggage;
     sds debug_id;
-} jaegertracing_span_context;
+} jaeger_span_context;
 
-typedef enum jaegertracing_span_reference_type {
-    jaegertracing_child_of_ref,
-    jaegertracing_follows_from_ref
-} jaegertracing_span_reference_type;
+typedef enum jaeger_span_reference_type {
+    jaeger_child_of_ref,
+    jaeger_follows_from_ref
+} jaeger_span_reference_type;
 
-typedef struct jaegertracing_span_reference {
-    const jaegertracing_span_context* context;
-    jaegertracing_span_reference_type type;
-} jaegertracing_span_reference;
+typedef struct jaeger_span_reference {
+    const jaeger_span_context* context;
+    jaeger_span_reference_type type;
+} jaeger_span_reference;
 
 DEFINE_LIST(span_reference);
 
-typedef struct jaegertracing_span {
-    struct jaegertracing_tracer* tracer;
-    jaegertracing_span_context context;
+typedef struct jaeger_span {
+    struct jaeger_tracer* tracer;
+    jaeger_span_context context;
     sds operation_name;
     struct timeval start_time_system;
     struct timespec start_time_monotonic;
-    jaegertracing_key_value_list* tags;
-    jaegertracing_span_reference_list* references;
-} jaegertracing_span;
+    jaeger_key_value_list* tags;
+    jaeger_span_reference_list* references;
+} jaeger_span;
 
 #undef DEFINE_LIST
 
