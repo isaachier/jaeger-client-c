@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.1)
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
 set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/toolchain.cmake"
     CACHE FILEPATH
     "Toolchain to use for building this package and dependencies")
@@ -7,6 +9,17 @@ set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/toolchain.cmake"
 project(jaegertracingc VERSION 0.0.1 LANGUAGES C)
 
 include(CTest)
+
+option(JAEGERTRACINGC_COVERAGE "Enable code coverage" OFF)
+
+if(BUILD_TESTING AND CMAKE_BUILD_TYPE STREQUAL "Debug" AND
+   JAEGERTRACINGC_COVERAGE)
+  include(CodeCoverage)
+  append_coverage_compiler_flags()
+  set(COVERAGE_EXCLUDES
+    "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/sds/*"
+    "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/unity/*")
+endif()
 
 find_package(Threads REQUIRED)
 
@@ -30,10 +43,19 @@ if(BUILD_TESTING)
   target_include_directories(unity PUBLIC "thirdparty/unity")
 
   set(test_src
-      "src/jaegertracingc/token_bucket_test.c")
+    "src/jaegertracingc/token_bucket_test.c")
   foreach(src ${test_src})
     get_filename_component(name ${src} NAME_WE)
     add_executable(${name} ${src})
     target_link_libraries(${name} PUBLIC jaegertracingc unity)
+
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug" AND JAEGERTRACINGC_COVERAGE)
+      setup_target_for_coverage(
+        NAME ${name}_coverage
+        EXECUTABLE ${name}
+        DEPENDENCIES ${name})
+    endif()
+
+    add_test(${name} ${name})
   endforeach()
 endif()
