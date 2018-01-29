@@ -18,6 +18,6 @@
 
 #include <stdlib.h>
 
-jaeger_alloc jaeger_default_allocator = {.malloc = &malloc,
-                                         .realloc = &realloc,
-                                         .free = &free };
+struct jaeger_allocator jaeger_alloc = {.malloc = &malloc,
+                                        .realloc = &realloc,
+                                        .free = &free };

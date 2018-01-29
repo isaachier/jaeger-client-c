@@ -18,6 +18,7 @@
 #define JAEGERTRACINGC_SPAN_H
 
 #include "jaegertracingc/common.h"
+#include "jaegertracingc/duration.h"
 
 struct jaeger_tracer;
 
@@ -59,8 +60,8 @@ typedef struct jaeger_span {
     struct jaeger_tracer* tracer;
     jaeger_span_context context;
     sds operation_name;
-    struct timeval start_time_system;
-    struct timespec start_time_monotonic;
+    time_t start_time_system;
+    jaeger_duration start_time_monotonic;
     jaeger_key_value_list* tags;
     jaeger_span_reference_list* references;
 } jaeger_span;

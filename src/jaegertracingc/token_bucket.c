@@ -20,7 +20,8 @@
 #include <math.h>
 #include <stdio.h>
 
-#include "jaegertracingc/time.h"
+#include "jaegertracingc/alloc.h"
+#include "jaegertracingc/duration.h"
 
 #define NS_PER_S JAEGERTRACINGC_NANOSECONDS_PER_SECOND
 
@@ -31,29 +32,47 @@ struct jaeger_token_bucket {
     double max_balance;
     double balance;
     jaeger_duration last_tick;
+#ifndef NDEBUG
+    void (*time_fn)(jaeger_duration*);
+#endif  /* NDEBUG */
 };
 
-jaeger_token_bucket* jaeger_token_bucket_init(const jaeger_alloc* alloc,
-                                              double credits_per_second,
+#ifdef NDEBUG
+#define INIT_TIME(tok, current_time) \
+    do { \
+        jaeger_duration_now(&current_time); \
+    } while (0)
+#else  /* NDEBUG */
+#define INIT_TIME(tok, current_time) \
+    do { \
+        assert(tok->time_fn != NULL); \
+        tok->time_fn(&current_time); \
+    } while (0)
+#endif  /* NDEBUG */
+
+jaeger_token_bucket* jaeger_token_bucket_init(double credits_per_second,
                                               double max_balance)
 {
-    assert(alloc != NULL);
-    jaeger_token_bucket* tok = alloc->malloc(sizeof(jaeger_token_bucket));
+    jaeger_token_bucket* tok =
+        jaeger_alloc.malloc(sizeof(jaeger_token_bucket));
     if (tok == NULL) {
         fprintf(stderr, "ERROR: Cannot allocate token bucket\n");
         return NULL;
     }
+#ifndef NDEBUG
+    tok->time_fn = &jaeger_duration_now;
+#endif  /* NDEBUG */
     tok->credits_per_second = credits_per_second;
     tok->max_balance = max_balance;
-    jaeger_duration_now(&tok->last_tick);
+    INIT_TIME(tok, tok->last_tick);
     return tok;
 }
 
-int jaeger_token_bucket_check_credit(jaeger_token_bucket* tok, double cost)
+static void update_balance(jaeger_token_bucket* tok)
 {
     assert(tok != NULL);
     jaeger_duration current_time;
-    jaeger_duration_now(&current_time);
+    INIT_TIME(tok, current_time);
     jaeger_duration interval;
     const int result =
         jaeger_duration_subtract(&current_time, &tok->last_tick, &interval);
@@ -64,5 +83,15 @@ int jaeger_token_bucket_check_credit(jaeger_token_bucket* tok, double cost)
         tok->credits_per_second;
     tok->balance = MIN(tok->max_balance, tok->balance + diff);
     tok->last_tick = current_time;
-    return 0;
+}
+
+
+bool jaeger_token_bucket_check_credit(jaeger_token_bucket* tok, double cost)
+{
+    update_balance(tok);
+    if (tok->balance < cost) {
+        return 0;
+    }
+    tok->balance -= cost;
+    return 1;
 }

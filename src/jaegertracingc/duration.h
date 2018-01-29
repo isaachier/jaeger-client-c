@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef JAEGERTRACINGC_TIME_H
-#define JAEGERTRACINGC_TIME_H
+#ifndef JAEGERTRACINGC_DURATION_H
+#define JAEGERTRACINGC_DURATION_H
 
 #include "jaegertracingc/common.h"
 #include <time.h>
@@ -30,4 +30,4 @@ int jaeger_duration_subtract(const jaeger_duration* lhs,
                              const jaeger_duration* rhs,
                              jaeger_duration* result);
 
-#endif  // JAEGERTRACINGC_TIME_H
+#endif  // JAEGERTRACINGC_DURATION_H

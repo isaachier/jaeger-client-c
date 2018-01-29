@@ -18,6 +18,7 @@
 #define JAEGERTRACINGC_COMMON_H
 
 #include <sds.h>
+#include <stdbool.h>
 #include <stddef.h>
 
 #endif  // JAEGERTRACINGC_COMMON_H
