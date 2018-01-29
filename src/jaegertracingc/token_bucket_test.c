@@ -21,7 +21,7 @@
 
 #define NS_PER_S JAEGERTRACINGC_NANOSECONDS_PER_SECOND
 
-int main()
+void test_token_bucket()
 {
     const double credits_per_second = 10;
     const double max_balance = 3;
@@ -41,5 +41,4 @@ int main()
     TEST_ASSERT(result);
     result = jaeger_token_bucket_check_credit(tok, expected_credits);
     TEST_ASSERT(!result);
-    printf("token_bucket PASSED\n");
 }

@@ -42,20 +42,17 @@ if(BUILD_TESTING)
   add_library(unity "thirdparty/unity/unity.c")
   target_include_directories(unity PUBLIC "thirdparty/unity")
 
-  set(test_src
+  add_executable(unit_test
+    "src/jaegertracingc/unit_test.c"
     "src/jaegertracingc/token_bucket_test.c")
-  foreach(src ${test_src})
-    get_filename_component(name ${src} NAME_WE)
-    add_executable(${name} ${src})
-    target_link_libraries(${name} PUBLIC jaegertracingc unity)
+  target_link_libraries(unit_test PUBLIC jaegertracingc unity)
 
-    if(CMAKE_BUILD_TYPE STREQUAL "Debug" AND JAEGERTRACINGC_COVERAGE)
-      setup_target_for_coverage(
-        NAME ${name}_coverage
-        EXECUTABLE ${name}
-        DEPENDENCIES ${name})
-    endif()
+  if(CMAKE_BUILD_TYPE STREQUAL "Debug" AND JAEGERTRACINGC_COVERAGE)
+    setup_target_for_coverage(
+      NAME unit_test_coverage
+      EXECUTABLE unit_test
+      DEPENDENCIES unit_test)
+  endif()
 
-    add_test(${name} ${name})
-  endforeach()
+  add_test(unit_test unit_test)
 endif()
