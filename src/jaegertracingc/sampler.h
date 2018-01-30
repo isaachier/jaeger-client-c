@@ -19,49 +19,52 @@
 
 #include "jaegertracingc/common.h"
 #include "jaegertracingc/duration.h"
+#include "jaegertracingc/key_value.h"
 #include "jaegertracingc/logger.h"
+#include "jaegertracingc/metrics.h"
 #include "jaegertracingc/trace_id.h"
 #include "jaegertracingc/token_bucket.h"
 
-#define SAMPLER_SUBCLASS                                                       \
-    bool (*is_sampled)(struct jaeger_sampler* sampler, \
-                       const jaeger_trace_id* trace_id, \
-                       sds operation)
+typedef struct jaeger_sampling_status {
+    bool status;
+    jaeger_key_value_list tags;
+} jaeger_sampling_status;
+
+#define JAEGERTRACINGC_SAMPLER_SUBCLASS                                                       \
+    jaeger_sampling_status (*is_sampled)(struct jaeger_sampler* sampler, \
+                                         const jaeger_trace_id* trace_id, \
+                                         sds operation); \
+    void (*close)(struct jaeger_sampler* sampler)
 
 typedef struct jaeger_sampler {
-    SAMPLER_SUBCLASS;
+    JAEGERTRACINGC_SAMPLER_SUBCLASS;
 } jaeger_sampler;
 
+void jaeger_const_sampler_init(jaeger_sampler* sampler, bool decision);
+
+void jaeger_probabilistic_sampler_init(
+    jaeger_sampler* sampler, double probability);
+
+void jaeger_rate_limiting_sampler_init(
+    jaeger_sampler* sampler, double max_traces_per_second);
+
 typedef struct jaeger_const_sampler {
-    SAMPLER_SUBCLASS;
+    JAEGERTRACINGC_SAMPLER_SUBCLASS;
     bool decision;
 } jaeger_const_sampler;
 
-typedef struct jaeger_probabilistic_sampler {
-    SAMPLER_SUBCLASS;
-    double probability;
-    unsigned int seed;
-} jaeger_probabilistic_sampler;
+void jaeger_guaranteed_throughput_probabilistic_sampler_init(
+    jaeger_sampler* sampler,
+    double lower_bound,
+    double sampling_rate);
 
-typedef struct jaeger_rate_limiting_sampler {
-    SAMPLER_SUBCLASS;
-    jaeger_token_bucket* tok;
-} jaeger_rate_limiting_sampler;
-
-typedef struct jaeger_guaranteed_throughput_probabilistic_sampler {
-    SAMPLER_SUBCLASS;
-    jaeger_probabilistic_sampler probabilistic_sampler;
-    jaeger_rate_limiting_sampler lower_bound_sampler;
-} jaeger_guaranteed_throughput_probabilistic_sampler;
-
-typedef struct jaeger_remotely_controlled_sampler {
-    SAMPLER_SUBCLASS;
-    sds service_name;
-    sds sampling_server_url;
-    jaeger_sampler* sampler;
-    int max_operations;
-    jaeger_duration sampling_refresh_interval;
-    jaeger_logger* logger;
-} jaeger_remotely_controlled_sampler;
+void jaeger_remotely_controlled_sampler_init(
+    jaeger_sampler* sampler,
+    sds service_name,
+    jaeger_sampler* initial_sampler,
+    int max_operations,
+    const jaeger_duration* sampling_refresh_interval,
+    jaeger_logger* logger,
+    jaeger_metrics* metrics);
 
 #endif  // JAEGERTRACINGC_SAMPLER_H

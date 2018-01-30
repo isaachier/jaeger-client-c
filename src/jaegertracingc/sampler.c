@@ -15,3 +15,30 @@
  */
 
 #include "jaegertracingc/sampler.h"
+
+typedef struct jaeger_probabilistic_sampler {
+    JAEGERTRACINGC_SAMPLER_SUBCLASS;
+    double probability;
+    unsigned int seed;
+} jaeger_probabilistic_sampler;
+
+typedef struct jaeger_rate_limiting_sampler {
+    JAEGERTRACINGC_SAMPLER_SUBCLASS;
+    jaeger_token_bucket* tok;
+} jaeger_rate_limiting_sampler;
+
+typedef struct jaeger_guaranteed_throughput_probabilistic_sampler {
+    JAEGERTRACINGC_SAMPLER_SUBCLASS;
+    jaeger_probabilistic_sampler probabilistic_sampler;
+    jaeger_rate_limiting_sampler lower_bound_sampler;
+} jaeger_guaranteed_throughput_probabilistic_sampler;
+
+typedef struct jaeger_remotely_controlled_sampler {
+    JAEGERTRACINGC_SAMPLER_SUBCLASS;
+    sds service_name;
+    sds sampling_server_url;
+    jaeger_sampler* sampler;
+    int max_operations;
+    jaeger_duration sampling_refresh_interval;
+    jaeger_logger* logger;
+} jaeger_remotely_controlled_sampler;

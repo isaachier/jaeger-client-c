@@ -19,6 +19,7 @@
 
 #include "jaegertracingc/common.h"
 #include "jaegertracingc/duration.h"
+#include "jaegertracingc/key_value.h"
 #include "jaegertracingc/trace_id.h"
 
 struct jaeger_tracer;
@@ -29,12 +30,6 @@ struct jaeger_tracer;
         struct jaeger_##inner##_list* next;                                    \
     } jaeger_##inner##_list
 
-typedef struct jaeger_key_value {
-    sds key;
-    sds value;
-} jaeger_key_value;
-
-DEFINE_LIST(key_value);
 
 typedef struct jaeger_span_context {
     jaeger_trace_id trace_id;
