@@ -56,7 +56,7 @@ jaeger_token_bucket* jaeger_token_bucket_init(double credits_per_second,
     jaeger_token_bucket* tok =
         jaeger_global_alloc_malloc(sizeof(jaeger_token_bucket));
     if (tok == NULL) {
-        fprintf(stderr, "ERROR: Cannot allocate token bucket\n");
+        fprintf(stderr, "ERROR: Cannot allocate jaeger_token_bucket\n");
         return NULL;
     }
 #ifndef TESTING

@@ -90,6 +90,7 @@ jaeger_gauge* jaeger_default_gauge_init()
     default_gauge* g = (default_gauge*) gauge;
     g->amount = 0;
     g->update = &default_gauge_update;
+    return gauge;
 }
 
 static void null_gauge_update(jaeger_gauge* gauge, int64_t amount)

@@ -15,6 +15,10 @@
  */
 
 #include "jaegertracingc/sampler.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "jaegertracingc/alloc.h"
 
 typedef struct jaeger_const_sampler {
@@ -31,7 +35,9 @@ static bool const_is_sampled(
     (void) trace_id;
     (void) operation_name;
     jaeger_const_sampler* s = (jaeger_const_sampler*) sampler;
-    // TODO: Tags
+    if (tags != NULL) {
+        // TODO: Tags
+    }
     return s->decision;
 }
 
@@ -44,7 +50,13 @@ jaeger_sampler* jaeger_const_sampler_init(bool decision)
 {
     jaeger_const_sampler* sampler =
         jaeger_global_alloc_malloc(sizeof(*sampler));
+    if (sampler == NULL) {
+        fprintf(stderr, "ERROR: Cannot allocate jaeger_const_sampler\n");
+        return NULL;
+    }
     sampler->is_sampled = &const_is_sampled;
+    sampler->close = &noop_close;
+    return (jaeger_sampler*) sampler;
 }
 
 typedef struct jaeger_probabilistic_sampler {
@@ -53,9 +65,34 @@ typedef struct jaeger_probabilistic_sampler {
     unsigned int seed;
 } jaeger_probabilistic_sampler;
 
+static bool probabilistic_is_sampled(
+    jaeger_sampler* sampler,
+    const jaeger_trace_id* trace_id,
+    const sds operation_name,
+    jaeger_key_value_list* tags)
+{
+    jaeger_probabilistic_sampler* s = (jaeger_probabilistic_sampler*) sampler;
+    const double threshold = (rand_r(&s->seed) / RAND_MAX);
+    const bool decision = (s->probability >= threshold);
+    if (tags != NULL) {
+        // TODO: Tags
+    }
+    return decision;
+}
+
 jaeger_sampler* jaeger_probabilistic_sampler_init(
     double probability)
 {
+    jaeger_probabilistic_sampler* sampler =
+        jaeger_global_alloc_malloc(sizeof(*sampler));
+    if (sampler == NULL) {
+        fprintf(stderr,
+                "ERROR: Cannot allocate jaeger_probabilistic_sampler\n");
+        return NULL;
+    }
+    sampler->is_sampled = &probabilistic_is_sampled;
+    sampler->close = &noop_close;
+    return (jaeger_sampler*) sampler;
 }
 
 typedef struct jaeger_rate_limiting_sampler {
