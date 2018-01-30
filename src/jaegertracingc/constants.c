@@ -14,13 +14,4 @@
  * limitations under the License.
  */
 
-#include <time.h>
-#include "unity.h"
-#include "jaegertracingc/alloc.h"
-
-void test_alloc()
-{
-    void* mem = jaeger_global_alloc->malloc(jaeger_global_alloc, 2);
-    mem = jaeger_global_alloc->realloc(jaeger_global_alloc, mem, 4);
-    jaeger_global_alloc->free(jaeger_global_alloc, mem);
-}
+#include "jaegertracingc/constants.h"

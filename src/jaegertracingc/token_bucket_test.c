@@ -42,5 +42,5 @@ void test_token_bucket()
     TEST_ASSERT(result);
     result = jaeger_token_bucket_check_credit(tok, expected_credits);
     TEST_ASSERT(!result);
-    jaeger_default_alloc.free(&jaeger_default_alloc, tok);
+    jaeger_global_alloc->free(jaeger_global_alloc, tok);
 }

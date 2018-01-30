@@ -18,39 +18,40 @@
 
 #include <stdlib.h>
 
-static void* default_malloc(jaeger_allocator* alloc, size_t sz)
+static void* global_malloc(jaeger_allocator* alloc, size_t sz)
 {
     (void) alloc;
     return malloc(sz);
 }
 
-static void* default_realloc(jaeger_allocator* alloc, void* ptr, size_t sz)
+static void* global_realloc(jaeger_allocator* alloc, void* ptr, size_t sz)
 {
     (void) alloc;
     return realloc(ptr, sz);
 }
 
-static void default_free(jaeger_allocator* alloc, void* ptr)
+static void global_free(jaeger_allocator* alloc, void* ptr)
 {
     (void) alloc;
     free(ptr);
 }
 
-struct jaeger_allocator jaeger_default_alloc = {.malloc = &default_malloc,
-                                        .realloc = &default_realloc,
-                                        .free = &default_free };
+static struct jaeger_allocator global_alloc = {.malloc = &global_malloc,
+                                        .realloc = &global_realloc,
+                                        .free = &global_free };
+jaeger_allocator* jaeger_global_alloc = &global_alloc;
 
-void* jaeger_default_alloc_malloc(size_t sz)
+void* jaeger_global_alloc_malloc(size_t sz)
 {
-    return jaeger_default_alloc.malloc(&jaeger_default_alloc, sz);
+    return jaeger_global_alloc->malloc(jaeger_global_alloc, sz);
 }
 
-void* jaeger_default_alloc_realloc(void* ptr, size_t sz)
+void* jaeger_global_alloc_realloc(void* ptr, size_t sz)
 {
-    return jaeger_default_alloc.realloc(&jaeger_default_alloc, ptr, sz);
+    return jaeger_global_alloc->realloc(jaeger_global_alloc, ptr, sz);
 }
 
-void jaeger_default_alloc_free(void* ptr)
+void jaeger_global_alloc_free(void* ptr)
 {
-    return jaeger_default_alloc.free(&jaeger_default_alloc, ptr);
+    return jaeger_global_alloc->free(jaeger_global_alloc, ptr);
 }

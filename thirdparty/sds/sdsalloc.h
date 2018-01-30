@@ -39,6 +39,6 @@
 
 #include "jaegertracingc/alloc.h"
 
-#define s_malloc jaeger_default_alloc_malloc
-#define s_realloc jaeger_default_alloc_realloc
-#define s_free jaeger_default_alloc_free
+#define s_malloc jaeger_global_alloc_malloc
+#define s_realloc jaeger_global_alloc_realloc
+#define s_free jaeger_global_alloc_free

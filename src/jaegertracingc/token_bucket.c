@@ -32,37 +32,36 @@ struct jaeger_token_bucket {
     double max_balance;
     double balance;
     jaeger_duration last_tick;
-#ifndef NDEBUG
+#ifndef TESTING
     void (*time_fn)(jaeger_duration*);
-#endif  /* NDEBUG */
+#endif  /* TESTING */
 };
 
-#ifdef NDEBUG
+#ifdef TESTING
 #define INIT_TIME(tok, current_time) \
     do { \
         jaeger_duration_now(&current_time); \
     } while (0)
-#else  /* NDEBUG */
+#else  /* TESTING */
 #define INIT_TIME(tok, current_time) \
     do { \
         assert(tok->time_fn != NULL); \
         tok->time_fn(&current_time); \
     } while (0)
-#endif  /* NDEBUG */
+#endif  /* TESTING */
 
 jaeger_token_bucket* jaeger_token_bucket_init(double credits_per_second,
                                               double max_balance)
 {
     jaeger_token_bucket* tok =
-        jaeger_default_alloc.malloc(
-            &jaeger_default_alloc, sizeof(jaeger_token_bucket));
+        jaeger_global_alloc_malloc(sizeof(jaeger_token_bucket));
     if (tok == NULL) {
         fprintf(stderr, "ERROR: Cannot allocate token bucket\n");
         return NULL;
     }
-#ifndef NDEBUG
+#ifndef TESTING
     tok->time_fn = &jaeger_duration_now;
-#endif  /* NDEBUG */
+#endif  /* TESTING */
     tok->credits_per_second = credits_per_second;
     tok->max_balance = max_balance;
     INIT_TIME(tok, tok->last_tick);

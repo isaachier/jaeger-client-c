@@ -8,15 +8,28 @@ set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/toolchain.cmake"
 
 project(jaegertracingc VERSION 0.0.1 LANGUAGES C)
 
+include(CMakeDependentOption)
 include(CTest)
 
-option(JAEGERTRACINGC_COVERAGE "Enable code coverage" OFF)
+foreach(flag "-Wall" "-Werror")
+  string(MAKE_C_IDENTIFIER "HAVE${flag}" flag_var)
+  check_c_compiler_flag(${flag} ${flag_var})
+  if(${flag_var})
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${flag}")
+  endif()
+endforeach()
 
-if(BUILD_TESTING AND CMAKE_BUILD_TYPE STREQUAL "Debug" AND
-   JAEGERTRACINGC_COVERAGE)
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+  set(debug_build ON)
+endif()
+cmake_dependent_option(JAEGERTRACINGC_COVERAGE "Enable code coverage" OFF
+                       "BUILD_TESTING;debug_build" OFF)
+if(JAEGERTRACINGC_COVERAGE)
   include(CodeCoverage)
-  append_coverage_compiler_flags()
+  append_coverage_compiler_flags(CMAKE_C_FLAGS)
   set(COVERAGE_EXCLUDES
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/jaegertracingc/*_test.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/jaegertracingc/*_test.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/sds/*"
     "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/unity/*")
 endif()
@@ -29,9 +42,15 @@ target_include_directories(sds PUBLIC "thirdparty/sds" "src")
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+configure_file(
+  "src/jaegertracingc/constants.h.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/generated/include/jaegertracingc/constants.h"
+  @ONLY)
+
 add_library(jaegertracingc
     "src/jaegertracingc/alloc.c"
     "src/jaegertracingc/common.c"
+    "src/jaegertracingc/constants.c"
     "src/jaegertracingc/duration.c"
     "src/jaegertracingc/key_value.c"
     "src/jaegertracingc/logger.c"
@@ -40,7 +59,8 @@ add_library(jaegertracingc
     "src/jaegertracingc/span.c"
     "src/jaegertracingc/trace_id.c"
     "src/jaegertracingc/token_bucket.c")
-target_include_directories(jaegertracingc PUBLIC "src")
+target_include_directories(jaegertracingc PUBLIC
+  "src" "${CMAKE_CURRENT_BINARY_DIR}/generated/include")
 target_link_libraries(jaegertracingc PUBLIC sds)
 
 if(BUILD_TESTING)
@@ -52,6 +72,7 @@ if(BUILD_TESTING)
     "src/jaegertracingc/alloc_test.c"
     "src/jaegertracingc/duration_test.c"
     "src/jaegertracingc/token_bucket_test.c")
+  target_compile_definitions(unit_test PUBLIC "-DTESTING")
   target_link_libraries(unit_test PUBLIC jaegertracingc unity)
 
   if(CMAKE_BUILD_TYPE STREQUAL "Debug" AND JAEGERTRACINGC_COVERAGE)

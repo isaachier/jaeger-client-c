@@ -25,41 +25,30 @@
 #include "jaegertracingc/trace_id.h"
 #include "jaegertracingc/token_bucket.h"
 
-typedef struct jaeger_sampling_status {
-    bool status;
-    jaeger_key_value_list tags;
-} jaeger_sampling_status;
-
 #define JAEGERTRACINGC_SAMPLER_SUBCLASS                                                       \
-    jaeger_sampling_status (*is_sampled)(struct jaeger_sampler* sampler, \
+    bool (*is_sampled)(struct jaeger_sampler* sampler, \
                                          const jaeger_trace_id* trace_id, \
-                                         sds operation); \
+                                         const sds operation, \
+                                         jaeger_key_value_list* tags); \
     void (*close)(struct jaeger_sampler* sampler)
 
 typedef struct jaeger_sampler {
     JAEGERTRACINGC_SAMPLER_SUBCLASS;
 } jaeger_sampler;
 
-void jaeger_const_sampler_init(jaeger_sampler* sampler, bool decision);
+jaeger_sampler* jaeger_const_sampler_init(bool decision);
 
-void jaeger_probabilistic_sampler_init(
-    jaeger_sampler* sampler, double probability);
+jaeger_sampler* jaeger_probabilistic_sampler_init(
+    double probability);
 
-void jaeger_rate_limiting_sampler_init(
-    jaeger_sampler* sampler, double max_traces_per_second);
+jaeger_sampler* jaeger_rate_limiting_sampler_init(
+    double max_traces_per_second);
 
-typedef struct jaeger_const_sampler {
-    JAEGERTRACINGC_SAMPLER_SUBCLASS;
-    bool decision;
-} jaeger_const_sampler;
-
-void jaeger_guaranteed_throughput_probabilistic_sampler_init(
-    jaeger_sampler* sampler,
+jaeger_sampler* jaeger_guaranteed_throughput_probabilistic_sampler_init(
     double lower_bound,
     double sampling_rate);
 
-void jaeger_remotely_controlled_sampler_init(
-    jaeger_sampler* sampler,
+jaeger_sampler* jaeger_remotely_controlled_sampler_init(
     sds service_name,
     jaeger_sampler* initial_sampler,
     int max_operations,

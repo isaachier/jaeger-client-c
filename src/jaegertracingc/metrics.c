@@ -19,7 +19,7 @@
 #include <stdio.h>
 #include "jaegertracingc/alloc.h"
 
-typedef struct default_counter {
+typedef struct global_counter {
     JAEGERTRACINGC_COUNTER_SUBCLASS;
     int64_t total;
 } default_counter;
@@ -35,8 +35,8 @@ static void default_counter_inc(
 jaeger_counter* jaeger_default_counter_init()
 {
     jaeger_counter* counter =
-        jaeger_default_alloc.malloc(
-            &jaeger_default_alloc, sizeof(default_counter));
+        jaeger_global_alloc->malloc(
+            jaeger_global_alloc, sizeof(default_counter));
     if (counter == NULL) {
         fprintf(stderr, "Cannot allocate default counter\n");
         return NULL;
@@ -56,8 +56,8 @@ static void null_counter_inc(jaeger_counter* counter, int64_t delta)
 jaeger_counter* jaeger_null_counter_init()
 {
     jaeger_counter* counter =
-        jaeger_default_alloc.malloc(
-            &jaeger_default_alloc, sizeof(jaeger_counter));
+        jaeger_global_alloc->malloc(
+            jaeger_global_alloc, sizeof(jaeger_counter));
     if (counter == NULL) {
         fprintf(stderr, "Cannot allocate null counter\n");
         return NULL;
@@ -81,8 +81,8 @@ static void default_gauge_update(jaeger_gauge* gauge, int64_t amount)
 jaeger_gauge* jaeger_default_gauge_init()
 {
     jaeger_gauge* gauge =
-        jaeger_default_alloc.malloc(
-            &jaeger_default_alloc, sizeof(default_gauge));
+        jaeger_global_alloc->malloc(
+            jaeger_global_alloc, sizeof(default_gauge));
     if (gauge == NULL) {
         fprintf(stderr, "Cannot allocate default gauge\n");
         return NULL;
@@ -101,8 +101,8 @@ static void null_gauge_update(jaeger_gauge* gauge, int64_t amount)
 jaeger_gauge* jaeger_null_gauge_init()
 {
     jaeger_gauge* gauge =
-        jaeger_default_alloc.malloc(
-            &jaeger_default_alloc, sizeof(jaeger_gauge));
+        jaeger_global_alloc->malloc(
+            jaeger_global_alloc, sizeof(jaeger_gauge));
     if (gauge == NULL) {
         fprintf(stderr, "Cannot allocate null gauge\n");
         return NULL;
