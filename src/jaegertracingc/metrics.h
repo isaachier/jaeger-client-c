@@ -14,28 +14,17 @@
  * limitations under the License.
  */
 
-#include "jaegertracingc/alloc.h"
+#ifndef JAEGERTRACINGC_METRICS_H
+#define JAEGERTRACINGC_METRICS_H
 
-#include <stdlib.h>
+#include "jaegertracingc/common.h"
 
-static void* default_malloc(jaeger_allocator* alloc, size_t sz)
-{
-    (void) alloc;
-    return malloc(sz);
-}
+typedef struct jaeger_counter {
+    void (*inc)(jaeger_counter* counter, int64_t delta);
+} jaeger_counter;
 
-static void* default_realloc(jaeger_allocator* alloc, void* ptr, size_t sz)
-{
-    (void) alloc;
-    return realloc(ptr, sz);
-}
+typedef struct jaeger_gauge {
+    void (*update)(jaeger_gauge* gauge, int64_t amount);
+} jaeger_gauge;
 
-static void default_free(jaeger_allocator* alloc, void* ptr)
-{
-    (void) alloc;
-    free(ptr);
-}
-
-struct jaeger_allocator jaeger_default_alloc = {.malloc = &default_malloc,
-                                        .realloc = &default_realloc,
-                                        .free = &default_free };
+#endif  // JAEGERTRACINGC_METRICS_H

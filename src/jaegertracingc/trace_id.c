@@ -14,28 +14,4 @@
  * limitations under the License.
  */
 
-#include "jaegertracingc/alloc.h"
-
-#include <stdlib.h>
-
-static void* default_malloc(jaeger_allocator* alloc, size_t sz)
-{
-    (void) alloc;
-    return malloc(sz);
-}
-
-static void* default_realloc(jaeger_allocator* alloc, void* ptr, size_t sz)
-{
-    (void) alloc;
-    return realloc(ptr, sz);
-}
-
-static void default_free(jaeger_allocator* alloc, void* ptr)
-{
-    (void) alloc;
-    free(ptr);
-}
-
-struct jaeger_allocator jaeger_default_alloc = {.malloc = &default_malloc,
-                                        .realloc = &default_realloc,
-                                        .free = &default_free };
+#include "jaegertracingc/trace_id.h"

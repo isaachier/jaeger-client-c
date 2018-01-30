@@ -14,28 +14,14 @@
  * limitations under the License.
  */
 
-#include "jaegertracingc/alloc.h"
+#ifndef JAEGERTRACINGC_LOGGER_H
+#define JAEGERTRACINGC_LOGGER_H
 
-#include <stdlib.h>
+#include "jaegertracingc/common.h"
 
-static void* default_malloc(jaeger_allocator* alloc, size_t sz)
-{
-    (void) alloc;
-    return malloc(sz);
-}
+typedef struct jaeger_logger {
+    void (*error)(const sds message);
+    void (*info)(const sds message);
+} jaeger_logger;
 
-static void* default_realloc(jaeger_allocator* alloc, void* ptr, size_t sz)
-{
-    (void) alloc;
-    return realloc(ptr, sz);
-}
-
-static void default_free(jaeger_allocator* alloc, void* ptr)
-{
-    (void) alloc;
-    free(ptr);
-}
-
-struct jaeger_allocator jaeger_default_alloc = {.malloc = &default_malloc,
-                                        .realloc = &default_realloc,
-                                        .free = &default_free };
+#endif  // JAEGERTRACINGC_LOGGER_H
