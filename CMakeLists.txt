@@ -46,6 +46,8 @@ if(BUILD_TESTING)
 
   add_executable(unit_test
     "src/jaegertracingc/unit_test.c"
+    "src/jaegertracingc/alloc_test.c"
+    "src/jaegertracingc/duration_test.c"
     "src/jaegertracingc/token_bucket_test.c")
   target_link_libraries(unit_test PUBLIC jaegertracingc unity)
 

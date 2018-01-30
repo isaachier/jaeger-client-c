@@ -16,6 +16,7 @@
 
 #include <time.h>
 #include "unity.h"
+#include "jaegertracingc/alloc.h"
 #include "jaegertracingc/duration.h"
 #include "jaegertracingc/token_bucket.h"
 
@@ -41,4 +42,5 @@ void test_token_bucket()
     TEST_ASSERT(result);
     result = jaeger_token_bucket_check_credit(tok, expected_credits);
     TEST_ASSERT(!result);
+    jaeger_default_alloc.free(&jaeger_default_alloc, tok);
 }

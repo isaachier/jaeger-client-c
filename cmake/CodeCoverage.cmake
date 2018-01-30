@@ -78,12 +78,12 @@ if(NOT GCOV_PATH)
     message(FATAL_ERROR "gcov not found! Aborting...")
 endif() # NOT GCOV_PATH
 
-if("${CMAKE_C_COMPILER_ID}" MATCHES "(Apple)?[Cc]lang")
+if(CMAKE_C_COMPILER_ID MATCHES "[Cc]lang")
     if("${CMAKE_C_COMPILER_VERSION}" VERSION_LESS 3)
         message(FATAL_ERROR "Clang version must be 3.0.0 or greater! Aborting...")
     endif()
     set(COVERAGE_COMPILER_FLAGS "-Qunused-arguments")
-elseif(NOT CMAKE_COMPILER_IS_GNUC)
+elseif(NOT CMAKE_C_COMPILER_ID STREQUAL "GNU")
     message(FATAL_ERROR "Compiler is not GNU gcc! Aborting...")
 endif()
 
