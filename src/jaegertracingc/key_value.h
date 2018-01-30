@@ -19,19 +19,10 @@
 
 #include "jaegertracingc/common.h"
 
-#define DEFINE_LIST(inner)                                                     \
-    typedef struct jaeger_##inner##_list {                                     \
-        jaeger_##inner data;                                                   \
-        struct jaeger_##inner##_list* next;                                    \
-    } jaeger_##inner##_list
-
-typedef struct jaeger_key_value {
+typedef struct jaeger_key_value_list {
     sds key;
     sds value;
-} jaeger_key_value;
-
-DEFINE_LIST(key_value);
-
-#undef DEFINE_LIST
+    struct jaeger_key_value_list* next;
+} jaeger_key_value_list;
 
 #endif  // JAEGERTRACINGC_KEY_VALUE_H

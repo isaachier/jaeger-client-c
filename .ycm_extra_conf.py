@@ -48,7 +48,7 @@ flags = [
 '-I',
 os.path.join(project_dir, 'src'),
 '-I',
-os.path.join(project_dir, 'build/src')
+os.path.join(project_dir, 'build/generated/include')
 ]
 
 if hunter_install_dir:

@@ -20,6 +20,7 @@
 #include <stdlib.h>
 
 #include "jaegertracingc/alloc.h"
+#include "jaegertracingc/constants.h"
 
 typedef struct jaeger_const_sampler {
     JAEGERTRACINGC_SAMPLER_SUBCLASS;
@@ -36,7 +37,12 @@ static bool const_is_sampled(
     (void) operation_name;
     jaeger_const_sampler* s = (jaeger_const_sampler*) sampler;
     if (tags != NULL) {
-        // TODO: Tags
+        tags->key = sdsnew(JAEGERTRACINGC_SAMPLER_TYPE_TAG_KEY);
+        tags->value = sdsnew(JAEGERTRACINGC_SAMPLER_TYPE_CONST);
+        tags->next = malloc(sizeof(jaeger_key_value_list));
+        tags = tags->next;
+        tags->key = sdsnew(JAEGERTRACINGC_SAMPLER_PARAM_TAG_KEY);
+        tags->value = sdsnew(s->decision ? "true" : "false");
     }
     return s->decision;
 }
@@ -72,10 +78,17 @@ static bool probabilistic_is_sampled(
     jaeger_key_value_list* tags)
 {
     jaeger_probabilistic_sampler* s = (jaeger_probabilistic_sampler*) sampler;
-    const double threshold = (rand_r(&s->seed) / RAND_MAX);
+    const double threshold = ((double) rand_r(&s->seed)) / RAND_MAX;
     const bool decision = (s->probability >= threshold);
     if (tags != NULL) {
-        // TODO: Tags
+        tags->key = sdsnew(JAEGERTRACINGC_SAMPLER_TYPE_TAG_KEY);
+        tags->value = sdsnew(JAEGERTRACINGC_SAMPLER_TYPE_CONST);
+        tags->next = malloc(sizeof(jaeger_key_value_list));
+        tags = tags->next;
+        tags->key = sdsnew(JAEGERTRACINGC_SAMPLER_PARAM_TAG_KEY);
+        char buffer[16];
+        snprintf(&buffer[0], sizeof(buffer), "%f", s->probability);
+        tags->value = sdsnew(&buffer[0]);
     }
     return decision;
 }

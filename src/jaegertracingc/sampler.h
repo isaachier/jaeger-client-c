@@ -45,8 +45,7 @@ jaeger_sampler* jaeger_rate_limiting_sampler_init(
     double max_traces_per_second);
 
 jaeger_sampler* jaeger_guaranteed_throughput_probabilistic_sampler_init(
-    double lower_bound,
-    double sampling_rate);
+    double lower_bound, double sampling_rate);
 
 jaeger_sampler* jaeger_remotely_controlled_sampler_init(
     sds service_name,
