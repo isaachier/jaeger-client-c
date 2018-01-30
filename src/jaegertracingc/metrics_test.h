@@ -14,17 +14,9 @@
  * limitations under the License.
  */
 
-#include "unity.h"
-#include "alloc_test.h"
-#include "duration_test.h"
-#include "metrics_test.h"
-#include "token_bucket_test.h"
+#ifndef JAEGERTRACINGC_METRICS_TEST_H
+#define JAEGERTRACINGC_METRICS_TEST_H
 
-int main()
-{
-    RUN_TEST(test_alloc);
-    RUN_TEST(test_duration);
-    RUN_TEST(test_metrics);
-    RUN_TEST(test_token_bucket);
-    return 0;
-}
+void test_metrics();
+
+#endif  // JAEGERTRACINGC_METRICS_TEST_H

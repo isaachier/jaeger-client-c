@@ -71,6 +71,7 @@ if(BUILD_TESTING)
     "src/jaegertracingc/unit_test.c"
     "src/jaegertracingc/alloc_test.c"
     "src/jaegertracingc/duration_test.c"
+    "src/jaegertracingc/metrics_test.c"
     "src/jaegertracingc/token_bucket_test.c")
   target_compile_definitions(unit_test PUBLIC "-DTESTING")
   target_link_libraries(unit_test PUBLIC jaegertracingc unity)

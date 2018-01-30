@@ -37,6 +37,10 @@ typedef struct jaeger_gauge {
     JAEGERTRACINGC_GAUGE_SUBCLASS;
 } jaeger_gauge;
 
+jaeger_gauge* jaeger_default_gauge_init();
+
+jaeger_gauge* jaeger_null_gauge_init();
+
 typedef struct jaeger_metrics {
     jaeger_counter* traces_started_sampled;
     jaeger_counter* traces_started_not_sampled;
