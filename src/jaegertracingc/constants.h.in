@@ -19,21 +19,21 @@
 
 #include "jaegertracingc/common.h"
 
-const char* jaeger_client_version;
-const char* jaeger_client_version_tag_key;
-const char* jaeger_debug_header;
-const char* jaeger_baggage_header;
-const char* jaeger_tracer_hostname_tag_key;
-const char* jaeger_tracer_ip_tag_key;
-const char* jaeger_sampler_type_tag_key;
-const char* jaeger_sampler_param_tag_key;
-const char* jaeger_trace_context_header_name;
-const char* jaeger_tracer_state_header_name;
-const char* jaeger_trace_baggage_header_prefix;
-const char* jaeger_sampler_type_const;
-const char* jaeger_sampler_type_remote;
-const char* jaeger_sampler_type_probabilistic;
-const char* jaeger_sampler_type_rate_limiting;
-const char* jaeger_sampler_type_lower_bound;
+#define JAEGER_CLIENT_VERSION "C-@PROJECT_VERSION@"
+#define JAEGER_CLIENT_VERSION_TAG_KEY "jaeger.version"
+#define JAEGER_DEBUG_HEADER "jaeger-debug-id"
+#define JAEGER_BAGGAGE_HEADER "jaeger-baggage"
+#define JAEGER_TRACER_HOSTNAME_TAG_KEY "hostname"
+#define JAEGER_TRACER_IP_TAG_KEY "ip"
+#define JAEGER_SAMPLER_TYPE_TAG_KEY "sampler.type"
+#define JAEGER_SAMPLER_PARAM_TAG_KEY "sampler.param"
+#define JAEGER_TRACE_CONTEXT_HEADER_NAME "uber-trace-id"
+#define JAEGER_TRACER_STATE_HEADER_NAME JAEGER_TRACE_CONTEXT_HEADER_NAME
+#define JAEGER_TRACE_BAGGAGE_HEADER_PREFIX "uberctx-"
+#define JAEGER_SAMPLER_TYPE_CONST "const"
+#define JAEGER_SAMPLER_TYPE_REMOTE "remote"
+#define JAEGER_SAMPLER_TYPE_PROBABILISTIC "probabilistic"
+#define JAEGER_SAMPLER_TYPE_RATE_LIMITING "ratelimiting"
+#define JAEGER_SAMPLER_TYPE_LOWER_BOUND "lowerbound"
 
 #endif  // JAEGERTRACINGC_CONSTANTS_H
