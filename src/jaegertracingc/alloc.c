@@ -39,3 +39,18 @@ static void default_free(jaeger_allocator* alloc, void* ptr)
 struct jaeger_allocator jaeger_default_alloc = {.malloc = &default_malloc,
                                         .realloc = &default_realloc,
                                         .free = &default_free };
+
+void* jaeger_default_alloc_malloc(size_t sz)
+{
+    return jaeger_default_alloc.malloc(&jaeger_default_alloc, sz);
+}
+
+void* jaeger_default_alloc_realloc(void* ptr, size_t sz)
+{
+    return jaeger_default_alloc.realloc(&jaeger_default_alloc, ptr, sz);
+}
+
+void jaeger_default_alloc_free(void* ptr)
+{
+    return jaeger_default_alloc.free(&jaeger_default_alloc, ptr);
+}

@@ -23,8 +23,9 @@ endif()
 
 find_package(Threads REQUIRED)
 
+# sds uses "jaegertracingc/alloc.h", so includes src
 add_library(sds "thirdparty/sds/sds.c")
-target_include_directories(sds PUBLIC "thirdparty/sds")
+target_include_directories(sds PUBLIC "thirdparty/sds" "src")
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 

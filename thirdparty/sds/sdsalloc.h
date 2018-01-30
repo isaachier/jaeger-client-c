@@ -37,6 +37,8 @@
  * the include of your alternate allocator if needed (not needed in order
  * to use the default libc allocator). */
 
-#define s_malloc malloc
-#define s_realloc realloc
-#define s_free free
+#include "jaegertracingc/alloc.h"
+
+#define s_malloc jaeger_default_alloc_malloc
+#define s_realloc jaeger_default_alloc_realloc
+#define s_free jaeger_default_alloc_free

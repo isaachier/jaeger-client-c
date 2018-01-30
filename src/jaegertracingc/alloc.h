@@ -26,6 +26,12 @@ typedef struct jaeger_allocator {
     void (*free)(struct jaeger_allocator*, void*);
 } jaeger_allocator;
 
-extern jaeger_allocator jaeger_default_alloc;
+jaeger_allocator jaeger_default_alloc;
+
+void* jaeger_default_alloc_malloc(size_t sz);
+
+void* jaeger_default_alloc_realloc(void* ptr, size_t sz);
+
+void jaeger_default_alloc_free(void* ptr);
 
 #endif  // JAEGERTRACINGC_ALLOC_H
