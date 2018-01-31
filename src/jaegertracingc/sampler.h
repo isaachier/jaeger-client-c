@@ -17,9 +17,6 @@
 #ifndef JAEGERTRACINGC_SAMPLER_H
 #define JAEGERTRACINGC_SAMPLER_H
 
-#include <assert.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include "jaegertracingc/common.h"
 #include "jaegertracingc/constants.h"
 #include "jaegertracingc/duration.h"
@@ -28,11 +25,14 @@
 #include "jaegertracingc/metrics.h"
 #include "jaegertracingc/token_bucket.h"
 #include "jaegertracingc/trace_id.h"
+#include <assert.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #define JAEGERTRACINGC_SAMPLER_SUBCLASS                                        \
     bool (*is_sampled)(struct jaeger_sampler * sampler,                        \
                        const jaeger_trace_id* trace_id,                        \
-                       const char* operation,                                    \
+                       const char* operation,                                  \
                        jaeger_key_value_list* tags);                           \
     void (*close)(struct jaeger_sampler * sampler)
 
@@ -72,24 +72,21 @@ typedef struct jaeger_remotely_controlled_sampler {
     jaeger_logger* logger;
 } jaeger_remotely_controlled_sampler;
 
-inline bool const_is_sampled(
-    jaeger_sampler* sampler,
-    const jaeger_trace_id* trace_id,
-    const char* operation_name,
-    jaeger_key_value_list* tags)
+inline bool const_is_sampled(jaeger_sampler* sampler,
+                             const jaeger_trace_id* trace_id,
+                             const char* operation_name,
+                             jaeger_key_value_list* tags)
 {
     (void)trace_id;
     (void)operation_name;
     jaeger_const_sampler* s = (jaeger_const_sampler*)sampler;
     if (tags != NULL) {
-        jaeger_key_value_list_append(
-            tags,
-            JAEGERTRACINGC_SAMPLER_TYPE_TAG_KEY,
-            JAEGERTRACINGC_SAMPLER_TYPE_CONST);
-        jaeger_key_value_list_append(
-            tags,
-            JAEGERTRACINGC_SAMPLER_PARAM_TAG_KEY,
-            (s->decision ? "true" : "false"));
+        jaeger_key_value_list_append(tags,
+                                     JAEGERTRACINGC_SAMPLER_TYPE_TAG_KEY,
+                                     JAEGERTRACINGC_SAMPLER_TYPE_CONST);
+        jaeger_key_value_list_append(tags,
+                                     JAEGERTRACINGC_SAMPLER_PARAM_TAG_KEY,
+                                     (s->decision ? "true" : "false"));
     }
     return s->decision;
 }
@@ -112,22 +109,19 @@ static bool probabilistic_is_sampled(jaeger_sampler* sampler,
     const double threshold = ((double)rand_r(&s->seed)) / RAND_MAX;
     const bool decision = (s->probability >= threshold);
     if (tags != NULL) {
-        jaeger_key_value_list_append(
-            tags,
-            JAEGERTRACINGC_SAMPLER_TYPE_TAG_KEY,
-            JAEGERTRACINGC_SAMPLER_TYPE_PROBABILISTIC);
+        jaeger_key_value_list_append(tags,
+                                     JAEGERTRACINGC_SAMPLER_TYPE_TAG_KEY,
+                                     JAEGERTRACINGC_SAMPLER_TYPE_PROBABILISTIC);
         char buffer[16];
         snprintf(&buffer[0], sizeof(buffer), "%f", s->probability);
         jaeger_key_value_list_append(
-            tags,
-            JAEGERTRACINGC_SAMPLER_PARAM_TAG_KEY,
-            buffer);
+            tags, JAEGERTRACINGC_SAMPLER_PARAM_TAG_KEY, buffer);
     }
     return decision;
 }
 
-void jaeger_probabilistic_sampler_init(
-    jaeger_probabilistic_sampler* sampler, double probability)
+void jaeger_probabilistic_sampler_init(jaeger_probabilistic_sampler* sampler,
+                                       double probability)
 {
     assert(sampler != NULL);
     sampler->is_sampled = &probabilistic_is_sampled;
@@ -135,8 +129,8 @@ void jaeger_probabilistic_sampler_init(
     sampler->probability = probability;
 }
 
-void jaeger_rate_limiting_sampler_init(
-    jaeger_rate_limiting_sampler* sampler, double max_traces_per_second)
+void jaeger_rate_limiting_sampler_init(jaeger_rate_limiting_sampler* sampler,
+                                       double max_traces_per_second)
 {
     assert(sampler != NULL);
     /* TODO */

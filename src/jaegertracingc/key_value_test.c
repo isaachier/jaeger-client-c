@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-#include <stdio.h>
-#include <string.h>
 #include "jaegertracingc/key_value.h"
 #include "unity.h"
+#include <stdio.h>
+#include <string.h>
 
 void test_key_value()
 {

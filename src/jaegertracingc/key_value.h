@@ -17,11 +17,11 @@
 #ifndef JAEGERTRACINGC_KEY_VALUE_H
 #define JAEGERTRACINGC_KEY_VALUE_H
 
+#include "jaegertracingc/alloc.h"
+#include "jaegertracingc/common.h"
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
-#include "jaegertracingc/alloc.h"
-#include "jaegertracingc/common.h"
 
 #define JAEGERTRACINGC_KV_INIT_SIZE 10
 #define JAEGERTRACINGC_KV_RESIZE_FACTOR 2
@@ -39,9 +39,8 @@ typedef struct jaeger_key_value_list {
 
 static inline bool jaeger_key_value_alloc_list(jaeger_key_value_list* list)
 {
-    list->kv =
-        jaeger_global_alloc_malloc(
-            sizeof(jaeger_key_value) * JAEGERTRACINGC_KV_INIT_SIZE);
+    list->kv = jaeger_global_alloc_malloc(sizeof(jaeger_key_value) *
+                                          JAEGERTRACINGC_KV_INIT_SIZE);
     if (list->kv == NULL) {
         fprintf(stderr, "ERROR: Cannot allocate jaeger_key_value_list\n");
         return false;
@@ -54,9 +53,8 @@ static inline bool jaeger_key_value_resize(jaeger_key_value_list* list)
 {
     assert(list != NULL);
     const int new_capacity = list->capacity * JAEGERTRACINGC_KV_RESIZE_FACTOR;
-    jaeger_key_value* new_kv =
-        jaeger_global_alloc_realloc(list->kv,
-            sizeof(jaeger_key_value) * new_capacity);
+    jaeger_key_value* new_kv = jaeger_global_alloc_realloc(
+        list->kv, sizeof(jaeger_key_value) * new_capacity);
     if (new_kv == NULL) {
         fprintf(stderr,
                 "ERROR: Cannot allocate more space for jaeger_key_value_list,"
@@ -81,8 +79,9 @@ static inline bool jaeger_key_value_list_init(jaeger_key_value_list* list)
     return true;
 }
 
-static inline bool jaeger_key_value_list_append(
-    jaeger_key_value_list* list, const char* key, const char* value)
+static inline bool jaeger_key_value_list_append(jaeger_key_value_list* list,
+                                                const char* key,
+                                                const char* value)
 {
     assert(list != NULL);
     if (list->kv == NULL && !jaeger_key_value_alloc_list(list)) {
@@ -106,10 +105,8 @@ static inline bool jaeger_key_value_list_append(
         return false;
     }
     memcpy(value_copy, value, value_size);
-    list->kv[list->size] = (jaeger_key_value) {
-        .key = key_copy,
-        .value = value_copy
-    };
+    list->kv[list->size] =
+        (jaeger_key_value){ .key = key_copy, .value = value_copy };
     list->size++;
     return true;
 }

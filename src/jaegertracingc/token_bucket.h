@@ -17,9 +17,9 @@
 #ifndef JAEGERTRACINGC_TOKEN_BUCKET_H
 #define JAEGERTRACINGC_TOKEN_BUCKET_H
 
-#include <assert.h>
 #include "jaegertracingc/common.h"
 #include "jaegertracingc/duration.h"
+#include <assert.h>
 
 typedef struct jaeger_token_bucket {
     double credits_per_second;
@@ -28,10 +28,9 @@ typedef struct jaeger_token_bucket {
     jaeger_duration last_tick;
 } jaeger_token_bucket;
 
-static inline void jaeger_token_bucket_init(
-    jaeger_token_bucket* tok,
-    double credits_per_second,
-    double max_balance)
+static inline void jaeger_token_bucket_init(jaeger_token_bucket* tok,
+                                            double credits_per_second,
+                                            double max_balance)
 {
     assert(tok != NULL);
     tok->credits_per_second = credits_per_second;
@@ -39,8 +38,8 @@ static inline void jaeger_token_bucket_init(
     jaeger_duration_now(&tok->last_tick);
 }
 
-static inline bool jaeger_token_bucket_check_credit(
-    jaeger_token_bucket* tok, double cost)
+static inline bool jaeger_token_bucket_check_credit(jaeger_token_bucket* tok,
+                                                    double cost)
 {
     assert(tok != NULL);
     jaeger_duration current_time;
@@ -51,8 +50,8 @@ static inline bool jaeger_token_bucket_check_credit(
     (void)result;
     assert(result);
     const double diff =
-        (((double)interval.tv_nsec) /
-         JAEGERTRACINGC_NANOSECONDS_PER_SECOND + interval.tv_sec) *
+        (((double)interval.tv_nsec) / JAEGERTRACINGC_NANOSECONDS_PER_SECOND +
+         interval.tv_sec) *
         tok->credits_per_second;
     const double new_balance = tok->balance + diff;
     tok->balance =

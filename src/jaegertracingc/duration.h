@@ -17,9 +17,9 @@
 #ifndef JAEGERTRACINGC_DURATION_H
 #define JAEGERTRACINGC_DURATION_H
 
+#include "jaegertracingc/common.h"
 #include <assert.h>
 #include <time.h>
-#include "jaegertracingc/common.h"
 
 #define JAEGERTRACINGC_NANOSECONDS_PER_SECOND 1000000000
 
@@ -33,10 +33,9 @@ static inline void jaeger_duration_now(jaeger_duration* duration)
 
 // Algorithm based on
 // http://www.gnu.org/software/libc/manual/html_node/Elapsed-Time.html.
-static inline bool jaeger_duration_subtract(
-    const jaeger_duration* lhs,
-    const jaeger_duration* rhs,
-    jaeger_duration* result)
+static inline bool jaeger_duration_subtract(const jaeger_duration* lhs,
+                                            const jaeger_duration* rhs,
+                                            jaeger_duration* result)
 {
     assert(lhs != NULL);
     assert(rhs != NULL);
