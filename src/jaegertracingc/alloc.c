@@ -40,18 +40,3 @@ static struct jaeger_allocator global_alloc = {.malloc = &global_malloc,
                                                .realloc = &global_realloc,
                                                .free = &global_free };
 jaeger_allocator* jaeger_global_alloc = &global_alloc;
-
-void* jaeger_global_alloc_malloc(size_t sz)
-{
-    return jaeger_global_alloc->malloc(jaeger_global_alloc, sz);
-}
-
-void* jaeger_global_alloc_realloc(void* ptr, size_t sz)
-{
-    return jaeger_global_alloc->realloc(jaeger_global_alloc, ptr, sz);
-}
-
-void jaeger_global_alloc_free(void* ptr)
-{
-    return jaeger_global_alloc->free(jaeger_global_alloc, ptr);
-}

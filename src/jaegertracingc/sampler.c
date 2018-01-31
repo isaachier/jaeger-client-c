@@ -15,17 +15,11 @@
  */
 
 #include "jaegertracingc/sampler.h"
-
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
-
 #include "jaegertracingc/alloc.h"
 #include "jaegertracingc/constants.h"
-
-typedef struct jaeger_const_sampler {
-    JAEGERTRACINGC_SAMPLER_SUBCLASS;
-    bool decision;
-} jaeger_const_sampler;
 
 static bool const_is_sampled(jaeger_sampler* sampler,
                              const jaeger_trace_id* trace_id,
@@ -50,24 +44,12 @@ static bool const_is_sampled(jaeger_sampler* sampler,
 
 static void noop_close(jaeger_sampler* sampler) { (void)sampler; }
 
-jaeger_sampler* jaeger_const_sampler_new(bool decision)
+void jaeger_const_sampler_init(jaeger_const_sampler* sampler, bool decision)
 {
-    jaeger_const_sampler* sampler =
-        jaeger_global_alloc_malloc(sizeof(*sampler));
-    if (sampler == NULL) {
-        fprintf(stderr, "ERROR: Cannot allocate jaeger_const_sampler\n");
-        return NULL;
-    }
+    assert(sampler != NULL);
     sampler->is_sampled = &const_is_sampled;
     sampler->close = &noop_close;
-    return (jaeger_sampler*)sampler;
 }
-
-typedef struct jaeger_probabilistic_sampler {
-    JAEGERTRACINGC_SAMPLER_SUBCLASS;
-    double probability;
-    unsigned int seed;
-} jaeger_probabilistic_sampler;
 
 static bool probabilistic_is_sampled(jaeger_sampler* sampler,
                                      const jaeger_trace_id* trace_id,
@@ -92,52 +74,40 @@ static bool probabilistic_is_sampled(jaeger_sampler* sampler,
     return decision;
 }
 
-jaeger_sampler* jaeger_probabilistic_sampler_new(double probability)
+void jaeger_probabilistic_sampler_init(
+    jaeger_probabilistic_sampler* sampler, double probability)
 {
-    jaeger_probabilistic_sampler* sampler =
-        jaeger_global_alloc_malloc(sizeof(*sampler));
-    if (sampler == NULL) {
-        fprintf(stderr,
-                "ERROR: Cannot allocate jaeger_probabilistic_sampler\n");
-        return NULL;
-    }
+    assert(sampler != NULL);
     sampler->is_sampled = &probabilistic_is_sampled;
     sampler->close = &noop_close;
     sampler->probability = probability;
-    return (jaeger_sampler*)sampler;
 }
 
-typedef struct jaeger_rate_limiting_sampler {
-    JAEGERTRACINGC_SAMPLER_SUBCLASS;
-    jaeger_token_bucket* tok;
-} jaeger_rate_limiting_sampler;
+void jaeger_rate_limiting_sampler_init(
+    jaeger_rate_limiting_sampler* sampler, double max_traces_per_second)
+{
+    assert(sampler != NULL);
+    /* TODO */
+}
 
-jaeger_sampler* jaeger_rate_limiting_sampler_new(double max_traces_per_second);
+void jaeger_guaranteed_throughput_probabilistic_sampler_init(
+    jaeger_guaranteed_throughput_probabilistic_sampler* sampler,
+    double lower_bound,
+    double sampling_rate)
+{
+    assert(sampler != NULL);
+    /* TODO */
+}
 
-typedef struct jaeger_guaranteed_throughput_probabilistic_sampler {
-    JAEGERTRACINGC_SAMPLER_SUBCLASS;
-    jaeger_probabilistic_sampler probabilistic_sampler;
-    jaeger_rate_limiting_sampler lower_bound_sampler;
-} jaeger_guaranteed_throughput_probabilistic_sampler;
-
-jaeger_sampler*
-jaeger_guaranteed_throughput_probabilistic_sampler_new(double lower_bound,
-                                                        double sampling_rate);
-
-typedef struct jaeger_remotely_controlled_sampler {
-    JAEGERTRACINGC_SAMPLER_SUBCLASS;
-    sds service_name;
-    sds sampling_server_url;
-    jaeger_sampler* sampler;
-    int max_operations;
-    jaeger_duration sampling_refresh_interval;
-    jaeger_logger* logger;
-} jaeger_remotely_controlled_sampler;
-
-jaeger_sampler* jaeger_remotely_controlled_sampler_new(
+void jaeger_remotely_controlled_sampler_init(
+    jaeger_remotely_controlled_sampler* sampler,
     sds service_name,
     jaeger_sampler* initial_sampler,
     int max_operations,
     const jaeger_duration* sampling_refresh_interval,
     jaeger_logger* logger,
-    jaeger_metrics* metrics);
+    jaeger_metrics* metrics)
+{
+    assert(sampler != NULL);
+    /* TODO */
+}

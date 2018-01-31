@@ -20,23 +20,21 @@
 
 void test_metrics()
 {
-    jaeger_counter* counter = jaeger_default_counter_new();
-    TEST_ASSERT_NOT_NULL(counter);
-    counter->inc(counter, 2);
-    jaeger_global_alloc_free(counter);
+    jaeger_default_counter default_counter;
+    jaeger_default_counter_init(&default_counter);
+    default_counter.inc((jaeger_counter*)&default_counter, 2);
+    TEST_ASSERT_EQUAL(2, default_counter.total);
 
-    counter = jaeger_null_counter_new();
-    TEST_ASSERT_NOT_NULL(counter);
-    counter->inc(counter, -1);
-    jaeger_global_alloc_free(counter);
+    jaeger_counter null_counter;
+    jaeger_null_counter_init(&null_counter);
+    null_counter.inc(&null_counter, -1);
 
-    jaeger_gauge* gauge = jaeger_default_gauge_new();
-    TEST_ASSERT_NOT_NULL(gauge);
-    gauge->update(gauge, 3);
-    jaeger_global_alloc_free(gauge);
+    jaeger_default_gauge default_gauge;
+    jaeger_default_gauge_init(&default_gauge);
+    default_gauge.update((jaeger_gauge*)&default_gauge, 3);
+    TEST_ASSERT_EQUAL(3, default_gauge.amount);
 
-    gauge = jaeger_null_gauge_new();
-    TEST_ASSERT_NOT_NULL(gauge);
-    gauge->update(gauge, 4);
-    jaeger_global_alloc_free(gauge);
+    jaeger_gauge null_gauge;
+    jaeger_null_gauge_init(&null_gauge);
+    null_gauge.update(&null_gauge, 4);
 }

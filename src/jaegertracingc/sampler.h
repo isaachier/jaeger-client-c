@@ -36,17 +36,52 @@ typedef struct jaeger_sampler {
     JAEGERTRACINGC_SAMPLER_SUBCLASS;
 } jaeger_sampler;
 
-jaeger_sampler* jaeger_const_sampler_new(bool decision);
+typedef struct jaeger_const_sampler {
+    JAEGERTRACINGC_SAMPLER_SUBCLASS;
+    bool decision;
+} jaeger_const_sampler;
 
-jaeger_sampler* jaeger_probabilistic_sampler_new(double probability);
+typedef struct jaeger_probabilistic_sampler {
+    JAEGERTRACINGC_SAMPLER_SUBCLASS;
+    double probability;
+    unsigned int seed;
+} jaeger_probabilistic_sampler;
 
-jaeger_sampler* jaeger_rate_limiting_sampler_new(double max_traces_per_second);
+typedef struct jaeger_rate_limiting_sampler {
+    JAEGERTRACINGC_SAMPLER_SUBCLASS;
+    jaeger_token_bucket* tok;
+} jaeger_rate_limiting_sampler;
 
-jaeger_sampler*
-jaeger_guaranteed_throughput_probabilistic_sampler_new(double lower_bound,
-                                                        double sampling_rate);
+typedef struct jaeger_guaranteed_throughput_probabilistic_sampler {
+    JAEGERTRACINGC_SAMPLER_SUBCLASS;
+    jaeger_probabilistic_sampler probabilistic_sampler;
+    jaeger_rate_limiting_sampler lower_bound_sampler;
+} jaeger_guaranteed_throughput_probabilistic_sampler;
+typedef struct jaeger_remotely_controlled_sampler {
+    JAEGERTRACINGC_SAMPLER_SUBCLASS;
+    sds service_name;
+    sds sampling_server_url;
+    jaeger_sampler* sampler;
+    int max_operations;
+    jaeger_duration sampling_refresh_interval;
+    jaeger_logger* logger;
+} jaeger_remotely_controlled_sampler;
 
-jaeger_sampler* jaeger_remotely_controlled_sampler_new(
+void jaeger_const_sampler_init(jaeger_const_sampler* sampler, bool decision);
+
+void jaeger_probabilistic_sampler_init(
+    jaeger_probabilistic_sampler* sampler, double probability);
+
+void jaeger_rate_limiting_sampler_init(
+    jaeger_rate_limiting_sampler* sampler, double max_traces_per_second);
+
+void jaeger_guaranteed_throughput_probabilistic_sampler_init(
+    jaeger_guaranteed_throughput_probabilistic_sampler* sampler,
+    double lower_bound,
+    double sampling_rate);
+
+void jaeger_remotely_controlled_sampler_init(
+    jaeger_remotely_controlled_sampler* sampler,
     sds service_name,
     jaeger_sampler* initial_sampler,
     int max_operations,
