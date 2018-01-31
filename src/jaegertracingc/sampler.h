@@ -29,6 +29,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define JAEGERTRACINGC_DOUBLE_STR_SIZE 16
+
 #define JAEGERTRACINGC_SAMPLER_SUBCLASS                                        \
     bool (*is_sampled)(struct jaeger_sampler * sampler,                        \
                        const jaeger_trace_id* trace_id,                        \
@@ -48,12 +50,16 @@ typedef struct jaeger_const_sampler {
 typedef struct jaeger_probabilistic_sampler {
     JAEGERTRACINGC_SAMPLER_SUBCLASS;
     double probability;
+#ifdef HAVE_RAND_R
     unsigned int seed;
+#endif  /* HAVE_RAND_R */
+    char probability_str[JAEGERTRACINGC_DOUBLE_STR_SIZE];
 } jaeger_probabilistic_sampler;
 
 typedef struct jaeger_rate_limiting_sampler {
     JAEGERTRACINGC_SAMPLER_SUBCLASS;
-    jaeger_token_bucket* tok;
+    jaeger_token_bucket tok;
+    char max_traces_per_second_str[JAEGERTRACINGC_DOUBLE_STR_SIZE];
 } jaeger_rate_limiting_sampler;
 
 typedef struct jaeger_guaranteed_throughput_probabilistic_sampler {
@@ -100,22 +106,26 @@ void jaeger_const_sampler_init(jaeger_const_sampler* sampler, bool decision)
     sampler->close = &noop_close;
 }
 
-static bool probabilistic_is_sampled(jaeger_sampler* sampler,
+inline bool probabilistic_is_sampled(jaeger_sampler* sampler,
                                      const jaeger_trace_id* trace_id,
                                      const char* operation_name,
                                      jaeger_key_value_list* tags)
 {
+    (void)trace_id;
+    (void)operation_name;
     jaeger_probabilistic_sampler* s = (jaeger_probabilistic_sampler*)sampler;
+#ifdef HAVE_RAND_R
     const double threshold = ((double)rand_r(&s->seed)) / RAND_MAX;
+#else
+    const double threshold = ((double)rand()) / RAND_MAX;
+#endif  /* HAVE_RAND_R */
     const bool decision = (s->probability >= threshold);
     if (tags != NULL) {
         jaeger_key_value_list_append(tags,
                                      JAEGERTRACINGC_SAMPLER_TYPE_TAG_KEY,
                                      JAEGERTRACINGC_SAMPLER_TYPE_PROBABILISTIC);
-        char buffer[16];
-        snprintf(&buffer[0], sizeof(buffer), "%f", s->probability);
         jaeger_key_value_list_append(
-            tags, JAEGERTRACINGC_SAMPLER_PARAM_TAG_KEY, buffer);
+            tags, JAEGERTRACINGC_SAMPLER_PARAM_TAG_KEY, s->probability_str);
     }
     return decision;
 }
@@ -126,14 +136,49 @@ void jaeger_probabilistic_sampler_init(jaeger_probabilistic_sampler* sampler,
     assert(sampler != NULL);
     sampler->is_sampled = &probabilistic_is_sampled;
     sampler->close = &noop_close;
-    sampler->probability = probability;
+    sampler->probability =
+        (probability < 0) ? 0 : ((probability > 1) ? 1 : probability);
+    snprintf(&sampler->probability_str[0],
+             sizeof(sampler->probability_str),
+             "%f",
+             sampler->probability);
+}
+
+inline bool rate_limiting_is_sampled(jaeger_sampler* sampler,
+                                     const jaeger_trace_id* trace_id,
+                                     const char* operation_name,
+                                     jaeger_key_value_list* tags)
+{
+    (void)trace_id;
+    (void)operation_name;
+    assert(sampler != NULL);
+    jaeger_rate_limiting_sampler* s = (jaeger_rate_limiting_sampler*)sampler;
+    const bool decision = jaeger_token_bucket_check_credit(&s->tok, 1);
+    if (tags != NULL) {
+        jaeger_key_value_list_append(tags,
+                                     JAEGERTRACINGC_SAMPLER_TYPE_TAG_KEY,
+                                     JAEGERTRACINGC_SAMPLER_TYPE_RATE_LIMITING);
+        jaeger_key_value_list_append(tags,
+                                     JAEGERTRACINGC_SAMPLER_PARAM_TAG_KEY,
+                                     s->max_traces_per_second_str);
+    }
+    return decision;
 }
 
 void jaeger_rate_limiting_sampler_init(jaeger_rate_limiting_sampler* sampler,
                                        double max_traces_per_second)
 {
     assert(sampler != NULL);
-    /* TODO */
+    sampler->is_sampled = &rate_limiting_is_sampled;
+    sampler->close = &noop_close;
+    jaeger_token_bucket_init(
+        &sampler->tok,
+        max_traces_per_second,
+        (max_traces_per_second < 1) ? 1 : max_traces_per_second);
+    snprintf(&sampler->max_traces_per_second_str[0],
+             sizeof(sampler->max_traces_per_second_str),
+             "%f",
+             max_traces_per_second);
 }
 
 void jaeger_guaranteed_throughput_probabilistic_sampler_init(

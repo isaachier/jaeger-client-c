@@ -39,7 +39,7 @@ typedef struct jaeger_key_value_list {
 
 static inline bool jaeger_key_value_alloc_list(jaeger_key_value_list* list)
 {
-    list->kv = jaeger_global_alloc_malloc(sizeof(jaeger_key_value) *
+    list->kv = jaeger_malloc(sizeof(jaeger_key_value) *
                                           JAEGERTRACINGC_KV_INIT_SIZE);
     if (list->kv == NULL) {
         fprintf(stderr, "ERROR: Cannot allocate jaeger_key_value_list\n");
@@ -53,7 +53,7 @@ static inline bool jaeger_key_value_resize(jaeger_key_value_list* list)
 {
     assert(list != NULL);
     const int new_capacity = list->capacity * JAEGERTRACINGC_KV_RESIZE_FACTOR;
-    jaeger_key_value* new_kv = jaeger_global_alloc_realloc(
+    jaeger_key_value* new_kv = jaeger_realloc(
         list->kv, sizeof(jaeger_key_value) * new_capacity);
     if (new_kv == NULL) {
         fprintf(stderr,
@@ -92,14 +92,14 @@ static inline bool jaeger_key_value_list_append(jaeger_key_value_list* list,
         return false;
     }
     const int key_size = strlen(key);
-    char* key_copy = jaeger_global_alloc_malloc(key_size);
+    char* key_copy = jaeger_malloc(key_size);
     if (key_copy == NULL) {
         fprintf(stderr, "ERROR: Cannot allocate key, size=%d\n", key_size);
         return false;
     }
     memcpy(key_copy, key, key_size);
     const int value_size = strlen(value);
-    char* value_copy = jaeger_global_alloc_malloc(value_size);
+    char* value_copy = jaeger_malloc(value_size);
     if (value_copy == NULL) {
         fprintf(stderr, "ERROR: Cannot allocate value, size=%d\n", value_size);
         return false;
@@ -116,10 +116,10 @@ static inline void jaeger_key_value_list_free(jaeger_key_value_list* list)
     assert(list != NULL);
     if (list->kv != NULL) {
         for (int i = 0; i < list->size; i++) {
-            jaeger_global_alloc_free(list->kv[i].key);
-            jaeger_global_alloc_free(list->kv[i].value);
+            jaeger_free(list->kv[i].key);
+            jaeger_free(list->kv[i].value);
         }
-        jaeger_global_alloc_free(list->kv);
+        jaeger_free(list->kv);
     }
 }
 

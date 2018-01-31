@@ -21,7 +21,7 @@
 #endif /* JAEGERTRACINGC_VERBOSE_ALLOC */
 #include <stdlib.h>
 
-static void* global_malloc(jaeger_allocator* alloc, size_t sz)
+static void* built_in_malloc(jaeger_allocator* alloc, size_t sz)
 {
     (void)alloc;
 #ifdef JAEGERTRACINGC_VERBOSE_ALLOC
@@ -33,7 +33,7 @@ static void* global_malloc(jaeger_allocator* alloc, size_t sz)
 #endif /* JAEGERTRACINGC_VERBOSE_ALLOC */
 }
 
-static void* global_realloc(jaeger_allocator* alloc, void* ptr, size_t sz)
+static void* built_in_realloc(jaeger_allocator* alloc, void* ptr, size_t sz)
 {
     (void)alloc;
 #ifdef JAEGERTRACINGC_VERBOSE_ALLOC
@@ -45,7 +45,7 @@ static void* global_realloc(jaeger_allocator* alloc, void* ptr, size_t sz)
 #endif /* JAEGERTRACINGC_VERBOSE_ALLOC */
 }
 
-static void global_free(jaeger_allocator* alloc, void* ptr)
+static void built_in_free(jaeger_allocator* alloc, void* ptr)
 {
     (void)alloc;
 #ifdef JAEGERTRACINGC_VERBOSE_ALLOC
@@ -56,9 +56,13 @@ static void global_free(jaeger_allocator* alloc, void* ptr)
 #endif /* JAEGERTRACINGC_VERBOSE_ALLOC */
 }
 
-static struct jaeger_allocator global_alloc = { .malloc = &global_malloc,
-                                                .realloc = &global_realloc,
-                                                .free = &global_free };
-jaeger_allocator* jaeger_global_alloc = NULL;
+jaeger_allocator* jaeger_built_in_allocator()
+{
+    static struct jaeger_allocator built_in_alloc = {
+        .malloc = &built_in_malloc,
+        .realloc = &built_in_realloc,
+        .free = &built_in_free };
+    return &built_in_alloc;
+}
 
-jaeger_allocator* jaeger_built_in_allocator() { return &global_alloc; }
+jaeger_allocator* jaeger_alloc;

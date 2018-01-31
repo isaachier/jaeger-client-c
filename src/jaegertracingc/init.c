@@ -15,13 +15,35 @@
  */
 
 #include "jaegertracingc/init.h"
+#include <stdlib.h>
+#include <time.h>
+
+#ifdef HAVE_PTHREAD
+#include <pthread.h>
+#endif  /* HAVE_PTHREAD */
+
+static inline void init_lib()
+{
+    jaeger_alloc = jaeger_built_in_allocator();
+
+#ifndef HAVE_RAND_R
+    /* Set up global random seed */
+    srand(time(NULL));
+#endif  /* HAVE_RAND_R */
+}
 
 void jaeger_init_lib(jaeger_allocator* alloc)
 {
+#ifdef HAVE_PTHREAD
+    static pthread_once_t is_initialized = PTHREAD_ONCE_INIT;
+    const bool first_run = pthread_once(&is_initialized, init_lib);
+    if (first_run && alloc != NULL) {
+        jaeger_alloc = alloc;
+    }
+#else
+    init_lib();
     if (alloc != NULL) {
-        jaeger_global_alloc = alloc;
+        jaeger_alloc = alloc;
     }
-    else {
-        jaeger_global_alloc = jaeger_built_in_allocator();
-    }
+#endif  /* HAVE_PTHREAD */
 }

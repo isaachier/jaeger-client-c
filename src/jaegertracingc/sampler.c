@@ -16,9 +16,19 @@
 
 #include "jaegertracingc/sampler.h"
 
+extern inline void noop_close(jaeger_sampler* sampler);
+
 extern inline bool const_is_sampled(jaeger_sampler* sampler,
                                     const jaeger_trace_id* trace_id,
                                     const char* operation_name,
                                     jaeger_key_value_list* tags);
 
-extern inline void noop_close(jaeger_sampler* sampler);
+extern inline bool probabilistic_is_sampled(jaeger_sampler* sampler,
+                                     const jaeger_trace_id* trace_id,
+                                     const char* operation_name,
+                                     jaeger_key_value_list* tags);
+
+extern inline bool rate_limiting_is_sampled(jaeger_sampler* sampler,
+                                     const jaeger_trace_id* trace_id,
+                                     const char* operation_name,
+                                     jaeger_key_value_list* tags);

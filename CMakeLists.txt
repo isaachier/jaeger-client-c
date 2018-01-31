@@ -8,6 +8,8 @@ set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/toolchain.cmake"
 
 project(jaegertracingc VERSION 0.0.1 LANGUAGES C)
 
+include(CheckCCompilerFlag)
+include(CheckFunctionExists)
 include(CMakeDependentOption)
 include(CTest)
 
@@ -37,7 +39,8 @@ cmake_dependent_option(JAEGERTRACINGC_VERBOSE_ALLOC "Print all allocations" OFF
                        "BUILD_TESTING;debug_build" OFF)
 mark_as_advanced(JAEGERTRACINGC_VERBOSE_ALLOC)
 
-find_package(Threads REQUIRED)
+set(CMAKE_THREAD_PREFER_PTHREAD ON)
+find_package(Threads)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -61,6 +64,19 @@ add_library(jaegertracingc
     "src/jaegertracingc/token_bucket.c")
 target_include_directories(jaegertracingc PUBLIC
   "src" "${CMAKE_CURRENT_BINARY_DIR}/generated/include")
+if(CMAKE_USE_PTHREADS_INIT)
+  target_compile_definitions(jaegertracingc PUBLIC "-DHAVE_PTHREAD")
+  target_link_libraries(jaegertracingc PUBLIC Threads::Threads)
+endif()
+
+check_function_exists("rand_r" have_rand_r)
+if(have_rand_r)
+  target_compile_definitions(jaegertracingc PUBLIC "-DHAVE_RAND_R")
+else()
+  message(WARN
+    "Cannot find rand_r, so using rand, which may negatively affect "
+    "probabilistic sampling")
+endif()
 
 if(JAEGERTRACINGC_VERBOSE_ALLOC)
   target_compile_definitions(
