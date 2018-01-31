@@ -32,7 +32,7 @@
 #define JAEGERTRACINGC_SAMPLER_SUBCLASS                                        \
     bool (*is_sampled)(struct jaeger_sampler * sampler,                        \
                        const jaeger_trace_id* trace_id,                        \
-                       const sds operation,                                    \
+                       const char* operation,                                    \
                        jaeger_key_value_list* tags);                           \
     void (*close)(struct jaeger_sampler * sampler)
 
@@ -64,8 +64,8 @@ typedef struct jaeger_guaranteed_throughput_probabilistic_sampler {
 
 typedef struct jaeger_remotely_controlled_sampler {
     JAEGERTRACINGC_SAMPLER_SUBCLASS;
-    sds service_name;
-    sds sampling_server_url;
+    char* service_name;
+    char* sampling_server_url;
     jaeger_sampler* sampler;
     int max_operations;
     jaeger_duration sampling_refresh_interval;
@@ -75,7 +75,7 @@ typedef struct jaeger_remotely_controlled_sampler {
 inline bool const_is_sampled(
     jaeger_sampler* sampler,
     const jaeger_trace_id* trace_id,
-    const sds operation_name,
+    const char* operation_name,
     jaeger_key_value_list* tags)
 {
     (void)trace_id;
@@ -105,7 +105,7 @@ void jaeger_const_sampler_init(jaeger_const_sampler* sampler, bool decision)
 
 static bool probabilistic_is_sampled(jaeger_sampler* sampler,
                                      const jaeger_trace_id* trace_id,
-                                     const sds operation_name,
+                                     const char* operation_name,
                                      jaeger_key_value_list* tags)
 {
     jaeger_probabilistic_sampler* s = (jaeger_probabilistic_sampler*)sampler;
@@ -153,7 +153,7 @@ void jaeger_guaranteed_throughput_probabilistic_sampler_init(
 
 void jaeger_remotely_controlled_sampler_init(
     jaeger_remotely_controlled_sampler* sampler,
-    sds service_name,
+    char* service_name,
     jaeger_sampler* initial_sampler,
     int max_operations,
     const jaeger_duration* sampling_refresh_interval,

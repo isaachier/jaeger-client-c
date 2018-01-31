@@ -16,14 +16,18 @@
 
 #include "alloc_test.h"
 #include "duration_test.h"
+#include "key_value_test.h"
 #include "metrics_test.h"
 #include "token_bucket_test.h"
+#include "init.h"
 #include "unity.h"
 
 int main()
 {
+    jaeger_init_lib(NULL);
     RUN_TEST(test_alloc);
     RUN_TEST(test_duration);
+    RUN_TEST(test_key_value);
     RUN_TEST(test_metrics);
     RUN_TEST(test_token_bucket);
     return 0;

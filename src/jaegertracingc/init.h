@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-#ifndef JAEGERTRACINGC_COMMON_H
-#define JAEGERTRACINGC_COMMON_H
+#ifndef JAEGERTRACINGC_INIT_H
+#define JAEGERTRACINGC_INIT_H
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
+#include "jaegertracingc/alloc.h"
+#include "jaegertracingc/common.h"
 
-#endif  // JAEGERTRACINGC_COMMON_H
+/* Use this function to initialize the library before calling any functions.
+ * Either pass in a custom allocator or NULL to use the built-in allocator. */
+void jaeger_init_lib(jaeger_allocator* alloc);
+
+#endif  // JAEGERTRACINGC_INIT_H

@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-#ifndef JAEGERTRACINGC_COMMON_H
-#define JAEGERTRACINGC_COMMON_H
+#include "jaegertracingc/init.h"
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
-
-#endif  // JAEGERTRACINGC_COMMON_H
+void jaeger_init_lib(jaeger_allocator* alloc)
+{
+    if (alloc != NULL) {
+        jaeger_global_alloc = alloc;
+    }
+    else {
+        jaeger_global_alloc = jaeger_built_in_allocator();
+    }
+}

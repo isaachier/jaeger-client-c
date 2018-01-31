@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2018 Uber Technologies, Inc.
  *
@@ -28,6 +27,8 @@ typedef struct jaeger_allocator {
 
 extern jaeger_allocator* jaeger_global_alloc;
 
+jaeger_allocator* jaeger_built_in_allocator();
+
 static inline void* jaeger_global_alloc_malloc(size_t sz)
 {
     return jaeger_global_alloc->malloc(jaeger_global_alloc, sz);
@@ -40,7 +41,7 @@ static inline void* jaeger_global_alloc_realloc(void* ptr, size_t sz)
 
 static inline void jaeger_global_alloc_free(void* ptr)
 {
-    return jaeger_global_alloc->free(jaeger_global_alloc, ptr);
+    jaeger_global_alloc->free(jaeger_global_alloc, ptr);
 }
 
 #endif  // JAEGERTRACINGC_ALLOC_H

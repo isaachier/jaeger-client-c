@@ -16,27 +16,49 @@
 
 #include "jaegertracingc/alloc.h"
 
+#ifdef JAEGERTRACINGC_VERBOSE_ALLOC
+#include <stdio.h>
+#endif  /* JAEGERTRACINGC_VERBOSE_ALLOC */
 #include <stdlib.h>
 
 static void* global_malloc(jaeger_allocator* alloc, size_t sz)
 {
     (void)alloc;
+#ifdef JAEGERTRACINGC_VERBOSE_ALLOC
+    void* ptr = malloc(sz);
+    printf("allocating %zu bytes at %p\n", sz, ptr);
+    return ptr;
+#else
     return malloc(sz);
+#endif  /* JAEGERTRACINGC_VERBOSE_ALLOC */
 }
 
 static void* global_realloc(jaeger_allocator* alloc, void* ptr, size_t sz)
 {
     (void)alloc;
+#ifdef JAEGERTRACINGC_VERBOSE_ALLOC
+    void* new_ptr = realloc(ptr, sz);
+    printf("reallocating %zu bytes at %p from %p\n", sz, new_ptr, ptr);
+    return new_ptr;
+#else
     return realloc(ptr, sz);
+#endif  /* JAEGERTRACINGC_VERBOSE_ALLOC */
 }
 
 static void global_free(jaeger_allocator* alloc, void* ptr)
 {
     (void)alloc;
+#ifdef JAEGERTRACINGC_VERBOSE_ALLOC
+    printf("freeing memory at %p\n", ptr);
     free(ptr);
+#else
+    free(ptr);
+#endif  /* JAEGERTRACINGC_VERBOSE_ALLOC */
 }
 
 static struct jaeger_allocator global_alloc = {.malloc = &global_malloc,
                                                .realloc = &global_realloc,
                                                .free = &global_free };
-jaeger_allocator* jaeger_global_alloc = &global_alloc;
+jaeger_allocator* jaeger_global_alloc = NULL;
+
+jaeger_allocator* jaeger_built_in_allocator() { return &global_alloc; }

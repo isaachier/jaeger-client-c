@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-#ifndef JAEGERTRACINGC_COMMON_H
-#define JAEGERTRACINGC_COMMON_H
+#ifndef JAEGERTRACINGC_KEY_VALUE_TEST_H
+#define JAEGERTRACINGC_KEY_VALUE_TEST_H
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
+void test_key_value();
 
-#endif  // JAEGERTRACINGC_COMMON_H
+#endif  // JAEGERTRACINGC_KEY_VALUE_TEST_H

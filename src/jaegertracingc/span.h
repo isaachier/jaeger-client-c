@@ -36,7 +36,7 @@ typedef struct jaeger_span_context {
     uint64_t parent_id;
     uint8_t flags;
     jaeger_key_value_list* baggage;
-    sds debug_id;
+    char* debug_id;
 } jaeger_span_context;
 
 typedef enum jaeger_span_reference_type {
@@ -54,7 +54,7 @@ DEFINE_LIST(span_reference);
 typedef struct jaeger_span {
     struct jaeger_tracer* tracer;
     jaeger_span_context context;
-    sds operation_name;
+    char* operation_name;
     time_t start_time_system;
     jaeger_duration start_time_monotonic;
     jaeger_key_value_list* tags;

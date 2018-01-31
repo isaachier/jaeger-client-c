@@ -30,15 +30,14 @@ if(JAEGERTRACINGC_COVERAGE)
   set(COVERAGE_EXCLUDES
     "${CMAKE_CURRENT_SOURCE_DIR}/src/jaegertracingc/*_test.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/jaegertracingc/*_test.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/sds/*"
     "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/unity/*")
 endif()
 
-find_package(Threads REQUIRED)
+cmake_dependent_option(JAEGERTRACINGC_VERBOSE_ALLOC "Print all allocations" OFF
+                       "BUILD_TESTING;debug_build" OFF)
+mark_as_advanced(JAEGERTRACINGC_VERBOSE_ALLOC)
 
-# sds uses "jaegertracingc/alloc.h", so includes src
-add_library(sds "thirdparty/sds/sds.c")
-target_include_directories(sds PUBLIC "thirdparty/sds" "src")
+find_package(Threads REQUIRED)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -52,6 +51,7 @@ add_library(jaegertracingc
     "src/jaegertracingc/common.c"
     "src/jaegertracingc/constants.c"
     "src/jaegertracingc/duration.c"
+    "src/jaegertracingc/init.c"
     "src/jaegertracingc/key_value.c"
     "src/jaegertracingc/logger.c"
     "src/jaegertracingc/metrics.c"
@@ -61,7 +61,11 @@ add_library(jaegertracingc
     "src/jaegertracingc/token_bucket.c")
 target_include_directories(jaegertracingc PUBLIC
   "src" "${CMAKE_CURRENT_BINARY_DIR}/generated/include")
-target_link_libraries(jaegertracingc PUBLIC sds)
+
+if(JAEGERTRACINGC_VERBOSE_ALLOC)
+  target_compile_definitions(
+    jaegertracingc PUBLIC "-DJAEGERTRACINGC_VERBOSE_ALLOC")
+endif()
 
 if(BUILD_TESTING)
   add_library(unity "thirdparty/unity/unity.c")
@@ -71,9 +75,10 @@ if(BUILD_TESTING)
     "src/jaegertracingc/unit_test.c"
     "src/jaegertracingc/alloc_test.c"
     "src/jaegertracingc/duration_test.c"
+    "src/jaegertracingc/key_value_test.c"
     "src/jaegertracingc/metrics_test.c"
     "src/jaegertracingc/token_bucket_test.c")
-  target_compile_definitions(unit_test PUBLIC "-DTESTING")
+  target_compile_definitions(jaegertracingc PUBLIC "-DTESTING")
   target_link_libraries(unit_test PUBLIC jaegertracingc unity)
 
   if(CMAKE_BUILD_TYPE STREQUAL "Debug" AND JAEGERTRACINGC_COVERAGE)
