@@ -2,6 +2,8 @@
 
 # Based on https://github.com/codecov/example-cpp11-cmake/blob/master/run_build.sh.
 
+set -e
+
 RED='\033[0;31m'
 BLUE='\033[0;34m'
 NO_COLOR='\033[0m'
