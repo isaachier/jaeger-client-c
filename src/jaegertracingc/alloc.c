@@ -20,25 +20,25 @@
 
 static void* global_malloc(jaeger_allocator* alloc, size_t sz)
 {
-    (void) alloc;
+    (void)alloc;
     return malloc(sz);
 }
 
 static void* global_realloc(jaeger_allocator* alloc, void* ptr, size_t sz)
 {
-    (void) alloc;
+    (void)alloc;
     return realloc(ptr, sz);
 }
 
 static void global_free(jaeger_allocator* alloc, void* ptr)
 {
-    (void) alloc;
+    (void)alloc;
     free(ptr);
 }
 
 static struct jaeger_allocator global_alloc = {.malloc = &global_malloc,
-                                        .realloc = &global_realloc,
-                                        .free = &global_free };
+                                               .realloc = &global_realloc,
+                                               .free = &global_free };
 jaeger_allocator* jaeger_global_alloc = &global_alloc;
 
 void* jaeger_global_alloc_malloc(size_t sz)

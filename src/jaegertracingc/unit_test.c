@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#include "unity.h"
 #include "alloc_test.h"
 #include "duration_test.h"
 #include "metrics_test.h"
 #include "token_bucket_test.h"
+#include "unity.h"
 
 int main()
 {

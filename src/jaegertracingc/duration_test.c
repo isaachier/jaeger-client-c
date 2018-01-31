@@ -14,23 +14,17 @@
  * limitations under the License.
  */
 
-#include <time.h>
-#include "unity.h"
 #include "jaegertracingc/duration.h"
+#include "unity.h"
+#include <time.h>
 
 #define NS_PER_S JAEGERTRACINGC_NANOSECONDS_PER_SECOND
 
 void test_duration()
 {
     {
-        jaeger_duration x = {
-            .tv_sec = 1,
-            .tv_nsec = 0
-        };
-        jaeger_duration y = {
-            .tv_sec = 0,
-            .tv_nsec = NS_PER_S * 0.5
-        };
+        jaeger_duration x = {.tv_sec = 1, .tv_nsec = 0 };
+        jaeger_duration y = {.tv_sec = 0, .tv_nsec = NS_PER_S * 0.5 };
         jaeger_duration result;
         jaeger_duration_subtract(&x, &y, &result);
         TEST_ASSERT_EQUAL(0, result.tv_sec);
@@ -40,12 +34,9 @@ void test_duration()
     {
         jaeger_duration x = {
             .tv_sec = 0,
-            .tv_nsec = NS_PER_S * 1.1  /* Testing edge case for coverage */
+            .tv_nsec = NS_PER_S * 1.1 /* Testing edge case for coverage */
         };
-        jaeger_duration y = {
-            .tv_sec = 0,
-            .tv_nsec = NS_PER_S * 0.0
-        };
+        jaeger_duration y = {.tv_sec = 0, .tv_nsec = NS_PER_S * 0.0 };
         jaeger_duration result;
         jaeger_duration_subtract(&x, &y, &result);
         TEST_ASSERT_EQUAL(1, result.tv_sec);

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <time.h>
-#include "unity.h"
 #include "jaegertracingc/alloc.h"
+#include "unity.h"
+#include <time.h>
 
 void test_alloc()
 {

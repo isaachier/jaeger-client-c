@@ -27,15 +27,14 @@ typedef struct jaeger_const_sampler {
     bool decision;
 } jaeger_const_sampler;
 
-static bool const_is_sampled(
-    jaeger_sampler* sampler,
-    const jaeger_trace_id* trace_id,
-    const sds operation_name,
-    jaeger_key_value_list* tags)
+static bool const_is_sampled(jaeger_sampler* sampler,
+                             const jaeger_trace_id* trace_id,
+                             const sds operation_name,
+                             jaeger_key_value_list* tags)
 {
-    (void) trace_id;
-    (void) operation_name;
-    jaeger_const_sampler* s = (jaeger_const_sampler*) sampler;
+    (void)trace_id;
+    (void)operation_name;
+    jaeger_const_sampler* s = (jaeger_const_sampler*)sampler;
     if (tags != NULL) {
         tags->key = sdsnew(JAEGERTRACINGC_SAMPLER_TYPE_TAG_KEY);
         tags->value = sdsnew(JAEGERTRACINGC_SAMPLER_TYPE_CONST);
@@ -47,10 +46,7 @@ static bool const_is_sampled(
     return s->decision;
 }
 
-static void noop_close(jaeger_sampler* sampler)
-{
-    (void) sampler;
-}
+static void noop_close(jaeger_sampler* sampler) { (void)sampler; }
 
 jaeger_sampler* jaeger_const_sampler_init(bool decision)
 {
@@ -62,7 +58,7 @@ jaeger_sampler* jaeger_const_sampler_init(bool decision)
     }
     sampler->is_sampled = &const_is_sampled;
     sampler->close = &noop_close;
-    return (jaeger_sampler*) sampler;
+    return (jaeger_sampler*)sampler;
 }
 
 typedef struct jaeger_probabilistic_sampler {
@@ -71,14 +67,13 @@ typedef struct jaeger_probabilistic_sampler {
     unsigned int seed;
 } jaeger_probabilistic_sampler;
 
-static bool probabilistic_is_sampled(
-    jaeger_sampler* sampler,
-    const jaeger_trace_id* trace_id,
-    const sds operation_name,
-    jaeger_key_value_list* tags)
+static bool probabilistic_is_sampled(jaeger_sampler* sampler,
+                                     const jaeger_trace_id* trace_id,
+                                     const sds operation_name,
+                                     jaeger_key_value_list* tags)
 {
-    jaeger_probabilistic_sampler* s = (jaeger_probabilistic_sampler*) sampler;
-    const double threshold = ((double) rand_r(&s->seed)) / RAND_MAX;
+    jaeger_probabilistic_sampler* s = (jaeger_probabilistic_sampler*)sampler;
+    const double threshold = ((double)rand_r(&s->seed)) / RAND_MAX;
     const bool decision = (s->probability >= threshold);
     if (tags != NULL) {
         tags->key = sdsnew(JAEGERTRACINGC_SAMPLER_TYPE_TAG_KEY);
@@ -93,8 +88,7 @@ static bool probabilistic_is_sampled(
     return decision;
 }
 
-jaeger_sampler* jaeger_probabilistic_sampler_init(
-    double probability)
+jaeger_sampler* jaeger_probabilistic_sampler_init(double probability)
 {
     jaeger_probabilistic_sampler* sampler =
         jaeger_global_alloc_malloc(sizeof(*sampler));
@@ -105,7 +99,7 @@ jaeger_sampler* jaeger_probabilistic_sampler_init(
     }
     sampler->is_sampled = &probabilistic_is_sampled;
     sampler->close = &noop_close;
-    return (jaeger_sampler*) sampler;
+    return (jaeger_sampler*)sampler;
 }
 
 typedef struct jaeger_rate_limiting_sampler {
@@ -113,8 +107,7 @@ typedef struct jaeger_rate_limiting_sampler {
     jaeger_token_bucket* tok;
 } jaeger_rate_limiting_sampler;
 
-jaeger_sampler* jaeger_rate_limiting_sampler_init(
-    double max_traces_per_second);
+jaeger_sampler* jaeger_rate_limiting_sampler_init(double max_traces_per_second);
 
 typedef struct jaeger_guaranteed_throughput_probabilistic_sampler {
     JAEGERTRACINGC_SAMPLER_SUBCLASS;
@@ -122,9 +115,9 @@ typedef struct jaeger_guaranteed_throughput_probabilistic_sampler {
     jaeger_rate_limiting_sampler lower_bound_sampler;
 } jaeger_guaranteed_throughput_probabilistic_sampler;
 
-jaeger_sampler* jaeger_guaranteed_throughput_probabilistic_sampler_init(
-    double lower_bound,
-    double sampling_rate);
+jaeger_sampler*
+jaeger_guaranteed_throughput_probabilistic_sampler_init(double lower_bound,
+                                                        double sampling_rate);
 
 typedef struct jaeger_remotely_controlled_sampler {
     JAEGERTRACINGC_SAMPLER_SUBCLASS;

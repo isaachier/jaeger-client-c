@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#include <time.h>
-#include "unity.h"
+#include "jaegertracingc/token_bucket.h"
 #include "jaegertracingc/alloc.h"
 #include "jaegertracingc/duration.h"
-#include "jaegertracingc/token_bucket.h"
+#include "unity.h"
+#include <time.h>
 
 #define NS_PER_S JAEGERTRACINGC_NANOSECONDS_PER_SECOND
 
@@ -29,8 +29,8 @@ void test_token_bucket()
     jaeger_token_bucket* tok =
         jaeger_token_bucket_init(credits_per_second, max_balance);
     TEST_ASSERT(tok != NULL);
-    jaeger_duration sleep_time = {.tv_sec = 0, .tv_nsec = NS_PER_S * 0.3};
-    jaeger_duration rem_time = { .tv_sec = 0, .tv_nsec = 0 };
+    jaeger_duration sleep_time = {.tv_sec = 0, .tv_nsec = NS_PER_S * 0.3 };
+    jaeger_duration rem_time = {.tv_sec = 0, .tv_nsec = 0 };
     nanosleep(&sleep_time, &rem_time);
     jaeger_duration interval;
     int result = jaeger_duration_subtract(&sleep_time, &rem_time, &interval);

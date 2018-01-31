@@ -19,8 +19,8 @@
 
 #include "jaegertracingc/common.h"
 
-#define JAEGERTRACINGC_COUNTER_SUBCLASS \
-    void (*inc)(struct jaeger_counter* counter, int64_t delta)
+#define JAEGERTRACINGC_COUNTER_SUBCLASS                                        \
+    void (*inc)(struct jaeger_counter * counter, int64_t delta)
 
 typedef struct jaeger_counter {
     JAEGERTRACINGC_COUNTER_SUBCLASS;
@@ -30,8 +30,8 @@ jaeger_counter* jaeger_default_counter_init();
 
 jaeger_counter* jaeger_null_counter_init();
 
-#define JAEGERTRACINGC_GAUGE_SUBCLASS \
-    void (*update)(struct jaeger_gauge* gauge, int64_t amount)
+#define JAEGERTRACINGC_GAUGE_SUBCLASS                                          \
+    void (*update)(struct jaeger_gauge * gauge, int64_t amount)
 
 typedef struct jaeger_gauge {
     JAEGERTRACINGC_GAUGE_SUBCLASS;

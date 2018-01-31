@@ -30,7 +30,6 @@ struct jaeger_tracer;
         struct jaeger_##inner##_list* next;                                    \
     } jaeger_##inner##_list
 
-
 typedef struct jaeger_span_context {
     jaeger_trace_id trace_id;
     uint64_t span_id;

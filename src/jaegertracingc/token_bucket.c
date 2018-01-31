@@ -34,21 +34,21 @@ struct jaeger_token_bucket {
     jaeger_duration last_tick;
 #ifndef TESTING
     void (*time_fn)(jaeger_duration*);
-#endif  /* TESTING */
+#endif /* TESTING */
 };
 
 #ifdef TESTING
-#define INIT_TIME(tok, current_time) \
-    do { \
-        jaeger_duration_now(&current_time); \
+#define INIT_TIME(tok, current_time)                                           \
+    do {                                                                       \
+        jaeger_duration_now(&current_time);                                    \
     } while (0)
-#else  /* TESTING */
-#define INIT_TIME(tok, current_time) \
-    do { \
-        assert(tok->time_fn != NULL); \
-        tok->time_fn(&current_time); \
+#else /* TESTING */
+#define INIT_TIME(tok, current_time)                                           \
+    do {                                                                       \
+        assert(tok->time_fn != NULL);                                          \
+        tok->time_fn(&current_time);                                           \
     } while (0)
-#endif  /* TESTING */
+#endif /* TESTING */
 
 jaeger_token_bucket* jaeger_token_bucket_init(double credits_per_second,
                                               double max_balance)
@@ -61,7 +61,7 @@ jaeger_token_bucket* jaeger_token_bucket_init(double credits_per_second,
     }
 #ifndef TESTING
     tok->time_fn = &jaeger_duration_now;
-#endif  /* TESTING */
+#endif /* TESTING */
     tok->credits_per_second = credits_per_second;
     tok->max_balance = max_balance;
     INIT_TIME(tok, tok->last_tick);
@@ -84,7 +84,6 @@ static void update_balance(jaeger_token_bucket* tok)
     tok->balance = MIN(tok->max_balance, tok->balance + diff);
     tok->last_tick = current_time;
 }
-
 
 bool jaeger_token_bucket_check_credit(jaeger_token_bucket* tok, double cost)
 {
