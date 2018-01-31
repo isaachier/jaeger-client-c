@@ -28,7 +28,7 @@ void test_token_bucket()
     const double max_balance = 3;
     jaeger_token_bucket tok;
     jaeger_token_bucket_init(&tok, credits_per_second, max_balance);
-    jaeger_duration sleep_time = {.tv_sec = 0, .tv_nsec = NS_PER_S * 0.3 };
+    jaeger_duration sleep_time = {.tv_sec = 0, .tv_nsec = NS_PER_S * 0.01 };
     jaeger_duration rem_time = {.tv_sec = 0, .tv_nsec = 0 };
     nanosleep(&sleep_time, &rem_time);
     jaeger_duration interval;
