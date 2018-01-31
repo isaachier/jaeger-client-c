@@ -50,7 +50,7 @@ struct jaeger_token_bucket {
     } while (0)
 #endif /* TESTING */
 
-jaeger_token_bucket* jaeger_token_bucket_init(double credits_per_second,
+jaeger_token_bucket* jaeger_token_bucket_new(double credits_per_second,
                                               double max_balance)
 {
     jaeger_token_bucket* tok =

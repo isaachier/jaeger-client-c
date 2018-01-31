@@ -31,12 +31,11 @@ static void default_counter_inc(jaeger_counter* counter, int64_t delta)
     c->total += delta;
 }
 
-jaeger_counter* jaeger_default_counter_init()
+jaeger_counter* jaeger_default_counter_new()
 {
-    jaeger_counter* counter = jaeger_global_alloc->malloc(
-        jaeger_global_alloc, sizeof(default_counter));
+    jaeger_counter* counter = jaeger_global_alloc_malloc(sizeof(*counter));
     if (counter == NULL) {
-        fprintf(stderr, "Cannot allocate default counter\n");
+        fprintf(stderr, "Cannot allocate default_counter\n");
         return NULL;
     }
     default_counter* c = (default_counter*)counter;
@@ -51,12 +50,11 @@ static void null_counter_inc(jaeger_counter* counter, int64_t delta)
     (void)delta;
 }
 
-jaeger_counter* jaeger_null_counter_init()
+jaeger_counter* jaeger_null_counter_new()
 {
-    jaeger_counter* counter = jaeger_global_alloc->malloc(
-        jaeger_global_alloc, sizeof(jaeger_counter));
+    jaeger_counter* counter = jaeger_global_alloc_malloc(sizeof(*counter));
     if (counter == NULL) {
-        fprintf(stderr, "Cannot allocate null counter\n");
+        fprintf(stderr, "Cannot allocate null_counter\n");
         return NULL;
     }
     counter->inc = &null_counter_inc;
@@ -75,12 +73,11 @@ static void default_gauge_update(jaeger_gauge* gauge, int64_t amount)
     g->amount = amount;
 }
 
-jaeger_gauge* jaeger_default_gauge_init()
+jaeger_gauge* jaeger_default_gauge_new()
 {
-    jaeger_gauge* gauge =
-        jaeger_global_alloc->malloc(jaeger_global_alloc, sizeof(default_gauge));
+    jaeger_gauge* gauge = jaeger_global_alloc_malloc(sizeof(*gauge));
     if (gauge == NULL) {
-        fprintf(stderr, "Cannot allocate default gauge\n");
+        fprintf(stderr, "Cannot allocate default_gauge\n");
         return NULL;
     }
     default_gauge* g = (default_gauge*)gauge;
@@ -95,12 +92,11 @@ static void null_gauge_update(jaeger_gauge* gauge, int64_t amount)
     (void)amount;
 }
 
-jaeger_gauge* jaeger_null_gauge_init()
+jaeger_gauge* jaeger_null_gauge_new()
 {
-    jaeger_gauge* gauge =
-        jaeger_global_alloc->malloc(jaeger_global_alloc, sizeof(jaeger_gauge));
+    jaeger_gauge* gauge = jaeger_global_alloc_malloc(sizeof(*gauge));
     if (gauge == NULL) {
-        fprintf(stderr, "Cannot allocate null gauge\n");
+        fprintf(stderr, "Cannot allocate null_gauge\n");
         return NULL;
     }
     gauge->update = &null_gauge_update;

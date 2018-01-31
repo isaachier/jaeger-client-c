@@ -19,10 +19,22 @@
 
 #include "jaegertracingc/common.h"
 
-typedef struct jaeger_key_value_list {
+typedef struct jaeger_key_value {
     sds key;
     sds value;
-    struct jaeger_key_value_list* next;
+} jaeger_key_value;
+
+typedef struct jaeger_key_value_list {
+    jaeger_key_value* kv;
+    int size;
+    int capacity;
 } jaeger_key_value_list;
+
+bool jaeger_key_value_list_init(jaeger_key_value_list* list);
+
+bool jaeger_key_value_list_append(
+    jaeger_key_value_list* list, const char* key, const char* value);
+
+void jaeger_key_value_list_free(jaeger_key_value_list* list);
 
 #endif  // JAEGERTRACINGC_KEY_VALUE_H

@@ -36,19 +36,21 @@ static bool const_is_sampled(jaeger_sampler* sampler,
     (void)operation_name;
     jaeger_const_sampler* s = (jaeger_const_sampler*)sampler;
     if (tags != NULL) {
-        tags->key = sdsnew(JAEGERTRACINGC_SAMPLER_TYPE_TAG_KEY);
-        tags->value = sdsnew(JAEGERTRACINGC_SAMPLER_TYPE_CONST);
-        tags->next = malloc(sizeof(jaeger_key_value_list));
-        tags = tags->next;
-        tags->key = sdsnew(JAEGERTRACINGC_SAMPLER_PARAM_TAG_KEY);
-        tags->value = sdsnew(s->decision ? "true" : "false");
+        jaeger_key_value_list_append(
+            tags,
+            JAEGERTRACINGC_SAMPLER_TYPE_TAG_KEY,
+            JAEGERTRACINGC_SAMPLER_TYPE_CONST);
+        jaeger_key_value_list_append(
+            tags,
+            JAEGERTRACINGC_SAMPLER_PARAM_TAG_KEY,
+            (s->decision ? "true" : "false"));
     }
     return s->decision;
 }
 
 static void noop_close(jaeger_sampler* sampler) { (void)sampler; }
 
-jaeger_sampler* jaeger_const_sampler_init(bool decision)
+jaeger_sampler* jaeger_const_sampler_new(bool decision)
 {
     jaeger_const_sampler* sampler =
         jaeger_global_alloc_malloc(sizeof(*sampler));
@@ -76,19 +78,21 @@ static bool probabilistic_is_sampled(jaeger_sampler* sampler,
     const double threshold = ((double)rand_r(&s->seed)) / RAND_MAX;
     const bool decision = (s->probability >= threshold);
     if (tags != NULL) {
-        tags->key = sdsnew(JAEGERTRACINGC_SAMPLER_TYPE_TAG_KEY);
-        tags->value = sdsnew(JAEGERTRACINGC_SAMPLER_TYPE_CONST);
-        tags->next = malloc(sizeof(jaeger_key_value_list));
-        tags = tags->next;
-        tags->key = sdsnew(JAEGERTRACINGC_SAMPLER_PARAM_TAG_KEY);
+        jaeger_key_value_list_append(
+            tags,
+            JAEGERTRACINGC_SAMPLER_TYPE_TAG_KEY,
+            JAEGERTRACINGC_SAMPLER_TYPE_PROBABILISTIC);
         char buffer[16];
         snprintf(&buffer[0], sizeof(buffer), "%f", s->probability);
-        tags->value = sdsnew(&buffer[0]);
+        jaeger_key_value_list_append(
+            tags,
+            JAEGERTRACINGC_SAMPLER_PARAM_TAG_KEY,
+            buffer);
     }
     return decision;
 }
 
-jaeger_sampler* jaeger_probabilistic_sampler_init(double probability)
+jaeger_sampler* jaeger_probabilistic_sampler_new(double probability)
 {
     jaeger_probabilistic_sampler* sampler =
         jaeger_global_alloc_malloc(sizeof(*sampler));
@@ -99,6 +103,7 @@ jaeger_sampler* jaeger_probabilistic_sampler_init(double probability)
     }
     sampler->is_sampled = &probabilistic_is_sampled;
     sampler->close = &noop_close;
+    sampler->probability = probability;
     return (jaeger_sampler*)sampler;
 }
 
@@ -107,7 +112,7 @@ typedef struct jaeger_rate_limiting_sampler {
     jaeger_token_bucket* tok;
 } jaeger_rate_limiting_sampler;
 
-jaeger_sampler* jaeger_rate_limiting_sampler_init(double max_traces_per_second);
+jaeger_sampler* jaeger_rate_limiting_sampler_new(double max_traces_per_second);
 
 typedef struct jaeger_guaranteed_throughput_probabilistic_sampler {
     JAEGERTRACINGC_SAMPLER_SUBCLASS;
@@ -116,7 +121,7 @@ typedef struct jaeger_guaranteed_throughput_probabilistic_sampler {
 } jaeger_guaranteed_throughput_probabilistic_sampler;
 
 jaeger_sampler*
-jaeger_guaranteed_throughput_probabilistic_sampler_init(double lower_bound,
+jaeger_guaranteed_throughput_probabilistic_sampler_new(double lower_bound,
                                                         double sampling_rate);
 
 typedef struct jaeger_remotely_controlled_sampler {
@@ -129,7 +134,7 @@ typedef struct jaeger_remotely_controlled_sampler {
     jaeger_logger* logger;
 } jaeger_remotely_controlled_sampler;
 
-jaeger_sampler* jaeger_remotely_controlled_sampler_init(
+jaeger_sampler* jaeger_remotely_controlled_sampler_new(
     sds service_name,
     jaeger_sampler* initial_sampler,
     int max_operations,

@@ -19,6 +19,7 @@
 
 #include <sds.h>
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
 
 #endif  // JAEGERTRACINGC_COMMON_H

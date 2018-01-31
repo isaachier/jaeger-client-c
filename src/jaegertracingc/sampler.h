@@ -36,17 +36,17 @@ typedef struct jaeger_sampler {
     JAEGERTRACINGC_SAMPLER_SUBCLASS;
 } jaeger_sampler;
 
-jaeger_sampler* jaeger_const_sampler_init(bool decision);
+jaeger_sampler* jaeger_const_sampler_new(bool decision);
 
-jaeger_sampler* jaeger_probabilistic_sampler_init(double probability);
+jaeger_sampler* jaeger_probabilistic_sampler_new(double probability);
 
-jaeger_sampler* jaeger_rate_limiting_sampler_init(double max_traces_per_second);
+jaeger_sampler* jaeger_rate_limiting_sampler_new(double max_traces_per_second);
 
 jaeger_sampler*
-jaeger_guaranteed_throughput_probabilistic_sampler_init(double lower_bound,
+jaeger_guaranteed_throughput_probabilistic_sampler_new(double lower_bound,
                                                         double sampling_rate);
 
-jaeger_sampler* jaeger_remotely_controlled_sampler_init(
+jaeger_sampler* jaeger_remotely_controlled_sampler_new(
     sds service_name,
     jaeger_sampler* initial_sampler,
     int max_operations,
