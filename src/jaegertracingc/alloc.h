@@ -19,8 +19,7 @@
 
 #include "jaegertracingc/common.h"
 
-typedef struct jaeger_allocator
-{
+typedef struct jaeger_allocator {
     void* (*malloc)(struct jaeger_allocator*, size_t);
     void* (*realloc)(struct jaeger_allocator*, void*, size_t);
     void (*free)(struct jaeger_allocator*, void*);

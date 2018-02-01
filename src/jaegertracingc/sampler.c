@@ -17,15 +17,14 @@
 #include "jaegertracingc/sampler.h"
 
 static bool jaeger_const_sampler_is_sampled(jaeger_sampler* sampler,
-                                     const jaeger_trace_id* trace_id,
-                                     const char* operation_name,
-                                     jaeger_key_value_list* tags)
+                                            const jaeger_trace_id* trace_id,
+                                            const char* operation_name,
+                                            jaeger_key_value_list* tags)
 {
     (void) trace_id;
     (void) operation_name;
     jaeger_const_sampler* s = (jaeger_const_sampler*) sampler;
-    if (tags != NULL)
-    {
+    if (tags != NULL) {
         jaeger_key_value_list_append(tags,
                                      JAEGERTRACINGC_SAMPLER_TYPE_TAG_KEY,
                                      JAEGERTRACINGC_SAMPLER_TYPE_CONST);
@@ -41,8 +40,7 @@ static void jaeger_sampler_noop_close(jaeger_sampler* sampler)
     (void) sampler;
 }
 
-void jaeger_const_sampler_init(jaeger_const_sampler* sampler,
-                               bool decision)
+void jaeger_const_sampler_init(jaeger_const_sampler* sampler, bool decision)
 {
     assert(sampler != NULL);
     sampler->is_sampled = &jaeger_const_sampler_is_sampled;
@@ -64,8 +62,7 @@ jaeger_probabilistic_sampler_is_sampled(jaeger_sampler* sampler,
     const double threshold = ((double) rand()) / RAND_MAX;
 #endif /* HAVE_RAND_R */
     const bool decision = (s->probability >= threshold);
-    if (tags != NULL)
-    {
+    if (tags != NULL) {
         jaeger_key_value_list_append(tags,
                                      JAEGERTRACINGC_SAMPLER_TYPE_TAG_KEY,
                                      JAEGERTRACINGC_SAMPLER_TYPE_PROBABILISTIC);
@@ -75,9 +72,8 @@ jaeger_probabilistic_sampler_is_sampled(jaeger_sampler* sampler,
     return decision;
 }
 
-void jaeger_probabilistic_sampler_init(
-    jaeger_probabilistic_sampler* sampler,
-    double probability)
+void jaeger_probabilistic_sampler_init(jaeger_probabilistic_sampler* sampler,
+                                       double probability)
 {
     assert(sampler != NULL);
     sampler->is_sampled = &jaeger_probabilistic_sampler_is_sampled;
@@ -101,8 +97,7 @@ jaeger_rate_limiting_sampler_is_sampled(jaeger_sampler* sampler,
     assert(sampler != NULL);
     jaeger_rate_limiting_sampler* s = (jaeger_rate_limiting_sampler*) sampler;
     const bool decision = jaeger_token_bucket_check_credit(&s->tok, 1);
-    if (tags != NULL)
-    {
+    if (tags != NULL) {
         jaeger_key_value_list_append(tags,
                                      JAEGERTRACINGC_SAMPLER_TYPE_TAG_KEY,
                                      JAEGERTRACINGC_SAMPLER_TYPE_RATE_LIMITING);
@@ -114,7 +109,7 @@ jaeger_rate_limiting_sampler_is_sampled(jaeger_sampler* sampler,
 }
 
 void jaeger_rate_limiting_sampler_init(jaeger_rate_limiting_sampler* sampler,
-                                              double max_traces_per_second)
+                                       double max_traces_per_second)
 {
     assert(sampler != NULL);
     sampler->is_sampled = &jaeger_rate_limiting_sampler_is_sampled;
@@ -145,15 +140,13 @@ static bool jaeger_guaranteed_throughput_probabilistic_sampler_is_sampled(
         trace_id,
         operation_name,
         NULL);
-    if (decision)
-    {
+    if (decision) {
         s->lower_bound_sampler.is_sampled(
             (jaeger_sampler*) &s->lower_bound_sampler,
             trace_id,
             operation_name,
             NULL);
-        if (tags != NULL)
-        {
+        if (tags != NULL) {
             jaeger_key_value_list_append(
                 tags,
                 JAEGERTRACINGC_SAMPLER_TYPE_TAG_KEY,
@@ -170,8 +163,7 @@ static bool jaeger_guaranteed_throughput_probabilistic_sampler_is_sampled(
         trace_id,
         operation_name,
         NULL);
-    if (tags != NULL)
-    {
+    if (tags != NULL) {
         jaeger_key_value_list_append(tags,
                                      JAEGERTRACINGC_SAMPLER_TYPE_TAG_KEY,
                                      JAEGERTRACINGC_SAMPLER_TYPE_RATE_LIMITING);
@@ -220,5 +212,3 @@ void jaeger_remotely_controlled_sampler_init(
     assert(sampler != NULL);
     /* TODO */
 }
-
-

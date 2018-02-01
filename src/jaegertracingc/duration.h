@@ -44,16 +44,14 @@ static inline bool jaeger_duration_subtract(const jaeger_duration* lhs,
     jaeger_duration x = *lhs;
     jaeger_duration y = *rhs;
 
-    if (x.tv_nsec < y.tv_nsec)
-    {
+    if (x.tv_nsec < y.tv_nsec) {
         const int64_t nsec =
             (y.tv_nsec - x.tv_nsec) / JAEGERTRACINGC_NANOSECONDS_PER_SECOND + 1;
         y.tv_nsec -= JAEGERTRACINGC_NANOSECONDS_PER_SECOND * nsec;
         y.tv_sec += nsec;
     }
 
-    if (x.tv_nsec - y.tv_nsec > JAEGERTRACINGC_NANOSECONDS_PER_SECOND)
-    {
+    if (x.tv_nsec - y.tv_nsec > JAEGERTRACINGC_NANOSECONDS_PER_SECOND) {
         const int64_t nsec =
             (x.tv_nsec - y.tv_nsec) / JAEGERTRACINGC_NANOSECONDS_PER_SECOND;
         y.tv_nsec += JAEGERTRACINGC_NANOSECONDS_PER_SECOND * nsec;

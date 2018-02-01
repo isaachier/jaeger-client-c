@@ -21,8 +21,7 @@
 #include "jaegertracingc/duration.h"
 #include <assert.h>
 
-typedef struct jaeger_token_bucket
-{
+typedef struct jaeger_token_bucket {
     double credits_per_second;
     double max_balance;
     double balance;
@@ -58,8 +57,7 @@ static inline bool jaeger_token_bucket_check_credit(jaeger_token_bucket* tok,
     tok->balance =
         (tok->max_balance < new_balance) ? tok->max_balance : new_balance;
     tok->last_tick = current_time;
-    if (tok->balance < cost)
-    {
+    if (tok->balance < cost) {
         return 0;
     }
     tok->balance -= cost;

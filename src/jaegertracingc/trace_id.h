@@ -19,8 +19,7 @@
 
 #include "jaegertracingc/common.h"
 
-typedef struct jaeger_trace_id
-{
+typedef struct jaeger_trace_id {
     uint64_t high;
     uint64_t low;
 } jaeger_trace_id;

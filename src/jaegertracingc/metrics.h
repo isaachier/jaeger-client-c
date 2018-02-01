@@ -22,13 +22,11 @@
 #define JAEGERTRACINGC_COUNTER_SUBCLASS \
     void (*inc)(struct jaeger_counter * counter, int64_t delta)
 
-typedef struct jaeger_counter
-{
+typedef struct jaeger_counter {
     JAEGERTRACINGC_COUNTER_SUBCLASS;
 } jaeger_counter;
 
-typedef struct jaeger_default_counter
-{
+typedef struct jaeger_default_counter {
     JAEGERTRACINGC_COUNTER_SUBCLASS;
     int64_t total;
 } jaeger_default_counter;
@@ -40,13 +38,11 @@ void jaeger_null_counter_init(jaeger_counter* counter);
 #define JAEGERTRACINGC_GAUGE_SUBCLASS \
     void (*update)(struct jaeger_gauge * gauge, int64_t amount)
 
-typedef struct jaeger_gauge
-{
+typedef struct jaeger_gauge {
     JAEGERTRACINGC_GAUGE_SUBCLASS;
 } jaeger_gauge;
 
-typedef struct jaeger_default_gauge
-{
+typedef struct jaeger_default_gauge {
     JAEGERTRACINGC_GAUGE_SUBCLASS;
     int64_t amount;
 } jaeger_default_gauge;
@@ -55,8 +51,7 @@ void jaeger_default_gauge_init(jaeger_default_gauge* gauge);
 
 void jaeger_null_gauge_init(jaeger_gauge* gauge);
 
-typedef struct jaeger_metrics
-{
+typedef struct jaeger_metrics {
     jaeger_counter* traces_started_sampled;
     jaeger_counter* traces_started_not_sampled;
     jaeger_counter* traces_joined_sampled;

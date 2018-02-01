@@ -38,21 +38,18 @@
                        jaeger_key_value_list* tags);    \
     void (*close)(struct jaeger_sampler * sampler)
 
-typedef struct jaeger_sampler
-{
+typedef struct jaeger_sampler {
     JAEGERTRACINGC_SAMPLER_SUBCLASS;
 } jaeger_sampler;
 
-typedef struct jaeger_const_sampler
-{
+typedef struct jaeger_const_sampler {
     JAEGERTRACINGC_SAMPLER_SUBCLASS;
     bool decision;
 } jaeger_const_sampler;
 
 void jaeger_const_sampler_init(jaeger_const_sampler* sampler, bool decision);
 
-typedef struct jaeger_probabilistic_sampler
-{
+typedef struct jaeger_probabilistic_sampler {
     JAEGERTRACINGC_SAMPLER_SUBCLASS;
     double probability;
 #ifdef HAVE_RAND_R
@@ -61,21 +58,19 @@ typedef struct jaeger_probabilistic_sampler
     char probability_str[JAEGERTRACINGC_DOUBLE_STR_SIZE];
 } jaeger_probabilistic_sampler;
 
-void jaeger_probabilistic_sampler_init(
-    jaeger_probabilistic_sampler* sampler, double probability);
+void jaeger_probabilistic_sampler_init(jaeger_probabilistic_sampler* sampler,
+                                       double probability);
 
-typedef struct jaeger_rate_limiting_sampler
-{
+typedef struct jaeger_rate_limiting_sampler {
     JAEGERTRACINGC_SAMPLER_SUBCLASS;
     jaeger_token_bucket tok;
     char max_traces_per_second_str[JAEGERTRACINGC_DOUBLE_STR_SIZE];
 } jaeger_rate_limiting_sampler;
 
-void jaeger_rate_limiting_sampler_init(
-    jaeger_rate_limiting_sampler* sampler, double max_traces_per_second);
+void jaeger_rate_limiting_sampler_init(jaeger_rate_limiting_sampler* sampler,
+                                       double max_traces_per_second);
 
-typedef struct jaeger_guaranteed_throughput_probabilistic_sampler
-{
+typedef struct jaeger_guaranteed_throughput_probabilistic_sampler {
     JAEGERTRACINGC_SAMPLER_SUBCLASS;
     jaeger_probabilistic_sampler probabilistic_sampler;
     jaeger_rate_limiting_sampler lower_bound_sampler;
@@ -86,8 +81,7 @@ void jaeger_guaranteed_throughput_probabilistic_sampler_init(
     double lower_bound,
     double sampling_rate);
 
-typedef struct jaeger_remotely_controlled_sampler
-{
+typedef struct jaeger_remotely_controlled_sampler {
     JAEGERTRACINGC_SAMPLER_SUBCLASS;
     char* service_name;
     char* sampling_server_url;

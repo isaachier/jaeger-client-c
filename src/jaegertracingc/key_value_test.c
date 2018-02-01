@@ -24,8 +24,7 @@ void test_key_value()
     jaeger_key_value_list kv = {0};
     bool result = jaeger_key_value_list_init(&kv);
     TEST_ASSERT_TRUE(result);
-    for (int i = 0; i < JAEGERTRACINGC_KV_INIT_SIZE + 1; i++)
-    {
+    for (int i = 0; i < JAEGERTRACINGC_KV_INIT_SIZE + 1; i++) {
         char buffer[16];
         memset(&buffer, 0, sizeof(buffer));
         snprintf(&buffer[0], sizeof(buffer), "%d", i);
