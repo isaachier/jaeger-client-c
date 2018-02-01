@@ -85,8 +85,8 @@ static inline bool jaeger_key_value_list_init(jaeger_key_value_list* list)
 }
 
 static inline bool jaeger_key_value_list_append(jaeger_key_value_list* list,
-                                                const char* key,
-                                                const char* value)
+                                         const char* key,
+                                         const char* value)
 {
     assert(list != NULL);
     if (list->kv == NULL && !jaeger_key_value_alloc_list(list))

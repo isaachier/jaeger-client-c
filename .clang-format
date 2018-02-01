@@ -19,8 +19,19 @@ AlwaysBreakBeforeMultilineStrings: false
 AlwaysBreakTemplateDeclarations: false
 BinPackArguments: false
 BinPackParameters: false
+BraceWrapping:
+  AfterClass:      false
+  AfterControlStatement: false
+  AfterEnum:       false
+  AfterFunction:   true
+  AfterNamespace:  false
+  AfterStruct:     false
+  AfterUnion:      false
+  BeforeCatch:     false
+  BeforeElse:      true
+  IndentBraces:    false
 BreakBeforeBinaryOperators: None
-BreakBeforeBraces: Allman
+BreakBeforeBraces: Custom
 BreakBeforeTernaryOperators: true
 BreakConstructorInitializersBeforeComma: true
 ColumnLimit:     80
