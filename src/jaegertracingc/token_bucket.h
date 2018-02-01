@@ -64,4 +64,4 @@ static inline bool jaeger_token_bucket_check_credit(jaeger_token_bucket* tok,
     return 1;
 }
 
-#endif // JAEGERTRACINGC_TOKEN_BUCKET_H
+#endif /* JAEGERTRACINGC_TOKEN_BUCKET_H */

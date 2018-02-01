@@ -100,4 +100,4 @@ void jaeger_remotely_controlled_sampler_init(
     jaeger_logger* logger,
     jaeger_metrics* metrics);
 
-#endif // JAEGERTRACINGC_SAMPLER_H
+#endif /* JAEGERTRACINGC_SAMPLER_H */

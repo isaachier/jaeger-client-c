@@ -44,4 +44,4 @@ static inline void jaeger_free(void* ptr)
     jaeger_alloc->free(jaeger_alloc, ptr);
 }
 
-#endif // JAEGERTRACINGC_ALLOC_H
+#endif /* JAEGERTRACINGC_ALLOC_H */

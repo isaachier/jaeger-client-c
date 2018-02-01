@@ -63,4 +63,4 @@ static inline bool jaeger_duration_subtract(const jaeger_duration* lhs,
     return x.tv_sec >= y.tv_sec;
 }
 
-#endif // JAEGERTRACINGC_DURATION_H
+#endif /* JAEGERTRACINGC_DURATION_H */

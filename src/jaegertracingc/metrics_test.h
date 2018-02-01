@@ -19,4 +19,4 @@
 
 void test_metrics();
 
-#endif // JAEGERTRACINGC_METRICS_TEST_H
+#endif /* JAEGERTRACINGC_METRICS_TEST_H */

@@ -19,4 +19,4 @@
 
 void test_key_value();
 
-#endif // JAEGERTRACINGC_KEY_VALUE_TEST_H
+#endif /* JAEGERTRACINGC_KEY_VALUE_TEST_H */

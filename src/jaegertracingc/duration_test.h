@@ -19,4 +19,4 @@
 
 void test_duration();
 
-#endif // JAEGERTRACINGC_DURATION_TEST_H
+#endif /* JAEGERTRACINGC_DURATION_TEST_H */

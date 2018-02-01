@@ -21,4 +21,4 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#endif // JAEGERTRACINGC_COMMON_H
+#endif /* JAEGERTRACINGC_COMMON_H */

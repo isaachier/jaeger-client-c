@@ -123,4 +123,4 @@ static inline void jaeger_key_value_list_free(jaeger_key_value_list* list)
     }
 }
 
-#endif // JAEGERTRACINGC_KEY_VALUE_H
+#endif /* JAEGERTRACINGC_KEY_VALUE_H */

@@ -77,4 +77,4 @@ typedef struct jaeger_metrics {
     jaeger_counter* baggage_restrictions_update_failure;
 } jaeger_metrics;
 
-#endif // JAEGERTRACINGC_METRICS_H
+#endif /* JAEGERTRACINGC_METRICS_H */
