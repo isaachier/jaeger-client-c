@@ -29,6 +29,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#ifdef HAVE_PTHREAD
+#include <pthread.h>
+#endif  /* HAVE_PTHREAD */
+
 #define JAEGERTRACINGC_DOUBLE_STR_SIZE 16
 
 #define JAEGERTRACINGC_SAMPLER_SUBCLASS                 \
@@ -80,6 +84,21 @@ void jaeger_guaranteed_throughput_probabilistic_sampler_init(
     jaeger_guaranteed_throughput_probabilistic_sampler* sampler,
     double lower_bound,
     double sampling_rate);
+
+typedef struct jaeger_adaptive_sampler {
+    JAEGERTRACINGC_SAMPLER_SUBCLASS;
+    jaeger_probabilistic_sampler default_sampler;
+    double lower_bound;
+    int max_operations;
+#ifdef HAVE_PTHREAD
+    pthread_mutex_t mutex;
+#endif  /* HAVE_PTHREAD */
+} jaeger_adaptive_sampler;
+
+void jaeger_adaptive_sampler_init(
+    jaeger_adaptive_sampler* sampler,
+    const jaeger_key_value_list* per_operation_sampling_strategies,
+    int max_operations);
 
 typedef struct jaeger_remotely_controlled_sampler {
     JAEGERTRACINGC_SAMPLER_SUBCLASS;

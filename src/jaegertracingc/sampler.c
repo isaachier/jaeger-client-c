@@ -200,6 +200,14 @@ void jaeger_guaranteed_throughput_probabilistic_sampler_init(
                                       lower_bound);
 }
 
+void jaeger_adaptive_sampler_init(
+    jaeger_adaptive_sampler* sampler,
+    const jaeger_key_value_list* per_operation_sampling_strategies,
+    int max_operations)
+{
+    /* TODO */
+}
+
 void jaeger_remotely_controlled_sampler_init(
     jaeger_remotely_controlled_sampler* sampler,
     char* service_name,
