@@ -29,7 +29,7 @@ typedef struct jaeger_token_bucket
     jaeger_duration last_tick;
 } jaeger_token_bucket;
 
-static inline void jaeger_token_bucket_init(jaeger_token_bucket *tok,
+static inline void jaeger_token_bucket_init(jaeger_token_bucket* tok,
                                             double credits_per_second,
                                             double max_balance)
 {
@@ -39,7 +39,7 @@ static inline void jaeger_token_bucket_init(jaeger_token_bucket *tok,
     jaeger_duration_now(&tok->last_tick);
 }
 
-static inline bool jaeger_token_bucket_check_credit(jaeger_token_bucket *tok,
+static inline bool jaeger_token_bucket_check_credit(jaeger_token_bucket* tok,
                                                     double cost)
 {
     assert(tok != NULL);

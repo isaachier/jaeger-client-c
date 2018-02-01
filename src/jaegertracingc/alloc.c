@@ -21,11 +21,11 @@
 #endif /* JAEGERTRACINGC_VERBOSE_ALLOC */
 #include <stdlib.h>
 
-static void *built_in_malloc(jaeger_allocator *alloc, size_t sz)
+static void* built_in_malloc(jaeger_allocator* alloc, size_t sz)
 {
     (void) alloc;
 #ifdef JAEGERTRACINGC_VERBOSE_ALLOC
-    void *ptr = malloc(sz);
+    void* ptr = malloc(sz);
     printf("allocating %zu bytes at %p\n", sz, ptr);
     return ptr;
 #else
@@ -33,11 +33,11 @@ static void *built_in_malloc(jaeger_allocator *alloc, size_t sz)
 #endif /* JAEGERTRACINGC_VERBOSE_ALLOC */
 }
 
-static void *built_in_realloc(jaeger_allocator *alloc, void *ptr, size_t sz)
+static void* built_in_realloc(jaeger_allocator* alloc, void* ptr, size_t sz)
 {
     (void) alloc;
 #ifdef JAEGERTRACINGC_VERBOSE_ALLOC
-    void *new_ptr = realloc(ptr, sz);
+    void* new_ptr = realloc(ptr, sz);
     printf("reallocating %zu bytes at %p from %p\n", sz, new_ptr, ptr);
     return new_ptr;
 #else
@@ -45,7 +45,7 @@ static void *built_in_realloc(jaeger_allocator *alloc, void *ptr, size_t sz)
 #endif /* JAEGERTRACINGC_VERBOSE_ALLOC */
 }
 
-static void built_in_free(jaeger_allocator *alloc, void *ptr)
+static void built_in_free(jaeger_allocator* alloc, void* ptr)
 {
     (void) alloc;
 #ifdef JAEGERTRACINGC_VERBOSE_ALLOC
@@ -56,7 +56,7 @@ static void built_in_free(jaeger_allocator *alloc, void *ptr)
 #endif /* JAEGERTRACINGC_VERBOSE_ALLOC */
 }
 
-jaeger_allocator *jaeger_built_in_allocator()
+jaeger_allocator* jaeger_built_in_allocator()
 {
     static struct jaeger_allocator built_in_alloc = {.malloc = &built_in_malloc,
                                                      .realloc =
@@ -65,4 +65,4 @@ jaeger_allocator *jaeger_built_in_allocator()
     return &built_in_alloc;
 }
 
-jaeger_allocator *jaeger_alloc;
+jaeger_allocator* jaeger_alloc;

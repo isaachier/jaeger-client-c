@@ -20,7 +20,7 @@
 
 void test_alloc()
 {
-    void *mem = jaeger_malloc(2);
+    void* mem = jaeger_malloc(2);
     mem = jaeger_realloc(mem, 4);
     jaeger_free(mem);
 }

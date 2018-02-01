@@ -25,7 +25,7 @@
 
 typedef struct timespec jaeger_duration;
 
-static inline void jaeger_duration_now(jaeger_duration *duration)
+static inline void jaeger_duration_now(jaeger_duration* duration)
 {
     assert(duration != NULL);
     clock_gettime(CLOCK_MONOTONIC, duration);
@@ -33,9 +33,9 @@ static inline void jaeger_duration_now(jaeger_duration *duration)
 
 // Algorithm based on
 // http://www.gnu.org/software/libc/manual/html_node/Elapsed-Time.html.
-static inline bool jaeger_duration_subtract(const jaeger_duration *lhs,
-                                            const jaeger_duration *rhs,
-                                            jaeger_duration *result)
+static inline bool jaeger_duration_subtract(const jaeger_duration* lhs,
+                                            const jaeger_duration* rhs,
+                                            jaeger_duration* result)
 {
     assert(lhs != NULL);
     assert(rhs != NULL);

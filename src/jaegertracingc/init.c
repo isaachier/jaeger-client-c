@@ -32,7 +32,7 @@ static inline void init_lib()
 #endif /* HAVE_RAND_R */
 }
 
-void jaeger_init_lib(jaeger_allocator *alloc)
+void jaeger_init_lib(jaeger_allocator* alloc)
 {
 #ifdef HAVE_PTHREAD
     static pthread_once_t is_initialized = PTHREAD_ONCE_INIT;
