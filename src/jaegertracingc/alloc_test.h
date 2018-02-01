@@ -19,4 +19,4 @@
 
 void test_alloc();
 
-#endif  // JAEGERTRACINGC_ALLOC_TEST_H
+#endif // JAEGERTRACINGC_ALLOC_TEST_H

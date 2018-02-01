@@ -19,29 +19,30 @@
 
 #include "jaegertracingc/common.h"
 
-typedef struct jaeger_allocator {
-    void* (*malloc)(struct jaeger_allocator*, size_t);
-    void* (*realloc)(struct jaeger_allocator*, void*, size_t);
-    void (*free)(struct jaeger_allocator*, void*);
+typedef struct jaeger_allocator
+{
+    void *(*malloc)(struct jaeger_allocator *, size_t);
+    void *(*realloc)(struct jaeger_allocator *, void *, size_t);
+    void (*free)(struct jaeger_allocator *, void *);
 } jaeger_allocator;
 
-jaeger_allocator* jaeger_built_in_allocator();
+jaeger_allocator *jaeger_built_in_allocator();
 
-extern jaeger_allocator* jaeger_alloc;
+extern jaeger_allocator *jaeger_alloc;
 
-static inline void* jaeger_malloc(size_t sz)
+static inline void *jaeger_malloc(size_t sz)
 {
     return jaeger_alloc->malloc(jaeger_alloc, sz);
 }
 
-static inline void* jaeger_realloc(void* ptr, size_t sz)
+static inline void *jaeger_realloc(void *ptr, size_t sz)
 {
     return jaeger_alloc->realloc(jaeger_alloc, ptr, sz);
 }
 
-static inline void jaeger_free(void* ptr)
+static inline void jaeger_free(void *ptr)
 {
     jaeger_alloc->free(jaeger_alloc, ptr);
 }
 
-#endif  // JAEGERTRACINGC_ALLOC_H
+#endif // JAEGERTRACINGC_ALLOC_H

@@ -24,19 +24,21 @@
 
 struct jaeger_tracer;
 
-#define DEFINE_LIST(inner)                                                     \
-    typedef struct jaeger_##inner##_list {                                     \
-        jaeger_##inner data;                                                   \
-        struct jaeger_##inner##_list* next;                                    \
+#define DEFINE_LIST(inner)                  \
+    typedef struct jaeger_##inner##_list    \
+    {                                       \
+        jaeger_##inner data;                \
+        struct jaeger_##inner##_list *next; \
     } jaeger_##inner##_list
 
-typedef struct jaeger_span_context {
+typedef struct jaeger_span_context
+{
     jaeger_trace_id trace_id;
     uint64_t span_id;
     uint64_t parent_id;
     uint8_t flags;
-    jaeger_key_value_list* baggage;
-    char* debug_id;
+    jaeger_key_value_list *baggage;
+    char *debug_id;
 } jaeger_span_context;
 
 typedef enum jaeger_span_reference_type {
@@ -44,21 +46,23 @@ typedef enum jaeger_span_reference_type {
     jaeger_follows_from_ref
 } jaeger_span_reference_type;
 
-typedef struct jaeger_span_reference {
-    const jaeger_span_context* context;
+typedef struct jaeger_span_reference
+{
+    const jaeger_span_context *context;
     jaeger_span_reference_type type;
 } jaeger_span_reference;
 
 DEFINE_LIST(span_reference);
 
-typedef struct jaeger_span {
-    struct jaeger_tracer* tracer;
+typedef struct jaeger_span
+{
+    struct jaeger_tracer *tracer;
     jaeger_span_context context;
-    char* operation_name;
+    char *operation_name;
     time_t start_time_system;
     jaeger_duration start_time_monotonic;
-    jaeger_key_value_list* tags;
-    jaeger_span_reference_list* references;
+    jaeger_key_value_list *tags;
+    jaeger_span_reference_list *references;
 } jaeger_span;
 
 #undef DEFINE_LIST

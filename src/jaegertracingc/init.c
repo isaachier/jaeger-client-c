@@ -20,7 +20,7 @@
 
 #ifdef HAVE_PTHREAD
 #include <pthread.h>
-#endif  /* HAVE_PTHREAD */
+#endif /* HAVE_PTHREAD */
 
 static inline void init_lib()
 {
@@ -29,21 +29,23 @@ static inline void init_lib()
 #ifndef HAVE_RAND_R
     /* Set up global random seed */
     srand(time(NULL));
-#endif  /* HAVE_RAND_R */
+#endif /* HAVE_RAND_R */
 }
 
-void jaeger_init_lib(jaeger_allocator* alloc)
+void jaeger_init_lib(jaeger_allocator *alloc)
 {
 #ifdef HAVE_PTHREAD
     static pthread_once_t is_initialized = PTHREAD_ONCE_INIT;
     const bool first_run = pthread_once(&is_initialized, init_lib);
-    if (first_run && alloc != NULL) {
+    if (first_run && alloc != NULL)
+    {
         jaeger_alloc = alloc;
     }
 #else
     init_lib();
-    if (alloc != NULL) {
+    if (alloc != NULL)
+    {
         jaeger_alloc = alloc;
     }
-#endif  /* HAVE_PTHREAD */
+#endif /* HAVE_PTHREAD */
 }

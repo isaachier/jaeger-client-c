@@ -19,4 +19,4 @@
 
 void test_token_bucket();
 
-#endif  // JAEGERTRACINGC_TOKEN_BUCKET_TEST_H
+#endif // JAEGERTRACINGC_TOKEN_BUCKET_TEST_H

@@ -22,6 +22,6 @@
 
 /* Use this function to initialize the library before calling any functions.
  * Either pass in a custom allocator or NULL to use the built-in allocator. */
-void jaeger_init_lib(jaeger_allocator* alloc);
+void jaeger_init_lib(jaeger_allocator *alloc);
 
-#endif  // JAEGERTRACINGC_INIT_H
+#endif // JAEGERTRACINGC_INIT_H

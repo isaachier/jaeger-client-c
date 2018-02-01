@@ -19,9 +19,10 @@
 
 #include "jaegertracingc/common.h"
 
-typedef struct jaeger_logger {
-    void (*error)(const char* message);
-    void (*info)(const char* message);
+typedef struct jaeger_logger
+{
+    void (*error)(const char *message);
+    void (*info)(const char *message);
 } jaeger_logger;
 
-#endif  // JAEGERTRACINGC_LOGGER_H
+#endif // JAEGERTRACINGC_LOGGER_H
