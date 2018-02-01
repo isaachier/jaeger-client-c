@@ -9,8 +9,8 @@ function main() {
 
     local srcs
     srcs=$(git ls-files src |
-           grep -E -v '_test\.c$' |
-           grep -E '\.c$')
+           grep -E '\.c$' |
+           grep -E -v '_test\.c$|protoc-gen')
 
     local cmd
     for src in $srcs; do

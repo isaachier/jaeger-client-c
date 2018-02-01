@@ -8,7 +8,7 @@ function main() {
     cd "$project_dir" || exit 1
 
     local srcs
-    srcs=($(git ls-files src | grep -E '\.(c|h)$')
+    srcs=($(git ls-files src | grep -E '\.(c|h)$' | grep -E -v 'protoc-gen')
           src/jaegertracingc/constants.h.in)
     python scripts/update-license.py "${srcs[@]}"
 }
