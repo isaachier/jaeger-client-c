@@ -211,13 +211,114 @@ void jaeger_guaranteed_throughput_probabilistic_sampler_init(
                                       lower_bound);
 }
 
-void jaeger_adaptive_sampler_init(
+typedef Jaegertracing__Protobuf__SamplingManager__PerOperationSamplingStrategy__OperationSamplingStrategy
+    jaeger_operation_sampling_strategy;
+
+static inline jaeger_operation_sampler* samplers_from_strategies(
+    const jaeger_per_operation_sampling_strategy* strategies)
+{
+    assert(strategies != NULL);
+
+    const size_t op_samplers_size =
+        sizeof(jaeger_operation_sampler) * strategies->n_per_operation_strategy;
+    jaeger_operation_sampler* op_samplers =
+        jaeger_malloc(op_samplers_size);
+    if (op_samplers == NULL) {
+        fprintf(stderr, "ERROR: Cannot allocate per operation samplers\n");
+        return NULL;
+    }
+    memset(op_samplers, 0, op_samplers_size);
+
+    bool success = true;
+    for (int i = 0; i < strategies->n_per_operation_strategy; i++) {
+        const jaeger_operation_sampling_strategy* strategy =
+            strategies->per_operation_strategy[i];
+        if (strategy == NULL) {
+            fprintf(stderr, "ERROR: Encountered null operation strategy\n");
+            success = false;
+            break;
+        }
+
+        jaeger_operation_sampler* op_sampler = &op_samplers[i];
+        op_sampler->operation_name = jaeger_strdup(strategy->operation);
+        if (op_sampler->operation_name == NULL) {
+            fprintf(
+                stderr,
+                "ERROR: Cannot allocate operation sampler, "
+                "operation name = \"%s\"\n",
+                strategy->operation);
+            success = false;
+            break;
+        }
+
+        if (strategy->probabilistic == NULL) {
+            fprintf(stderr, "ERROR: Encountered null probabilistic strategy\n");
+            success = false;
+            break;
+        }
+
+        jaeger_guaranteed_throughput_probabilistic_sampler_init(
+            &op_sampler->sampler,
+            strategies->default_lower_bound_traces_per_second,
+            strategy->probabilistic->sampling_rate);
+    }
+
+    if (!success) {
+        for (int i = 0; i < strategies->n_per_operation_strategy; i++) {
+            jaeger_operation_sampler_destroy(&op_samplers[i]);
+        }
+        jaeger_free(op_samplers);
+        return NULL;
+    }
+
+    return op_samplers;
+}
+
+static bool jaeger_adaptive_sampler_is_sampled(jaeger_sampler* sampler,
+                                               const jaeger_trace_id* trace_id,
+                                               const char* operation_name,
+                                               jaeger_tag_list* tags)
+{
+    (void) trace_id;
+    (void) operation_name;
+    assert(sampler != NULL);
+    /* TODO
+    jaeger_adaptive_sampler* s = (jaeger_adaptive_sampler*) sampler; */
+    return true;
+}
+
+static void jaeger_adaptive_sampler_close(jaeger_sampler* sampler)
+{
+    assert(sampler != NULL);
+    jaeger_adaptive_sampler* s = (jaeger_adaptive_sampler*) sampler;
+    for (int i = 0; i < s->num_op_samplers; i++) {
+        jaeger_operation_sampler_destroy(&s->op_samplers[i]);
+    }
+    jaeger_free(s->op_samplers);
+#ifdef HAVE_PTHREAD
+    pthread_mutex_destroy(&s->mutex);
+#endif  /* HAVE_PTHREAD */
+}
+
+bool jaeger_adaptive_sampler_init(
     jaeger_adaptive_sampler* sampler,
-    const jaeger_per_operation_sampling_strategy*
-        per_operation_sampling_strategies,
+    const jaeger_per_operation_sampling_strategy* strategies,
     int max_operations)
 {
-    /* TODO */
+    assert(sampler != NULL);
+    sampler->op_samplers = samplers_from_strategies(strategies);
+    if (sampler->op_samplers == NULL) {
+        return false;
+    }
+    sampler->num_op_samplers = strategies->n_per_operation_strategy;
+    sampler->max_operations = max_operations;
+#ifdef HAVE_PTHREAD
+    sampler->mutex = (pthread_mutex_t) PTHREAD_MUTEX_INITIALIZER;
+    pthread_mutex_init(&sampler->mutex, NULL);
+#endif  /* HAVE_PTHREAD */
+    sampler->is_sampled = &jaeger_adaptive_sampler_is_sampled;
+    sampler->close = &jaeger_adaptive_sampler_close;
+    return true;
 }
 
 void jaeger_remotely_controlled_sampler_init(

@@ -129,7 +129,7 @@ static inline bool jaeger_tag_copy(jaeger_tag* dst, const jaeger_tag* src)
     return true;
 }
 
-static inline void jaeger_tag_free(jaeger_tag* tag)
+static inline void jaeger_tag_destroy(jaeger_tag* tag)
 {
     if (tag->key != NULL) {
         jaeger_free(tag->key);
@@ -171,12 +171,12 @@ static inline bool jaeger_tag_list_append(
     return true;
 }
 
-static inline void jaeger_tag_list_free(jaeger_tag_list* list)
+static inline void jaeger_tag_list_destroy(jaeger_tag_list* list)
 {
     assert(list != NULL);
     if (list->tags != NULL) {
         for (int i = 0; i < list->size; i++) {
-            jaeger_tag_free(&list->tags[i]);
+            jaeger_tag_destroy(&list->tags[i]);
         }
         jaeger_free(list->tags);
     }

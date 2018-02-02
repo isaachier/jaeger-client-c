@@ -60,6 +60,7 @@ add_library(jaegertracingc
   "src/jaegertracingc/metrics.c"
   "src/jaegertracingc/sampler.c"
   "src/jaegertracingc/token_bucket.c"
+  "src/jaegertracingc/types.c"
   "src/jaegertracingc/protoc-gen/agent.pb-c.c"
   "src/jaegertracingc/protoc-gen/baggage.pb-c.c"
   "src/jaegertracingc/protoc-gen/jaeger.pb-c.c"

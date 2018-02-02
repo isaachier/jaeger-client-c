@@ -65,5 +65,5 @@ void test_tag()
     TEST_ASSERT_EQUAL_STRING(
         "hello world", (char*) tags.tags[tags.size - 1].binary_value.data);
 
-    jaeger_tag_list_free(&tags);
+    jaeger_tag_list_destroy(&tags);
 }
