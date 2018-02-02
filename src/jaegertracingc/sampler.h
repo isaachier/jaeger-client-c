@@ -17,17 +17,17 @@
 #ifndef JAEGERTRACINGC_SAMPLER_H
 #define JAEGERTRACINGC_SAMPLER_H
 
-#include "jaegertracingc/common.h"
-#include "jaegertracingc/constants.h"
-#include "jaegertracingc/duration.h"
-#include "jaegertracingc/key_value.h"
-#include "jaegertracingc/logger.h"
-#include "jaegertracingc/metrics.h"
-#include "jaegertracingc/token_bucket.h"
-#include "jaegertracingc/trace_id.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "jaegertracingc/common.h"
+#include "jaegertracingc/constants.h"
+#include "jaegertracingc/duration.h"
+#include "jaegertracingc/tag.h"
+#include "jaegertracingc/logger.h"
+#include "jaegertracingc/metrics.h"
+#include "jaegertracingc/token_bucket.h"
+#include "jaegertracingc/protoc-gen/sampling.pb-c.h"
 
 #ifdef HAVE_PTHREAD
 #include <pthread.h>
@@ -39,8 +39,11 @@
     bool (*is_sampled)(struct jaeger_sampler * sampler, \
                        const jaeger_trace_id* trace_id, \
                        const char* operation,           \
-                       jaeger_key_value_list* tags);    \
-    void (*close)(struct jaeger_sampler * sampler)
+                       jaeger_tag_list* tags);    \
+    void (*close)(struct jaeger_sampler* sampler)
+
+typedef Jaegertracing__Protobuf__SamplingManager__PerOperationSamplingStrategy
+    jaeger_per_operation_sampling_strategy;
 
 typedef struct jaeger_sampler {
     JAEGERTRACINGC_SAMPLER_SUBCLASS;
@@ -59,7 +62,6 @@ typedef struct jaeger_probabilistic_sampler {
 #ifdef HAVE_RAND_R
     unsigned int seed;
 #endif /* HAVE_RAND_R */
-    char probability_str[JAEGERTRACINGC_DOUBLE_STR_SIZE];
 } jaeger_probabilistic_sampler;
 
 void jaeger_probabilistic_sampler_init(jaeger_probabilistic_sampler* sampler,
@@ -68,7 +70,7 @@ void jaeger_probabilistic_sampler_init(jaeger_probabilistic_sampler* sampler,
 typedef struct jaeger_rate_limiting_sampler {
     JAEGERTRACINGC_SAMPLER_SUBCLASS;
     jaeger_token_bucket tok;
-    char max_traces_per_second_str[JAEGERTRACINGC_DOUBLE_STR_SIZE];
+    double max_traces_per_second;
 } jaeger_rate_limiting_sampler;
 
 void jaeger_rate_limiting_sampler_init(jaeger_rate_limiting_sampler* sampler,
@@ -97,7 +99,8 @@ typedef struct jaeger_adaptive_sampler {
 
 void jaeger_adaptive_sampler_init(
     jaeger_adaptive_sampler* sampler,
-    const jaeger_key_value_list* per_operation_sampling_strategies,
+    const jaeger_per_operation_sampling_strategy*
+        per_operation_sampling_strategies,
     int max_operations);
 
 typedef struct jaeger_remotely_controlled_sampler {

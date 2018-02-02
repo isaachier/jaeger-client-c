@@ -14,4 +14,16 @@
  * limitations under the License.
  */
 
-#include "jaegertracingc/trace_id.h"
+#ifndef JAEGERTRACINGC_TYPES_H
+#define JAEGERTRACINGC_TYPES_H
+
+#include "jaegertracingc/common.h"
+#include "jaegertracingc/protoc-gen/jaeger.pb-c.h"
+
+typedef Jaegertracing__Protobuf__Log jaeger_log;
+typedef Jaegertracing__Protobuf__Span jaeger_span;
+typedef Jaegertracing__Protobuf__SpanRef jaeger_span_ref;
+typedef Jaegertracing__Protobuf__Tag jaeger_tag;
+typedef Jaegertracing__Protobuf__TraceID jaeger_trace_id;
+
+#endif /* JAEGERTRACINGC_TYPES_H */

@@ -17,6 +17,8 @@
 #ifndef JAEGERTRACINGC_ALLOC_H
 #define JAEGERTRACINGC_ALLOC_H
 
+#include <stdio.h>
+#include <string.h>
 #include "jaegertracingc/common.h"
 
 typedef struct jaeger_allocator {
@@ -42,6 +44,18 @@ static inline void* jaeger_realloc(void* ptr, size_t sz)
 static inline void jaeger_free(void* ptr)
 {
     jaeger_alloc->free(jaeger_alloc, ptr);
+}
+
+static inline char* jaeger_strdup(const char* str)
+{
+    const int size = strlen(str) + 1;
+    char* copy = jaeger_malloc(size);
+    if (copy == NULL) {
+        fprintf(stderr, "ERROR: Cannot allocate string copy, size=%d\n", size);
+        return NULL;
+    }
+    memcpy(copy, str, size);
+    return copy;
 }
 
 #endif /* JAEGERTRACINGC_ALLOC_H */

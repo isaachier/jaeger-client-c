@@ -41,6 +41,7 @@ mark_as_advanced(JAEGERTRACINGC_VERBOSE_ALLOC)
 
 set(CMAKE_THREAD_PREFER_PTHREAD ON)
 find_package(Threads)
+find_package(ProtobufC REQUIRED)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -50,23 +51,25 @@ configure_file(
   @ONLY)
 
 add_library(jaegertracingc
-    "src/jaegertracingc/alloc.c"
-    "src/jaegertracingc/common.c"
-    "src/jaegertracingc/constants.c"
-    "src/jaegertracingc/duration.c"
-    "src/jaegertracingc/init.c"
-    "src/jaegertracingc/key_value.c"
-    "src/jaegertracingc/logger.c"
-    "src/jaegertracingc/metrics.c"
-    "src/jaegertracingc/sampler.c"
-    "src/jaegertracingc/span.c"
-    "src/jaegertracingc/trace_id.c"
-    "src/jaegertracingc/token_bucket.c")
+  "src/jaegertracingc/alloc.c"
+  "src/jaegertracingc/common.c"
+  "src/jaegertracingc/constants.c"
+  "src/jaegertracingc/duration.c"
+  "src/jaegertracingc/init.c"
+  "src/jaegertracingc/logger.c"
+  "src/jaegertracingc/metrics.c"
+  "src/jaegertracingc/sampler.c"
+  "src/jaegertracingc/token_bucket.c"
+  "src/jaegertracingc/protoc-gen/agent.pb-c.c"
+  "src/jaegertracingc/protoc-gen/baggage.pb-c.c"
+  "src/jaegertracingc/protoc-gen/jaeger.pb-c.c"
+  "src/jaegertracingc/protoc-gen/sampling.pb-c.c")
 target_include_directories(jaegertracingc PUBLIC
   "src" "${CMAKE_CURRENT_BINARY_DIR}/generated/include")
 if(CMAKE_USE_PTHREADS_INIT)
   target_compile_definitions(jaegertracingc PUBLIC "-DHAVE_PTHREAD")
-  target_link_libraries(jaegertracingc PUBLIC Threads::Threads)
+  target_link_libraries(jaegertracingc PUBLIC
+    ProtobufC::ProtobufC Threads::Threads)
 endif()
 
 check_function_exists("rand_r" have_rand_r)
@@ -91,8 +94,8 @@ if(BUILD_TESTING)
     "src/jaegertracingc/unit_test.c"
     "src/jaegertracingc/alloc_test.c"
     "src/jaegertracingc/duration_test.c"
-    "src/jaegertracingc/key_value_test.c"
     "src/jaegertracingc/metrics_test.c"
+    "src/jaegertracingc/tag_test.c"
     "src/jaegertracingc/token_bucket_test.c")
   target_compile_definitions(jaegertracingc PUBLIC "-DTESTING")
   target_link_libraries(unit_test PUBLIC jaegertracingc unity)

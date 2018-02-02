@@ -33,6 +33,7 @@ static inline void jaeger_token_bucket_init(jaeger_token_bucket* tok,
                                             double max_balance)
 {
     assert(tok != NULL);
+    tok->balance = 0;
     tok->credits_per_second = credits_per_second;
     tok->max_balance = max_balance;
     jaeger_duration_now(&tok->last_tick);

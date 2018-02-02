@@ -14,14 +14,9 @@
  * limitations under the License.
  */
 
-#ifndef JAEGERTRACINGC_TRACE_ID_H
-#define JAEGERTRACINGC_TRACE_ID_H
+#ifndef JAEGERTRACINGC_TAG_TEST_H
+#define JAEGERTRACINGC_TAG_TEST_H
 
-#include "jaegertracingc/common.h"
+void test_tag();
 
-typedef struct jaeger_trace_id {
-    uint64_t high;
-    uint64_t low;
-} jaeger_trace_id;
-
-#endif /* JAEGERTRACINGC_TRACE_ID_H */
+#endif /* JAEGERTRACINGC_TAG_TEST_H */
