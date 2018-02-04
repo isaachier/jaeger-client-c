@@ -46,10 +46,8 @@ find_package(ProtobufC REQUIRED)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-configure_file(
-  "src/jaegertracingc/constants.h.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/generated/include/jaegertracingc/constants.h"
-  @ONLY)
+add_library(httpparser "thirdparty/http-parser/http_parser.c")
+target_include_directories(httpparser PUBLIC "thirdparty/http-parser")
 
 add_library(jaegertracingc
   "src/jaegertracingc/alloc.c"
@@ -66,11 +64,17 @@ add_library(jaegertracingc
   "src/jaegertracingc/protoc-gen/baggage.pb-c.c"
   "src/jaegertracingc/protoc-gen/jaeger.pb-c.c"
   "src/jaegertracingc/protoc-gen/sampling.pb-c.c")
+
+configure_file(
+  "src/jaegertracingc/constants.h.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/generated/include/jaegertracingc/constants.h"
+  @ONLY)
 target_include_directories(jaegertracingc PUBLIC
   "src" "${CMAKE_CURRENT_BINARY_DIR}/generated/include")
+
 if(CMAKE_USE_PTHREADS_INIT)
   target_link_libraries(jaegertracingc PUBLIC
-    ProtobufC::ProtobufC Threads::Threads)
+    ProtobufC::ProtobufC Threads::Threads httpparser)
 endif()
 
 check_function_exists("rand_r" have_rand_r)
@@ -88,8 +92,8 @@ if(JAEGERTRACINGC_VERBOSE_ALLOC)
 endif()
 
 if(BUILD_TESTING)
-  add_library(unity "thirdparty/unity/unity.c")
-  target_include_directories(unity PUBLIC "thirdparty/unity")
+  add_library(unity "thirdparty/unity/src/unity.c")
+  target_include_directories(unity PUBLIC "thirdparty/unity/src")
 
   add_executable(unit_test
     "src/jaegertracingc/unit_test.c"
