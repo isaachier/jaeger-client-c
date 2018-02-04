@@ -56,7 +56,6 @@ add_library(jaegertracingc
   "src/jaegertracingc/constants.c"
   "src/jaegertracingc/duration.c"
   "src/jaegertracingc/init.c"
-  "src/jaegertracingc/logger.c"
   "src/jaegertracingc/metrics.c"
   "src/jaegertracingc/sampler.c"
   "src/jaegertracingc/threads.c"

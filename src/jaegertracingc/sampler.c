@@ -376,7 +376,6 @@ void jaeger_remotely_controlled_sampler_init(
     jaeger_sampler* initial_sampler,
     int max_operations,
     const jaeger_duration* sampling_refresh_interval,
-    jaeger_logger* logger,
     jaeger_metrics* metrics)
 {
     assert(sampler != NULL);

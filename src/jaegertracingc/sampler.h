@@ -20,7 +20,6 @@
 #include "jaegertracingc/common.h"
 #include "jaegertracingc/constants.h"
 #include "jaegertracingc/duration.h"
-#include "jaegertracingc/logger.h"
 #include "jaegertracingc/metrics.h"
 #include "jaegertracingc/protoc-gen/sampling.pb-c.h"
 #include "jaegertracingc/tag.h"
@@ -122,7 +121,6 @@ typedef struct jaeger_remotely_controlled_sampler {
     jaeger_sampler* sampler;
     int max_operations;
     jaeger_duration sampling_refresh_interval;
-    jaeger_logger* logger;
 } jaeger_remotely_controlled_sampler;
 
 void jaeger_remotely_controlled_sampler_init(
@@ -131,7 +129,6 @@ void jaeger_remotely_controlled_sampler_init(
     jaeger_sampler* initial_sampler,
     int max_operations,
     const jaeger_duration* sampling_refresh_interval,
-    jaeger_logger* logger,
     jaeger_metrics* metrics);
 
 #endif /* JAEGERTRACINGC_SAMPLER_H */
