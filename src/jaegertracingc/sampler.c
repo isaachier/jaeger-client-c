@@ -22,6 +22,7 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#include "http_parser.h"
 
 #define SAMPLER_GROWTH_RATIO 2
 
@@ -475,73 +476,68 @@ void jaeger_adaptive_sampler_update(
 }
 
 static inline bool jaeger_http_sampling_manager_format_request(
-    jaeger_http_sampling_manager* manager)
+    jaeger_http_sampling_manager* manager,
+    const struct http_parser_url* parsed_url)
 {
-#define URL_FIELD_LENGTH(len_var, field_flag)                                \
-    do {                                                                     \
-        if (manager->parsed_sampling_server_url.field_set &                  \
-            (1 << (field_flag))) {                                           \
-            len_var =                                                        \
-                manager->parsed_sampling_server_url.field_data[(field_flag)] \
-                    .len +                                                   \
-                1;                                                           \
-        }                                                                    \
-    } while (0)
-
-#define URL_COPY_BUFFER(buffer, field_flag)                                   \
-    do {                                                                      \
-        memcpy(                                                               \
-            &buffer[0],                                                       \
-            &manager->sampling_server_url[manager->parsed_sampling_server_url \
-                                              .field_data[(field_flag)]       \
-                                              .off],                          \
-            sizeof(buffer));                                                  \
-    } while (0)
-
-    assert(manager);
+    assert(manager != NULL);
+    assert(parsed_url != NULL);
     int path_len = 2;
-    URL_FIELD_LENGTH(path_len, UF_PATH);
+    if (parsed_url->field_set & (1 << UF_PATH)) {
+        path_len = parsed_url->field_data[(UF_PATH)].len + 1;
+    }
     char path[path_len];
     if (path_len > 2) {
-        URL_COPY_BUFFER(path, UF_PATH);
+        memcpy(
+            &path[0],
+            &manager->sampling_server_url[parsed_url->field_data[UF_PATH].off],
+            path_len);
     }
     else {
         path[0] = '/';
         path[1] = '\0';
     }
 
-    int host_len = 1;
-    URL_FIELD_LENGTH(host_len, UF_HOST);
-    char host[host_len];
-    if (host_len > 1) {
-        URL_COPY_BUFFER(host, UF_HOST);
-    }
-    else {
-        host[0] = '\0';
-    }
+    const int host_off = parsed_url->field_set & (1 << UF_HOST)
+                             ? parsed_url->field_data[UF_HOST].off
+                             : -1;
+    const int host_len = parsed_url->field_set & (1 << UF_HOST)
+                             ? parsed_url->field_data[UF_HOST].len
+                             : 0;
+    const int port_off = parsed_url->field_set & (1 << UF_PORT)
+                             ? parsed_url->field_data[UF_PORT].off
+                             : -1;
+    const int port_len = parsed_url->field_set & (1 << UF_PORT)
+                             ? parsed_url->field_data[UF_PORT].len
+                             : 0;
+    const int colon_len = port_len > 0 ? 1 : 0;
 
-    int port_len = 1;
-    URL_FIELD_LENGTH(port_len, UF_PORT);
-    char port[port_len];
-    if (port_len > 1) {
-        URL_COPY_BUFFER(port, UF_PORT);
+    char host_port[host_len + colon_len + port_len + 1];
+    host_port[host_len + colon_len + port_len] = '\0';
+    int idx = 0;
+    if (host_len > 0) {
+        memcpy(
+            &host_port[idx], &manager->sampling_server_url[host_off], host_len);
+        idx += host_len;
     }
-    else {
-        port[0] = '\0';
+    if (colon_len > 0) {
+        host_port[idx] = ':';
+        idx++;
     }
-
-#undef URL_COPY_BUFFER
-#undef URL_FIELD_LENGTH
+    if (port_len > 0) {
+        memcpy(
+            &host_port[idx], &manager->sampling_server_url[port_off], port_len);
+        idx += port_len;
+    }
+    assert(idx == host_len + colon_len + port_len);
 
     const int result = snprintf(manager->request_buffer,
                                 sizeof(manager->request_buffer),
                                 "GET %s?service=%s HTTP/1.1\r\n"
-                                "Host: %s%s\r\n"
+                                "Host: %s\r\n"
                                 "User-Agent: jaegertracing/%s\r\n\r\n",
                                 path,
                                 manager->service_name,
-                                host,
-                                port,
+                                host_port,
                                 JAEGERTRACINGC_CLIENT_VERSION);
     if (result > sizeof(manager->request_buffer)) {
         fprintf(stderr,
@@ -561,6 +557,7 @@ jaeger_http_sampling_manager_init(jaeger_http_sampling_manager* manager,
 {
     assert(manager != NULL);
     assert(service_name != NULL);
+
     manager->service_name = service_name;
     sampling_server_url =
         (sampling_server_url != NULL && strlen(sampling_server_url) > 0)
@@ -568,11 +565,12 @@ jaeger_http_sampling_manager_init(jaeger_http_sampling_manager* manager,
             : "http://localhost:5778/sampling";
     manager->sampling_server_url = sampling_server_url;
 
-    http_parser_url_init(&manager->parsed_sampling_server_url);
+    struct http_parser_url parsed_url;
+    http_parser_url_init(&parsed_url);
     int result = http_parser_parse_url(manager->sampling_server_url,
                                        strlen(sampling_server_url),
                                        0,
-                                       &manager->parsed_sampling_server_url);
+                                       &parsed_url);
     if (result != 0) {
         fprintf(stderr,
                 "ERROR: Cannot parse sampling server URL, "
@@ -626,7 +624,7 @@ jaeger_http_sampling_manager_init(jaeger_http_sampling_manager* manager,
     assert(socket_fd >= 0);
     manager->fd = socket_fd;
 
-    return jaeger_http_sampling_manager_format_request(manager);
+    return jaeger_http_sampling_manager_format_request(manager, &parsed_url);
 }
 
 typedef Jaegertracing__Protobuf__SamplingManager__SamplingStrategyResponse
@@ -735,7 +733,7 @@ bool jaeger_remotely_controlled_sampler_init(
         interval,
         metrics,
         JAEGERTRACINGC_TICKER_INIT,
-        (jaeger_http_sampling_manager){NULL, NULL, {}, -1},
+        (jaeger_http_sampling_manager){NULL, NULL, -1},
         PTHREAD_MUTEX_INITIALIZER};
 
     if (initial_sampler != NULL) {
