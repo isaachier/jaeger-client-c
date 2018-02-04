@@ -24,14 +24,11 @@
 #include "jaegertracingc/metrics.h"
 #include "jaegertracingc/protoc-gen/sampling.pb-c.h"
 #include "jaegertracingc/tag.h"
+#include "jaegertracingc/threads.h"
 #include "jaegertracingc/token_bucket.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
-
-#ifdef HAVE_PTHREAD
-#include <pthread.h>
-#endif /* HAVE_PTHREAD */
 
 #define JAEGERTRACINGC_DOUBLE_STR_SIZE 16
 
@@ -58,14 +55,14 @@ void jaeger_const_sampler_init(jaeger_const_sampler* sampler, bool decision);
 
 typedef struct jaeger_probabilistic_sampler {
     JAEGERTRACINGC_SAMPLER_SUBCLASS;
-    double probability;
+    double sampling_rate;
 #ifdef HAVE_RAND_R
     unsigned int seed;
 #endif /* HAVE_RAND_R */
 } jaeger_probabilistic_sampler;
 
 void jaeger_probabilistic_sampler_init(jaeger_probabilistic_sampler* sampler,
-                                       double probability);
+                                       double sampling_rate);
 
 typedef struct jaeger_rate_limiting_sampler {
     JAEGERTRACINGC_SAMPLER_SUBCLASS;
@@ -105,13 +102,12 @@ jaeger_operation_sampler_destroy(jaeger_operation_sampler* op_sampler)
 typedef struct jaeger_adaptive_sampler {
     JAEGERTRACINGC_SAMPLER_SUBCLASS;
     int num_op_samplers;
+    int op_samplers_capacity;
     jaeger_operation_sampler* op_samplers;
     jaeger_probabilistic_sampler default_sampler;
     double lower_bound;
     int max_operations;
-#ifdef HAVE_PTHREAD
-    pthread_mutex_t mutex;
-#endif /* HAVE_PTHREAD */
+    jaeger_mutex mutex;
 } jaeger_adaptive_sampler;
 
 bool jaeger_adaptive_sampler_init(

@@ -14,13 +14,4 @@
  * limitations under the License.
  */
 
-#ifndef JAEGERTRACINGC_COMMON_H
-#define JAEGERTRACINGC_COMMON_H
-
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
-
-#define JAEGERTRACINGC_MIN(a, b) ((a) < (b) ? (a) : (b))
-
-#endif /* JAEGERTRACINGC_COMMON_H */
+#include "jaegertracingc/threads.h"

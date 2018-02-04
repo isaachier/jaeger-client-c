@@ -59,6 +59,7 @@ add_library(jaegertracingc
   "src/jaegertracingc/logger.c"
   "src/jaegertracingc/metrics.c"
   "src/jaegertracingc/sampler.c"
+  "src/jaegertracingc/threads.c"
   "src/jaegertracingc/token_bucket.c"
   "src/jaegertracingc/types.c"
   "src/jaegertracingc/protoc-gen/agent.pb-c.c"

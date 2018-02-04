@@ -16,6 +16,8 @@
 
 #include "jaegertracingc/sampler.h"
 
+#define SAMPLER_GROWTH_RATIO 2
+
 static bool jaeger_const_sampler_is_sampled(jaeger_sampler* sampler,
                                             const jaeger_trace_id* trace_id,
                                             const char* operation_name,
@@ -65,7 +67,7 @@ jaeger_probabilistic_sampler_is_sampled(jaeger_sampler* sampler,
 #else
     const double threshold = ((double) rand()) / RAND_MAX;
 #endif /* HAVE_RAND_R */
-    const bool decision = (s->probability >= threshold);
+    const bool decision = (s->sampling_rate >= threshold);
     if (tags != NULL) {
         jaeger_tag tag = JAEGERTRACING__PROTOBUF__TAG__INIT;
         tag.key = JAEGERTRACINGC_SAMPLER_TYPE_TAG_KEY;
@@ -75,20 +77,20 @@ jaeger_probabilistic_sampler_is_sampled(jaeger_sampler* sampler,
 
         tag.key = JAEGERTRACINGC_SAMPLER_PARAM_TAG_KEY;
         tag.value_case = JAEGERTRACING__PROTOBUF__TAG__VALUE_DOUBLE_VALUE;
-        tag.double_value = s->probability;
+        tag.double_value = s->sampling_rate;
         jaeger_tag_list_append(tags, &tag);
     }
     return decision;
 }
 
 void jaeger_probabilistic_sampler_init(jaeger_probabilistic_sampler* sampler,
-                                       double probability)
+                                       double sampling_rate)
 {
     assert(sampler != NULL);
     sampler->is_sampled = &jaeger_probabilistic_sampler_is_sampled;
     sampler->close = &jaeger_sampler_noop_close;
-    sampler->probability =
-        (probability < 0) ? 0 : ((probability > 1) ? 1 : probability);
+    sampler->sampling_rate =
+        (sampling_rate < 0) ? 0 : ((sampling_rate > 1) ? 1 : sampling_rate);
 }
 
 static bool
@@ -161,7 +163,7 @@ static bool jaeger_guaranteed_throughput_probabilistic_sampler_is_sampled(
 
             tag.key = JAEGERTRACINGC_SAMPLER_PARAM_TAG_KEY;
             tag.value_case = JAEGERTRACING__PROTOBUF__TAG__VALUE_DOUBLE_VALUE;
-            tag.double_value = s->probabilistic_sampler.probability;
+            tag.double_value = s->probabilistic_sampler.sampling_rate;
             jaeger_tag_list_append(tags, &tag);
         }
         return true;
@@ -280,9 +282,61 @@ static bool jaeger_adaptive_sampler_is_sampled(jaeger_sampler* sampler,
     (void) trace_id;
     (void) operation_name;
     assert(sampler != NULL);
-    /* TODO
-    jaeger_adaptive_sampler* s = (jaeger_adaptive_sampler*) sampler; */
-    return true;
+    jaeger_adaptive_sampler* s = (jaeger_adaptive_sampler*) sampler;
+    for (int i = 0; i < s->num_op_samplers; i++) {
+        if (strcmp(s->op_samplers[i].operation_name, operation_name) == 0) {
+            jaeger_guaranteed_throughput_probabilistic_sampler* g =
+                &s->op_samplers[i].sampler;
+            const bool decision = g->is_sampled(
+                (jaeger_sampler*) g, trace_id, operation_name, tags);
+            jaeger_mutex_unlock(&s->mutex);
+            return decision;
+        }
+    }
+
+    if (s->num_op_samplers >= s->max_operations) {
+        goto default_sampler;
+    }
+
+    assert(s->num_op_samplers <= s->op_samplers_capacity);
+    if (s->num_op_samplers == s->op_samplers_capacity) {
+        const int new_capacity = JAEGERTRACINGC_MIN(
+            s->num_op_samplers * SAMPLER_GROWTH_RATIO, s->max_operations);
+        jaeger_operation_sampler* new_op_samplers = jaeger_realloc(
+            s->op_samplers, sizeof(jaeger_operation_sampler) * new_capacity);
+        if (new_op_samplers == NULL) {
+            fprintf(stderr,
+                    "ERROR: Cannot allocate more operation samplers "
+                    "in adaptive sampler\n");
+            goto default_sampler;
+        }
+
+        s->op_samplers = new_op_samplers;
+        s->op_samplers_capacity = new_capacity;
+    }
+    jaeger_operation_sampler* op_sampler = &s->op_samplers[s->num_op_samplers];
+    op_sampler->operation_name = jaeger_strdup(operation_name);
+    if (op_sampler->operation_name == NULL) {
+        fprintf(stderr,
+                "ERROR: Cannot allocate operation name for new "
+                "operation sampler in adaptive sampler\n");
+        goto default_sampler;
+    }
+    jaeger_guaranteed_throughput_probabilistic_sampler_init(
+        &op_sampler->sampler, s->lower_bound, s->default_sampler.sampling_rate);
+    s->num_op_samplers++;
+
+    const bool decision = op_sampler->sampler.is_sampled(
+        (jaeger_sampler*) &op_sampler->sampler, trace_id, operation_name, tags);
+    jaeger_mutex_unlock(&s->mutex);
+    return decision;
+
+default_sampler : {
+    const bool decision = s->default_sampler.is_sampled(
+        (jaeger_sampler*) &s->default_sampler, trace_id, operation_name, tags);
+    jaeger_mutex_unlock(&s->mutex);
+    return decision;
+}
 }
 
 static void jaeger_adaptive_sampler_close(jaeger_sampler* sampler)
@@ -293,9 +347,7 @@ static void jaeger_adaptive_sampler_close(jaeger_sampler* sampler)
         jaeger_operation_sampler_destroy(&s->op_samplers[i]);
     }
     jaeger_free(s->op_samplers);
-#ifdef HAVE_PTHREAD
-    pthread_mutex_destroy(&s->mutex);
-#endif /* HAVE_PTHREAD */
+    jaeger_mutex_destroy(&s->mutex);
 }
 
 bool jaeger_adaptive_sampler_init(
@@ -309,11 +361,10 @@ bool jaeger_adaptive_sampler_init(
         return false;
     }
     sampler->num_op_samplers = strategies->n_per_operation_strategy;
+    sampler->op_samplers_capacity = sampler->num_op_samplers;
     sampler->max_operations = max_operations;
-#ifdef HAVE_PTHREAD
-    sampler->mutex = (pthread_mutex_t) PTHREAD_MUTEX_INITIALIZER;
-    pthread_mutex_init(&sampler->mutex, NULL);
-#endif /* HAVE_PTHREAD */
+    sampler->mutex = (jaeger_mutex) JAEGER_MUTEX_INIT;
+    jaeger_mutex_init(&sampler->mutex, NULL);
     sampler->is_sampled = &jaeger_adaptive_sampler_is_sampled;
     sampler->close = &jaeger_adaptive_sampler_close;
     return true;
