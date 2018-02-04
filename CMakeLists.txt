@@ -32,6 +32,7 @@ if(JAEGERTRACINGC_COVERAGE)
   set(COVERAGE_EXCLUDES
     "${CMAKE_CURRENT_SOURCE_DIR}/src/jaegertracingc/*_test.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/jaegertracingc/*_test.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/jaegertracingc/protoc-gen/*"
     "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/unity/*")
 endif()
 
