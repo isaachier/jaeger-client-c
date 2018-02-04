@@ -22,6 +22,7 @@ extern "C" {
 #endif /* __cplusplus */
 
 #include <assert.h>
+#include <http_parser.h>
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -154,6 +155,9 @@ typedef struct jaeger_http_sampling_manager {
     const char* service_name;
     const char* sampling_server_url;
     int fd;
+    http_parser parser;
+    http_parser_settings settings;
+    int request_length;
     char request_buffer[JAEGERTRACINGC_HTTP_SAMPLING_MANAGER_REQUEST_MAX_LEN];
 } jaeger_http_sampling_manager;
 

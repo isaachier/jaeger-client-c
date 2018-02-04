@@ -40,14 +40,14 @@ cmake_dependent_option(JAEGERTRACINGC_VERBOSE_ALLOC "Print all allocations" OFF
                        "BUILD_TESTING;debug_build" OFF)
 mark_as_advanced(JAEGERTRACINGC_VERBOSE_ALLOC)
 
-set(CMAKE_THREAD_PREFER_PTHREAD ON)
-find_package(Threads REQUIRED)
+find_package(http-parser REQUIRED)
+find_package(Jansson REQUIRED)
 find_package(ProtobufC REQUIRED)
 
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_THREAD_PREFER_PTHREAD ON)
+find_package(Threads REQUIRED)
 
-add_library(httpparser "thirdparty/http-parser/http_parser.c")
-target_include_directories(httpparser PUBLIC "thirdparty/http-parser")
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_library(jaegertracingc
   "src/jaegertracingc/alloc.c"
@@ -74,7 +74,10 @@ target_include_directories(jaegertracingc PUBLIC
 
 if(CMAKE_USE_PTHREADS_INIT)
   target_link_libraries(jaegertracingc PUBLIC
-    ProtobufC::ProtobufC Threads::Threads httpparser)
+    http-parser::http-parser
+    Jansson::Jansson
+    ProtobufC::ProtobufC
+    Threads::Threads)
 endif()
 
 check_function_exists("rand_r" have_rand_r)

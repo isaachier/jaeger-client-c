@@ -22,7 +22,6 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <unistd.h>
-#include "http_parser.h"
 
 #define SAMPLER_GROWTH_RATIO 2
 
@@ -547,7 +546,34 @@ static inline bool jaeger_http_sampling_manager_format_request(
                 result);
         return false;
     }
+
+    manager->request_length = result;
     return true;
+}
+
+static int
+jaeger_http_sampling_manager_parser_on_headers_complete(http_parser* parser)
+{
+    assert(parser != NULL);
+    if (parser->status_code != HPE_OK) {
+        fprintf(stderr,
+                "ERROR: HTTP sampling manager failed to retrieve sampling "
+                "strategies, HTTP status code = %d\n",
+                parser->status_code);
+        return 1;
+    }
+    return 0;
+}
+
+static int jaeger_http_sampling_manager_parser_on_body(http_parser* parser,
+                                                       const char* at,
+                                                       size_t len)
+{
+    assert(parser != NULL);
+    assert(parser->data != NULL);
+    jaeger_http_sampling_manager* manager =
+        (jaeger_http_sampling_manager*) parser->data;
+    return manager->fd;
 }
 
 static inline bool
@@ -565,8 +591,7 @@ jaeger_http_sampling_manager_init(jaeger_http_sampling_manager* manager,
             : "http://localhost:5778/sampling";
     manager->sampling_server_url = sampling_server_url;
 
-    struct http_parser_url parsed_url;
-    http_parser_url_init(&parsed_url);
+    struct http_parser_url parsed_url = {0};
     int result = http_parser_parse_url(manager->sampling_server_url,
                                        strlen(sampling_server_url),
                                        0,
@@ -624,6 +649,11 @@ jaeger_http_sampling_manager_init(jaeger_http_sampling_manager* manager,
     assert(socket_fd >= 0);
     manager->fd = socket_fd;
 
+    http_parser_init(&manager->parser, HTTP_RESPONSE);
+    manager->settings.on_headers_complete =
+        &jaeger_http_sampling_manager_parser_on_headers_complete;
+    manager->settings.on_body = &jaeger_http_sampling_manager_parser_on_body;
+
     return jaeger_http_sampling_manager_format_request(manager, &parsed_url);
 }
 
@@ -636,7 +666,18 @@ static inline bool jaeger_http_sampling_manager_get_sampling_strategies(
 {
     assert(manager != NULL);
     assert(response != NULL);
-    /* TODO */
+
+    const int num_written = write(
+        manager->fd, &manager->request_buffer[0], manager->request_length);
+    if (num_written != manager->request_length) {
+        fprintf(stderr,
+                "ERROR: Cannot write entire HTTP sampling request, "
+                "num written = %d, request length = %d\n",
+                num_written,
+                manager->request_length);
+        return false;
+    }
+
     return true;
 }
 
@@ -733,7 +774,7 @@ bool jaeger_remotely_controlled_sampler_init(
         interval,
         metrics,
         JAEGERTRACINGC_TICKER_INIT,
-        (jaeger_http_sampling_manager){NULL, NULL, -1},
+        (jaeger_http_sampling_manager){NULL, NULL, -1, {}, {}, 0, {'\0'}},
         PTHREAD_MUTEX_INITIALIZER};
 
     if (initial_sampler != NULL) {
