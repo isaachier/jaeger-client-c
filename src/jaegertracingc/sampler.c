@@ -221,8 +221,7 @@ static inline jaeger_operation_sampler* samplers_from_strategies(
 
     const size_t op_samplers_size =
         sizeof(jaeger_operation_sampler) * strategies->n_per_operation_strategy;
-    jaeger_operation_sampler* op_samplers =
-        jaeger_malloc(op_samplers_size);
+    jaeger_operation_sampler* op_samplers = jaeger_malloc(op_samplers_size);
     if (op_samplers == NULL) {
         fprintf(stderr, "ERROR: Cannot allocate per operation samplers\n");
         return NULL;
@@ -242,11 +241,10 @@ static inline jaeger_operation_sampler* samplers_from_strategies(
         jaeger_operation_sampler* op_sampler = &op_samplers[i];
         op_sampler->operation_name = jaeger_strdup(strategy->operation);
         if (op_sampler->operation_name == NULL) {
-            fprintf(
-                stderr,
-                "ERROR: Cannot allocate operation sampler, "
-                "operation name = \"%s\"\n",
-                strategy->operation);
+            fprintf(stderr,
+                    "ERROR: Cannot allocate operation sampler, "
+                    "operation name = \"%s\"\n",
+                    strategy->operation);
             success = false;
             break;
         }
@@ -297,7 +295,7 @@ static void jaeger_adaptive_sampler_close(jaeger_sampler* sampler)
     jaeger_free(s->op_samplers);
 #ifdef HAVE_PTHREAD
     pthread_mutex_destroy(&s->mutex);
-#endif  /* HAVE_PTHREAD */
+#endif /* HAVE_PTHREAD */
 }
 
 bool jaeger_adaptive_sampler_init(
@@ -315,7 +313,7 @@ bool jaeger_adaptive_sampler_init(
 #ifdef HAVE_PTHREAD
     sampler->mutex = (pthread_mutex_t) PTHREAD_MUTEX_INITIALIZER;
     pthread_mutex_init(&sampler->mutex, NULL);
-#endif  /* HAVE_PTHREAD */
+#endif /* HAVE_PTHREAD */
     sampler->is_sampled = &jaeger_adaptive_sampler_is_sampled;
     sampler->close = &jaeger_adaptive_sampler_close;
     return true;

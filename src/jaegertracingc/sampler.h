@@ -17,21 +17,21 @@
 #ifndef JAEGERTRACINGC_SAMPLER_H
 #define JAEGERTRACINGC_SAMPLER_H
 
-#include <assert.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include "jaegertracingc/common.h"
 #include "jaegertracingc/constants.h"
 #include "jaegertracingc/duration.h"
-#include "jaegertracingc/tag.h"
 #include "jaegertracingc/logger.h"
 #include "jaegertracingc/metrics.h"
-#include "jaegertracingc/token_bucket.h"
 #include "jaegertracingc/protoc-gen/sampling.pb-c.h"
+#include "jaegertracingc/tag.h"
+#include "jaegertracingc/token_bucket.h"
+#include <assert.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #ifdef HAVE_PTHREAD
 #include <pthread.h>
-#endif  /* HAVE_PTHREAD */
+#endif /* HAVE_PTHREAD */
 
 #define JAEGERTRACINGC_DOUBLE_STR_SIZE 16
 
@@ -39,8 +39,8 @@
     bool (*is_sampled)(struct jaeger_sampler * sampler, \
                        const jaeger_trace_id* trace_id, \
                        const char* operation,           \
-                       jaeger_tag_list* tags);    \
-    void (*close)(struct jaeger_sampler* sampler)
+                       jaeger_tag_list* tags);          \
+    void (*close)(struct jaeger_sampler * sampler)
 
 typedef Jaegertracing__Protobuf__SamplingManager__PerOperationSamplingStrategy
     jaeger_per_operation_sampling_strategy;
@@ -93,8 +93,8 @@ typedef struct jaeger_operation_sampler {
     jaeger_guaranteed_throughput_probabilistic_sampler sampler;
 } jaeger_operation_sampler;
 
-static inline void jaeger_operation_sampler_destroy(
-    jaeger_operation_sampler* op_sampler)
+static inline void
+jaeger_operation_sampler_destroy(jaeger_operation_sampler* op_sampler)
 {
     assert(op_sampler != NULL);
     if (op_sampler->operation_name != NULL) {
@@ -111,7 +111,7 @@ typedef struct jaeger_adaptive_sampler {
     int max_operations;
 #ifdef HAVE_PTHREAD
     pthread_mutex_t mutex;
-#endif  /* HAVE_PTHREAD */
+#endif /* HAVE_PTHREAD */
 } jaeger_adaptive_sampler;
 
 bool jaeger_adaptive_sampler_init(

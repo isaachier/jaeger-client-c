@@ -17,12 +17,12 @@
 #ifndef JAEGERTRACINGC_TAG_H
 #define JAEGERTRACINGC_TAG_H
 
-#include <assert.h>
-#include <stdio.h>
-#include <string.h>
 #include "jaegertracingc/alloc.h"
 #include "jaegertracingc/common.h"
 #include "jaegertracingc/types.h"
+#include <assert.h>
+#include <stdio.h>
+#include <string.h>
 
 #define JAEGERTRACINGC_TAGS_INIT_SIZE 10
 #define JAEGERTRACINGC_TAGS_RESIZE_FACTOR 2
@@ -82,9 +82,8 @@ static inline bool jaeger_tag_copy(jaeger_tag* dst, const jaeger_tag* src)
     *dst = (jaeger_tag) JAEGERTRACING__PROTOBUF__TAG__INIT;
     dst->key = jaeger_strdup(src->key);
     if (dst->key == NULL) {
-        fprintf(stderr,
-                "ERROR: Cannot allocate tag key, key = \"%s\"\n",
-                src->key);
+        fprintf(
+            stderr, "ERROR: Cannot allocate tag key, key = \"%s\"\n", src->key);
         *dst = (jaeger_tag) JAEGERTRACING__PROTOBUF__TAG__INIT;
         return false;
     }
@@ -151,8 +150,8 @@ static inline void jaeger_tag_destroy(jaeger_tag* tag)
     }
 }
 
-static inline bool jaeger_tag_list_append(
-    jaeger_tag_list* list, const jaeger_tag* tag)
+static inline bool jaeger_tag_list_append(jaeger_tag_list* list,
+                                          const jaeger_tag* tag)
 {
     assert(list != NULL);
     assert(tag != NULL);

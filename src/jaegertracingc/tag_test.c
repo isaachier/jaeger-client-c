@@ -51,8 +51,7 @@ void test_tag()
     result = jaeger_tag_list_append(&tags, &tag);
     TEST_ASSERT_TRUE(result);
     memset(&buffer, 0, sizeof(buffer));
-    TEST_ASSERT_EQUAL_STRING(
-        "hello world", tags.tags[tags.size - 1].str_value);
+    TEST_ASSERT_EQUAL_STRING("hello world", tags.tags[tags.size - 1].str_value);
 
     tag.key = "test5";
     tag.value_case = JAEGERTRACING__PROTOBUF__TAG__VALUE_BINARY_VALUE;
