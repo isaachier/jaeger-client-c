@@ -474,6 +474,86 @@ void jaeger_adaptive_sampler_update(
     pthread_mutex_unlock(&sampler->mutex);
 }
 
+static inline bool jaeger_http_sampling_manager_format_request(
+    jaeger_http_sampling_manager* manager)
+{
+#define URL_FIELD_LENGTH(len_var, field_flag)                                \
+    do {                                                                     \
+        if (manager->parsed_sampling_server_url.field_set &                  \
+            (1 << (field_flag))) {                                           \
+            len_var =                                                        \
+                manager->parsed_sampling_server_url.field_data[(field_flag)] \
+                    .len +                                                   \
+                1;                                                           \
+        }                                                                    \
+    } while (0)
+
+#define URL_COPY_BUFFER(buffer, field_flag)                                   \
+    do {                                                                      \
+        memcpy(                                                               \
+            &buffer[0],                                                       \
+            &manager->sampling_server_url[manager->parsed_sampling_server_url \
+                                              .field_data[(field_flag)]       \
+                                              .off],                          \
+            sizeof(buffer));                                                  \
+    } while (0)
+
+    assert(manager);
+    int path_len = 2;
+    URL_FIELD_LENGTH(path_len, UF_PATH);
+    char path[path_len];
+    if (path_len > 2) {
+        URL_COPY_BUFFER(path, UF_PATH);
+    }
+    else {
+        path[0] = '/';
+        path[1] = '\0';
+    }
+
+    int host_len = 1;
+    URL_FIELD_LENGTH(host_len, UF_HOST);
+    char host[host_len];
+    if (host_len > 1) {
+        URL_COPY_BUFFER(host, UF_HOST);
+    }
+    else {
+        host[0] = '\0';
+    }
+
+    int port_len = 1;
+    URL_FIELD_LENGTH(port_len, UF_PORT);
+    char port[port_len];
+    if (port_len > 1) {
+        URL_COPY_BUFFER(port, UF_PORT);
+    }
+    else {
+        port[0] = '\0';
+    }
+
+#undef URL_COPY_BUFFER
+#undef URL_FIELD_LENGTH
+
+    const int result = snprintf(manager->request_buffer,
+                                sizeof(manager->request_buffer),
+                                "GET %s?service=%s HTTP/1.1\r\n"
+                                "Host: %s%s\r\n"
+                                "User-Agent: jaegertracing/%s\r\n\r\n",
+                                path,
+                                manager->service_name,
+                                host,
+                                port,
+                                JAEGERTRACINGC_CLIENT_VERSION);
+    if (result > sizeof(manager->request_buffer)) {
+        fprintf(stderr,
+                "ERROR: Cannot write entire HTTP sampling request to buffer, "
+                "buffer size = %zu, request length = %d\n",
+                sizeof(manager->request_buffer),
+                result);
+        return false;
+    }
+    return true;
+}
+
 static inline bool
 jaeger_http_sampling_manager_init(jaeger_http_sampling_manager* manager,
                                   const char* sampling_server_url,
@@ -488,13 +568,27 @@ jaeger_http_sampling_manager_init(jaeger_http_sampling_manager* manager,
             : "http://localhost:5778/sampling";
     manager->sampling_server_url = sampling_server_url;
 
+    http_parser_url_init(&manager->parsed_sampling_server_url);
+    int result = http_parser_parse_url(manager->sampling_server_url,
+                                       strlen(sampling_server_url),
+                                       0,
+                                       &manager->parsed_sampling_server_url);
+    if (result != 0) {
+        fprintf(stderr,
+                "ERROR: Cannot parse sampling server URL, "
+                "sampling server url = \"%s\", "
+                "error code = %d\n",
+                manager->sampling_server_url,
+                result);
+        return false;
+    }
+
     struct addrinfo hints;
     memset(&hints, 0, sizeof(hints));
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM;
     struct addrinfo* addr = NULL;
-    const int result =
-        getaddrinfo(manager->sampling_server_url, 0, &hints, &addr);
+    result = getaddrinfo(manager->sampling_server_url, 0, &hints, &addr);
     if (result != 0) {
         fprintf(stderr,
                 "ERROR: Cannot resolve sampling server URL for HTTP sampling "
@@ -531,6 +625,20 @@ jaeger_http_sampling_manager_init(jaeger_http_sampling_manager* manager,
 
     assert(socket_fd >= 0);
     manager->fd = socket_fd;
+
+    return jaeger_http_sampling_manager_format_request(manager);
+}
+
+typedef Jaegertracing__Protobuf__SamplingManager__SamplingStrategyResponse
+    jaeger_sampling_strategy_response;
+
+static inline bool jaeger_http_sampling_manager_get_sampling_strategies(
+    jaeger_http_sampling_manager* manager,
+    jaeger_sampling_strategy_response* response)
+{
+    assert(manager != NULL);
+    assert(response != NULL);
+    /* TODO */
     return true;
 }
 
@@ -586,9 +694,14 @@ static void jaeger_remotely_controlled_sampler_close(jaeger_sampler* sampler)
 static void jaeger_remotely_controlled_sampler_update(void* context)
 {
     assert(context != NULL);
-    /* TODO
-      jaeger_remotely_controlled_sampler* sampler =
-        (jaeger_remotely_controlled_sampler*) context;*/
+    jaeger_remotely_controlled_sampler* sampler =
+        (jaeger_remotely_controlled_sampler*) context;
+    jaeger_sampling_strategy_response response;
+    const bool result = jaeger_http_sampling_manager_get_sampling_strategies(
+        &sampler->manager, &response);
+    if (result) {
+        /* TODO */
+    }
 }
 
 static const jaeger_duration default_sampling_refresh_interval = {60, 0};
@@ -622,7 +735,7 @@ bool jaeger_remotely_controlled_sampler_init(
         interval,
         metrics,
         JAEGERTRACINGC_TICKER_INIT,
-        (jaeger_http_sampling_manager){NULL, NULL, -1},
+        (jaeger_http_sampling_manager){NULL, NULL, {}, -1},
         PTHREAD_MUTEX_INITIALIZER};
 
     if (initial_sampler != NULL) {

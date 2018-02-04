@@ -25,6 +25,7 @@ extern "C" {
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "http_parser.h"
 #include "jaegertracingc/common.h"
 #include "jaegertracingc/constants.h"
 #include "jaegertracingc/duration.h"
@@ -148,10 +149,14 @@ typedef struct jaeger_sampler_choice {
     };
 } jaeger_sampler_choice;
 
+#define JAEGERTRACINGC_HTTP_SAMPLING_MANAGER_REQUEST_MAX_LEN 256
+
 typedef struct jaeger_http_sampling_manager {
     const char* service_name;
     const char* sampling_server_url;
+    struct http_parser_url parsed_sampling_server_url;
     int fd;
+    char request_buffer[JAEGERTRACINGC_HTTP_SAMPLING_MANAGER_REQUEST_MAX_LEN];
 } jaeger_http_sampling_manager;
 
 typedef struct jaeger_remotely_controlled_sampler {
