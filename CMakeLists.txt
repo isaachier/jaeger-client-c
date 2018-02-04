@@ -41,7 +41,7 @@ cmake_dependent_option(JAEGERTRACINGC_VERBOSE_ALLOC "Print all allocations" OFF
 mark_as_advanced(JAEGERTRACINGC_VERBOSE_ALLOC)
 
 set(CMAKE_THREAD_PREFER_PTHREAD ON)
-find_package(Threads)
+find_package(Threads REQUIRED)
 find_package(ProtobufC REQUIRED)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -59,7 +59,7 @@ add_library(jaegertracingc
   "src/jaegertracingc/init.c"
   "src/jaegertracingc/metrics.c"
   "src/jaegertracingc/sampler.c"
-  "src/jaegertracingc/threads.c"
+  "src/jaegertracingc/ticker.c"
   "src/jaegertracingc/token_bucket.c"
   "src/jaegertracingc/types.c"
   "src/jaegertracingc/protoc-gen/agent.pb-c.c"
@@ -69,7 +69,6 @@ add_library(jaegertracingc
 target_include_directories(jaegertracingc PUBLIC
   "src" "${CMAKE_CURRENT_BINARY_DIR}/generated/include")
 if(CMAKE_USE_PTHREADS_INIT)
-  target_compile_definitions(jaegertracingc PUBLIC "-DHAVE_PTHREAD")
   target_link_libraries(jaegertracingc PUBLIC
     ProtobufC::ProtobufC Threads::Threads)
 endif()
@@ -98,6 +97,7 @@ if(BUILD_TESTING)
     "src/jaegertracingc/duration_test.c"
     "src/jaegertracingc/metrics_test.c"
     "src/jaegertracingc/tag_test.c"
+    "src/jaegertracingc/ticker_test.c"
     "src/jaegertracingc/token_bucket_test.c")
   target_compile_definitions(jaegertracingc PUBLIC "-DTESTING")
   target_link_libraries(unit_test PUBLIC jaegertracingc unity)

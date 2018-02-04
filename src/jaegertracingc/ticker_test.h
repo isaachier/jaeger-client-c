@@ -14,4 +14,9 @@
  * limitations under the License.
  */
 
-#include "jaegertracingc/threads.h"
+#ifndef JAEGERTRACINGC_TICKER_TEST_H
+#define JAEGERTRACINGC_TICKER_TEST_H
+
+void test_ticker();
+
+#endif /* JAEGERTRACINGC_TICKER_TEST_H */

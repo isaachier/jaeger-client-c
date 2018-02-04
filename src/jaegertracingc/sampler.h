@@ -17,17 +17,17 @@
 #ifndef JAEGERTRACINGC_SAMPLER_H
 #define JAEGERTRACINGC_SAMPLER_H
 
+#include <assert.h>
+#include <pthread.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include "jaegertracingc/common.h"
 #include "jaegertracingc/constants.h"
 #include "jaegertracingc/duration.h"
 #include "jaegertracingc/metrics.h"
 #include "jaegertracingc/protoc-gen/sampling.pb-c.h"
 #include "jaegertracingc/tag.h"
-#include "jaegertracingc/threads.h"
 #include "jaegertracingc/token_bucket.h"
-#include <assert.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 #define JAEGERTRACINGC_DOUBLE_STR_SIZE 16
 
@@ -111,7 +111,7 @@ typedef struct jaeger_adaptive_sampler {
     jaeger_probabilistic_sampler default_sampler;
     double lower_bound;
     int max_operations;
-    jaeger_mutex mutex;
+    pthread_mutex_t mutex;
 } jaeger_adaptive_sampler;
 
 bool jaeger_adaptive_sampler_init(
@@ -130,6 +130,8 @@ typedef struct jaeger_remotely_controlled_sampler {
     jaeger_sampler* sampler;
     int max_operations;
     jaeger_duration sampling_refresh_interval;
+    bool running;
+    pthread_mutex_t mutex;
 } jaeger_remotely_controlled_sampler;
 
 void jaeger_remotely_controlled_sampler_init(
