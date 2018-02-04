@@ -83,6 +83,11 @@ void jaeger_guaranteed_throughput_probabilistic_sampler_init(
     double lower_bound,
     double sampling_rate);
 
+void jaeger_guaranteed_throughput_probabilistic_sampler_update(
+    jaeger_guaranteed_throughput_probabilistic_sampler* sampler,
+    double lower_bound,
+    double sampling_rate);
+
 /* Used in jaeger_adaptive_sampler, not a new sampler type. */
 typedef struct jaeger_operation_sampler {
     char* operation_name;
@@ -113,6 +118,10 @@ bool jaeger_adaptive_sampler_init(
     jaeger_adaptive_sampler* sampler,
     const jaeger_per_operation_sampling_strategy* strategies,
     int max_operations);
+
+void jaeger_adaptive_sampler_update(
+    jaeger_adaptive_sampler* sampler,
+    const jaeger_per_operation_sampling_strategy* strategies);
 
 typedef struct jaeger_remotely_controlled_sampler {
     JAEGERTRACINGC_SAMPLER_SUBCLASS;
