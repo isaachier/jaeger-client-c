@@ -17,6 +17,10 @@
 #ifndef JAEGERTRACINGC_METRICS_H
 #define JAEGERTRACINGC_METRICS_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 #include "jaegertracingc/common.h"
 
 #define JAEGERTRACINGC_COUNTER_SUBCLASS \
@@ -76,5 +80,9 @@ typedef struct jaeger_metrics {
     jaeger_counter* baggage_restrictions_update_success;
     jaeger_counter* baggage_restrictions_update_failure;
 } jaeger_metrics;
+
+#ifdef __cplusplus
+} /* extern C */
+#endif /* __cplusplus */
 
 #endif /* JAEGERTRACINGC_METRICS_H */

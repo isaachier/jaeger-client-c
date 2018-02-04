@@ -17,6 +17,14 @@
 #ifndef JAEGERTRACINGC_TAG_TEST_H
 #define JAEGERTRACINGC_TAG_TEST_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 void test_tag();
+
+#ifdef __cplusplus
+} /* extern C */
+#endif /* __cplusplus */
 
 #endif /* JAEGERTRACINGC_TAG_TEST_H */

@@ -17,6 +17,14 @@
 #ifndef JAEGERTRACINGC_METRICS_TEST_H
 #define JAEGERTRACINGC_METRICS_TEST_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 void test_metrics();
+
+#ifdef __cplusplus
+} /* extern C */
+#endif /* __cplusplus */
 
 #endif /* JAEGERTRACINGC_METRICS_TEST_H */

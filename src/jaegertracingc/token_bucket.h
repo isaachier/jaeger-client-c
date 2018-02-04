@@ -17,6 +17,10 @@
 #ifndef JAEGERTRACINGC_TOKEN_BUCKET_H
 #define JAEGERTRACINGC_TOKEN_BUCKET_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 #include "jaegertracingc/common.h"
 #include "jaegertracingc/duration.h"
 #include <assert.h>
@@ -64,5 +68,9 @@ static inline bool jaeger_token_bucket_check_credit(jaeger_token_bucket* tok,
     tok->balance -= cost;
     return 1;
 }
+
+#ifdef __cplusplus
+} /* extern C */
+#endif /* __cplusplus */
 
 #endif /* JAEGERTRACINGC_TOKEN_BUCKET_H */

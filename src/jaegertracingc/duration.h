@@ -17,6 +17,10 @@
 #ifndef JAEGERTRACINGC_DURATION_H
 #define JAEGERTRACINGC_DURATION_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 #include "jaegertracingc/common.h"
 #include <assert.h>
 #include <time.h>
@@ -62,5 +66,9 @@ static inline bool jaeger_duration_subtract(const jaeger_duration* lhs,
     result->tv_nsec = x.tv_nsec - y.tv_nsec;
     return x.tv_sec >= y.tv_sec;
 }
+
+#ifdef __cplusplus
+} /* extern C */
+#endif /* __cplusplus */
 
 #endif /* JAEGERTRACINGC_DURATION_H */

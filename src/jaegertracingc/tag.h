@@ -17,6 +17,10 @@
 #ifndef JAEGERTRACINGC_TAG_H
 #define JAEGERTRACINGC_TAG_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 #include "jaegertracingc/alloc.h"
 #include "jaegertracingc/common.h"
 #include "jaegertracingc/types.h"
@@ -180,5 +184,9 @@ static inline void jaeger_tag_list_destroy(jaeger_tag_list* list)
         jaeger_free(list->tags);
     }
 }
+
+#ifdef __cplusplus
+} /* extern C */
+#endif /* __cplusplus */
 
 #endif /* JAEGERTRACINGC_TAG_H */

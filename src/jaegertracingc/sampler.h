@@ -17,6 +17,10 @@
 #ifndef JAEGERTRACINGC_SAMPLER_H
 #define JAEGERTRACINGC_SAMPLER_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 #include <assert.h>
 #include <pthread.h>
 #include <stdio.h>
@@ -169,5 +173,9 @@ bool jaeger_remotely_controlled_sampler_init(
     int max_operations,
     const jaeger_duration* sampling_refresh_interval,
     jaeger_metrics* metrics);
+
+#ifdef __cplusplus
+} /* extern C */
+#endif /* __cplusplus */
 
 #endif /* JAEGERTRACINGC_SAMPLER_H */

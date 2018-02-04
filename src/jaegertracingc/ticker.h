@@ -18,6 +18,10 @@
 #ifndef JAEGERTRACINGC_TICKER_H
 #define JAEGERTRACINGC_TICKER_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 #include <pthread.h>
 #include "jaegertracingc/common.h"
 #include "jaegertracingc/duration.h"
@@ -71,5 +75,9 @@ static inline void jaeger_ticker_destroy(jaeger_ticker* ticker)
     pthread_mutex_destroy(&ticker->mutex);
     pthread_cond_destroy(&ticker->cond);
 }
+
+#ifdef __cplusplus
+} /* extern C */
+#endif /* __cplusplus */
 
 #endif /* JAEGERTRACINGC_TICKER_H */

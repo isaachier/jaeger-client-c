@@ -17,6 +17,14 @@
 #ifndef JAEGERTRACINGC_TOKEN_BUCKET_TEST_H
 #define JAEGERTRACINGC_TOKEN_BUCKET_TEST_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 void test_token_bucket();
+
+#ifdef __cplusplus
+} /* extern C */
+#endif /* __cplusplus */
 
 #endif /* JAEGERTRACINGC_TOKEN_BUCKET_TEST_H */

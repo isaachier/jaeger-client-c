@@ -534,10 +534,8 @@ jaeger_http_sampling_manager_init(jaeger_http_sampling_manager* manager,
     return true;
 }
 
-static inline
-
-    static inline void
-    jaeger_http_sampling_manager_destroy(jaeger_http_sampling_manager* manager)
+static inline void
+jaeger_http_sampling_manager_destroy(jaeger_http_sampling_manager* manager)
 {
     assert(manager != NULL);
     close(manager->fd);
