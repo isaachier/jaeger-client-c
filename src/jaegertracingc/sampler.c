@@ -16,6 +16,13 @@
 
 #include "jaegertracingc/sampler.h"
 
+#include <arpa/inet.h>
+#include <errno.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <unistd.h>
+
 #define SAMPLER_GROWTH_RATIO 2
 
 static bool jaeger_const_sampler_is_sampled(jaeger_sampler* sampler,
@@ -467,14 +474,189 @@ void jaeger_adaptive_sampler_update(
     pthread_mutex_unlock(&sampler->mutex);
 }
 
-void jaeger_remotely_controlled_sampler_init(
+static inline bool
+jaeger_http_sampling_manager_init(jaeger_http_sampling_manager* manager,
+                                  const char* sampling_server_url,
+                                  const char* service_name)
+{
+    assert(manager != NULL);
+    assert(service_name != NULL);
+    manager->service_name = service_name;
+    sampling_server_url =
+        (sampling_server_url != NULL && strlen(sampling_server_url) > 0)
+            ? sampling_server_url
+            : "http://localhost:5778/sampling";
+    manager->sampling_server_url = sampling_server_url;
+
+    struct addrinfo hints;
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_STREAM;
+    struct addrinfo* addr = NULL;
+    const int result =
+        getaddrinfo(manager->sampling_server_url, 0, &hints, &addr);
+    if (result != 0) {
+        fprintf(stderr,
+                "ERROR: Cannot resolve sampling server URL for HTTP sampling "
+                "manager, sampling server url = \"%s\", error = \"%s\"\n",
+                manager->sampling_server_url,
+                gai_strerror(result));
+        return false;
+    }
+
+    bool success = false;
+    int socket_fd = -1;
+    for (struct addrinfo* addr_iter = addr; addr_iter != NULL;
+         addr_iter = addr_iter->ai_next) {
+        socket_fd = socket(addr_iter->ai_family,
+                           addr_iter->ai_socktype,
+                           addr_iter->ai_protocol);
+        if (socket_fd < 0) {
+            continue;
+        }
+        if (connect(socket_fd, addr_iter->ai_addr, addr_iter->ai_addrlen)) {
+            success = true;
+            break;
+        }
+        close(socket_fd);
+    }
+    freeaddrinfo(addr);
+    if (!success) {
+        fprintf(stderr,
+                "ERROR: Cannot connect to host for HTTP sampling manager, "
+                "sampling server url = \"%s\"\n",
+                manager->sampling_server_url);
+        return false;
+    }
+
+    assert(socket_fd >= 0);
+    manager->fd = socket_fd;
+    return true;
+}
+
+static inline
+
+    static inline void
+    jaeger_http_sampling_manager_destroy(jaeger_http_sampling_manager* manager)
+{
+    assert(manager != NULL);
+    close(manager->fd);
+}
+
+static bool
+jaeger_remotely_controlled_sampler_is_sampled(jaeger_sampler* sampler,
+                                              const jaeger_trace_id* trace_id,
+                                              const char* operation_name,
+                                              jaeger_tag_list* tags)
+{
+    /* TODO */
+    return true;
+}
+
+static void jaeger_remotely_controlled_sampler_close(jaeger_sampler* sampler)
+{
+    jaeger_remotely_controlled_sampler* s =
+        (jaeger_remotely_controlled_sampler*) sampler;
+    jaeger_ticker_destroy(&s->ticker);
+    jaeger_sampler_choice* sampler_choice = &s->sampler;
+
+#define SAMPLER_TYPE_CASE(type)                                 \
+    case jaeger_##type##_sampler_type:                          \
+        sampler_choice->type##_sampler.close(                   \
+            (jaeger_sampler*) &sampler_choice->type##_sampler); \
+        break
+
+    switch (sampler_choice->type) {
+        SAMPLER_TYPE_CASE(const);
+        SAMPLER_TYPE_CASE(probabilistic);
+        SAMPLER_TYPE_CASE(rate_limiting);
+        SAMPLER_TYPE_CASE(guaranteed_throughput_probabilistic);
+        SAMPLER_TYPE_CASE(adaptive);
+    default:
+        fprintf(stderr,
+                "ERROR: Invalid sampler type in sampler choice, sampler type = "
+                "%d\n",
+                sampler_choice->type);
+        break;
+    }
+
+#undef SAMPLER_TYPE_CASE
+
+    jaeger_http_sampling_manager_destroy(&s->manager);
+}
+
+static void jaeger_remotely_controlled_sampler_update(void* context)
+{
+    assert(context != NULL);
+    /* TODO
+      jaeger_remotely_controlled_sampler* sampler =
+        (jaeger_remotely_controlled_sampler*) context;*/
+}
+
+static const jaeger_duration default_sampling_refresh_interval = {60, 0};
+
+#define DEFAULT_MAX_OPERATIONS 2000
+#define DEFAULT_SAMPLING_RATE 0.001
+
+bool jaeger_remotely_controlled_sampler_init(
     jaeger_remotely_controlled_sampler* sampler,
-    char* service_name,
-    jaeger_sampler* initial_sampler,
+    const char* service_name,
+    const char* sampling_server_url,
+    const jaeger_sampler_choice* initial_sampler,
     int max_operations,
     const jaeger_duration* sampling_refresh_interval,
     jaeger_metrics* metrics)
 {
     assert(sampler != NULL);
-    /* TODO */
+    assert(service_name != NULL);
+    const jaeger_duration interval = (sampling_refresh_interval != NULL &&
+                                      (sampling_refresh_interval->tv_sec > 0 ||
+                                       sampling_refresh_interval->tv_nsec > 0))
+                                         ? *sampling_refresh_interval
+                                         : default_sampling_refresh_interval;
+    max_operations =
+        (max_operations <= 0) ? DEFAULT_MAX_OPERATIONS : max_operations;
+    *sampler = (jaeger_remotely_controlled_sampler){
+        &jaeger_remotely_controlled_sampler_is_sampled,
+        &jaeger_remotely_controlled_sampler_close,
+        (jaeger_sampler_choice){},
+        max_operations,
+        interval,
+        metrics,
+        JAEGERTRACINGC_TICKER_INIT,
+        (jaeger_http_sampling_manager){NULL, NULL, -1},
+        PTHREAD_MUTEX_INITIALIZER};
+
+    if (initial_sampler != NULL) {
+        sampler->sampler = *initial_sampler;
+    }
+    else {
+        sampler->sampler =
+            (jaeger_sampler_choice){jaeger_probabilistic_sampler_type};
+        jaeger_probabilistic_sampler_init(
+            &sampler->sampler.probabilistic_sampler, DEFAULT_SAMPLING_RATE);
+    }
+
+    if (!jaeger_http_sampling_manager_init(
+            &sampler->manager, sampling_server_url, service_name)) {
+        fprintf(stderr,
+                "ERROR: Cannot initialize HTTP manager for remotely "
+                "controlled sampler\n");
+        return false;
+    }
+
+    const int result =
+        jaeger_ticker_start(&sampler->ticker,
+                            &sampler->sampling_refresh_interval,
+                            &jaeger_remotely_controlled_sampler_update,
+                            &sampler);
+    if (result != 0) {
+        fprintf(stderr,
+                "ERROR: Cannot start ticker in remotely controlled sampler, "
+                "return code = %d\n",
+                result);
+        return false;
+    }
+
+    return true;
 }

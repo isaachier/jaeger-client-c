@@ -36,6 +36,6 @@ void test_ticker()
     jaeger_duration sleep_interval = interval;
     result = nanosleep(&sleep_interval, NULL);
     TEST_ASSERT_EQUAL(0, result);
-    jaeger_ticker_stop(&ticker);
-    TEST_ASSERT_GREATER_OR_EQUAL(1, x);
+    jaeger_ticker_destroy(&ticker);
+    TEST_ASSERT_GREATER_THAN(0, x);
 }

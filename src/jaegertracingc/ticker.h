@@ -59,4 +59,17 @@ static inline void jaeger_ticker_stop(jaeger_ticker* ticker)
     pthread_join(ticker->thread, NULL);
 }
 
+static inline void jaeger_ticker_destroy(jaeger_ticker* ticker)
+{
+    assert(ticker != NULL);
+    pthread_mutex_lock(&ticker->mutex);
+    const bool running = ticker->running;
+    pthread_mutex_unlock(&ticker->mutex);
+    if (running) {
+        jaeger_ticker_stop(ticker);
+    }
+    pthread_mutex_destroy(&ticker->mutex);
+    pthread_cond_destroy(&ticker->cond);
+}
+
 #endif /* JAEGERTRACINGC_TICKER_H */

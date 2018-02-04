@@ -27,6 +27,7 @@
 #include "jaegertracingc/metrics.h"
 #include "jaegertracingc/protoc-gen/sampling.pb-c.h"
 #include "jaegertracingc/tag.h"
+#include "jaegertracingc/ticker.h"
 #include "jaegertracingc/token_bucket.h"
 
 #define JAEGERTRACINGC_DOUBLE_STR_SIZE 16
@@ -123,21 +124,48 @@ void jaeger_adaptive_sampler_update(
     jaeger_adaptive_sampler* sampler,
     const jaeger_per_operation_sampling_strategy* strategies);
 
+typedef enum jaeger_sampler_type {
+    jaeger_const_sampler_type,
+    jaeger_probabilistic_sampler_type,
+    jaeger_rate_limiting_sampler_type,
+    jaeger_guaranteed_throughput_probabilistic_sampler_type,
+    jaeger_adaptive_sampler_type
+} jaeger_sampler_type;
+
+typedef struct jaeger_sampler_choice {
+    jaeger_sampler_type type;
+    union {
+        jaeger_const_sampler const_sampler;
+        jaeger_probabilistic_sampler probabilistic_sampler;
+        jaeger_rate_limiting_sampler rate_limiting_sampler;
+        jaeger_guaranteed_throughput_probabilistic_sampler
+            guaranteed_throughput_probabilistic_sampler;
+        jaeger_adaptive_sampler adaptive_sampler;
+    };
+} jaeger_sampler_choice;
+
+typedef struct jaeger_http_sampling_manager {
+    const char* service_name;
+    const char* sampling_server_url;
+    int fd;
+} jaeger_http_sampling_manager;
+
 typedef struct jaeger_remotely_controlled_sampler {
     JAEGERTRACINGC_SAMPLER_SUBCLASS;
-    char* service_name;
-    char* sampling_server_url;
-    jaeger_sampler* sampler;
+    jaeger_sampler_choice sampler;
     int max_operations;
     jaeger_duration sampling_refresh_interval;
-    bool running;
+    jaeger_metrics* metrics;
+    jaeger_ticker ticker;
+    jaeger_http_sampling_manager manager;
     pthread_mutex_t mutex;
 } jaeger_remotely_controlled_sampler;
 
-void jaeger_remotely_controlled_sampler_init(
+bool jaeger_remotely_controlled_sampler_init(
     jaeger_remotely_controlled_sampler* sampler,
-    char* service_name,
-    jaeger_sampler* initial_sampler,
+    const char* service_name,
+    const char* sampling_server_url,
+    const jaeger_sampler_choice* initial_sampler,
     int max_operations,
     const jaeger_duration* sampling_refresh_interval,
     jaeger_metrics* metrics);
