@@ -159,6 +159,9 @@ typedef struct jaeger_http_sampling_manager {
     http_parser_settings settings;
     int request_length;
     char request_buffer[JAEGERTRACINGC_HTTP_SAMPLING_MANAGER_REQUEST_MAX_LEN];
+    int response_length;
+    int response_capacity;
+    char* response_buffer;
 } jaeger_http_sampling_manager;
 
 typedef struct jaeger_remotely_controlled_sampler {

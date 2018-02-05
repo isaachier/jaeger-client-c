@@ -18,12 +18,13 @@
 
 #include <arpa/inet.h>
 #include <errno.h>
+#include <jansson.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <unistd.h>
 
-#define SAMPLER_GROWTH_RATIO 2
+#define SAMPLER_GROWTH_FACTOR 2
 
 static bool jaeger_const_sampler_is_sampled(jaeger_sampler* sampler,
                                             const jaeger_trace_id* trace_id,
@@ -317,7 +318,7 @@ jaeger_adaptive_sampler_resize_op_samplers(jaeger_adaptive_sampler* sampler)
     assert(sampler != NULL);
     assert(sampler->num_op_samplers <= sampler->op_samplers_capacity);
     const int new_capacity =
-        JAEGERTRACINGC_MIN(sampler->num_op_samplers * SAMPLER_GROWTH_RATIO,
+        JAEGERTRACINGC_MIN(sampler->num_op_samplers * SAMPLER_GROWTH_FACTOR,
                            sampler->max_operations);
     jaeger_operation_sampler* new_op_samplers = jaeger_realloc(
         sampler->op_samplers, sizeof(jaeger_operation_sampler) * new_capacity);
@@ -565,6 +566,10 @@ jaeger_http_sampling_manager_parser_on_headers_complete(http_parser* parser)
     return 0;
 }
 
+#define RESPONSE_BUFFER_GROWTH_FACTOR 2
+#define RESPONSE_BUFFER_INIT_SIZE \
+    JAEGERTRACINGC_HTTP_SAMPLING_MANAGER_REQUEST_MAX_LEN
+
 static int jaeger_http_sampling_manager_parser_on_body(http_parser* parser,
                                                        const char* at,
                                                        size_t len)
@@ -573,7 +578,25 @@ static int jaeger_http_sampling_manager_parser_on_body(http_parser* parser,
     assert(parser->data != NULL);
     jaeger_http_sampling_manager* manager =
         (jaeger_http_sampling_manager*) parser->data;
-    return manager->fd;
+    if (manager->response_length + len > manager->response_capacity) {
+        const int new_response_capacity =
+            manager->response_capacity * RESPONSE_BUFFER_GROWTH_FACTOR;
+        char* new_response_buffer =
+            jaeger_realloc(manager->response_buffer, new_response_capacity);
+        if (new_response_buffer == NULL) {
+            fprintf(stderr,
+                    "ERROR: Cannot allocate larger buffer for JSON sampling "
+                    "response, current length = %d, current capacity = %d\n",
+                    manager->response_length,
+                    manager->response_capacity);
+            return 1;
+        }
+        manager->response_capacity = new_response_capacity;
+        manager->response_buffer = new_response_buffer;
+    }
+    memcpy(&manager->response_buffer[manager->response_length], at, len);
+    manager->response_length += len;
+    return 0;
 }
 
 static inline bool
@@ -654,6 +677,18 @@ jaeger_http_sampling_manager_init(jaeger_http_sampling_manager* manager,
         &jaeger_http_sampling_manager_parser_on_headers_complete;
     manager->settings.on_body = &jaeger_http_sampling_manager_parser_on_body;
 
+    manager->response_buffer = jaeger_malloc(RESPONSE_BUFFER_INIT_SIZE);
+    if (manager->response_buffer == NULL) {
+        fprintf(stderr,
+                "ERROR: Cannot allocate response buffer in HTTP sampling "
+                "manager, size = %d\n",
+                RESPONSE_BUFFER_INIT_SIZE);
+        close(manager->fd);
+        return false;
+    }
+    manager->response_length = 0;
+    manager->response_capacity = RESPONSE_BUFFER_INIT_SIZE;
+
     return jaeger_http_sampling_manager_format_request(manager, &parsed_url);
 }
 
@@ -678,6 +713,42 @@ static inline bool jaeger_http_sampling_manager_get_sampling_strategies(
         return false;
     }
 
+    char chunk_buffer[JAEGERTRACINGC_HTTP_SAMPLING_MANAGER_REQUEST_MAX_LEN];
+    int num_read = read(manager->fd, &chunk_buffer[0], sizeof(chunk_buffer));
+    while (num_read > 0) {
+        const int num_parsed = http_parser_execute(
+            &manager->parser, &manager->settings, &chunk_buffer[0], num_read);
+        if (num_parsed != num_read) {
+            return false;
+        }
+        num_read = read(manager->fd, &chunk_buffer[0], sizeof(chunk_buffer));
+    }
+
+    json_error_t err;
+    json_t* response_json = json_loadb(manager->response_buffer,
+                                       manager->response_length,
+                                       JSON_REJECT_DUPLICATES,
+                                       &err);
+    if (response_json == NULL) {
+        fprintf(stderr,
+                "ERROR: JSON decoding error, message = \"%s\", "
+                "source = \"%s\", line = %d, column = %d, position = %d\n",
+                err.text,
+                err.source,
+                err.line,
+                err.column,
+                err.position);
+        return false;
+    }
+
+    /* Although we could shrink the response buffer at this point, the next
+     * response will probably need a similar sized response buffer. To avoid
+     * incurring performance hits for multiple allocations, we can keep the
+     * buffer until the manager is freed.
+     */
+
+    /* TODO: Decode JSON into response object */
+
     return true;
 }
 
@@ -686,6 +757,9 @@ jaeger_http_sampling_manager_destroy(jaeger_http_sampling_manager* manager)
 {
     assert(manager != NULL);
     close(manager->fd);
+    if (manager->response_buffer != NULL) {
+        jaeger_free(manager->response_buffer);
+    }
 }
 
 static bool
@@ -774,7 +848,8 @@ bool jaeger_remotely_controlled_sampler_init(
         interval,
         metrics,
         JAEGERTRACINGC_TICKER_INIT,
-        (jaeger_http_sampling_manager){NULL, NULL, -1, {}, {}, 0, {'\0'}},
+        (jaeger_http_sampling_manager){
+            NULL, NULL, -1, {}, {}, 0, {'\0'}, 0, 0, NULL},
         PTHREAD_MUTEX_INITIALIZER};
 
     if (initial_sampler != NULL) {

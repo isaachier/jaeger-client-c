@@ -15,6 +15,7 @@
  */
 
 #include "jaegertracingc/init.h"
+#include <jansson.h>
 #include <pthread.h>
 #include <stdlib.h>
 #include <time.h>
@@ -22,6 +23,7 @@
 static inline void init_lib()
 {
     jaeger_alloc = jaeger_built_in_allocator();
+    json_set_alloc_funcs(&jaeger_malloc, &jaeger_free);
 
 #ifndef HAVE_RAND_R
     /* Set up global random seed */
