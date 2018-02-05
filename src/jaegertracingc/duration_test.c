@@ -15,8 +15,8 @@
  */
 
 #include "jaegertracingc/duration.h"
-#include "unity.h"
 #include <time.h>
+#include "unity.h"
 
 #define NS_PER_S JAEGERTRACINGC_NANOSECONDS_PER_SECOND
 

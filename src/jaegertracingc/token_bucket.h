@@ -21,9 +21,9 @@
 extern "C" {
 #endif /* __cplusplus */
 
+#include <assert.h>
 #include "jaegertracingc/common.h"
 #include "jaegertracingc/duration.h"
-#include <assert.h>
 
 typedef struct jaeger_token_bucket {
     double credits_per_second;

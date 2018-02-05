@@ -15,9 +15,9 @@
  */
 
 #include "jaegertracingc/tag.h"
-#include "unity.h"
 #include <stdio.h>
 #include <string.h>
+#include "unity.h"
 
 void test_tag()
 {

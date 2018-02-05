@@ -15,8 +15,8 @@
  */
 
 #include "jaegertracingc/alloc.h"
-#include "unity.h"
 #include <time.h>
+#include "unity.h"
 
 void test_alloc()
 {

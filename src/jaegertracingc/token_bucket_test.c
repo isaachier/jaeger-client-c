@@ -15,10 +15,10 @@
  */
 
 #include "jaegertracingc/token_bucket.h"
+#include <time.h>
 #include "jaegertracingc/alloc.h"
 #include "jaegertracingc/duration.h"
 #include "unity.h"
-#include <time.h>
 
 #define NS_PER_S JAEGERTRACINGC_NANOSECONDS_PER_SECOND
 

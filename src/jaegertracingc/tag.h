@@ -21,12 +21,12 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include "jaegertracingc/alloc.h"
-#include "jaegertracingc/common.h"
-#include "jaegertracingc/types.h"
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
+#include "jaegertracingc/alloc.h"
+#include "jaegertracingc/common.h"
+#include "jaegertracingc/types.h"
 
 #define JAEGERTRACINGC_TAGS_INIT_SIZE 10
 #define JAEGERTRACINGC_TAGS_RESIZE_FACTOR 2

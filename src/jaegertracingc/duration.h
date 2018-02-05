@@ -21,9 +21,9 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include "jaegertracingc/common.h"
 #include <assert.h>
 #include <time.h>
+#include "jaegertracingc/common.h"
 
 #define JAEGERTRACINGC_NANOSECONDS_PER_SECOND 1000000000
 
