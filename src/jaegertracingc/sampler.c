@@ -242,17 +242,17 @@ void jaeger_guaranteed_throughput_probabilistic_sampler_update(
 }
 
 typedef Jaegertracing__Protobuf__SamplingManager__PerOperationSamplingStrategy__OperationSamplingStrategy
-    jaeger_operation_sampling_strategy;
+    jaeger_operation_strategy;
 
-static inline jaeger_operation_sampler* samplers_from_strategies(
-    const jaeger_per_operation_sampling_strategy* strategies,
-    int* const num_op_samplers)
+static inline jaeger_operation_sampler*
+samplers_from_strategies(const jaeger_per_operation_strategy* strategies,
+                         int* const num_op_samplers)
 {
     assert(strategies != NULL);
     assert(num_op_samplers != NULL);
     *num_op_samplers = 0;
     for (int i = 0; i < strategies->n_per_operation_strategy; i++) {
-        const jaeger_operation_sampling_strategy* strategy =
+        const jaeger_operation_strategy* strategy =
             strategies->per_operation_strategy[i];
         if (strategy == NULL) {
             fprintf(stderr, "WARNING: Encountered null operation strategy\n");
@@ -278,7 +278,7 @@ static inline jaeger_operation_sampler* samplers_from_strategies(
     bool success = true;
     int index = 0;
     for (int i = 0; i < strategies->n_per_operation_strategy; i++) {
-        const jaeger_operation_sampling_strategy* strategy =
+        const jaeger_operation_strategy* strategy =
             strategies->per_operation_strategy[i];
         if (strategy == NULL || strategy->probabilistic == NULL) {
             continue;
@@ -401,7 +401,7 @@ static void jaeger_adaptive_sampler_close(jaeger_sampler* sampler)
 
 bool jaeger_adaptive_sampler_init(
     jaeger_adaptive_sampler* sampler,
-    const jaeger_per_operation_sampling_strategy* strategies,
+    const jaeger_per_operation_strategy* strategies,
     int max_operations)
 {
     assert(sampler != NULL);
@@ -420,7 +420,7 @@ bool jaeger_adaptive_sampler_init(
 
 void jaeger_adaptive_sampler_update(
     jaeger_adaptive_sampler* sampler,
-    const jaeger_per_operation_sampling_strategy* strategies)
+    const jaeger_per_operation_strategy* strategies)
 {
     assert(sampler != NULL);
     assert(strategies != NULL);
@@ -428,7 +428,7 @@ void jaeger_adaptive_sampler_update(
         strategies->default_lower_bound_traces_per_second;
     pthread_mutex_lock(&sampler->mutex);
     for (int i = 0; i < strategies->n_per_operation_strategy; i++) {
-        const jaeger_operation_sampling_strategy* strategy =
+        const jaeger_operation_strategy* strategy =
             strategies->per_operation_strategy[i];
         bool found_match = false;
         if (strategy == NULL) {
@@ -706,10 +706,11 @@ jaeger_http_sampling_manager_init(jaeger_http_sampling_manager* manager,
     } while (0)
 
 typedef Jaegertracing__Protobuf__SamplingManager__ProbabilisticSamplingStrategy
-    jaeger_sampling_probabilistic_strategy;
+    jaeger_probabilistic_strategy;
 
-static inline bool parse_probabilistic_sampling_json(
-    jaeger_sampling_probabilistic_strategy* strategy, json_t* json)
+static inline bool
+parse_probabilistic_sampling_json(jaeger_probabilistic_strategy* strategy,
+                                  json_t* json)
 {
     assert(strategy == NULL);
     assert(json == NULL);
@@ -725,10 +726,11 @@ static inline bool parse_probabilistic_sampling_json(
 }
 
 typedef Jaegertracing__Protobuf__SamplingManager__RateLimitingSamplingStrategy
-    jaeger_sampling_rate_limiting_strategy;
+    jaeger_rate_limiting_strategy;
 
-static inline bool parse_rate_limiting_sampling_json(
-    jaeger_sampling_rate_limiting_strategy* strategy, json_t* json)
+static inline bool
+parse_rate_limiting_sampling_json(jaeger_rate_limiting_strategy* strategy,
+                                  json_t* json)
 {
     assert(strategy == NULL);
     assert(json == NULL);
@@ -743,25 +745,148 @@ static inline bool parse_rate_limiting_sampling_json(
     return true;
 }
 
-typedef Jaegertracing__Protobuf__SamplingManager__PerOperationSamplingStrategy
-    jaeger_sampling_per_operation_strategy;
-
-static inline bool parse_per_operation_sampling_json(
-    jaeger_sampling_per_operation_strategy* strategy, json_t* json)
+static inline bool
+parse_per_operation_sampling_json(jaeger_per_operation_strategy* strategy,
+                                  json_t* json)
 {
     assert(strategy == NULL);
     assert(json == NULL);
-    /* TODO
-    json_error_t err;*/
-    return true;
+
+    json_t* array = NULL;
+    json_error_t err;
+    const int result =
+        json_unpack_ex(json,
+                       &err,
+                       0,
+                       "{sf sf s?O}",
+                       "defaultSamplingProbability",
+                       &strategy->default_sampling_probability,
+                       "defaultLowerBoundTracesPerSecond",
+                       &strategy->default_lower_bound_traces_per_second,
+                       "perOperationStrategies",
+                       &array);
+
+    if (result != 0) {
+        PRINT_ERR_MSG;
+        return false;
+    }
+
+    if (array == NULL) {
+        strategy->n_per_operation_strategy = 0;
+        strategy->per_operation_strategy = NULL;
+        return true;
+    }
+
+    if (!json_is_array(array)) {
+        fprintf(stderr,
+                "ERROR: perOperationStrategies must be an array, JSON: ");
+        json_dumpf(array, stderr, 0);
+        fprintf(stderr, "\n");
+        json_decref(array);
+        return false;
+    }
+
+    strategy->n_per_operation_strategy = json_array_size(array);
+    strategy->per_operation_strategy =
+        jaeger_malloc(sizeof(jaeger_operation_strategy*) *
+                      strategy->n_per_operation_strategy);
+    if (strategy->per_operation_strategy == NULL) {
+        fprintf(stderr,
+                "ERROR: Cannot allocate perOperationStrategies for response "
+                "JSON, num operation strategies = %zu\n",
+                strategy->n_per_operation_strategy);
+        return false;
+    }
+
+    bool success = true;
+    int num_allocated = 0;
+    for (int i = 0; i < (int) strategy->n_per_operation_strategy; i++) {
+        jaeger_operation_strategy* op_strategy =
+            jaeger_malloc(sizeof(jaeger_operation_strategy));
+        if (op_strategy == NULL) {
+            fprintf(stderr,
+                    "ERROR: Cannot allocate operation strategy, num operation "
+                    "strategies = %zu\n",
+                    strategy->n_per_operation_strategy);
+            success = false;
+            break;
+        }
+        num_allocated++;
+        strategy->per_operation_strategy[i] = op_strategy;
+
+        op_strategy->probabilistic =
+            jaeger_malloc(sizeof(jaeger_probabilistic_strategy));
+        if (op_strategy->probabilistic == NULL) {
+            fprintf(
+                stderr,
+                "ERROR: Cannot allocate probabilistic strategy, num operation "
+                "strategies = %zu\n",
+                strategy->n_per_operation_strategy);
+            success = false;
+            break;
+        }
+
+        /* Borrow reference */
+        json_t* op_json = json_array_get(array, i);
+        assert(op_json != NULL);
+        json_t* probabilistic_json = NULL;
+        const char* operation_name = NULL;
+        const int result = json_unpack_ex(op_json,
+                                          &err,
+                                          0,
+                                          "{ss sO}",
+                                          "operation",
+                                          &operation_name,
+                                          "probabilisticSampling",
+                                          &probabilistic_json);
+        if (result != 0) {
+            PRINT_ERR_MSG;
+            success = false;
+            break;
+        }
+
+        op_strategy->operation = jaeger_strdup(operation_name);
+        if (op_strategy->operation == NULL) {
+            fprintf(stderr,
+                    "ERROR: Cannot allocate operation name for operation "
+                    "strategy, operation name = \"%s\"",
+                    operation_name);
+            success = false;
+            break;
+        }
+        if (!parse_probabilistic_sampling_json(op_strategy->probabilistic,
+                                               probabilistic_json)) {
+            success = false;
+            break;
+        }
+    }
+
+    if (!success) {
+        for (int i = 0; i < num_allocated; i++) {
+            jaeger_operation_strategy* op_strategy =
+                strategy->per_operation_strategy[i];
+            if (op_strategy != NULL) {
+                if (op_strategy->probabilistic != NULL) {
+                    jaeger_free(op_strategy->probabilistic);
+                }
+                jaeger_free(op_strategy);
+            }
+        }
+        if (strategy->per_operation_strategy) {
+            jaeger_free(strategy->per_operation_strategy);
+        }
+    }
+
+    json_decref(array);
+
+    return success;
 }
 
 typedef Jaegertracing__Protobuf__SamplingManager__SamplingStrategyResponse
-    jaeger_sampling_strategy_response;
+    jaeger_strategy_response;
 
 static inline bool jaeger_http_sampling_manager_parse_json_response(
-    jaeger_http_sampling_manager* manager,
-    jaeger_sampling_strategy_response* response)
+    jaeger_http_sampling_manager* manager, jaeger_strategy_response* response)
 {
     assert(manager != NULL);
     assert(response != NULL);
@@ -850,8 +975,7 @@ cleanup:
 #undef ERR_FMT
 
 static inline bool jaeger_http_sampling_manager_get_sampling_strategies(
-    jaeger_http_sampling_manager* manager,
-    jaeger_sampling_strategy_response* response)
+    jaeger_http_sampling_manager* manager, jaeger_strategy_response* response)
 {
     assert(manager != NULL);
     assert(response != NULL);
@@ -944,7 +1068,7 @@ static void jaeger_remotely_controlled_sampler_update(void* context)
     assert(context != NULL);
     jaeger_remotely_controlled_sampler* sampler =
         (jaeger_remotely_controlled_sampler*) context;
-    jaeger_sampling_strategy_response response;
+    jaeger_strategy_response response;
     const bool result = jaeger_http_sampling_manager_get_sampling_strategies(
         &sampler->manager, &response);
     if (result) {

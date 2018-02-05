@@ -45,7 +45,7 @@ extern "C" {
     void (*close)(struct jaeger_sampler * sampler)
 
 typedef Jaegertracing__Protobuf__SamplingManager__PerOperationSamplingStrategy
-    jaeger_per_operation_sampling_strategy;
+    jaeger_per_operation_strategy;
 
 typedef struct jaeger_sampler {
     JAEGERTRACINGC_SAMPLER_SUBCLASS;
@@ -122,12 +122,12 @@ typedef struct jaeger_adaptive_sampler {
 
 bool jaeger_adaptive_sampler_init(
     jaeger_adaptive_sampler* sampler,
-    const jaeger_per_operation_sampling_strategy* strategies,
+    const jaeger_per_operation_strategy* strategies,
     int max_operations);
 
 void jaeger_adaptive_sampler_update(
     jaeger_adaptive_sampler* sampler,
-    const jaeger_per_operation_sampling_strategy* strategies);
+    const jaeger_per_operation_strategy* strategies);
 
 typedef enum jaeger_sampler_type {
     jaeger_const_sampler_type,
