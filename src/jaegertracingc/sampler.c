@@ -433,6 +433,7 @@ void jaeger_adaptive_sampler_update(
         bool found_match = false;
         if (strategy == NULL) {
             fprintf(stderr, "WARNING: Encountered null operation strategy\n");
+            continue;
         }
         if (strategy->probabilistic == NULL) {
             fprintf(stderr,
@@ -692,8 +693,161 @@ jaeger_http_sampling_manager_init(jaeger_http_sampling_manager* manager,
     return jaeger_http_sampling_manager_format_request(manager, &parsed_url);
 }
 
+#define ERR_FMT                                                              \
+    "message = \"%s\", source = \"%s\", line = %d, column = %d, position = " \
+    "%d\n"
+
+#define ERR_ARGS err.text, err.source, err.line, err.column, err.position
+
+#define PRINT_ERR_MSG                                                         \
+    do {                                                                      \
+        fprintf(                                                              \
+            stderr, "ERROR: Cannot parse JSON response, " ERR_FMT, ERR_ARGS); \
+    } while (0)
+
+typedef Jaegertracing__Protobuf__SamplingManager__ProbabilisticSamplingStrategy
+    jaeger_sampling_probabilistic_strategy;
+
+static inline bool parse_probabilistic_sampling_json(
+    jaeger_sampling_probabilistic_strategy* strategy, json_t* json)
+{
+    assert(strategy == NULL);
+    assert(json == NULL);
+    json_error_t err;
+    double sampling_rate = 0;
+    const int result =
+        json_unpack_ex(json, &err, 0, "{sf}", "samplingRate", &sampling_rate);
+    if (result != 0) {
+        PRINT_ERR_MSG;
+        return false;
+    }
+    return true;
+}
+
+typedef Jaegertracing__Protobuf__SamplingManager__RateLimitingSamplingStrategy
+    jaeger_sampling_rate_limiting_strategy;
+
+static inline bool parse_rate_limiting_sampling_json(
+    jaeger_sampling_rate_limiting_strategy* strategy, json_t* json)
+{
+    assert(strategy == NULL);
+    assert(json == NULL);
+    json_error_t err;
+    double max_traces_per_second = 0;
+    const int result = json_unpack_ex(
+        json, &err, 0, "{sf}", "maxTracesPerSecond", &max_traces_per_second);
+    if (result != 0) {
+        PRINT_ERR_MSG;
+        return false;
+    }
+    return true;
+}
+
+typedef Jaegertracing__Protobuf__SamplingManager__PerOperationSamplingStrategy
+    jaeger_sampling_per_operation_strategy;
+
+static inline bool parse_per_operation_sampling_json(
+    jaeger_sampling_per_operation_strategy* strategy, json_t* json)
+{
+    assert(strategy == NULL);
+    assert(json == NULL);
+    /* TODO
+    json_error_t err;*/
+    return true;
+}
+
 typedef Jaegertracing__Protobuf__SamplingManager__SamplingStrategyResponse
     jaeger_sampling_strategy_response;
+
+static inline bool jaeger_http_sampling_manager_parse_json_response(
+    jaeger_http_sampling_manager* manager,
+    jaeger_sampling_strategy_response* response)
+{
+    assert(manager != NULL);
+    assert(response != NULL);
+
+    json_error_t err;
+    json_t* response_json =
+        json_loads(manager->response_buffer, JSON_REJECT_DUPLICATES, &err);
+
+    if (response_json == NULL) {
+        fprintf(stderr, "ERROR: JSON decoding error, " ERR_FMT, ERR_ARGS);
+        return false;
+    }
+
+    /* Although we could shrink the response buffer at this point, the next
+     * response will probably need a response buffer about the same size. To
+     * avoid incurring performance hits for multiple allocations, we can keep
+     * the buffer until the manager is freed.
+     */
+
+    json_t* probabilistic_json = NULL;
+    json_t* rate_limiting_json = NULL;
+    json_t* per_operation_json = NULL;
+    const int result = json_unpack_ex(response_json,
+                                      &err,
+                                      0,
+                                      "{sO* sO* sO*}",
+                                      "probabilisticSampling",
+                                      &probabilistic_json,
+                                      "rateLimitingSampling",
+                                      &rate_limiting_json,
+                                      "operationSampling",
+                                      &per_operation_json);
+    bool success = true;
+    if (result != 0) {
+        PRINT_ERR_MSG;
+        success = false;
+        goto cleanup;
+    }
+
+#define STRATEGY_CASE(x) \
+    JAEGERTRACING__PROTOBUF__SAMPLING_MANAGER__SAMPLING_STRATEGY_RESPONSE__STRATEGY_##x
+
+    if (probabilistic_json != NULL) {
+        response->strategy_case = STRATEGY_CASE(PROBABILISTIC);
+        success = parse_probabilistic_sampling_json(response->probabilistic,
+                                                    probabilistic_json);
+    }
+    else if (rate_limiting_json != NULL) {
+        response->strategy_case = STRATEGY_CASE(RATE_LIMITING);
+        success = parse_rate_limiting_sampling_json(response->rate_limiting,
+                                                    rate_limiting_json);
+    }
+    else {
+        if (per_operation_json == NULL) {
+            fprintf(stderr,
+                    "WARNING: JSON response contains no strategies, response = "
+                    "\"%s\"\n",
+                    manager->response_buffer);
+            success = false;
+            goto cleanup;
+        }
+
+        response->strategy_case = STRATEGY_CASE(PER_OPERATION);
+        success = parse_per_operation_sampling_json(response->per_operation,
+                                                    per_operation_json);
+    }
+
+#undef STRATEGY_CASE
+
+cleanup:
+    json_decref(response_json);
+    if (probabilistic_json != NULL) {
+        json_decref(probabilistic_json);
+    }
+    if (rate_limiting_json != NULL) {
+        json_decref(rate_limiting_json);
+    }
+    if (per_operation_json != NULL) {
+        json_decref(per_operation_json);
+    }
+    return success;
+}
+
+#undef PRINT_ERR_MSG
+#undef ERR_ARGS
+#undef ERR_FMT
 
 static inline bool jaeger_http_sampling_manager_get_sampling_strategies(
     jaeger_http_sampling_manager* manager,
@@ -724,32 +878,13 @@ static inline bool jaeger_http_sampling_manager_get_sampling_strategies(
         num_read = read(manager->fd, &chunk_buffer[0], sizeof(chunk_buffer));
     }
 
-    json_error_t err;
-    json_t* response_json = json_loadb(manager->response_buffer,
-                                       manager->response_length,
-                                       JSON_REJECT_DUPLICATES,
-                                       &err);
-    if (response_json == NULL) {
-        fprintf(stderr,
-                "ERROR: JSON decoding error, message = \"%s\", "
-                "source = \"%s\", line = %d, column = %d, position = %d\n",
-                err.text,
-                err.source,
-                err.line,
-                err.column,
-                err.position);
-        return false;
+    if (manager->response_buffer != NULL) {
+        manager->response_buffer[manager->response_length] = '\0';
+        /* Do not increase length because string should not contain null byte.
+         */
     }
 
-    /* Although we could shrink the response buffer at this point, the next
-     * response will probably need a similar sized response buffer. To avoid
-     * incurring performance hits for multiple allocations, we can keep the
-     * buffer until the manager is freed.
-     */
-
-    /* TODO: Decode JSON into response object */
-
-    return true;
+    return jaeger_http_sampling_manager_parse_json_response(manager, response);
 }
 
 static inline void
