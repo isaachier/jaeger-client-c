@@ -33,7 +33,7 @@ if(JAEGERTRACINGC_COVERAGE)
     "${CMAKE_CURRENT_SOURCE_DIR}/src/jaegertracingc/*_test.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/jaegertracingc/*_test.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/jaegertracingc/protoc-gen/*"
-    "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/unity/*")
+    "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/unity/src/*")
 endif()
 
 cmake_dependent_option(JAEGERTRACINGC_VERBOSE_ALLOC "Print all allocations" OFF
