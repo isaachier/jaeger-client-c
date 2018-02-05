@@ -47,6 +47,44 @@ extern "C" {
 typedef Jaegertracing__Protobuf__SamplingManager__PerOperationSamplingStrategy
     jaeger_per_operation_strategy;
 
+typedef Jaegertracing__Protobuf__SamplingManager__PerOperationSamplingStrategy__OperationSamplingStrategy
+    jaeger_operation_strategy;
+
+static inline void jaeger_operation_strategy_destroy(
+    jaeger_operation_strategy* strategy)
+{
+    assert(strategy != NULL);
+    if (strategy->operation != NULL) {
+        jaeger_free(strategy->operation);
+        strategy->operation = NULL;
+    }
+    if (strategy->probabilistic != NULL) {
+        jaeger_free(strategy->probabilistic);
+        strategy->probabilistic = NULL;
+    }
+    if (strategy->rate_limiting != NULL) {
+        jaeger_free(strategy->rate_limiting);
+        strategy->rate_limiting = NULL;
+    }
+}
+
+static inline void jaeger_per_operation_strategy_destroy(
+    jaeger_per_operation_strategy* strategy)
+{
+    assert(strategy != NULL);
+    if (strategy->per_operation_strategy != NULL) {
+        for (int i = 0; i < strategy->n_per_operation_strategy; i++) {
+            if (strategy->per_operation_strategy[i] != NULL) {
+                jaeger_operation_strategy_destroy(
+                    strategy->per_operation_strategy[i]);
+                jaeger_free(strategy->per_operation_strategy[i]);
+            }
+        }
+        jaeger_free(strategy->per_operation_strategy);
+        strategy->per_operation_strategy = NULL;
+    }
+}
+
 typedef struct jaeger_sampler {
     JAEGERTRACINGC_SAMPLER_SUBCLASS;
 } jaeger_sampler;
@@ -106,6 +144,7 @@ jaeger_operation_sampler_destroy(jaeger_operation_sampler* op_sampler)
     assert(op_sampler != NULL);
     if (op_sampler->operation_name != NULL) {
         jaeger_free(op_sampler->operation_name);
+        op_sampler->operation_name = NULL;
     }
 }
 
@@ -124,10 +163,6 @@ bool jaeger_adaptive_sampler_init(
     jaeger_adaptive_sampler* sampler,
     const jaeger_per_operation_strategy* strategies,
     int max_operations);
-
-void jaeger_adaptive_sampler_update(
-    jaeger_adaptive_sampler* sampler,
-    const jaeger_per_operation_strategy* strategies);
 
 typedef enum jaeger_sampler_type {
     jaeger_const_sampler_type,
@@ -148,6 +183,33 @@ typedef struct jaeger_sampler_choice {
         jaeger_adaptive_sampler adaptive_sampler;
     };
 } jaeger_sampler_choice;
+
+static inline void jaeger_sampler_choice_close(
+    jaeger_sampler_choice* sampler)
+{
+#define SAMPLER_TYPE_CASE(type)                          \
+    case jaeger_##type##_sampler_type:                   \
+        sampler->type##_sampler.close(                   \
+            (jaeger_sampler*) &sampler->type##_sampler); \
+        break
+
+    switch (sampler->type) {
+        SAMPLER_TYPE_CASE(const);
+        SAMPLER_TYPE_CASE(probabilistic);
+        SAMPLER_TYPE_CASE(rate_limiting);
+        SAMPLER_TYPE_CASE(guaranteed_throughput_probabilistic);
+        SAMPLER_TYPE_CASE(adaptive);
+    default:
+        fprintf(
+            stderr,
+            "WARNING: Invalid sampler type in sampler choice, sampler type = "
+            "%d\n",
+            sampler->type);
+        break;
+    }
+
+#undef SAMPLER_TYPE_CASE
+}
 
 #define JAEGERTRACINGC_HTTP_SAMPLING_MANAGER_REQUEST_MAX_LEN 256
 

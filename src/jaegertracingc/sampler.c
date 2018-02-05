@@ -241,9 +241,6 @@ void jaeger_guaranteed_throughput_probabilistic_sampler_update(
     }
 }
 
-typedef Jaegertracing__Protobuf__SamplingManager__PerOperationSamplingStrategy__OperationSamplingStrategy
-    jaeger_operation_strategy;
-
 static inline jaeger_operation_sampler*
 samplers_from_strategies(const jaeger_per_operation_strategy* strategies,
                          int* const num_op_samplers)
@@ -418,12 +415,13 @@ bool jaeger_adaptive_sampler_init(
     return true;
 }
 
-void jaeger_adaptive_sampler_update(
+static inline bool jaeger_adaptive_sampler_update(
     jaeger_adaptive_sampler* sampler,
     const jaeger_per_operation_strategy* strategies)
 {
     assert(sampler != NULL);
     assert(strategies != NULL);
+    bool success = true;
     const double lower_bound =
         strategies->default_lower_bound_traces_per_second;
     pthread_mutex_lock(&sampler->mutex);
@@ -452,12 +450,19 @@ void jaeger_adaptive_sampler_update(
             }
         }
 
-        if (!found_match) {
+        /* Only consider allocating new samplers if we have not had issues with
+         * memory. Otherwise, success will be false and we will skip this part
+         * entirely.
+         */
+        if (!found_match && success) {
             if (sampler->num_op_samplers == sampler->op_samplers_capacity &&
                 !jaeger_adaptive_sampler_resize_op_samplers(sampler)) {
                 fprintf(stderr,
                         "ERROR: Cannot allocate more operation samplers "
                         "in adaptive sampler\n");
+                success = false;
+                /* Continue with loop so we can update existing samplers despite
+                 * memory issues. */
                 continue;
             }
             jaeger_operation_sampler* op_sampler =
@@ -468,12 +473,17 @@ void jaeger_adaptive_sampler_update(
                         "ERROR: Cannot allocate operation sampler, "
                         "operation name = \"%s\"\n",
                         strategy->operation);
+                jaeger_free(op_sampler);
+                success = false;
+                /* Continue with loop so we can update existing samplers despite
+                 * memory issues. */
                 continue;
             }
             sampler->num_op_samplers++;
         }
     }
     pthread_mutex_unlock(&sampler->mutex);
+    return success;
 }
 
 static inline bool jaeger_http_sampling_manager_format_request(
@@ -693,6 +703,9 @@ jaeger_http_sampling_manager_init(jaeger_http_sampling_manager* manager,
     return jaeger_http_sampling_manager_format_request(manager, &parsed_url);
 }
 
+#define STRATEGY_CASE(x) \
+    JAEGERTRACING__PROTOBUF__SAMPLING_MANAGER__SAMPLING_STRATEGY_RESPONSE__STRATEGY_##x
+
 #define ERR_FMT                                                              \
     "message = \"%s\", source = \"%s\", line = %d, column = %d, position = " \
     "%d\n"
@@ -862,17 +875,15 @@ parse_per_operation_sampling_json(jaeger_per_operation_strategy* strategy,
     }
 
     if (!success) {
-        for (int i = 0; i < num_allocated; i++) {
-            jaeger_operation_strategy* op_strategy =
-                strategy->per_operation_strategy[i];
-            if (op_strategy != NULL) {
-                if (op_strategy->probabilistic != NULL) {
-                    jaeger_free(op_strategy->probabilistic);
+        if (strategy->per_operation_strategy != NULL) {
+            for (int i = 0; i < num_allocated; i++) {
+                jaeger_operation_strategy* op_strategy =
+                    strategy->per_operation_strategy[i];
+                if (op_strategy != NULL) {
+                    jaeger_operation_strategy_destroy(op_strategy);
+                    jaeger_free(op_strategy);
                 }
-                jaeger_free(op_strategy);
             }
-        }
-        if (strategy->per_operation_strategy) {
             jaeger_free(strategy->per_operation_strategy);
         }
     }
@@ -884,6 +895,25 @@ parse_per_operation_sampling_json(jaeger_per_operation_strategy* strategy,
 
 typedef Jaegertracing__Protobuf__SamplingManager__SamplingStrategyResponse
     jaeger_strategy_response;
+
+static inline void jaeger_strategy_response_destroy(
+    jaeger_strategy_response* response)
+{
+    assert(response != NULL);
+    if (response->per_operation != NULL) {
+        jaeger_per_operation_strategy_destroy(response->per_operation);
+        jaeger_free(response->per_operation);
+        response->per_operation = NULL;
+    }
+    if (response->probabilistic != NULL) {
+        jaeger_free(response->probabilistic);
+        response->probabilistic = NULL;
+    }
+    if (response->rate_limiting != NULL) {
+        jaeger_free(response->rate_limiting);
+        response->rate_limiting = NULL;
+    }
+}
 
 static inline bool jaeger_http_sampling_manager_parse_json_response(
     jaeger_http_sampling_manager* manager, jaeger_strategy_response* response)
@@ -926,9 +956,6 @@ static inline bool jaeger_http_sampling_manager_parse_json_response(
         goto cleanup;
     }
 
-#define STRATEGY_CASE(x) \
-    JAEGERTRACING__PROTOBUF__SAMPLING_MANAGER__SAMPLING_STRATEGY_RESPONSE__STRATEGY_##x
-
     if (probabilistic_json != NULL) {
         response->strategy_case = STRATEGY_CASE(PROBABILISTIC);
         success = parse_probabilistic_sampling_json(response->probabilistic,
@@ -953,8 +980,6 @@ static inline bool jaeger_http_sampling_manager_parse_json_response(
         success = parse_per_operation_sampling_json(response->per_operation,
                                                     per_operation_json);
     }
-
-#undef STRATEGY_CASE
 
 cleanup:
     json_decref(response_json);
@@ -1037,30 +1062,27 @@ static void jaeger_remotely_controlled_sampler_close(jaeger_sampler* sampler)
         (jaeger_remotely_controlled_sampler*) sampler;
     jaeger_ticker_destroy(&s->ticker);
     jaeger_sampler_choice* sampler_choice = &s->sampler;
-
-#define SAMPLER_TYPE_CASE(type)                                 \
-    case jaeger_##type##_sampler_type:                          \
-        sampler_choice->type##_sampler.close(                   \
-            (jaeger_sampler*) &sampler_choice->type##_sampler); \
-        break
-
-    switch (sampler_choice->type) {
-        SAMPLER_TYPE_CASE(const);
-        SAMPLER_TYPE_CASE(probabilistic);
-        SAMPLER_TYPE_CASE(rate_limiting);
-        SAMPLER_TYPE_CASE(guaranteed_throughput_probabilistic);
-        SAMPLER_TYPE_CASE(adaptive);
-    default:
-        fprintf(stderr,
-                "ERROR: Invalid sampler type in sampler choice, sampler type = "
-                "%d\n",
-                sampler_choice->type);
-        break;
-    }
-
-#undef SAMPLER_TYPE_CASE
-
+    jaeger_sampler_choice_close(sampler_choice);
     jaeger_http_sampling_manager_destroy(&s->manager);
+}
+
+static inline bool jaeger_remotely_controlled_sampler_update_adaptive_sampler(
+    jaeger_remotely_controlled_sampler* sampler,
+    const jaeger_per_operation_strategy* strategies)
+{
+    assert(sampler != NULL);
+    assert(strategies != NULL);
+    if (sampler->sampler.type == jaeger_adaptive_sampler_type) {
+        return jaeger_adaptive_sampler_update(
+            &sampler->sampler.adaptive_sampler, strategies);
+    }
+    else {
+        jaeger_sampler_choice_close(&sampler->sampler);
+        sampler->sampler.type = jaeger_adaptive_sampler_type;
+        return jaeger_adaptive_sampler_init(&sampler->sampler.adaptive_sampler,
+                                            strategies,
+                                            sampler->max_operations);
+    }
 }
 
 static void jaeger_remotely_controlled_sampler_update(void* context)
@@ -1071,9 +1093,41 @@ static void jaeger_remotely_controlled_sampler_update(void* context)
     jaeger_strategy_response response;
     const bool result = jaeger_http_sampling_manager_get_sampling_strategies(
         &sampler->manager, &response);
-    if (result) {
-        /* TODO */
+    if (!result) {
+        fprintf(stderr,
+                "ERROR: Cannot get sampling strategies, will retry later\n");
+        if (sampler->metrics != NULL &&
+            sampler->metrics->sampler_query_failure) {
+            sampler->metrics->sampler_query_failure->inc(
+                sampler->metrics->sampler_query_failure, 1);
+        }
+        return;
     }
+
+    pthread_mutex_lock(&sampler->mutex);
+
+    if (sampler->metrics && sampler->metrics->sampler_retrieved) {
+        sampler->metrics->sampler_retrieved->inc(
+            sampler->metrics->sampler_retrieved, 1);
+    }
+
+    if (response.strategy_case == STRATEGY_CASE(PER_OPERATION)) {
+        if (!jaeger_remotely_controlled_sampler_update_adaptive_sampler(
+            sampler, response.per_operation)) {
+            fprintf(
+                stderr,
+                "ERROR: Cannot update adaptive sampler in remotely controlled "
+                "sampler\n");
+        }
+    }
+    else {
+        /* TODO
+         * jaeger_remotely_controlled_sampler_update_sampler(sampler, response); */
+    }
+
+    jaeger_strategy_response_destroy(&response);
+
+    pthread_mutex_unlock(&sampler->mutex);
 }
 
 static const jaeger_duration default_sampling_refresh_interval = {60, 0};
