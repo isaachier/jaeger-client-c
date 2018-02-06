@@ -40,6 +40,9 @@ typedef Jaegertracing__Protobuf__SamplingManager__PerOperationSamplingStrategy__
 #define JAEGERTRACINGC_OPERATION_STRATEGY_INIT \
     JAEGERTRACING__PROTOBUF__SAMPLING_MANAGER__PER_OPERATION_SAMPLING_STRATEGY__OPERATION_SAMPLING_STRATEGY__INIT
 
+#define JAEGERTRACINGC_OPERATION_STRATEGY_TYPE(type) \
+    JAEGERTRACING__PROTOBUF__SAMPLING_MANAGER__PER_OPERATION_SAMPLING_STRATEGY__OPERATION_SAMPLING_STRATEGY__STRATEGY_##type
+
 typedef Jaegertracing__Protobuf__SamplingManager__ProbabilisticSamplingStrategy
     jaeger_probabilistic_strategy;
 

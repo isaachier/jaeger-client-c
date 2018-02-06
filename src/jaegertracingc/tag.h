@@ -94,7 +94,7 @@ static inline bool jaeger_tag_copy(jaeger_tag* dst, const jaeger_tag* src)
 
     dst->value_case = src->value_case;
     switch (src->value_case) {
-    case JAEGERTRACING__PROTOBUF__TAG__VALUE_STR_VALUE: {
+    case JAEGERTRACINGC_TAG_TYPE(STR): {
         dst->str_value = jaeger_strdup(src->str_value);
         if (dst->str_value == NULL) {
             fprintf(stderr,
@@ -104,7 +104,7 @@ static inline bool jaeger_tag_copy(jaeger_tag* dst, const jaeger_tag* src)
             return false;
         }
     } break;
-    case JAEGERTRACING__PROTOBUF__TAG__VALUE_BINARY_VALUE: {
+    case JAEGERTRACINGC_TAG_TYPE(BINARY): {
         dst->binary_value.data = jaeger_malloc(src->binary_value.len);
         if (dst->binary_value.data == NULL) {
             fprintf(stderr,
@@ -117,15 +117,14 @@ static inline bool jaeger_tag_copy(jaeger_tag* dst, const jaeger_tag* src)
                src->binary_value.data,
                src->binary_value.len);
     } break;
-    case JAEGERTRACING__PROTOBUF__TAG__VALUE_DOUBLE_VALUE: {
+    case JAEGERTRACINGC_TAG_TYPE(DOUBLE): {
         dst->double_value = src->double_value;
     } break;
-    case JAEGERTRACING__PROTOBUF__TAG__VALUE_BOOL_VALUE: {
+    case JAEGERTRACINGC_TAG_TYPE(BOOL): {
         dst->bool_value = src->bool_value;
     } break;
     default: {
-        assert(dst->value_case ==
-               JAEGERTRACING__PROTOBUF__TAG__VALUE_LONG_VALUE);
+        assert(dst->value_case == JAEGERTRACINGC_TAG_TYPE(LONG));
         dst->long_value = src->long_value;
     } break;
     }
@@ -140,13 +139,13 @@ static inline void jaeger_tag_destroy(jaeger_tag* tag)
     }
 
     switch (tag->value_case) {
-    case JAEGERTRACING__PROTOBUF__TAG__VALUE_STR_VALUE: {
+    case JAEGERTRACINGC_TAG_TYPE(STR): {
         if (tag->str_value != NULL) {
             jaeger_free(tag->str_value);
             tag->str_value = NULL;
         }
     } break;
-    case JAEGERTRACING__PROTOBUF__TAG__VALUE_BINARY_VALUE: {
+    case JAEGERTRACINGC_TAG_TYPE(BINARY): {
         if (tag->binary_value.data != NULL) {
             jaeger_free(tag->binary_value.data);
             tag->binary_value.data = NULL;

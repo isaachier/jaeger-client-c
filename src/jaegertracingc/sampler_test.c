@@ -33,6 +33,44 @@
 
 #define TEST_DEFAULT_SAMPLING_PROBABILITY 0.5
 
+#define CHECK_TAGS(                                                          \
+    sampler_type, param_type, value_member, param_value, tag_list)           \
+    do {                                                                     \
+        TEST_ASSERT_EQUAL(2, (tag_list).size);                               \
+        TEST_ASSERT_EQUAL_STRING(JAEGERTRACINGC_SAMPLER_TYPE_TAG_KEY,        \
+                                 (tag_list).tags[0].key);                    \
+        TEST_ASSERT_EQUAL(JAEGERTRACINGC_TAG_TYPE(STR),                      \
+                          (tag_list).tags[0].value_case);                    \
+        TEST_ASSERT_EQUAL_STRING(JAEGERTRACINGC_SAMPLER_TYPE_##sampler_type, \
+                                 (tag_list).tags[0].str_value);              \
+        TEST_ASSERT_EQUAL_STRING(JAEGERTRACINGC_SAMPLER_PARAM_TAG_KEY,       \
+                                 (tag_list).tags[1].key);                    \
+        TEST_ASSERT_EQUAL(JAEGERTRACINGC_TAG_TYPE(param_type),               \
+                          (tag_list).tags[1].value_case);                    \
+        TEST_ASSERT_EQUAL((param_value), (tag_list).tags[1].value_member);   \
+    } while (0)
+
+#define CHECK_CONST_TAGS(sampler, tags) \
+    CHECK_TAGS(CONST, BOOL, bool_value, (sampler).decision, (tags))
+
+#define CHECK_PROBABILISTIC_TAGS(sampler, tags) \
+    CHECK_TAGS(                                 \
+        PROBABILISTIC, DOUBLE, double_value, (sampler).sampling_rate, (tags))
+
+#define CHECK_RATE_LIMITING_TAGS(sampler, tags) \
+    CHECK_TAGS(RATE_LIMITING,                   \
+               DOUBLE,                          \
+               double_value,                    \
+               (sampler).max_traces_per_second, \
+               (tags))
+
+#define CHECK_LOWER_BOUND_TAGS(sampler, tags)                       \
+    CHECK_TAGS(LOWER_BOUND,                                         \
+               DOUBLE,                                              \
+               double_value,                                        \
+               (sampler).lower_bound_sampler.max_traces_per_second, \
+               (tags))
+
 void test_const_sampler()
 {
     SET_UP_SAMPLER_TEST();
@@ -42,36 +80,13 @@ void test_const_sampler()
 
     TEST_ASSERT_TRUE(
         c.is_sampled((jaeger_sampler*) &c, &trace_id, operation_name, &tags));
-    c.close((jaeger_sampler*) &c);
-    TEST_ASSERT_EQUAL(2, tags.size);
-    TEST_ASSERT_EQUAL_STRING(JAEGERTRACINGC_SAMPLER_TYPE_TAG_KEY,
-                             tags.tags[0].key);
-    TEST_ASSERT_EQUAL(JAEGERTRACING__PROTOBUF__TAG__VALUE_STR_VALUE,
-                      tags.tags[0].value_case);
-    TEST_ASSERT_EQUAL_STRING(JAEGERTRACINGC_SAMPLER_TYPE_CONST,
-                             tags.tags[0].str_value);
-    TEST_ASSERT_EQUAL_STRING(JAEGERTRACINGC_SAMPLER_PARAM_TAG_KEY,
-                             tags.tags[1].key);
-    TEST_ASSERT_EQUAL(JAEGERTRACING__PROTOBUF__TAG__VALUE_BOOL_VALUE,
-                      tags.tags[1].value_case);
-    TEST_ASSERT_TRUE(tags.tags[1].bool_value);
+    CHECK_CONST_TAGS(c, tags);
 
+    c.close((jaeger_sampler*) &c);
     jaeger_tag_list_clear(&tags);
     jaeger_const_sampler_init(&c, false);
     TEST_ASSERT_FALSE(
         c.is_sampled((jaeger_sampler*) &c, &trace_id, operation_name, &tags));
-    TEST_ASSERT_EQUAL(2, tags.size);
-    TEST_ASSERT_EQUAL_STRING(JAEGERTRACINGC_SAMPLER_TYPE_TAG_KEY,
-                             tags.tags[0].key);
-    TEST_ASSERT_EQUAL(JAEGERTRACING__PROTOBUF__TAG__VALUE_STR_VALUE,
-                      tags.tags[0].value_case);
-    TEST_ASSERT_EQUAL_STRING(JAEGERTRACINGC_SAMPLER_TYPE_CONST,
-                             tags.tags[0].str_value);
-    TEST_ASSERT_EQUAL_STRING(JAEGERTRACINGC_SAMPLER_PARAM_TAG_KEY,
-                             tags.tags[1].key);
-    TEST_ASSERT_EQUAL(JAEGERTRACING__PROTOBUF__TAG__VALUE_BOOL_VALUE,
-                      tags.tags[1].value_case);
-    TEST_ASSERT_FALSE(tags.tags[1].bool_value);
 
     TEAR_DOWN_SAMPLER_TEST(c);
 }
@@ -81,45 +96,19 @@ void test_probabilistic_sampler()
     SET_UP_SAMPLER_TEST();
 
     jaeger_probabilistic_sampler p;
-    jaeger_probabilistic_sampler_init(&p, 1);
+    double sampling_rate = 1;
+    jaeger_probabilistic_sampler_init(&p, sampling_rate);
     TEST_ASSERT_TRUE(
         p.is_sampled((jaeger_sampler*) &p, &trace_id, operation_name, &tags));
+    CHECK_PROBABILISTIC_TAGS(p, tags);
     p.close((jaeger_sampler*) &p);
 
-    TEST_ASSERT_EQUAL(2, tags.size);
-
-    TEST_ASSERT_EQUAL_STRING(JAEGERTRACINGC_SAMPLER_TYPE_TAG_KEY,
-                             tags.tags[0].key);
-    TEST_ASSERT_EQUAL(JAEGERTRACING__PROTOBUF__TAG__VALUE_STR_VALUE,
-                      tags.tags[0].value_case);
-    TEST_ASSERT_EQUAL_STRING(JAEGERTRACINGC_SAMPLER_TYPE_PROBABILISTIC,
-                             tags.tags[0].str_value);
-
-    TEST_ASSERT_EQUAL_STRING(JAEGERTRACINGC_SAMPLER_PARAM_TAG_KEY,
-                             tags.tags[1].key);
-    TEST_ASSERT_EQUAL(JAEGERTRACING__PROTOBUF__TAG__VALUE_DOUBLE_VALUE,
-                      tags.tags[1].value_case);
-    TEST_ASSERT_EQUAL(1, tags.tags[1].double_value);
+    sampling_rate = 0;
     jaeger_tag_list_clear(&tags);
-
-    jaeger_probabilistic_sampler_init(&p, 0);
+    jaeger_probabilistic_sampler_init(&p, sampling_rate);
     TEST_ASSERT_FALSE(
         p.is_sampled((jaeger_sampler*) &p, &trace_id, operation_name, &tags));
-
-    TEST_ASSERT_EQUAL(2, tags.size);
-
-    TEST_ASSERT_EQUAL_STRING(JAEGERTRACINGC_SAMPLER_TYPE_TAG_KEY,
-                             tags.tags[0].key);
-    TEST_ASSERT_EQUAL(JAEGERTRACING__PROTOBUF__TAG__VALUE_STR_VALUE,
-                      tags.tags[0].value_case);
-    TEST_ASSERT_EQUAL_STRING(JAEGERTRACINGC_SAMPLER_TYPE_PROBABILISTIC,
-                             tags.tags[0].str_value);
-
-    TEST_ASSERT_EQUAL_STRING(JAEGERTRACINGC_SAMPLER_PARAM_TAG_KEY,
-                             tags.tags[1].key);
-    TEST_ASSERT_EQUAL(JAEGERTRACING__PROTOBUF__TAG__VALUE_DOUBLE_VALUE,
-                      tags.tags[1].value_case);
-    TEST_ASSERT_EQUAL(0, tags.tags[1].double_value);
+    CHECK_PROBABILISTIC_TAGS(p, tags);
 
     TEAR_DOWN_SAMPLER_TEST(p);
 }
@@ -134,33 +123,12 @@ void test_rate_limiting_sampler()
 
     TEST_ASSERT_TRUE(
         r.is_sampled((jaeger_sampler*) &r, &trace_id, operation_name, &tags));
-    TEST_ASSERT_EQUAL(2, tags.size);
-    TEST_ASSERT_EQUAL_STRING(JAEGERTRACINGC_SAMPLER_TYPE_TAG_KEY,
-                             tags.tags[0].key);
-    TEST_ASSERT_EQUAL(JAEGERTRACING__PROTOBUF__TAG__VALUE_STR_VALUE,
-                      tags.tags[0].value_case);
-    TEST_ASSERT_EQUAL_STRING(JAEGERTRACINGC_SAMPLER_TYPE_RATE_LIMITING,
-                             tags.tags[0].str_value);
-    TEST_ASSERT_EQUAL_STRING(JAEGERTRACINGC_SAMPLER_PARAM_TAG_KEY,
-                             tags.tags[1].key);
-    TEST_ASSERT_EQUAL(JAEGERTRACING__PROTOBUF__TAG__VALUE_DOUBLE_VALUE,
-                      tags.tags[1].value_case);
-    TEST_ASSERT_EQUAL(max_traces_per_second, tags.tags[1].double_value);
+    CHECK_RATE_LIMITING_TAGS(r, tags);
 
     jaeger_tag_list_clear(&tags);
     TEST_ASSERT_FALSE(
         r.is_sampled((jaeger_sampler*) &r, &trace_id, operation_name, &tags));
-    TEST_ASSERT_EQUAL_STRING(JAEGERTRACINGC_SAMPLER_TYPE_TAG_KEY,
-                             tags.tags[0].key);
-    TEST_ASSERT_EQUAL(JAEGERTRACING__PROTOBUF__TAG__VALUE_STR_VALUE,
-                      tags.tags[0].value_case);
-    TEST_ASSERT_EQUAL_STRING(JAEGERTRACINGC_SAMPLER_TYPE_RATE_LIMITING,
-                             tags.tags[0].str_value);
-    TEST_ASSERT_EQUAL_STRING(JAEGERTRACINGC_SAMPLER_PARAM_TAG_KEY,
-                             tags.tags[1].key);
-    TEST_ASSERT_EQUAL(JAEGERTRACING__PROTOBUF__TAG__VALUE_DOUBLE_VALUE,
-                      tags.tags[1].value_case);
-    TEST_ASSERT_EQUAL(max_traces_per_second, tags.tags[1].double_value);
+    CHECK_RATE_LIMITING_TAGS(r, tags);
 
     TEAR_DOWN_SAMPLER_TEST(r);
 }
@@ -196,18 +164,7 @@ void test_guaranteed_throughput_probabilistic_sampler()
         &g, lower_bound, sampling_rate);
     TEST_ASSERT_TRUE(
         g.is_sampled((jaeger_sampler*) &g, &trace_id, operation_name, &tags));
-    TEST_ASSERT_EQUAL(2, tags.size);
-    TEST_ASSERT_EQUAL_STRING(JAEGERTRACINGC_SAMPLER_TYPE_TAG_KEY,
-                             tags.tags[0].key);
-    TEST_ASSERT_EQUAL(JAEGERTRACING__PROTOBUF__TAG__VALUE_STR_VALUE,
-                      tags.tags[0].value_case);
-    TEST_ASSERT_EQUAL_STRING(JAEGERTRACINGC_SAMPLER_TYPE_LOWER_BOUND,
-                             tags.tags[0].str_value);
-    TEST_ASSERT_EQUAL_STRING(JAEGERTRACINGC_SAMPLER_PARAM_TAG_KEY,
-                             tags.tags[1].key);
-    TEST_ASSERT_EQUAL(JAEGERTRACING__PROTOBUF__TAG__VALUE_DOUBLE_VALUE,
-                      tags.tags[1].value_case);
-    TEST_ASSERT_EQUAL(lower_bound, tags.tags[1].double_value);
+    CHECK_LOWER_BOUND_TAGS(g, tags);
 
     jaeger_tag_list_clear(&tags);
     sampling_rate = 1.0;
@@ -215,18 +172,7 @@ void test_guaranteed_throughput_probabilistic_sampler()
         &g, lower_bound, sampling_rate);
     TEST_ASSERT_TRUE(
         g.is_sampled((jaeger_sampler*) &g, &trace_id, operation_name, &tags));
-    TEST_ASSERT_EQUAL(2, tags.size);
-    TEST_ASSERT_EQUAL_STRING(JAEGERTRACINGC_SAMPLER_TYPE_TAG_KEY,
-                             tags.tags[0].key);
-    TEST_ASSERT_EQUAL(JAEGERTRACING__PROTOBUF__TAG__VALUE_STR_VALUE,
-                      tags.tags[0].value_case);
-    TEST_ASSERT_EQUAL_STRING(JAEGERTRACINGC_SAMPLER_TYPE_PROBABILISTIC,
-                             tags.tags[0].str_value);
-    TEST_ASSERT_EQUAL_STRING(JAEGERTRACINGC_SAMPLER_PARAM_TAG_KEY,
-                             tags.tags[1].key);
-    TEST_ASSERT_EQUAL(JAEGERTRACING__PROTOBUF__TAG__VALUE_DOUBLE_VALUE,
-                      tags.tags[1].value_case);
-    TEST_ASSERT_EQUAL(sampling_rate, tags.tags[1].double_value);
+    CHECK_PROBABILISTIC_TAGS(g.probabilistic_sampler, tags);
 
     TEAR_DOWN_SAMPLER_TEST(g);
 }
@@ -253,7 +199,7 @@ void test_adaptive_sampler()
         jaeger_strdup(operation_name);
     TEST_ASSERT_NOT_NULL(strategies.per_operation_strategy[0]->operation);
     strategies.per_operation_strategy[0]->strategy_case =
-        JAEGERTRACING__PROTOBUF__SAMPLING_MANAGER__PER_OPERATION_SAMPLING_STRATEGY__OPERATION_SAMPLING_STRATEGY__STRATEGY_PROBABILISTIC;
+        JAEGERTRACINGC_OPERATION_STRATEGY_TYPE(PROBABILISTIC);
     strategies.per_operation_strategy[0]->probabilistic =
         jaeger_malloc(sizeof(jaeger_probabilistic_strategy));
     TEST_ASSERT_NOT_NULL(strategies.per_operation_strategy[0]->probabilistic);
@@ -266,6 +212,7 @@ void test_adaptive_sampler()
     strategies.default_sampling_probability = TEST_DEFAULT_SAMPLING_PROBABILITY;
 
     jaeger_adaptive_sampler_init(&a, &strategies, TEST_DEFAULT_MAX_OPERATIONS);
+    a.is_sampled((jaeger_sampler*) &a, &trace_id, operation_name, &tags);
 
     jaeger_per_operation_strategy_destroy(&strategies);
     TEAR_DOWN_SAMPLER_TEST(a);

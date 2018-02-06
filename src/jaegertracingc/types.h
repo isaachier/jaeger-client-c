@@ -40,6 +40,9 @@ typedef Jaegertracing__Protobuf__Tag jaeger_tag;
 
 #define JAEGERTRACINGC_TAG_INIT JAEGERTRACING__PROTOBUF__TAG__INIT
 
+#define JAEGERTRACINGC_TAG_TYPE(type) \
+    JAEGERTRACING__PROTOBUF__TAG__VALUE_##type##_VALUE
+
 typedef Jaegertracing__Protobuf__TraceID jaeger_trace_id;
 
 #define JAEGERTRACINGC_TRACE_ID_INIT JAEGERTRACING__PROTOBUF__TRACE_ID__INIT
