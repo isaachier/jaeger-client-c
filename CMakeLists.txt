@@ -122,7 +122,7 @@ if(BUILD_TESTING)
   if(JAEGERTRACINGC_COVERAGE)
     setup_target_for_coverage(
       NAME unit_test_coverage
-      EXECUTABLES default_test oom_test
+      EXECUTABLE ${CMAKE_CURRENT_BINARY_DIR}/default_test && ${CMAKE_CURRENT_BINARY_DIR}/oom_test
       DEPENDENCIES default_test oom_test)
   endif()
 endif()
