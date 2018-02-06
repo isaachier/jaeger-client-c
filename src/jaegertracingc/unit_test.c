@@ -29,7 +29,8 @@ int main()
     jaeger_init_lib(NULL);
     RUN_TEST(test_alloc);
     RUN_TEST(test_duration);
-    RUN_TEST(test_sampler);
+    RUN_TEST(test_const_sampler);
+    RUN_TEST(test_probabilistic_sampler);
     RUN_TEST(test_tag);
     RUN_TEST(test_ticker);
     RUN_TEST(test_metrics);

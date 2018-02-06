@@ -21,7 +21,9 @@
 extern "C" {
 #endif /* __cplusplus */
 
-void test_sampler();
+void test_const_sampler();
+
+void test_probabilistic_sampler();
 
 #ifdef __cplusplus
 } /* extern C */

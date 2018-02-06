@@ -136,22 +136,34 @@ static inline void jaeger_tag_destroy(jaeger_tag* tag)
 {
     if (tag->key != NULL) {
         jaeger_free(tag->key);
+        tag->key = NULL;
     }
 
     switch (tag->value_case) {
     case JAEGERTRACING__PROTOBUF__TAG__VALUE_STR_VALUE: {
         if (tag->str_value != NULL) {
             jaeger_free(tag->str_value);
+            tag->str_value = NULL;
         }
     } break;
     case JAEGERTRACING__PROTOBUF__TAG__VALUE_BINARY_VALUE: {
         if (tag->binary_value.data != NULL) {
             jaeger_free(tag->binary_value.data);
+            tag->binary_value.data = NULL;
         }
     } break;
     default:
         break;
     }
+}
+
+static inline void jaeger_tag_list_clear(jaeger_tag_list* list)
+{
+    assert(list != NULL);
+    for (int i = 0; i < list->size; i++) {
+        jaeger_tag_destroy(&list->tags[i]);
+    }
+    list->size = 0;
 }
 
 static inline bool jaeger_tag_list_append(jaeger_tag_list* list,
@@ -182,6 +194,7 @@ static inline void jaeger_tag_list_destroy(jaeger_tag_list* list)
             jaeger_tag_destroy(&list->tags[i]);
         }
         jaeger_free(list->tags);
+        list->tags = NULL;
     }
 }
 

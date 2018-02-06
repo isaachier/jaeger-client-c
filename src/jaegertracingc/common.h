@@ -25,10 +25,10 @@ extern "C" {
 #include <stddef.h>
 #include <stdint.h>
 
-#define JAEGERTRACINGC_MIN(a, b) ((a) <= (b) ? (a) : (b))
-#define JAEGERTRACINGC_MAX(a, b) ((a) >= (b) ? (a) : (b))
+#define JAEGERTRACINGC_MIN(a, b) ((b) < (a) ? (b) : (a))
+#define JAEGERTRACINGC_MAX(a, b) ((b) > (a) ? (b) : (a))
 #define JAEGERTRACINGC_CLAMP(x, low, high) \
-    ((x) < (low) ? (low) : ((x) < (high) ? (high) : (x)))
+    JAEGERTRACINGC_MIN(JAEGERTRACINGC_MAX((x), (low)), (high))
 
 #ifdef __cplusplus
 } /* extern C */
