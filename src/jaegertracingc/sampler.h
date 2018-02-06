@@ -34,6 +34,7 @@ extern "C" {
 #include "jaegertracingc/tag.h"
 #include "jaegertracingc/ticker.h"
 #include "jaegertracingc/token_bucket.h"
+#include "jaegertracingc/types.h"
 
 #define JAEGERTRACINGC_DOUBLE_STR_SIZE 16
 
@@ -50,8 +51,8 @@ typedef Jaegertracing__Protobuf__SamplingManager__PerOperationSamplingStrategy
 typedef Jaegertracing__Protobuf__SamplingManager__PerOperationSamplingStrategy__OperationSamplingStrategy
     jaeger_operation_strategy;
 
-static inline void jaeger_operation_strategy_destroy(
-    jaeger_operation_strategy* strategy)
+static inline void
+jaeger_operation_strategy_destroy(jaeger_operation_strategy* strategy)
 {
     assert(strategy != NULL);
     if (strategy->operation != NULL) {
@@ -68,8 +69,8 @@ static inline void jaeger_operation_strategy_destroy(
     }
 }
 
-static inline void jaeger_per_operation_strategy_destroy(
-    jaeger_per_operation_strategy* strategy)
+static inline void
+jaeger_per_operation_strategy_destroy(jaeger_per_operation_strategy* strategy)
 {
     assert(strategy != NULL);
     if (strategy->per_operation_strategy != NULL) {
@@ -184,14 +185,12 @@ typedef struct jaeger_sampler_choice {
     };
 } jaeger_sampler_choice;
 
-static inline void jaeger_sampler_choice_close(
-    jaeger_sampler_choice* sampler)
+static inline jaeger_sampler*
+jaeger_sampler_choice_get_sampler(jaeger_sampler_choice* sampler)
 {
-#define SAMPLER_TYPE_CASE(type)                          \
-    case jaeger_##type##_sampler_type:                   \
-        sampler->type##_sampler.close(                   \
-            (jaeger_sampler*) &sampler->type##_sampler); \
-        break
+#define SAMPLER_TYPE_CASE(type)        \
+    case jaeger_##type##_sampler_type: \
+        return (jaeger_sampler*) &sampler->type##_sampler;
 
     switch (sampler->type) {
         SAMPLER_TYPE_CASE(const);
@@ -205,10 +204,33 @@ static inline void jaeger_sampler_choice_close(
             "WARNING: Invalid sampler type in sampler choice, sampler type = "
             "%d\n",
             sampler->type);
-        break;
+        return NULL;
     }
 
 #undef SAMPLER_TYPE_CASE
+}
+
+static inline bool
+jaeger_sampler_choice_is_sampled(jaeger_sampler_choice* sampler,
+                                 const jaeger_trace_id* trace_id,
+                                 const char* operation,
+                                 jaeger_tag_list* tags)
+{
+    assert(sampler != NULL);
+    jaeger_sampler* s = jaeger_sampler_choice_get_sampler(sampler);
+    if (s != NULL) {
+        return s->is_sampled(s, trace_id, operation, tags);
+    }
+    return false;
+}
+
+static inline void jaeger_sampler_choice_close(jaeger_sampler_choice* sampler)
+{
+    assert(sampler != NULL);
+    jaeger_sampler* s = jaeger_sampler_choice_get_sampler(sampler);
+    if (s != NULL) {
+        s->close(s);
+    }
 }
 
 #define JAEGERTRACINGC_HTTP_SAMPLING_MANAGER_REQUEST_MAX_LEN 256

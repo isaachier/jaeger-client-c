@@ -104,6 +104,7 @@ if(BUILD_TESTING)
     "src/jaegertracingc/alloc_test.c"
     "src/jaegertracingc/duration_test.c"
     "src/jaegertracingc/metrics_test.c"
+    "src/jaegertracingc/sampler_test.c"
     "src/jaegertracingc/tag_test.c"
     "src/jaegertracingc/ticker_test.c"
     "src/jaegertracingc/token_bucket_test.c")

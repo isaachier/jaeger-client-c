@@ -14,24 +14,17 @@
  * limitations under the License.
  */
 
-#ifndef JAEGERTRACINGC_COMMON_H
-#define JAEGERTRACINGC_COMMON_H
+#ifndef JAEGERTRACINGC_SAMPLER_TEST_H
+#define JAEGERTRACINGC_SAMPLER_TEST_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
-
-#define JAEGERTRACINGC_MIN(a, b) ((a) <= (b) ? (a) : (b))
-#define JAEGERTRACINGC_MAX(a, b) ((a) >= (b) ? (a) : (b))
-#define JAEGERTRACINGC_CLAMP(x, low, high) \
-    ((x) < (low) ? (low) : ((x) < (high) ? (high) : (x)))
+void test_sampler();
 
 #ifdef __cplusplus
 } /* extern C */
 #endif /* __cplusplus */
 
-#endif /* JAEGERTRACINGC_COMMON_H */
+#endif /* JAEGERTRACINGC_SAMPLER_TEST_H */

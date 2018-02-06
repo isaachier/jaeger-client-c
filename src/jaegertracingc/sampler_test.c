@@ -14,25 +14,23 @@
  * limitations under the License.
  */
 
-#include "alloc_test.h"
-#include "duration_test.h"
-#include "init.h"
-#include "metrics_test.h"
-#include "sampler_test.h"
-#include "tag_test.h"
-#include "ticker_test.h"
-#include "token_bucket_test.h"
+#include "jaegertracingc/sampler.h"
+#include <stdio.h>
+#include <string.h>
 #include "unity.h"
 
-int main()
+void test_sampler()
 {
-    jaeger_init_lib(NULL);
-    RUN_TEST(test_alloc);
-    RUN_TEST(test_duration);
-    RUN_TEST(test_sampler);
-    RUN_TEST(test_tag);
-    RUN_TEST(test_ticker);
-    RUN_TEST(test_metrics);
-    RUN_TEST(test_token_bucket);
-    return 0;
+    jaeger_const_sampler c;
+    jaeger_const_sampler_init(&c, true);
+    const char* operation_name = "test-operation";
+    const jaeger_trace_id trace_id = (jaeger_trace_id){};
+    TEST_ASSERT_TRUE(
+        c.is_sampled((jaeger_sampler*) &c, &trace_id, operation_name, NULL));
+    c.close((jaeger_sampler*) &c);
+
+    jaeger_const_sampler_init(&c, false);
+    TEST_ASSERT_FALSE(
+        c.is_sampled((jaeger_sampler*) &c, &trace_id, operation_name, NULL));
+    c.close((jaeger_sampler*) &c);
 }
