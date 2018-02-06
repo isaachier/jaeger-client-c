@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
+#include "jaegertracingc/sampler.h"
 #include <stdio.h>
 #include <string.h>
-#include "jaegertracingc/sampler.h"
 #include "unity.h"
 
-#define SET_UP_SAMPLER_TEST()                                                 \
-    jaeger_tag_list tags;                                                     \
-    jaeger_tag_list_init(&tags);                                              \
-    const char* operation_name = "test-operation";                            \
-    (void) operation_name;                                                    \
-    const jaeger_trace_id trace_id = JAEGERTRACING__PROTOBUF__TRACE_ID__INIT; \
+#define SET_UP_SAMPLER_TEST()                                      \
+    jaeger_tag_list tags;                                          \
+    jaeger_tag_list_init(&tags);                                   \
+    const char* operation_name = "test-operation";                 \
+    (void) operation_name;                                         \
+    const jaeger_trace_id trace_id = JAEGERTRACINGC_TRACE_ID_INIT; \
     (void) trace_id
 
 #define TEAR_DOWN_SAMPLER_TEST(sampler)        \
@@ -239,7 +239,7 @@ void test_adaptive_sampler()
 
     jaeger_adaptive_sampler a;
     jaeger_per_operation_strategy strategies =
-        JAEGERTRACING__PROTOBUF__SAMPLING_MANAGER__PER_OPERATION_SAMPLING_STRATEGY__INIT;
+        JAEGERTRACINGC_PER_OPERATION_STRATEGY_INIT;
     strategies.per_operation_strategy =
         jaeger_malloc(sizeof(jaeger_operation_strategy*));
     TEST_ASSERT_NOT_NULL(strategies.per_operation_strategy);
@@ -247,19 +247,19 @@ void test_adaptive_sampler()
     strategies.per_operation_strategy[0] =
         jaeger_malloc(sizeof(jaeger_operation_sampler));
     TEST_ASSERT_NOT_NULL(strategies.per_operation_strategy[0]);
-    *strategies.per_operation_strategy[0] = (jaeger_operation_strategy)
-        JAEGERTRACING__PROTOBUF__SAMPLING_MANAGER__PER_OPERATION_SAMPLING_STRATEGY__OPERATION_SAMPLING_STRATEGY__INIT;
+    *strategies.per_operation_strategy[0] =
+        (jaeger_operation_strategy) JAEGERTRACINGC_OPERATION_STRATEGY_INIT;
     strategies.per_operation_strategy[0]->operation =
         jaeger_strdup(operation_name);
     TEST_ASSERT_NOT_NULL(strategies.per_operation_strategy[0]->operation);
     strategies.per_operation_strategy[0]->strategy_case =
         JAEGERTRACING__PROTOBUF__SAMPLING_MANAGER__PER_OPERATION_SAMPLING_STRATEGY__OPERATION_SAMPLING_STRATEGY__STRATEGY_PROBABILISTIC;
-    strategies.per_operation_strategy[0]->probabilistic = jaeger_malloc(sizeof(
-        Jaegertracing__Protobuf__SamplingManager__ProbabilisticSamplingStrategy));
+    strategies.per_operation_strategy[0]->probabilistic =
+        jaeger_malloc(sizeof(jaeger_probabilistic_strategy));
     TEST_ASSERT_NOT_NULL(strategies.per_operation_strategy[0]->probabilistic);
     *strategies.per_operation_strategy[0]->probabilistic =
-        (Jaegertracing__Protobuf__SamplingManager__ProbabilisticSamplingStrategy)
-            JAEGERTRACING__PROTOBUF__SAMPLING_MANAGER__PROBABILISTIC_SAMPLING_STRATEGY__INIT;
+        (jaeger_probabilistic_strategy)
+            JAEGERTRACINGC_PROBABILISTIC_STRATEGY_INIT;
     strategies.per_operation_strategy[0]->probabilistic->sampling_rate =
         TEST_DEFAULT_SAMPLING_PROBABILITY;
     strategies.default_lower_bound_traces_per_second = 1.0;

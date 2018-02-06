@@ -31,14 +31,35 @@ extern "C" {
 typedef Jaegertracing__Protobuf__SamplingManager__PerOperationSamplingStrategy
     jaeger_per_operation_strategy;
 
+#define JAEGERTRACINGC_PER_OPERATION_STRATEGY_INIT \
+    JAEGERTRACING__PROTOBUF__SAMPLING_MANAGER__PER_OPERATION_SAMPLING_STRATEGY__INIT
+
 typedef Jaegertracing__Protobuf__SamplingManager__PerOperationSamplingStrategy__OperationSamplingStrategy
     jaeger_operation_strategy;
+
+#define JAEGERTRACINGC_OPERATION_STRATEGY_INIT \
+    JAEGERTRACING__PROTOBUF__SAMPLING_MANAGER__PER_OPERATION_SAMPLING_STRATEGY__OPERATION_SAMPLING_STRATEGY__INIT
 
 typedef Jaegertracing__Protobuf__SamplingManager__ProbabilisticSamplingStrategy
     jaeger_probabilistic_strategy;
 
+#define JAEGERTRACINGC_PROBABILISTIC_STRATEGY_INIT \
+    JAEGERTRACING__PROTOBUF__SAMPLING_MANAGER__PROBABILISTIC_SAMPLING_STRATEGY__INIT
+
 typedef Jaegertracing__Protobuf__SamplingManager__RateLimitingSamplingStrategy
     jaeger_rate_limiting_strategy;
+
+#define JAEGERTRACINGC_RATE_LIMITING_STRATEGY_INIT \
+    JAEGERTRACING__PROTOBUF__SAMPLING_MANAGER__RATE_LIMITING_SAMPLING_STRATEGY__INIT
+
+typedef Jaegertracing__Protobuf__SamplingManager__SamplingStrategyResponse
+    jaeger_strategy_response;
+
+#define JAEGERTRACINGC_STRATEGY_RESPONSE_INIT \
+    JAEGERTRACING__PROTOBUF__SAMPLING_MANAGER__SAMPLING_STRATEGY_RESPONSE__INIT
+
+#define JAEGERTRACINGC_STRATEGY_RESPONSE_TYPE(x) \
+    JAEGERTRACING__PROTOBUF__SAMPLING_MANAGER__SAMPLING_STRATEGY_RESPONSE__STRATEGY_##x
 
 static inline void
 jaeger_operation_strategy_destroy(jaeger_operation_strategy* strategy)
@@ -74,9 +95,6 @@ jaeger_per_operation_strategy_destroy(jaeger_per_operation_strategy* strategy)
         strategy->per_operation_strategy = NULL;
     }
 }
-
-typedef Jaegertracing__Protobuf__SamplingManager__SamplingStrategyResponse
-    jaeger_strategy_response;
 
 static inline void
 jaeger_strategy_response_destroy(jaeger_strategy_response* response)
