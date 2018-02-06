@@ -108,7 +108,6 @@ if(BUILD_TESTING)
     "src/jaegertracingc/tag_test.c"
     "src/jaegertracingc/ticker_test.c"
     "src/jaegertracingc/token_bucket_test.c")
-  target_compile_definitions(jaegertracingc PUBLIC "-DTESTING")
   target_link_libraries(unit_test PUBLIC jaegertracingc unity)
 
   if(CMAKE_BUILD_TYPE STREQUAL "Debug" AND JAEGERTRACINGC_COVERAGE)
