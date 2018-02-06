@@ -10,7 +10,13 @@ function main() {
     local srcs
     srcs=($(git ls-files src | grep -E '\.(c|h)$' | grep -E -v 'protoc-gen')
           src/jaegertracingc/constants.h.in)
-    python scripts/update-license.py "${srcs[@]}"
+    local src
+    for src in ${srcs[*]}; do
+        local cmd
+        cmd="python scripts/update-license.py $src"
+        echo "$cmd"
+        eval "$cmd"
+    done
 }
 
 main
