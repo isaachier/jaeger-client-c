@@ -1099,7 +1099,8 @@ static void jaeger_remotely_controlled_sampler_update(void* context)
     assert(context != NULL);
     jaeger_remotely_controlled_sampler* sampler =
         (jaeger_remotely_controlled_sampler*) context;
-    jaeger_strategy_response response;
+    jaeger_strategy_response response =
+        JAEGERTRACING__PROTOBUF__SAMPLING_MANAGER__SAMPLING_STRATEGY_RESPONSE__INIT;
     const bool result = jaeger_http_sampling_manager_get_sampling_strategies(
         &sampler->manager, &response);
     if (!result) {
