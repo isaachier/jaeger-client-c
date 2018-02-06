@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include "jaegertracingc/sampler.h"
 #include <stdio.h>
 #include <string.h>
+#include "jaegertracingc/sampler.h"
 #include "unity.h"
 
 #define SET_UP_SAMPLER_TEST()                                                 \

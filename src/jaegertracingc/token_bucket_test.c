@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-#include "jaegertracingc/token_bucket.h"
 #include <time.h>
 #include "jaegertracingc/alloc.h"
 #include "jaegertracingc/duration.h"
+#include "jaegertracingc/token_bucket.h"
 #include "unity.h"
 
 #define NS_PER_S JAEGERTRACINGC_NANOSECONDS_PER_SECOND

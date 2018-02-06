@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#include "jaegertracingc/metrics.h"
 #include "jaegertracingc/alloc.h"
+#include "jaegertracingc/metrics.h"
 #include "unity.h"
 
 void test_metrics()

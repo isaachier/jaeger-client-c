@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include "jaegertracingc/tag.h"
 #include <stdio.h>
 #include <string.h>
+#include "jaegertracingc/tag.h"
 #include "unity.h"
 
 void test_tag()

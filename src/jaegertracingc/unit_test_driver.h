@@ -50,4 +50,4 @@ static inline void run_tests()
 } /* extern "C" */
 #endif /* __cplusplus */
 
-#endif  /* JAEGERTRACINGC_UNIT_TEST_DRIVER_H */
+#endif /* JAEGERTRACINGC_UNIT_TEST_DRIVER_H */

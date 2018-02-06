@@ -42,10 +42,7 @@ static void oom_free(jaeger_allocator* context, void* ptr)
 int main()
 {
     jaeger_allocator alloc = {
-        .malloc = &oom_malloc,
-        .realloc = &oom_realloc,
-        .free = &oom_free
-    };
+        .malloc = &oom_malloc, .realloc = &oom_realloc, .free = &oom_free};
     jaeger_init_lib(&alloc);
     run_tests();
     return 0;
