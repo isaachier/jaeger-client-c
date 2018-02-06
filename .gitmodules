@@ -1,9 +1,6 @@
 [submodule "jaeger-idl"]
 	path = jaeger-idl
 	url = git@github.com:jaegertracing/jaeger-idl.git
-[submodule "thirdparty/http-parser"]
-	path = thirdparty/http-parser
-	url = git@github.com:nodejs/http-parser.git
 [submodule "thirdparty/unity"]
 	path = thirdparty/unity
 	url = git@github.com:ThrowTheSwitch/Unity.git
