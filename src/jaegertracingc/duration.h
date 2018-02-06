@@ -17,13 +17,13 @@
 #ifndef JAEGERTRACINGC_DURATION_H
 #define JAEGERTRACINGC_DURATION_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
 #include <assert.h>
 #include <time.h>
 #include "jaegertracingc/common.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
 #define JAEGERTRACINGC_NANOSECONDS_PER_SECOND 1000000000
 

@@ -1,0 +1,104 @@
+/*
+ * Copyright (c) 2018 Uber Technologies, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+#ifndef JAEGERTRACINGC_SAMPLING_STRATEGY_H
+#define JAEGERTRACINGC_SAMPLING_STRATEGY_H
+
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include "jaegertracingc/alloc.h"
+#include "jaegertracingc/common.h"
+#include "jaegertracingc/protoc-gen/sampling.pb-c.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
+typedef Jaegertracing__Protobuf__SamplingManager__PerOperationSamplingStrategy
+    jaeger_per_operation_strategy;
+
+typedef Jaegertracing__Protobuf__SamplingManager__PerOperationSamplingStrategy__OperationSamplingStrategy
+    jaeger_operation_strategy;
+
+typedef Jaegertracing__Protobuf__SamplingManager__ProbabilisticSamplingStrategy
+    jaeger_probabilistic_strategy;
+
+typedef Jaegertracing__Protobuf__SamplingManager__RateLimitingSamplingStrategy
+    jaeger_rate_limiting_strategy;
+
+static inline void
+jaeger_operation_strategy_destroy(jaeger_operation_strategy* strategy)
+{
+    assert(strategy != NULL);
+    if (strategy->operation != NULL) {
+        jaeger_free(strategy->operation);
+        strategy->operation = NULL;
+    }
+    if (strategy->probabilistic != NULL) {
+        jaeger_free(strategy->probabilistic);
+        strategy->probabilistic = NULL;
+    }
+    if (strategy->rate_limiting != NULL) {
+        jaeger_free(strategy->rate_limiting);
+        strategy->rate_limiting = NULL;
+    }
+}
+
+static inline void
+jaeger_per_operation_strategy_destroy(jaeger_per_operation_strategy* strategy)
+{
+    assert(strategy != NULL);
+    if (strategy->per_operation_strategy != NULL) {
+        for (int i = 0; i < strategy->n_per_operation_strategy; i++) {
+            if (strategy->per_operation_strategy[i] != NULL) {
+                jaeger_operation_strategy_destroy(
+                    strategy->per_operation_strategy[i]);
+                jaeger_free(strategy->per_operation_strategy[i]);
+            }
+        }
+        jaeger_free(strategy->per_operation_strategy);
+        strategy->per_operation_strategy = NULL;
+    }
+}
+
+typedef Jaegertracing__Protobuf__SamplingManager__SamplingStrategyResponse
+    jaeger_strategy_response;
+
+static inline void
+jaeger_strategy_response_destroy(jaeger_strategy_response* response)
+{
+    assert(response != NULL);
+    if (response->per_operation != NULL) {
+        jaeger_per_operation_strategy_destroy(response->per_operation);
+        jaeger_free(response->per_operation);
+        response->per_operation = NULL;
+    }
+    if (response->probabilistic != NULL) {
+        jaeger_free(response->probabilistic);
+        response->probabilistic = NULL;
+    }
+    if (response->rate_limiting != NULL) {
+        jaeger_free(response->rate_limiting);
+        response->rate_limiting = NULL;
+    }
+}
+
+#ifdef __cplusplus
+} /* extern C */
+#endif /* __cplusplus */
+
+#endif /* JAEGERTRACINGC_SAMPLING_STRATEGY_H */

@@ -17,11 +17,11 @@
 #ifndef JAEGERTRACINGC_METRICS_H
 #define JAEGERTRACINGC_METRICS_H
 
+#include "jaegertracingc/common.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-#include "jaegertracingc/common.h"
 
 #define JAEGERTRACINGC_COUNTER_SUBCLASS \
     void (*inc)(struct jaeger_counter * counter, int64_t delta)

@@ -14,22 +14,4 @@
  * limitations under the License.
  */
 
-#ifndef JAEGERTRACINGC_INIT_H
-#define JAEGERTRACINGC_INIT_H
-
-#include "jaegertracingc/alloc.h"
-#include "jaegertracingc/common.h"
-
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
-/* Use this function to initialize the library before calling any functions.
- * Either pass in a custom allocator or NULL to use the built-in allocator. */
-void jaeger_init_lib(jaeger_allocator* alloc);
-
-#ifdef __cplusplus
-} /* extern C */
-#endif /* __cplusplus */
-
-#endif /* JAEGERTRACINGC_INIT_H */
+#include "jaegertracingc/sampling_strategy.h"

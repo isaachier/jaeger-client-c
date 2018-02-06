@@ -720,9 +720,6 @@ jaeger_http_sampling_manager_init(jaeger_http_sampling_manager* manager,
             stderr, "ERROR: Cannot parse JSON response, " ERR_FMT, ERR_ARGS); \
     } while (0)
 
-typedef Jaegertracing__Protobuf__SamplingManager__ProbabilisticSamplingStrategy
-    jaeger_probabilistic_strategy;
-
 static inline bool
 parse_probabilistic_sampling_json(jaeger_probabilistic_strategy* strategy,
                                   json_t* json)
@@ -739,9 +736,6 @@ parse_probabilistic_sampling_json(jaeger_probabilistic_strategy* strategy,
     }
     return true;
 }
-
-typedef Jaegertracing__Protobuf__SamplingManager__RateLimitingSamplingStrategy
-    jaeger_rate_limiting_strategy;
 
 static inline bool
 parse_rate_limiting_sampling_json(jaeger_rate_limiting_strategy* strategy,

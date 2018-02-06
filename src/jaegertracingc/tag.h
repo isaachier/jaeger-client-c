@@ -17,16 +17,16 @@
 #ifndef JAEGERTRACINGC_TAG_H
 #define JAEGERTRACINGC_TAG_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
 #include "jaegertracingc/alloc.h"
 #include "jaegertracingc/common.h"
 #include "jaegertracingc/types.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
 #define JAEGERTRACINGC_TAGS_INIT_SIZE 10
 #define JAEGERTRACINGC_TAGS_RESIZE_FACTOR 2

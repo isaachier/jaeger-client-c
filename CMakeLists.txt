@@ -57,6 +57,7 @@ add_library(jaegertracingc
   "src/jaegertracingc/init.c"
   "src/jaegertracingc/metrics.c"
   "src/jaegertracingc/sampler.c"
+  "src/jaegertracingc/sampling_strategy.c"
   "src/jaegertracingc/tag.c"
   "src/jaegertracingc/ticker.c"
   "src/jaegertracingc/token_bucket.c"

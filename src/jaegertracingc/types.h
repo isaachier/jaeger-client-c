@@ -17,12 +17,12 @@
 #ifndef JAEGERTRACINGC_TYPES_H
 #define JAEGERTRACINGC_TYPES_H
 
+#include "jaegertracingc/common.h"
+#include "jaegertracingc/protoc-gen/jaeger.pb-c.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-#include "jaegertracingc/common.h"
-#include "jaegertracingc/protoc-gen/jaeger.pb-c.h"
 
 typedef Jaegertracing__Protobuf__Log jaeger_log;
 typedef Jaegertracing__Protobuf__Span jaeger_span;

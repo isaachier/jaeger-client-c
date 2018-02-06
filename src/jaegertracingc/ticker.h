@@ -18,13 +18,13 @@
 #ifndef JAEGERTRACINGC_TICKER_H
 #define JAEGERTRACINGC_TICKER_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
 #include <pthread.h>
 #include "jaegertracingc/common.h"
 #include "jaegertracingc/duration.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
 typedef struct jaeger_ticker {
     pthread_mutex_t mutex;
