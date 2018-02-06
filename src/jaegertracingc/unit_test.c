@@ -32,6 +32,7 @@ int main()
     RUN_TEST(test_const_sampler);
     RUN_TEST(test_probabilistic_sampler);
     RUN_TEST(test_rate_limiting_sampler);
+    RUN_TEST(test_guaranteed_throughput_probabilistic_sampler);
     RUN_TEST(test_tag);
     RUN_TEST(test_ticker);
     RUN_TEST(test_metrics);

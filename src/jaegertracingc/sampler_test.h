@@ -27,6 +27,8 @@ void test_probabilistic_sampler();
 
 void test_rate_limiting_sampler();
 
+void test_guaranteed_throughput_probabilistic_sampler();
+
 #ifdef __cplusplus
 } /* extern C */
 #endif /* __cplusplus */

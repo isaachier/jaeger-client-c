@@ -72,11 +72,11 @@ jaeger_probabilistic_sampler_is_sampled(jaeger_sampler* sampler,
     (void) operation_name;
     jaeger_probabilistic_sampler* s = (jaeger_probabilistic_sampler*) sampler;
 #ifdef HAVE_RAND_R
-    const double threshold = ((double) rand_r(&s->seed)) / RAND_MAX;
+    const double random_value = ((double) rand_r(&s->seed) + 1) / RAND_MAX;
 #else
-    const double threshold = ((double) rand()) / RAND_MAX;
+    const double random_value = ((double) rand() + 1) / RAND_MAX;
 #endif /* HAVE_RAND_R */
-    const bool decision = (s->sampling_rate > threshold);
+    const bool decision = (s->sampling_rate >= random_value);
     if (tags != NULL) {
         jaeger_tag tag = JAEGERTRACING__PROTOBUF__TAG__INIT;
         tag.key = JAEGERTRACINGC_SAMPLER_TYPE_TAG_KEY;
@@ -187,7 +187,7 @@ static bool jaeger_guaranteed_throughput_probabilistic_sampler_is_sampled(
         jaeger_tag tag = JAEGERTRACING__PROTOBUF__TAG__INIT;
         tag.key = JAEGERTRACINGC_SAMPLER_TYPE_TAG_KEY;
         tag.value_case = JAEGERTRACING__PROTOBUF__TAG__VALUE_STR_VALUE;
-        tag.str_value = JAEGERTRACINGC_SAMPLER_TYPE_RATE_LIMITING;
+        tag.str_value = JAEGERTRACINGC_SAMPLER_TYPE_LOWER_BOUND;
         jaeger_tag_list_append(tags, &tag);
 
         tag.key = JAEGERTRACINGC_SAMPLER_PARAM_TAG_KEY;
