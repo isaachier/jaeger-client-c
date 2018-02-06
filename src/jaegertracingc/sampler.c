@@ -895,28 +895,6 @@ parse_per_operation_sampling_json(jaeger_per_operation_strategy* strategy,
     return success;
 }
 
-typedef Jaegertracing__Protobuf__SamplingManager__SamplingStrategyResponse
-    jaeger_strategy_response;
-
-static inline void
-jaeger_strategy_response_destroy(jaeger_strategy_response* response)
-{
-    assert(response != NULL);
-    if (response->per_operation != NULL) {
-        jaeger_per_operation_strategy_destroy(response->per_operation);
-        jaeger_free(response->per_operation);
-        response->per_operation = NULL;
-    }
-    if (response->probabilistic != NULL) {
-        jaeger_free(response->probabilistic);
-        response->probabilistic = NULL;
-    }
-    if (response->rate_limiting != NULL) {
-        jaeger_free(response->rate_limiting);
-        response->rate_limiting = NULL;
-    }
-}
-
 static inline bool jaeger_http_sampling_manager_parse_json_response(
     jaeger_http_sampling_manager* manager, jaeger_strategy_response* response)
 {
@@ -1137,10 +1115,10 @@ static void jaeger_remotely_controlled_sampler_update(void* context)
         }
         else {
             jaeger_sampler_choice_close(&sampler->sampler);
-            double sampling_rate = response.probabilistic->sampling_rate;
             sampler->sampler.type = jaeger_probabilistic_sampler_type;
             sampler->sampler.probabilistic_sampler.sampling_rate =
-                JAEGERTRACINGC_CLAMP(sampling_rate, 0, 1);
+                JAEGERTRACINGC_CLAMP(
+                    response.probabilistic->sampling_rate, 0, 1);
         }
     } break;
     default: {
@@ -1163,9 +1141,9 @@ static void jaeger_remotely_controlled_sampler_update(void* context)
     } break;
     }
 
-    jaeger_strategy_response_destroy(&response);
-
     pthread_mutex_unlock(&sampler->mutex);
+
+    jaeger_strategy_response_destroy(&response);
 }
 
 static const jaeger_duration default_sampling_refresh_interval = {60, 0};

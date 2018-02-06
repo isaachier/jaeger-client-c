@@ -86,6 +86,28 @@ jaeger_per_operation_strategy_destroy(jaeger_per_operation_strategy* strategy)
     }
 }
 
+typedef Jaegertracing__Protobuf__SamplingManager__SamplingStrategyResponse
+    jaeger_strategy_response;
+
+static inline void
+jaeger_strategy_response_destroy(jaeger_strategy_response* response)
+{
+    assert(response != NULL);
+    if (response->per_operation != NULL) {
+        jaeger_per_operation_strategy_destroy(response->per_operation);
+        jaeger_free(response->per_operation);
+        response->per_operation = NULL;
+    }
+    if (response->probabilistic != NULL) {
+        jaeger_free(response->probabilistic);
+        response->probabilistic = NULL;
+    }
+    if (response->rate_limiting != NULL) {
+        jaeger_free(response->rate_limiting);
+        response->rate_limiting = NULL;
+    }
+}
+
 typedef struct jaeger_sampler {
     JAEGERTRACINGC_SAMPLER_SUBCLASS;
 } jaeger_sampler;

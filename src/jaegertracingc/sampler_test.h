@@ -29,6 +29,10 @@ void test_rate_limiting_sampler();
 
 void test_guaranteed_throughput_probabilistic_sampler();
 
+void test_adaptive_sampler();
+
+void test_remotely_controlled_sampler();
+
 #ifdef __cplusplus
 } /* extern C */
 #endif /* __cplusplus */
