@@ -25,6 +25,8 @@ void test_const_sampler();
 
 void test_probabilistic_sampler();
 
+void test_rate_limiting_sampler();
+
 #ifdef __cplusplus
 } /* extern C */
 #endif /* __cplusplus */
