@@ -14,28 +14,39 @@
  * limitations under the License.
  */
 
-#include "jaegertracingc/init.h"
-#include <jansson.h>
-#include <pthread.h>
 #include <stdlib.h>
-#include <time.h>
+#include "alloc.h"
+#include "init.h"
+#include "unit_test_driver.h"
 
-static inline void init_lib()
+static void* oom_malloc(jaeger_allocator* context, size_t sz)
 {
-    jaeger_alloc = jaeger_built_in_allocator();
-    json_set_alloc_funcs(&jaeger_malloc, &jaeger_free);
-
-#ifndef HAVE_RAND_R
-    /* Set up global random seed */
-    srand(time(NULL));
-#endif /* HAVE_RAND_R */
+    (void) context;
+    (void) sz;
+    return NULL;
 }
 
-void jaeger_init_lib(jaeger_allocator* alloc)
+static void* oom_realloc(jaeger_allocator* context, void* ptr, size_t sz)
 {
-    static pthread_once_t is_initialized = PTHREAD_ONCE_INIT;
-    const int result = pthread_once(&is_initialized, init_lib);
-    if (result == 0 && alloc != NULL) {
-        jaeger_alloc = alloc;
-    }
+    (void) context;
+    (void) sz;
+    return NULL;
+}
+
+static void oom_free(jaeger_allocator* context, void* ptr)
+{
+    (void) context;
+    free(ptr);
+}
+
+int main()
+{
+    jaeger_allocator alloc = {
+        .malloc = &oom_malloc,
+        .realloc = &oom_realloc,
+        .free = &oom_free
+    };
+    jaeger_init_lib(&alloc);
+    run_tests();
+    return 0;
 }

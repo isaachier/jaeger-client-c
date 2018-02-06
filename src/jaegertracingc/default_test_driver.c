@@ -14,28 +14,12 @@
  * limitations under the License.
  */
 
-#include "jaegertracingc/init.h"
-#include <jansson.h>
-#include <pthread.h>
-#include <stdlib.h>
-#include <time.h>
+#include "init.h"
+#include "unit_test_driver.h"
 
-static inline void init_lib()
+int main()
 {
-    jaeger_alloc = jaeger_built_in_allocator();
-    json_set_alloc_funcs(&jaeger_malloc, &jaeger_free);
-
-#ifndef HAVE_RAND_R
-    /* Set up global random seed */
-    srand(time(NULL));
-#endif /* HAVE_RAND_R */
-}
-
-void jaeger_init_lib(jaeger_allocator* alloc)
-{
-    static pthread_once_t is_initialized = PTHREAD_ONCE_INIT;
-    const int result = pthread_once(&is_initialized, init_lib);
-    if (result == 0 && alloc != NULL) {
-        jaeger_alloc = alloc;
-    }
+    jaeger_init_lib(NULL);
+    run_tests();
+    return 0;
 }

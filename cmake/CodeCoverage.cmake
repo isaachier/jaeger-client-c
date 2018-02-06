@@ -106,13 +106,13 @@ endif()
 #
 # setup_target_for_coverage(
 #     NAME testrunner_coverage                    # New target name
-#     EXECUTABLE testrunner -j ${PROCESSOR_COUNT} # Executable in PROJECT_BINARY_DIR
+#     EXECUTABLES testrunner # Executable in PROJECT_BINARY_DIR
 #     DEPENDENCIES testrunner                     # Dependencies to build first
 # )
 function(setup_target_for_coverage)
     set(options NONE)
     set(oneValueArgs NAME)
-    set(multiValueArgs EXECUTABLE EXECUTABLE_ARGS DEPENDENCIES)
+    set(multiValueArgs EXECUTABLES DEPENDENCIES)
     cmake_parse_arguments(Coverage "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
     if(NOT LCOV_PATH)
@@ -130,7 +130,7 @@ function(setup_target_for_coverage)
         COMMAND ${LCOV_PATH} --directory . --zerocounters
 
         # Run tests
-        COMMAND ${Coverage_EXECUTABLE}
+        COMMAND ${Coverage_EXECUTABLES}
 
         # Capturing lcov counters and generating report
         COMMAND ${LCOV_PATH} --base-directory ${CMAKE_SOURCE_DIR} --directory . --capture --output-file ${Coverage_NAME}.info --no-external

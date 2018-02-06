@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
+#ifndef JAEGERTRACINGC_UNIT_TEST_DRIVER_H
+#define JAEGERTRACINGC_UNIT_TEST_DRIVER_H
+
 #include "alloc_test.h"
 #include "duration_test.h"
-#include "init.h"
 #include "metrics_test.h"
 #include "sampler_test.h"
 #include "tag_test.h"
@@ -24,9 +26,12 @@
 #include "token_bucket_test.h"
 #include "unity.h"
 
-int main()
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
+static inline void run_tests()
 {
-    jaeger_init_lib(NULL);
     RUN_TEST(test_alloc);
     RUN_TEST(test_duration);
     RUN_TEST(test_const_sampler);
@@ -39,5 +44,10 @@ int main()
     RUN_TEST(test_ticker);
     RUN_TEST(test_metrics);
     RUN_TEST(test_token_bucket);
-    return 0;
 }
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif /* __cplusplus */
+
+#endif  /* JAEGERTRACINGC_UNIT_TEST_DRIVER_H */

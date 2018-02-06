@@ -100,8 +100,7 @@ if(BUILD_TESTING)
   add_library(unity "thirdparty/unity/src/unity.c")
   target_include_directories(unity PUBLIC "thirdparty/unity/src")
 
-  add_executable(unit_test
-    "src/jaegertracingc/unit_test.c"
+  set(TEST_SRC
     "src/jaegertracingc/alloc_test.c"
     "src/jaegertracingc/duration_test.c"
     "src/jaegertracingc/metrics_test.c"
@@ -109,14 +108,21 @@ if(BUILD_TESTING)
     "src/jaegertracingc/tag_test.c"
     "src/jaegertracingc/ticker_test.c"
     "src/jaegertracingc/token_bucket_test.c")
-  target_link_libraries(unit_test PUBLIC jaegertracingc unity)
+  add_library(jaegertracingc_test ${TEST_SRC})
+  target_link_libraries(jaegertracingc_test PUBLIC jaegertracingc unity)
 
-  if(CMAKE_BUILD_TYPE STREQUAL "Debug" AND JAEGERTRACINGC_COVERAGE)
+  add_executable(default_test "src/jaegertracingc/default_test_driver.c")
+  target_link_libraries(default_test PUBLIC jaegertracingc_test)
+  add_test(default_test default_test)
+
+  add_executable(oom_test "src/jaegertracingc/oom_test_driver.c")
+  target_link_libraries(oom_test PUBLIC jaegertracingc_test)
+  add_test(oom_test oom_test)
+
+  if(JAEGERTRACINGC_COVERAGE)
     setup_target_for_coverage(
       NAME unit_test_coverage
-      EXECUTABLE unit_test
-      DEPENDENCIES unit_test)
+      EXECUTABLES default_test oom_test
+      DEPENDENCIES default_test oom_test)
   endif()
-
-  add_test(unit_test unit_test)
 endif()

@@ -12,10 +12,14 @@ function main() {
            grep -E '\.c$' |
            grep -E -v '_test\.c$|protoc-gen')
 
+    local skip_checks
+    skip_checks="-clang-diagnostic-unused-command-line-argument,"
+    skip_checks+="-clang-analyzer-security.insecureAPI.rand"
+
     local cmd
     for src in $srcs; do
         cmd="clang-tidy -p=build"
-        cmd+=" -checks=\"-clang-diagnostic-unused-command-line-argument\" "
+        cmd+=" -checks=\"${skip_checks}\""
         cmd+=" $src"
         echo "$cmd"
         eval "$cmd"
