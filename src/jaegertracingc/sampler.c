@@ -264,6 +264,10 @@ samplers_from_strategies(const jaeger_per_operation_strategy* strategies,
         (*num_op_samplers)++;
     }
 
+    if (*num_op_samplers == 0) {
+        return NULL;
+    }
+
     const size_t op_samplers_size =
         sizeof(jaeger_operation_sampler) * (*num_op_samplers);
     jaeger_operation_sampler* op_samplers = jaeger_malloc(op_samplers_size);
@@ -390,10 +394,15 @@ static void jaeger_adaptive_sampler_close(jaeger_sampler* sampler)
 {
     assert(sampler != NULL);
     jaeger_adaptive_sampler* s = (jaeger_adaptive_sampler*) sampler;
-    for (int i = 0; i < s->num_op_samplers; i++) {
-        jaeger_operation_sampler_destroy(&s->op_samplers[i]);
+    if (s->op_samplers != NULL) {
+        for (int i = 0; i < s->num_op_samplers; i++) {
+            jaeger_operation_sampler_destroy(&s->op_samplers[i]);
+        }
+        jaeger_free(s->op_samplers);
+        s->op_samplers = NULL;
+        s->num_op_samplers = 0;
+        s->op_samplers_capacity = 0;
     }
-    jaeger_free(s->op_samplers);
     pthread_mutex_destroy(&s->mutex);
 }
 
@@ -405,7 +414,7 @@ bool jaeger_adaptive_sampler_init(
     assert(sampler != NULL);
     sampler->op_samplers =
         samplers_from_strategies(strategies, &sampler->num_op_samplers);
-    if (sampler->op_samplers == NULL) {
+    if (sampler->num_op_samplers > 0 && sampler->op_samplers == NULL) {
         return false;
     }
     sampler->op_samplers_capacity = sampler->num_op_samplers;
