@@ -15,6 +15,11 @@
  */
 
 #include "jaegertracingc/sampler.h"
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <unistd.h>
+
 #include <stdio.h>
 #include <string.h>
 #include "unity.h"
@@ -218,7 +223,112 @@ void test_adaptive_sampler()
     TEAR_DOWN_SAMPLER_TEST(a);
 }
 
+#define MOCK_HTTP_BACKLOG 1
+
+typedef struct mock_http_server {
+    int socket_fd;
+    struct sockaddr_in addr;
+    pthread_t thread;
+    int done_fd;
+} mock_http_server;
+
+#define MOCK_HTTP_SERVER_INIT                     \
+    {                                             \
+        .socket_fd = -1, .addr = {0}, .thread = 0 \
+    }
+
+static void* mock_http_server_run_loop(void* context)
+{
+#define CHECK_RUNNING()           \
+    do {                          \
+        if (!running) {           \
+            if (client_fd > -1) { \
+                close(client_fd); \
+            }                     \
+            return NULL;          \
+        }                         \
+    } while (0)
+
+    TEST_ASSERT_NOT_NULL(context);
+    mock_http_server* server = (mock_http_server*) context;
+    bool running = true;
+    int client_fd = -1;
+    CHECK_RUNNING();
+
+    client_fd = accept(server->socket_fd, NULL, 0);
+    CHECK_RUNNING();
+    while (true) {
+        char buffer[JAEGERTRACINGC_HTTP_SAMPLING_MANAGER_REQUEST_MAX_LEN];
+        int buffer_len = 0;
+        int num_read = read(client_fd, &buffer[0], sizeof(buffer));
+        CHECK_RUNNING();
+
+        while (num_read > 0) {
+            TEST_ASSERT_LESS_OR_EQUAL(
+                JAEGERTRACINGC_HTTP_SAMPLING_MANAGER_REQUEST_MAX_LEN,
+                buffer_len);
+            buffer_len += num_read;
+            num_read = read(
+                client_fd, &buffer[buffer_len], sizeof(buffer) - buffer_len);
+            CHECK_RUNNING();
+        }
+        char str[buffer_len + 1];
+        memcpy(&str[0], &buffer[0], buffer_len);
+        str[buffer_len] = '\0';
+        printf("HTTP Request:\n%s\n", str);
+        break;
+    }
+    close(client_fd);
+    return NULL;
+
+#undef CHECK_RUNNING
+}
+
+static inline void mock_http_server_start(mock_http_server* server)
+{
+    TEST_ASSERT_NOT_NULL(server);
+
+    server->socket_fd = socket(AF_INET, SOCK_STREAM, 0);
+    server->addr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+    server->addr.sin_family = AF_INET;
+    server->addr.sin_port = 0;
+    TEST_ASSERT_GREATER_OR_EQUAL(0, server->socket_fd);
+    TEST_ASSERT_EQUAL(0,
+                      bind(server->socket_fd,
+                           (struct sockaddr*) &server->addr,
+                           sizeof(server->addr)));
+    TEST_ASSERT_EQUAL(0, listen(server->socket_fd, MOCK_HTTP_BACKLOG));
+    socklen_t addr_len = sizeof(server->addr);
+    TEST_ASSERT_EQUAL(0,
+                      getsockname(server->socket_fd,
+                                  (struct sockaddr*) &server->addr,
+                                  &addr_len));
+    TEST_ASSERT_EQUAL(sizeof(server->addr), addr_len);
+    TEST_ASSERT_EQUAL(
+        0,
+        pthread_create(
+            &server->thread, NULL, &mock_http_server_run_loop, server));
+}
+
+static inline void mock_http_server_destroy(mock_http_server* server)
+{
+    if (server->socket_fd > -1) {
+        close(server->socket_fd);
+        server->socket_fd = -1;
+    }
+    if (server->thread != 0) {
+        TEST_ASSERT_EQUAL(0, pthread_join(server->thread, NULL));
+        /* TODO: Signal thread to stop */
+        server->thread = 0;
+    }
+    memset(&server->addr, 0, sizeof(server->addr));
+}
+
 void test_remotely_controlled_sampler()
 {
-    /* TODO */
+    mock_http_server server = MOCK_HTTP_SERVER_INIT;
+    mock_http_server_start(&server);
+    const int port = ntohs(server.addr.sin_port);
+    printf("Server running on localhost:%d\n", port);
+    mock_http_server_destroy(&server);
 }
