@@ -18,10 +18,6 @@
 
 #include <errno.h>
 #include <jansson.h>
-#include <netdb.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <unistd.h>
 
 #define SAMPLER_GROWTH_FACTOR 2
 
@@ -498,68 +494,55 @@ jaeger_adaptive_sampler_update(jaeger_adaptive_sampler* sampler,
 
 static inline bool jaeger_http_sampling_manager_format_request(
     jaeger_http_sampling_manager* manager,
-    const struct http_parser_url* parsed_url)
+    const jaeger_url* url,
+    const jaeger_host_port* sampling_host_port)
 {
+    typedef struct str_segment {
+        int off;
+        int len;
+    } str_segment;
+
     assert(manager != NULL);
-    assert(parsed_url != NULL);
-    int path_len = 2;
-    if (parsed_url->field_set & (1 << UF_PATH)) {
-        path_len = parsed_url->field_data[(UF_PATH)].len + 1;
+    assert(url != NULL);
+    assert(sampling_host_port != NULL);
+
+    str_segment path_segment = {.off = -1, .len = 0};
+    if (url->parts.field_set & UF_PATH) {
+        path_segment = (str_segment){.off = url->parts.field_data[UF_PATH].off,
+                                     .len = url->parts.field_data[UF_PATH].len};
     }
-    char path[path_len];
-    if (path_len > 2) {
-        memcpy(
-            &path[0],
-            &manager->sampling_server_url[parsed_url->field_data[UF_PATH].off],
-            path_len);
+    int path_len = (path_segment.len > 0) ? path_segment.len + 1 : 2;
+    char path_buffer[path_len];
+    path_buffer[path_len] = '\0';
+    if (path_segment.len > 0) {
+        memcpy(&path_buffer[0], &url->str[path_segment.off], path_segment.len);
     }
     else {
-        path[0] = '/';
-        path[1] = '\0';
+        path_buffer[0] = '/';
     }
 
-    const int host_off = parsed_url->field_set & (1 << UF_HOST)
-                             ? parsed_url->field_data[UF_HOST].off
-                             : -1;
-    const int host_len = parsed_url->field_set & (1 << UF_HOST)
-                             ? parsed_url->field_data[UF_HOST].len
-                             : 0;
-    const int port_off = parsed_url->field_set & (1 << UF_PORT)
-                             ? parsed_url->field_data[UF_PORT].off
-                             : -1;
-    const int port_len = parsed_url->field_set & (1 << UF_PORT)
-                             ? parsed_url->field_data[UF_PORT].len
-                             : 0;
-    const int colon_len = port_len > 0 ? 1 : 0;
+    char host_port_buffer[256];
+    int result = jaeger_host_port_format(
+        sampling_host_port, &host_port_buffer[0], sizeof(host_port_buffer));
+    if (result > sizeof(host_port_buffer)) {
+        fprintf(
+            stderr,
+            "ERROR: Cannot write entire sampling server host port to buffer, "
+            "buffer size = %zu, host port string length = %d\n",
+            sizeof(host_port_buffer),
+            result);
+        return false;
+    }
 
-    char host_port[host_len + colon_len + port_len + 1];
-    host_port[host_len + colon_len + port_len] = '\0';
-    int idx = 0;
-    if (host_len > 0) {
-        memcpy(
-            &host_port[idx], &manager->sampling_server_url[host_off], host_len);
-        idx += host_len;
-    }
-    if (colon_len > 0) {
-        host_port[idx] = ':';
-        idx++;
-    }
-    if (port_len > 0) {
-        memcpy(
-            &host_port[idx], &manager->sampling_server_url[port_off], port_len);
-        idx += port_len;
-    }
-    assert(idx == host_len + colon_len + port_len);
-
-    const int result = snprintf(manager->request_buffer,
-                                sizeof(manager->request_buffer),
-                                "GET %s?service=%s HTTP/1.1\r\n"
-                                "Host: %s\r\n"
-                                "User-Agent: jaegertracing/%s\r\n\r\n",
-                                path,
-                                manager->service_name,
-                                host_port,
-                                JAEGERTRACINGC_CLIENT_VERSION);
+    result = snprintf(&manager->request_buffer[0],
+                      sizeof(manager->request_buffer),
+                      "GET %s?service=%s\r\n"
+                      "Host: %s\r\n"
+                      "User-Agent: jaegertracing/%s\r\n\r\n",
+                      &path_buffer[0],
+                      manager->service_name,
+                      &host_port_buffer[0],
+                      JAEGERTRACINGC_CLIENT_VERSION);
     if (result > sizeof(manager->request_buffer)) {
         fprintf(stderr,
                 "ERROR: Cannot write entire HTTP sampling request to buffer, "
@@ -621,79 +604,90 @@ static int jaeger_http_sampling_manager_parser_on_body(http_parser* parser,
 }
 
 static inline bool
+jaeger_http_sampling_manager_connect(jaeger_http_sampling_manager* manager,
+                                     const jaeger_host_port* sampling_host_port)
+{
+    struct addrinfo* host_addrs = NULL;
+    if (!jaeger_host_port_resolve(&host_addrs, sampling_host_port->host)) {
+        return false;
+    }
+
+    bool success = false;
+    for (struct addrinfo* addr_iter = host_addrs; addr_iter != NULL;
+         addr_iter = addr_iter->ai_next) {
+        int fd = socket(AF_INET, SOCK_STREAM, 0);
+        if (fd < 0) {
+            continue;
+        }
+
+        if (connect(fd, addr_iter->ai_addr, addr_iter->ai_addrlen) == 0) {
+            manager->fd = fd;
+            success = true;
+            break;
+        }
+
+        close(fd);
+    }
+    if (!success) {
+        fprintf(stderr,
+                "ERROR: Cannot connect to sampling server URL, URL = \"%s\"\n",
+                manager->sampling_server_url.str);
+    }
+    freeaddrinfo(host_addrs);
+    return success;
+}
+
+static inline void
+jaeger_http_sampling_manager_destroy(jaeger_http_sampling_manager* manager)
+{
+    assert(manager != NULL);
+    if (manager->fd >= 0) {
+        close(manager->fd);
+    }
+    if (manager->response_buffer != NULL) {
+        jaeger_free(manager->response_buffer);
+        manager->response_buffer = NULL;
+    }
+    jaeger_url_destroy(&manager->sampling_server_url);
+    if (manager->service_name != NULL) {
+        jaeger_free(manager->service_name);
+        manager->service_name = NULL;
+    }
+}
+
+static inline bool
 jaeger_http_sampling_manager_init(jaeger_http_sampling_manager* manager,
                                   const char* sampling_server_url,
                                   const char* service_name)
 {
     assert(manager != NULL);
-    assert(service_name != NULL);
+    assert(service_name != NULL && strlen(service_name) > 0);
 
-    manager->service_name = service_name;
+    manager->service_name = jaeger_strdup(service_name);
+    if (manager->service_name == NULL) {
+        fprintf(stderr,
+                "ERROR: Cannot allocate service name for HTTP sampling "
+                "manager, service name = \"%s\"\n",
+                service_name);
+        return false;
+    }
+
     sampling_server_url =
         (sampling_server_url != NULL && strlen(sampling_server_url) > 0)
             ? sampling_server_url
             : "http://localhost:5778/sampling";
-    manager->sampling_server_url = sampling_server_url;
-
-    struct http_parser_url parsed_url = {0};
-    int result = http_parser_parse_url(manager->sampling_server_url,
-                                       strlen(sampling_server_url),
-                                       0,
-                                       &parsed_url);
-    if (result != 0) {
-        fprintf(stderr,
-                "ERROR: Cannot parse sampling server URL, "
-                "sampling server url = \"%s\", "
-                "error code = %d\n",
-                manager->sampling_server_url,
-                result);
+    jaeger_host_port sampling_host_port = {.host = NULL, .port = 0};
+    if (!jaeger_url_init(&manager->sampling_server_url, sampling_server_url) ||
+        !jaeger_host_port_from_url(&sampling_host_port,
+                                   &manager->sampling_server_url) ||
+        !jaeger_http_sampling_manager_connect(manager, &sampling_host_port)) {
+        jaeger_host_port_destroy(&sampling_host_port);
+        jaeger_http_sampling_manager_destroy(manager);
         return false;
     }
-
-    struct addrinfo hints;
-    memset(&hints, 0, sizeof(hints));
-    hints.ai_family = AF_INET;
-    hints.ai_socktype = SOCK_STREAM;
-    struct addrinfo* addr = NULL;
-    result = getaddrinfo(manager->sampling_server_url, 0, &hints, &addr);
-    if (result != 0) {
-        fprintf(stderr,
-                "ERROR: Cannot resolve sampling server URL for HTTP sampling "
-                "manager, sampling server url = \"%s\", error = \"%s\"\n",
-                manager->sampling_server_url,
-                gai_strerror(result));
-        return false;
-    }
-
-    bool success = false;
-    int socket_fd = -1;
-    for (struct addrinfo* addr_iter = addr; addr_iter != NULL;
-         addr_iter = addr_iter->ai_next) {
-        socket_fd = socket(addr_iter->ai_family,
-                           addr_iter->ai_socktype,
-                           addr_iter->ai_protocol);
-        if (socket_fd < 0) {
-            continue;
-        }
-        if (connect(socket_fd, addr_iter->ai_addr, addr_iter->ai_addrlen)) {
-            success = true;
-            break;
-        }
-        close(socket_fd);
-    }
-    freeaddrinfo(addr);
-    if (!success) {
-        fprintf(stderr,
-                "ERROR: Cannot connect to host for HTTP sampling manager, "
-                "sampling server url = \"%s\"\n",
-                manager->sampling_server_url);
-        return false;
-    }
-
-    assert(socket_fd >= 0);
-    manager->fd = socket_fd;
 
     http_parser_init(&manager->parser, HTTP_RESPONSE);
+    manager->parser.data = manager;
     manager->settings.on_headers_complete =
         &jaeger_http_sampling_manager_parser_on_headers_complete;
     manager->settings.on_body = &jaeger_http_sampling_manager_parser_on_body;
@@ -704,13 +698,18 @@ jaeger_http_sampling_manager_init(jaeger_http_sampling_manager* manager,
                 "ERROR: Cannot allocate response buffer in HTTP sampling "
                 "manager, size = %d\n",
                 RESPONSE_BUFFER_INIT_SIZE);
-        close(manager->fd);
+        jaeger_host_port_destroy(&sampling_host_port);
+        jaeger_http_sampling_manager_destroy(manager);
         return false;
     }
+
     manager->response_length = 0;
     manager->response_capacity = RESPONSE_BUFFER_INIT_SIZE;
 
-    return jaeger_http_sampling_manager_format_request(manager, &parsed_url);
+    const bool decision = jaeger_http_sampling_manager_format_request(
+        manager, &manager->sampling_server_url, &sampling_host_port);
+    jaeger_host_port_destroy(&sampling_host_port);
+    return decision;
 }
 
 #define ERR_FMT                                                              \
@@ -992,9 +991,10 @@ static inline bool jaeger_http_sampling_manager_get_sampling_strategies(
     if (num_written != manager->request_length) {
         fprintf(stderr,
                 "ERROR: Cannot write entire HTTP sampling request, "
-                "num written = %d, request length = %d\n",
+                "num written = %d, request length = %d, errno = %d\n",
                 num_written,
-                manager->request_length);
+                manager->request_length,
+                errno);
         return false;
     }
 
@@ -1016,16 +1016,6 @@ static inline bool jaeger_http_sampling_manager_get_sampling_strategies(
     }
 
     return jaeger_http_sampling_manager_parse_json_response(manager, response);
-}
-
-static inline void
-jaeger_http_sampling_manager_destroy(jaeger_http_sampling_manager* manager)
-{
-    assert(manager != NULL);
-    close(manager->fd);
-    if (manager->response_buffer != NULL) {
-        jaeger_free(manager->response_buffer);
-    }
 }
 
 static bool
@@ -1163,7 +1153,7 @@ bool jaeger_remotely_controlled_sampler_init(
     jaeger_metrics* metrics)
 {
     assert(sampler != NULL);
-    assert(service_name != NULL);
+    assert(service_name != NULL && strlen(service_name) > 0);
     const jaeger_duration interval = (sampling_refresh_interval != NULL &&
                                       (sampling_refresh_interval->tv_sec > 0 ||
                                        sampling_refresh_interval->tv_nsec > 0))
@@ -1179,8 +1169,7 @@ bool jaeger_remotely_controlled_sampler_init(
         interval,
         metrics,
         JAEGERTRACINGC_TICKER_INIT,
-        (jaeger_http_sampling_manager){
-            NULL, NULL, -1, {}, {}, 0, {'\0'}, 0, 0, NULL},
+        JAEGERTRACINGC_HTTP_SAMPLING_MANAGER_INIT,
         PTHREAD_MUTEX_INITIALIZER};
 
     if (initial_sampler != NULL) {
@@ -1205,7 +1194,7 @@ bool jaeger_remotely_controlled_sampler_init(
         jaeger_ticker_start(&sampler->ticker,
                             &sampler->sampling_refresh_interval,
                             &jaeger_remotely_controlled_sampler_update,
-                            &sampler);
+                            sampler);
     if (result != 0) {
         fprintf(stderr,
                 "ERROR: Cannot start ticker in remotely controlled sampler, "

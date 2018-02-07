@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-#include "jaegertracingc/sampler.h"
+#include <errno.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include "jaegertracingc/sampler.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -219,6 +220,9 @@ void test_adaptive_sampler()
     jaeger_adaptive_sampler_init(&a, &strategies, TEST_DEFAULT_MAX_OPERATIONS);
     a.is_sampled((jaeger_sampler*) &a, &trace_id, operation_name, &tags);
 
+    jaeger_tag_list_clear(&tags);
+    a.is_sampled((jaeger_sampler*) &a, &trace_id, "unseen-operation", &tags);
+
     jaeger_per_operation_strategy_destroy(&strategies);
     TEAR_DOWN_SAMPLER_TEST(a);
 }
@@ -313,7 +317,7 @@ static inline void mock_http_server_start(mock_http_server* server)
 static inline void mock_http_server_destroy(mock_http_server* server)
 {
     if (server->socket_fd > -1) {
-        TEST_ASSERT_EQUAL(0, shutdown(server->socket_fd, SHUT_RDWR));
+        shutdown(server->socket_fd, SHUT_RDWR);
         TEST_ASSERT_EQUAL(0, close(server->socket_fd));
         server->socket_fd = -1;
     }
@@ -326,9 +330,34 @@ static inline void mock_http_server_destroy(mock_http_server* server)
 
 void test_remotely_controlled_sampler()
 {
+    jaeger_metrics metrics;
+    jaeger_null_metrics_init(&metrics);
     mock_http_server server = MOCK_HTTP_SERVER_INIT;
     mock_http_server_start(&server);
     const int port = ntohs(server.addr.sin_port);
     printf("Server running on localhost:%d\n", port);
+
+#define URL_PREFIX "http://localhost:"
+    char buffer[sizeof(URL_PREFIX) + 5];
+    const int result =
+        snprintf(&buffer[0], sizeof(buffer), URL_PREFIX "%d", port);
+    TEST_ASSERT_EQUAL(sizeof(buffer) - 1, result);
+    jaeger_remotely_controlled_sampler r;
+    const jaeger_duration sampling_refresh_interval = {
+        .tv_sec = 0, .tv_nsec = JAEGERTRACINGC_NANOSECONDS_PER_SECOND / 2};
+    jaeger_remotely_controlled_sampler_init(&r,
+                                            "test-service",
+                                            &buffer[0],
+                                            NULL,
+                                            TEST_DEFAULT_MAX_OPERATIONS,
+                                            &sampling_refresh_interval,
+                                            &metrics);
+
+    const int seconds = 5;
+    printf("Sleeping %d seconds...\n", seconds);
+    jaeger_duration sleep_time = {.tv_sec = seconds, .tv_nsec = 0};
+    nanosleep(&sleep_time, NULL);
+
     mock_http_server_destroy(&server);
+    jaeger_metrics_destroy(&metrics);
 }

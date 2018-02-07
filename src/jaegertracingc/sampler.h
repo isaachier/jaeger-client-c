@@ -18,7 +18,6 @@
 #define JAEGERTRACINGC_SAMPLER_H
 
 #include <assert.h>
-#include <http_parser.h>
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -26,6 +25,7 @@
 #include "jaegertracingc/constants.h"
 #include "jaegertracingc/duration.h"
 #include "jaegertracingc/metrics.h"
+#include "jaegertracingc/net.h"
 #include "jaegertracingc/sampling_strategy.h"
 #include "jaegertracingc/tag.h"
 #include "jaegertracingc/ticker.h"
@@ -195,8 +195,8 @@ static inline void jaeger_sampler_choice_close(jaeger_sampler_choice* sampler)
 #define JAEGERTRACINGC_HTTP_SAMPLING_MANAGER_REQUEST_MAX_LEN 256
 
 typedef struct jaeger_http_sampling_manager {
-    const char* service_name;
-    const char* sampling_server_url;
+    char* service_name;
+    jaeger_url sampling_server_url;
     int fd;
     http_parser parser;
     http_parser_settings settings;
@@ -206,6 +206,14 @@ typedef struct jaeger_http_sampling_manager {
     int response_capacity;
     char* response_buffer;
 } jaeger_http_sampling_manager;
+
+#define JAEGERTRACINGC_HTTP_SAMPLING_MANAGER_INIT                             \
+    {                                                                         \
+        .service_name = NULL, .sampling_server_url = JAEGERTRACINGC_URL_INIT, \
+        .fd = -1, .parser = {}, .settings = {}, .request_length = 0,          \
+        .request_buffer = {'\0'}, .response_length = 0,                       \
+        .response_capacity = 0, .response_buffer = NULL                       \
+    }
 
 typedef struct jaeger_remotely_controlled_sampler {
     JAEGERTRACINGC_SAMPLER_SUBCLASS;
