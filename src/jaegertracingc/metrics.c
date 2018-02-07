@@ -18,6 +18,11 @@
 #include <assert.h>
 #include <stdio.h>
 
+static void noop_destroy(jaeger_destructible* destructible)
+{
+    (void) destructible;
+}
+
 static void jaeger_default_counter_inc(jaeger_counter* counter, int64_t delta)
 {
     assert(counter != NULL);
@@ -25,11 +30,13 @@ static void jaeger_default_counter_inc(jaeger_counter* counter, int64_t delta)
     c->total += delta;
 }
 
-void jaeger_default_counter_init(jaeger_default_counter* counter)
+bool jaeger_default_counter_init(jaeger_default_counter* counter)
 {
     assert(counter != NULL);
     counter->total = 0;
+    counter->destroy = &noop_destroy;
     counter->inc = &jaeger_default_counter_inc;
+    return true;
 }
 
 static void jaeger_null_counter_inc(jaeger_counter* counter, int64_t delta)
@@ -38,10 +45,12 @@ static void jaeger_null_counter_inc(jaeger_counter* counter, int64_t delta)
     (void) delta;
 }
 
-void jaeger_null_counter_init(jaeger_counter* counter)
+bool jaeger_null_counter_init(jaeger_counter* counter)
 {
     assert(counter != NULL);
+    counter->destroy = &noop_destroy;
     counter->inc = &jaeger_null_counter_inc;
+    return true;
 }
 
 static void jaeger_default_gauge_update(jaeger_gauge* gauge, int64_t amount)
@@ -51,10 +60,13 @@ static void jaeger_default_gauge_update(jaeger_gauge* gauge, int64_t amount)
     g->amount = amount;
 }
 
-void jaeger_default_gauge_init(jaeger_default_gauge* gauge)
+bool jaeger_default_gauge_init(jaeger_default_gauge* gauge)
 {
-    gauge->amount = 0;
+    assert(gauge != NULL);
+    gauge->destroy = &noop_destroy;
     gauge->update = &jaeger_default_gauge_update;
+    gauge->amount = 0;
+    return true;
 }
 
 static void jaeger_null_gauge_update(jaeger_gauge* gauge, int64_t amount)
@@ -63,7 +75,10 @@ static void jaeger_null_gauge_update(jaeger_gauge* gauge, int64_t amount)
     (void) amount;
 }
 
-void jaeger_null_gauge_init(jaeger_gauge* gauge)
+bool jaeger_null_gauge_init(jaeger_gauge* gauge)
 {
+    assert(gauge != NULL);
+    gauge->destroy = &noop_destroy;
     gauge->update = &jaeger_null_gauge_update;
+    return true;
 }

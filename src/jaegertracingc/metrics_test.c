@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#include "jaegertracingc/alloc.h"
 #include "jaegertracingc/metrics.h"
+#include "jaegertracingc/alloc.h"
 #include "unity.h"
 
 void test_metrics()
@@ -37,4 +37,10 @@ void test_metrics()
     jaeger_gauge null_gauge;
     jaeger_null_gauge_init(&null_gauge);
     null_gauge.update(&null_gauge, 4);
+
+    jaeger_metrics metrics;
+    jaeger_default_metrics_init(&metrics);
+    jaeger_metrics_destroy(&metrics);
+    jaeger_null_metrics_init(&metrics);
+    jaeger_metrics_destroy(&metrics);
 }

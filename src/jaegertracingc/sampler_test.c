@@ -313,12 +313,12 @@ static inline void mock_http_server_start(mock_http_server* server)
 static inline void mock_http_server_destroy(mock_http_server* server)
 {
     if (server->socket_fd > -1) {
-        close(server->socket_fd);
+        TEST_ASSERT_EQUAL(0, shutdown(server->socket_fd, SHUT_RDWR));
+        TEST_ASSERT_EQUAL(0, close(server->socket_fd));
         server->socket_fd = -1;
     }
     if (server->thread != 0) {
         TEST_ASSERT_EQUAL(0, pthread_join(server->thread, NULL));
-        /* TODO: Signal thread to stop */
         server->thread = 0;
     }
     memset(&server->addr, 0, sizeof(server->addr));
