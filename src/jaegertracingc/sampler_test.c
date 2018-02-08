@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
+#include "jaegertracingc/sampler.h"
 #include <errno.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include "jaegertracingc/sampler.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -233,12 +233,14 @@ typedef struct mock_http_server {
     int socket_fd;
     struct sockaddr_in addr;
     pthread_t thread;
-    int done_fd;
+    pthread_mutex_t mutex;
+    pthread_cond_t cond;
 } mock_http_server;
 
-#define MOCK_HTTP_SERVER_INIT                     \
-    {                                             \
-        .socket_fd = -1, .addr = {0}, .thread = 0 \
+#define MOCK_HTTP_SERVER_INIT                                                \
+    {                                                                        \
+        .socket_fd = -1, .addr = {0}, .thread = 0,                           \
+        .mutex = PTHREAD_MUTEX_INITIALIZER, .cond = PTHREAD_COND_INITIALIZER \
     }
 
 static void* mock_http_server_run_loop(void* context)
@@ -257,7 +259,6 @@ static void* mock_http_server_run_loop(void* context)
     mock_http_server* server = (mock_http_server*) context;
     bool running = true;
     int client_fd = -1;
-    CHECK_RUNNING();
 
     client_fd = accept(server->socket_fd, NULL, 0);
     CHECK_RUNNING();
@@ -272,8 +273,10 @@ static void* mock_http_server_run_loop(void* context)
                 JAEGERTRACINGC_HTTP_SAMPLING_MANAGER_REQUEST_MAX_LEN,
                 buffer_len);
             buffer_len += num_read;
+            printf("Reading...\n");
             num_read = read(
                 client_fd, &buffer[buffer_len], sizeof(buffer) - buffer_len);
+            printf("num_read=%d\n", num_read);
             CHECK_RUNNING();
         }
         char str[buffer_len + 1];
@@ -324,6 +327,8 @@ static inline void mock_http_server_destroy(mock_http_server* server)
     if (server->thread != 0) {
         TEST_ASSERT_EQUAL(0, pthread_join(server->thread, NULL));
         server->thread = 0;
+        pthread_mutex_destroy(&server->mutex);
+        pthread_cond_destroy(&server->cond);
     }
     memset(&server->addr, 0, sizeof(server->addr));
 }
@@ -343,21 +348,14 @@ void test_remotely_controlled_sampler()
         snprintf(&buffer[0], sizeof(buffer), URL_PREFIX "%d", port);
     TEST_ASSERT_EQUAL(sizeof(buffer) - 1, result);
     jaeger_remotely_controlled_sampler r;
-    const jaeger_duration sampling_refresh_interval = {
-        .tv_sec = 0, .tv_nsec = JAEGERTRACINGC_NANOSECONDS_PER_SECOND / 2};
-    jaeger_remotely_controlled_sampler_init(&r,
-                                            "test-service",
-                                            &buffer[0],
-                                            NULL,
-                                            TEST_DEFAULT_MAX_OPERATIONS,
-                                            &sampling_refresh_interval,
-                                            &metrics);
-
-    const int seconds = 5;
-    printf("Sleeping %d seconds...\n", seconds);
-    jaeger_duration sleep_time = {.tv_sec = seconds, .tv_nsec = 0};
-    nanosleep(&sleep_time, NULL);
-
+    TEST_ASSERT_TRUE(
+        jaeger_remotely_controlled_sampler_init(&r,
+                                                "test-service",
+                                                &buffer[0],
+                                                NULL,
+                                                TEST_DEFAULT_MAX_OPERATIONS,
+                                                &metrics));
+    TEST_ASSERT_TRUE(jaeger_remotely_controlled_sampler_update(&r));
     mock_http_server_destroy(&server);
     jaeger_metrics_destroy(&metrics);
 }

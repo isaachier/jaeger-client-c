@@ -32,6 +32,8 @@
 extern "C" {
 #endif /* __cplusplus */
 
+#define JAEGERTRACINGC_MAX_PORT_STR_LEN 6
+
 typedef struct jaeger_host_port {
     char* host;
     int port;
@@ -155,7 +157,7 @@ static inline bool jaeger_host_port_from_url(jaeger_host_port* host_port,
         (host_segment.len == 0) ? sizeof("localhost") : host_segment.len + 1;
     char host_buffer[host_buffer_len];
     if (host_segment.len > 0) {
-        memcpy(&host_buffer[0], &url->str[0], host_segment.len);
+        memcpy(&host_buffer[0], &url->str[host_segment.off], host_segment.len);
     }
     else {
         memcpy(&host_buffer[0], "localhost", strlen("localhost"));
@@ -175,21 +177,26 @@ static inline int jaeger_host_port_format(const jaeger_host_port* host_port,
         buffer, buffer_len, "%s:%d", host_port->host, host_port->port);
 }
 
-static inline bool jaeger_host_port_resolve(struct addrinfo** host_addrs,
-                                            const char* host)
+static inline bool jaeger_host_port_resolve(const jaeger_host_port* host_port,
+                                            struct addrinfo** host_addrs)
 {
     assert(host_addrs != NULL);
-    assert(host != NULL && strlen(host) > 0);
+    assert(host_port != NULL);
+    assert(host_port->host != NULL && strlen(host_port->host) > 0);
 
     struct addrinfo hints;
     memset(&hints, 0, sizeof(hints));
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM;
-    const int result = getaddrinfo(host, 0, &hints, host_addrs);
+    char port_buffer[JAEGERTRACINGC_MAX_PORT_STR_LEN];
+    int result =
+        snprintf(&port_buffer[0], sizeof(port_buffer), "%d", host_port->port);
+    assert(result < JAEGERTRACINGC_MAX_PORT_STR_LEN);
+    result = getaddrinfo(host_port->host, &port_buffer[0], &hints, host_addrs);
     if (result != 0) {
         fprintf(stderr,
                 "ERROR: Cannot resolve host = \"%s\", error = \"%s\"\n",
-                host,
+                host_port->host,
                 gai_strerror(result));
         return false;
     }

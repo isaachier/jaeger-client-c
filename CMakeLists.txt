@@ -60,7 +60,6 @@ add_library(jaegertracingc
   "src/jaegertracingc/sampler.c"
   "src/jaegertracingc/sampling_strategy.c"
   "src/jaegertracingc/tag.c"
-  "src/jaegertracingc/ticker.c"
   "src/jaegertracingc/token_bucket.c"
   "src/jaegertracingc/types.c"
   "src/jaegertracingc/protoc-gen/agent.pb-c.c"
@@ -108,7 +107,6 @@ if(BUILD_TESTING)
     "src/jaegertracingc/net_test.c"
     "src/jaegertracingc/sampler_test.c"
     "src/jaegertracingc/tag_test.c"
-    "src/jaegertracingc/ticker_test.c"
     "src/jaegertracingc/token_bucket_test.c")
   add_library(jaegertracingc_test ${TEST_SRC})
   target_link_libraries(jaegertracingc_test PUBLIC jaegertracingc unity)

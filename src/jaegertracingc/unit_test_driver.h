@@ -22,7 +22,6 @@
 #include "metrics_test.h"
 #include "sampler_test.h"
 #include "tag_test.h"
-#include "ticker_test.h"
 #include "token_bucket_test.h"
 #include "unity.h"
 
@@ -41,7 +40,6 @@ static inline void run_tests()
     RUN_TEST(test_adaptive_sampler);
     RUN_TEST(test_remotely_controlled_sampler);
     RUN_TEST(test_tag);
-    RUN_TEST(test_ticker);
     RUN_TEST(test_metrics);
     RUN_TEST(test_token_bucket);
 }

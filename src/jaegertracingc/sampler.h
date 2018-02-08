@@ -28,7 +28,6 @@
 #include "jaegertracingc/net.h"
 #include "jaegertracingc/sampling_strategy.h"
 #include "jaegertracingc/tag.h"
-#include "jaegertracingc/ticker.h"
 #include "jaegertracingc/token_bucket.h"
 #include "jaegertracingc/types.h"
 
@@ -219,9 +218,7 @@ typedef struct jaeger_remotely_controlled_sampler {
     JAEGERTRACINGC_SAMPLER_SUBCLASS;
     jaeger_sampler_choice sampler;
     int max_operations;
-    jaeger_duration sampling_refresh_interval;
     jaeger_metrics* metrics;
-    jaeger_ticker ticker;
     jaeger_http_sampling_manager manager;
     pthread_mutex_t mutex;
 } jaeger_remotely_controlled_sampler;
@@ -232,8 +229,10 @@ bool jaeger_remotely_controlled_sampler_init(
     const char* sampling_server_url,
     const jaeger_sampler_choice* initial_sampler,
     int max_operations,
-    const jaeger_duration* sampling_refresh_interval,
     jaeger_metrics* metrics);
+
+bool jaeger_remotely_controlled_sampler_update(
+    jaeger_remotely_controlled_sampler* sampler);
 
 #ifdef __cplusplus
 } /* extern C */

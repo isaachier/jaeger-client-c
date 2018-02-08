@@ -16,6 +16,7 @@
 
 #include "jaegertracingc/sampler.h"
 
+#include <arpa/inet.h>
 #include <errno.h>
 #include <jansson.h>
 
@@ -608,18 +609,30 @@ jaeger_http_sampling_manager_connect(jaeger_http_sampling_manager* manager,
                                      const jaeger_host_port* sampling_host_port)
 {
     struct addrinfo* host_addrs = NULL;
-    if (!jaeger_host_port_resolve(&host_addrs, sampling_host_port->host)) {
+    if (!jaeger_host_port_resolve(sampling_host_port, &host_addrs)) {
         return false;
     }
 
     bool success = false;
+    char ip_str[INET_ADDRSTRLEN];
     for (struct addrinfo* addr_iter = host_addrs; addr_iter != NULL;
          addr_iter = addr_iter->ai_next) {
-        int fd = socket(AF_INET, SOCK_STREAM, 0);
+        const int fd = socket(AF_INET, SOCK_STREAM, 0);
         if (fd < 0) {
             continue;
         }
 
+        if (addr_iter->ai_addrlen == sizeof(struct sockaddr_in)) {
+            const struct sockaddr_in* ip_addr =
+                (const struct sockaddr_in*) addr_iter->ai_addr;
+            const char* result = inet_ntop(
+                AF_INET, &ip_addr->sin_addr, &ip_str[0], sizeof(ip_str));
+            if (result != NULL) {
+                printf("Attempting to connect to %s:%d\n",
+                       ip_str,
+                       ntohs(ip_addr->sin_port));
+            }
+        }
         if (connect(fd, addr_iter->ai_addr, addr_iter->ai_addrlen) == 0) {
             manager->fd = fd;
             success = true;
@@ -830,11 +843,11 @@ parse_per_operation_sampling_json(jaeger_per_operation_strategy* strategy,
         op_strategy->probabilistic =
             jaeger_malloc(sizeof(jaeger_probabilistic_strategy));
         if (op_strategy->probabilistic == NULL) {
-            fprintf(
-                stderr,
-                "ERROR: Cannot allocate probabilistic strategy, num operation "
-                "strategies = %zu\n",
-                strategy->n_per_operation_strategy);
+            fprintf(stderr,
+                    "ERROR: Cannot allocate probabilistic strategy, num "
+                    "operation "
+                    "strategies = %zu\n",
+                    strategy->n_per_operation_strategy);
             success = false;
             break;
         }
@@ -910,7 +923,8 @@ static inline bool jaeger_http_sampling_manager_parse_json_response(
 
     /* Although we could shrink the response buffer at this point, the next
      * response will probably need a response buffer about the same size. To
-     * avoid incurring performance hits for multiple allocations, we can keep
+     * avoid incurring performance hits for multiple allocations, we can
+     * keep
      * the buffer until the manager is freed.
      */
 
@@ -1011,7 +1025,8 @@ static inline bool jaeger_http_sampling_manager_get_sampling_strategies(
 
     if (manager->response_buffer != NULL) {
         manager->response_buffer[manager->response_length] = '\0';
-        /* Do not increase length because string should not contain null byte.
+        /* Do not increase length because string should not contain null
+         * byte.
          */
     }
 
@@ -1038,7 +1053,6 @@ static void jaeger_remotely_controlled_sampler_close(jaeger_sampler* sampler)
 {
     jaeger_remotely_controlled_sampler* s =
         (jaeger_remotely_controlled_sampler*) sampler;
-    jaeger_ticker_destroy(&s->ticker);
     jaeger_sampler_choice* sampler_choice = &s->sampler;
     jaeger_sampler_choice_close(sampler_choice);
     jaeger_http_sampling_manager_destroy(&s->manager);
@@ -1064,23 +1078,23 @@ static inline bool jaeger_remotely_controlled_sampler_update_adaptive_sampler(
     }
 }
 
-static void jaeger_remotely_controlled_sampler_update(void* context)
+bool jaeger_remotely_controlled_sampler_update(
+    jaeger_remotely_controlled_sampler* sampler)
 {
-    assert(context != NULL);
-    jaeger_remotely_controlled_sampler* sampler =
-        (jaeger_remotely_controlled_sampler*) context;
+    assert(sampler != NULL);
+    bool success = true;
     jaeger_strategy_response response = JAEGERTRACINGC_STRATEGY_RESPONSE_INIT;
     const bool result = jaeger_http_sampling_manager_get_sampling_strategies(
         &sampler->manager, &response);
     if (!result) {
         fprintf(stderr,
                 "ERROR: Cannot get sampling strategies, will retry later\n");
+        success = false;
         if (sampler->metrics != NULL &&
             sampler->metrics->sampler_query_failure) {
             sampler->metrics->sampler_query_failure->inc(
                 sampler->metrics->sampler_query_failure, 1);
         }
-        return;
     }
 
     pthread_mutex_lock(&sampler->mutex);
@@ -1094,10 +1108,10 @@ static void jaeger_remotely_controlled_sampler_update(void* context)
     case JAEGERTRACINGC_STRATEGY_RESPONSE_TYPE(PER_OPERATION): {
         if (!jaeger_remotely_controlled_sampler_update_adaptive_sampler(
                 sampler, response.per_operation)) {
-            fprintf(
-                stderr,
-                "ERROR: Cannot update adaptive sampler in remotely controlled "
-                "sampler\n");
+            fprintf(stderr,
+                    "ERROR: Cannot update adaptive sampler in remotely "
+                    "controlled "
+                    "sampler\n");
         }
     } break;
     case JAEGERTRACINGC_STRATEGY_RESPONSE_TYPE(PROBABILISTIC): {
@@ -1134,11 +1148,9 @@ static void jaeger_remotely_controlled_sampler_update(void* context)
     }
 
     pthread_mutex_unlock(&sampler->mutex);
-
     jaeger_strategy_response_destroy(&response);
+    return success;
 }
-
-static const jaeger_duration default_sampling_refresh_interval = {60, 0};
 
 #define DEFAULT_MAX_OPERATIONS 2000
 #define DEFAULT_SAMPLING_RATE 0.001
@@ -1149,16 +1161,10 @@ bool jaeger_remotely_controlled_sampler_init(
     const char* sampling_server_url,
     const jaeger_sampler_choice* initial_sampler,
     int max_operations,
-    const jaeger_duration* sampling_refresh_interval,
     jaeger_metrics* metrics)
 {
     assert(sampler != NULL);
     assert(service_name != NULL && strlen(service_name) > 0);
-    const jaeger_duration interval = (sampling_refresh_interval != NULL &&
-                                      (sampling_refresh_interval->tv_sec > 0 ||
-                                       sampling_refresh_interval->tv_nsec > 0))
-                                         ? *sampling_refresh_interval
-                                         : default_sampling_refresh_interval;
     max_operations =
         (max_operations <= 0) ? DEFAULT_MAX_OPERATIONS : max_operations;
     *sampler = (jaeger_remotely_controlled_sampler){
@@ -1166,9 +1172,7 @@ bool jaeger_remotely_controlled_sampler_init(
         &jaeger_remotely_controlled_sampler_close,
         (jaeger_sampler_choice){},
         max_operations,
-        interval,
         metrics,
-        JAEGERTRACINGC_TICKER_INIT,
         JAEGERTRACINGC_HTTP_SAMPLING_MANAGER_INIT,
         PTHREAD_MUTEX_INITIALIZER};
 
@@ -1187,19 +1191,6 @@ bool jaeger_remotely_controlled_sampler_init(
         fprintf(stderr,
                 "ERROR: Cannot initialize HTTP manager for remotely "
                 "controlled sampler\n");
-        return false;
-    }
-
-    const int result =
-        jaeger_ticker_start(&sampler->ticker,
-                            &sampler->sampling_refresh_interval,
-                            &jaeger_remotely_controlled_sampler_update,
-                            sampler);
-    if (result != 0) {
-        fprintf(stderr,
-                "ERROR: Cannot start ticker in remotely controlled sampler, "
-                "return code = %d\n",
-                result);
         return false;
     }
 
