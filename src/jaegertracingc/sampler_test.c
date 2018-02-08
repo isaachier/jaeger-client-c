@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-#include "jaegertracingc/sampler.h"
 #include <errno.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include "jaegertracingc/sampler.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -228,67 +228,117 @@ void test_adaptive_sampler()
 }
 
 #define MOCK_HTTP_BACKLOG 1
+#define MOCK_HTTP_MAX_URL 256
 
 typedef struct mock_http_server {
     int socket_fd;
     struct sockaddr_in addr;
     pthread_t thread;
-    pthread_mutex_t mutex;
-    pthread_cond_t cond;
+    int url_len;
+    char url_buffer[MOCK_HTTP_MAX_URL];
 } mock_http_server;
 
-#define MOCK_HTTP_SERVER_INIT                                                \
-    {                                                                        \
-        .socket_fd = -1, .addr = {0}, .thread = 0,                           \
-        .mutex = PTHREAD_MUTEX_INITIALIZER, .cond = PTHREAD_COND_INITIALIZER \
+#define MOCK_HTTP_SERVER_INIT                                    \
+    {                                                            \
+        .socket_fd = -1, .addr = {0}, .thread = 0, .url_len = 0, \
+        .url_buffer = {                                          \
+            '\0'                                                 \
+        }                                                        \
     }
+
+static int
+mock_http_server_on_url(http_parser* parser, const char* at, size_t len)
+{
+    TEST_ASSERT_NOT_NULL(parser);
+    TEST_ASSERT_NOT_NULL(parser->data);
+    mock_http_server* server = (mock_http_server*) parser->data;
+    TEST_ASSERT_NOT_NULL(at);
+    TEST_ASSERT_LESS_OR_EQUAL(MOCK_HTTP_MAX_URL, server->url_len + len);
+    memcpy(&server->url_buffer[server->url_len], at, len);
+    server->url_len += len;
+    return 0;
+}
+
+static inline void
+read_client_request(int client_fd, void* buffer, int* buffer_len)
+{
+    int num_read = read(client_fd,
+                        buffer,
+                        JAEGERTRACINGC_HTTP_SAMPLING_MANAGER_REQUEST_MAX_LEN);
+
+    while (num_read > 0) {
+        TEST_ASSERT_LESS_OR_EQUAL(
+            JAEGERTRACINGC_HTTP_SAMPLING_MANAGER_REQUEST_MAX_LEN, *buffer_len);
+        TEST_ASSERT_LESS_OR_EQUAL(
+            JAEGERTRACINGC_HTTP_SAMPLING_MANAGER_REQUEST_MAX_LEN,
+            *buffer_len + num_read);
+        *buffer_len += num_read;
+        if (*buffer_len >= 4 &&
+            memcmp(&buffer[*buffer_len - 4], "\r\n\r\n", 4) == 0) {
+            break;
+        }
+        num_read =
+            read(client_fd, &buffer[*buffer_len], sizeof(buffer) - *buffer_len);
+    }
+}
 
 static void* mock_http_server_run_loop(void* context)
 {
-#define CHECK_RUNNING()           \
-    do {                          \
-        if (!running) {           \
-            if (client_fd > -1) { \
-                close(client_fd); \
-            }                     \
-            return NULL;          \
-        }                         \
-    } while (0)
-
     TEST_ASSERT_NOT_NULL(context);
     mock_http_server* server = (mock_http_server*) context;
-    bool running = true;
     int client_fd = -1;
 
     client_fd = accept(server->socket_fd, NULL, 0);
-    CHECK_RUNNING();
-    while (true) {
-        char buffer[JAEGERTRACINGC_HTTP_SAMPLING_MANAGER_REQUEST_MAX_LEN];
-        int buffer_len = 0;
-        int num_read = read(client_fd, &buffer[0], sizeof(buffer));
-        CHECK_RUNNING();
+    http_parser parser;
+    http_parser_init(&parser, HTTP_REQUEST);
+    parser.data = server;
+    http_parser_settings settings;
+    http_parser_settings_init(&settings);
+    settings.on_url = &mock_http_server_on_url;
 
-        while (num_read > 0) {
-            TEST_ASSERT_LESS_OR_EQUAL(
-                JAEGERTRACINGC_HTTP_SAMPLING_MANAGER_REQUEST_MAX_LEN,
-                buffer_len);
-            buffer_len += num_read;
-            printf("Reading...\n");
-            num_read = read(
-                client_fd, &buffer[buffer_len], sizeof(buffer) - buffer_len);
-            printf("num_read=%d\n", num_read);
-            CHECK_RUNNING();
-        }
-        char str[buffer_len + 1];
-        memcpy(&str[0], &buffer[0], buffer_len);
-        str[buffer_len] = '\0';
-        printf("HTTP Request:\n%s\n", str);
-        break;
-    }
+    const char strategy_response[] = "{\n"
+                                     "  \"probabilisticSampling\": {\n"
+                                     "      \"samplingRate\": 0.5\n"
+                                     "    }\n"
+                                     "}\n";
+    const char http_response_format[] = "HTTP/1.1 200\r\n"
+                                        "Content-Type: application/json\r\n"
+                                        "Content-Length: %zu\r\n\r\n"
+                                        "%s";
+    const int num_digits = 10;
+    char http_response[strlen(strategy_response) +
+                       strlen(http_response_format) + num_digits + 1];
+    const int result = snprintf(http_response,
+                                sizeof(http_response),
+                                http_response_format,
+                                strlen(strategy_response),
+                                strategy_response);
+    TEST_ASSERT_LESS_OR_EQUAL(sizeof(http_response) - 1, result);
+
+    char buffer[JAEGERTRACINGC_HTTP_SAMPLING_MANAGER_REQUEST_MAX_LEN];
+    int buffer_len = 0;
+    read_client_request(client_fd, buffer, &buffer_len);
+
+    TEST_ASSERT_EQUAL(
+        buffer_len,
+        http_parser_execute(&parser, &settings, buffer, buffer_len));
+    struct http_parser_url url;
+    TEST_ASSERT_EQUAL(
+        0,
+        http_parser_parse_url(
+            &server->url_buffer[0], server->url_len, false, &url));
+    TEST_ASSERT_TRUE(url.field_set & (1 << UF_QUERY));
+    char query[url.field_data[UF_QUERY].len + 1];
+    memcpy(query,
+           &server->url_buffer[url.field_data[UF_QUERY].off],
+           sizeof(query) - 1);
+    query[sizeof(query) - 1] = '\0';
+    TEST_ASSERT_EQUAL_STRING("service=test-service", query);
+    const int num_written =
+        write(client_fd, http_response, strlen(http_response));
+    TEST_ASSERT_EQUAL(strlen(http_response), num_written);
     close(client_fd);
     return NULL;
-
-#undef CHECK_RUNNING
 }
 
 static inline void mock_http_server_start(mock_http_server* server)
@@ -296,10 +346,10 @@ static inline void mock_http_server_start(mock_http_server* server)
     TEST_ASSERT_NOT_NULL(server);
 
     server->socket_fd = socket(AF_INET, SOCK_STREAM, 0);
+    TEST_ASSERT_GREATER_OR_EQUAL(0, server->socket_fd);
     server->addr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
     server->addr.sin_family = AF_INET;
     server->addr.sin_port = 0;
-    TEST_ASSERT_GREATER_OR_EQUAL(0, server->socket_fd);
     TEST_ASSERT_EQUAL(0,
                       bind(server->socket_fd,
                            (struct sockaddr*) &server->addr,
@@ -327,8 +377,6 @@ static inline void mock_http_server_destroy(mock_http_server* server)
     if (server->thread != 0) {
         TEST_ASSERT_EQUAL(0, pthread_join(server->thread, NULL));
         server->thread = 0;
-        pthread_mutex_destroy(&server->mutex);
-        pthread_cond_destroy(&server->cond);
     }
     memset(&server->addr, 0, sizeof(server->addr));
 }
@@ -340,18 +388,16 @@ void test_remotely_controlled_sampler()
     mock_http_server server = MOCK_HTTP_SERVER_INIT;
     mock_http_server_start(&server);
     const int port = ntohs(server.addr.sin_port);
-    printf("Server running on localhost:%d\n", port);
 
 #define URL_PREFIX "http://localhost:"
     char buffer[sizeof(URL_PREFIX) + 5];
-    const int result =
-        snprintf(&buffer[0], sizeof(buffer), URL_PREFIX "%d", port);
+    const int result = snprintf(buffer, sizeof(buffer), URL_PREFIX "%d", port);
     TEST_ASSERT_EQUAL(sizeof(buffer) - 1, result);
     jaeger_remotely_controlled_sampler r;
     TEST_ASSERT_TRUE(
         jaeger_remotely_controlled_sampler_init(&r,
                                                 "test-service",
-                                                &buffer[0],
+                                                buffer,
                                                 NULL,
                                                 TEST_DEFAULT_MAX_OPERATIONS,
                                                 &metrics));

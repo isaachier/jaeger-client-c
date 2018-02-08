@@ -20,6 +20,7 @@
 #include <errno.h>
 #include <jansson.h>
 
+#define HTTP_OK 200
 #define SAMPLER_GROWTH_FACTOR 2
 
 static bool jaeger_const_sampler_is_sampled(jaeger_sampler* sampler,
@@ -493,6 +494,12 @@ jaeger_adaptive_sampler_update(jaeger_adaptive_sampler* sampler,
     return success;
 }
 
+enum {
+    jaeger_http_sampling_manager_state_write,
+    jaeger_http_sampling_manager_state_read,
+    jaeger_http_sampling_manager_state_parse
+};
+
 static inline bool jaeger_http_sampling_manager_format_request(
     jaeger_http_sampling_manager* manager,
     const jaeger_url* url,
@@ -512,14 +519,11 @@ static inline bool jaeger_http_sampling_manager_format_request(
         path_segment = (str_segment){.off = url->parts.field_data[UF_PATH].off,
                                      .len = url->parts.field_data[UF_PATH].len};
     }
-    int path_len = (path_segment.len > 0) ? path_segment.len + 1 : 2;
-    char path_buffer[path_len];
+    const int path_len = path_segment.len;
+    char path_buffer[path_len + 1];
     path_buffer[path_len] = '\0';
-    if (path_segment.len > 0) {
+    if (path_len > 0) {
         memcpy(&path_buffer[0], &url->str[path_segment.off], path_segment.len);
-    }
-    else {
-        path_buffer[0] = '/';
     }
 
     char host_port_buffer[256];
@@ -537,7 +541,7 @@ static inline bool jaeger_http_sampling_manager_format_request(
 
     result = snprintf(&manager->request_buffer[0],
                       sizeof(manager->request_buffer),
-                      "GET %s?service=%s\r\n"
+                      "GET /%s?service=%s\r\n"
                       "Host: %s\r\n"
                       "User-Agent: jaegertracing/%s\r\n\r\n",
                       &path_buffer[0],
@@ -561,13 +565,14 @@ static int
 jaeger_http_sampling_manager_parser_on_headers_complete(http_parser* parser)
 {
     assert(parser != NULL);
-    if (parser->status_code != HPE_OK) {
+    if (parser->status_code != HTTP_OK) {
         fprintf(stderr,
-                "ERROR: HTTP sampling manager failed to retrieve sampling "
+                "ERROR: HTTP sampling manager cannot retrieve sampling "
                 "strategies, HTTP status code = %d\n",
                 parser->status_code);
         return 1;
     }
+    assert(parser->data != NULL);
     return 0;
 }
 
@@ -604,6 +609,17 @@ static int jaeger_http_sampling_manager_parser_on_body(http_parser* parser,
     return 0;
 }
 
+static int
+jaeger_http_sampling_manager_parser_on_message_complete(http_parser* parser)
+{
+    assert(parser != NULL);
+    assert(parser->data != NULL);
+    jaeger_http_sampling_manager* manager =
+        (jaeger_http_sampling_manager*) parser->data;
+    manager->state = jaeger_http_sampling_manager_state_parse;
+    return 0;
+}
+
 static inline bool
 jaeger_http_sampling_manager_connect(jaeger_http_sampling_manager* manager,
                                      const jaeger_host_port* sampling_host_port)
@@ -614,7 +630,6 @@ jaeger_http_sampling_manager_connect(jaeger_http_sampling_manager* manager,
     }
 
     bool success = false;
-    char ip_str[INET_ADDRSTRLEN];
     for (struct addrinfo* addr_iter = host_addrs; addr_iter != NULL;
          addr_iter = addr_iter->ai_next) {
         const int fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -622,17 +637,6 @@ jaeger_http_sampling_manager_connect(jaeger_http_sampling_manager* manager,
             continue;
         }
 
-        if (addr_iter->ai_addrlen == sizeof(struct sockaddr_in)) {
-            const struct sockaddr_in* ip_addr =
-                (const struct sockaddr_in*) addr_iter->ai_addr;
-            const char* result = inet_ntop(
-                AF_INET, &ip_addr->sin_addr, &ip_str[0], sizeof(ip_str));
-            if (result != NULL) {
-                printf("Attempting to connect to %s:%d\n",
-                       ip_str,
-                       ntohs(ip_addr->sin_port));
-            }
-        }
         if (connect(fd, addr_iter->ai_addr, addr_iter->ai_addrlen) == 0) {
             manager->fd = fd;
             success = true;
@@ -704,6 +708,8 @@ jaeger_http_sampling_manager_init(jaeger_http_sampling_manager* manager,
     manager->settings.on_headers_complete =
         &jaeger_http_sampling_manager_parser_on_headers_complete;
     manager->settings.on_body = &jaeger_http_sampling_manager_parser_on_body;
+    manager->settings.on_message_complete =
+        &jaeger_http_sampling_manager_parser_on_message_complete;
 
     manager->response_buffer = jaeger_malloc(RESPONSE_BUFFER_INIT_SIZE);
     if (manager->response_buffer == NULL) {
@@ -741,8 +747,8 @@ static inline bool
 parse_probabilistic_sampling_json(jaeger_probabilistic_strategy* strategy,
                                   json_t* json)
 {
-    assert(strategy == NULL);
-    assert(json == NULL);
+    assert(strategy != NULL);
+    assert(json != NULL);
     json_error_t err;
     double sampling_rate = 0;
     const int result =
@@ -758,8 +764,8 @@ static inline bool
 parse_rate_limiting_sampling_json(jaeger_rate_limiting_strategy* strategy,
                                   json_t* json)
 {
-    assert(strategy == NULL);
-    assert(json == NULL);
+    assert(strategy != NULL);
+    assert(json != NULL);
     json_error_t err;
     double max_traces_per_second = 0;
     const int result = json_unpack_ex(
@@ -775,8 +781,8 @@ static inline bool
 parse_per_operation_sampling_json(jaeger_per_operation_strategy* strategy,
                                   json_t* json)
 {
-    assert(strategy == NULL);
-    assert(json == NULL);
+    assert(strategy != NULL);
+    assert(json != NULL);
 
     json_t* array = NULL;
     json_error_t err;
@@ -845,8 +851,7 @@ parse_per_operation_sampling_json(jaeger_per_operation_strategy* strategy,
         if (op_strategy->probabilistic == NULL) {
             fprintf(stderr,
                     "ERROR: Cannot allocate probabilistic strategy, num "
-                    "operation "
-                    "strategies = %zu\n",
+                    "operation strategies = %zu\n",
                     strategy->n_per_operation_strategy);
             success = false;
             break;
@@ -906,7 +911,7 @@ parse_per_operation_sampling_json(jaeger_per_operation_strategy* strategy,
     return success;
 }
 
-static inline bool jaeger_http_sampling_manager_parse_json_response(
+static inline bool jaeger_http_sampling_manager_parse_response_json(
     jaeger_http_sampling_manager* manager, jaeger_strategy_response* response)
 {
     assert(manager != NULL);
@@ -934,7 +939,7 @@ static inline bool jaeger_http_sampling_manager_parse_json_response(
     const int result = json_unpack_ex(response_json,
                                       &err,
                                       0,
-                                      "{sO* sO* sO*}",
+                                      "{s?O s?O s?O}",
                                       "probabilisticSampling",
                                       &probabilistic_json,
                                       "rateLimitingSampling",
@@ -951,14 +956,34 @@ static inline bool jaeger_http_sampling_manager_parse_json_response(
     if (probabilistic_json != NULL) {
         response->strategy_case =
             JAEGERTRACINGC_STRATEGY_RESPONSE_TYPE(PROBABILISTIC);
-        success = parse_probabilistic_sampling_json(response->probabilistic,
-                                                    probabilistic_json);
+        response->probabilistic =
+            jaeger_malloc(sizeof(jaeger_probabilistic_strategy));
+        if (response->probabilistic == NULL) {
+            fprintf(stderr,
+                    "ERROR: Cannot allocate probabilistic strategy for HTTP "
+                    "sampling response\n");
+            success = false;
+        }
+        else {
+            success = parse_probabilistic_sampling_json(response->probabilistic,
+                                                        probabilistic_json);
+        }
     }
     else if (rate_limiting_json != NULL) {
         response->strategy_case =
             JAEGERTRACINGC_STRATEGY_RESPONSE_TYPE(RATE_LIMITING);
-        success = parse_rate_limiting_sampling_json(response->rate_limiting,
-                                                    rate_limiting_json);
+        response->rate_limiting =
+            jaeger_malloc(sizeof(jaeger_rate_limiting_strategy));
+        if (response->rate_limiting == NULL) {
+            fprintf(stderr,
+                    "ERROR: Cannot allocate rate limiting strategy for HTTP "
+                    "sampling response\n");
+            success = false;
+        }
+        else {
+            success = parse_rate_limiting_sampling_json(response->rate_limiting,
+                                                        rate_limiting_json);
+        }
     }
     else {
         if (per_operation_json == NULL) {
@@ -972,8 +997,18 @@ static inline bool jaeger_http_sampling_manager_parse_json_response(
 
         response->strategy_case =
             JAEGERTRACINGC_STRATEGY_RESPONSE_TYPE(PER_OPERATION);
-        success = parse_per_operation_sampling_json(response->per_operation,
-                                                    per_operation_json);
+        response->per_operation =
+            jaeger_malloc(sizeof(jaeger_per_operation_strategy));
+        if (response->per_operation == NULL) {
+            fprintf(stderr,
+                    "ERROR: Cannot allocate per operation strategy for HTTP "
+                    "sampling response\n");
+            success = false;
+        }
+        else {
+            success = parse_per_operation_sampling_json(response->per_operation,
+                                                        per_operation_json);
+        }
     }
 
 cleanup:
@@ -1000,6 +1035,7 @@ static inline bool jaeger_http_sampling_manager_get_sampling_strategies(
     assert(manager != NULL);
     assert(response != NULL);
 
+    assert(manager->state == jaeger_http_sampling_manager_state_write);
     const int num_written = write(
         manager->fd, &manager->request_buffer[0], manager->request_length);
     if (num_written != manager->request_length) {
@@ -1012,9 +1048,11 @@ static inline bool jaeger_http_sampling_manager_get_sampling_strategies(
         return false;
     }
 
+    manager->state = jaeger_http_sampling_manager_state_read;
     char chunk_buffer[JAEGERTRACINGC_HTTP_SAMPLING_MANAGER_REQUEST_MAX_LEN];
     int num_read = read(manager->fd, &chunk_buffer[0], sizeof(chunk_buffer));
-    while (num_read > 0) {
+    while (num_read > 0 &&
+           manager->state == jaeger_http_sampling_manager_state_read) {
         const int num_parsed = http_parser_execute(
             &manager->parser, &manager->settings, &chunk_buffer[0], num_read);
         if (num_parsed != num_read) {
@@ -1023,14 +1061,13 @@ static inline bool jaeger_http_sampling_manager_get_sampling_strategies(
         num_read = read(manager->fd, &chunk_buffer[0], sizeof(chunk_buffer));
     }
 
-    if (manager->response_buffer != NULL) {
-        manager->response_buffer[manager->response_length] = '\0';
-        /* Do not increase length because string should not contain null
-         * byte.
-         */
-    }
+    assert(manager->response_buffer != NULL);
+    manager->response_buffer[manager->response_length] = '\0';
+    /* Do not increase length because string should not contain null
+     * byte.
+     */
 
-    return jaeger_http_sampling_manager_parse_json_response(manager, response);
+    return jaeger_http_sampling_manager_parse_response_json(manager, response);
 }
 
 static bool

@@ -103,18 +103,28 @@ static inline void
 jaeger_strategy_response_destroy(jaeger_strategy_response* response)
 {
     assert(response != NULL);
-    if (response->per_operation != NULL) {
-        jaeger_per_operation_strategy_destroy(response->per_operation);
-        jaeger_free(response->per_operation);
-        response->per_operation = NULL;
-    }
-    if (response->probabilistic != NULL) {
-        jaeger_free(response->probabilistic);
-        response->probabilistic = NULL;
-    }
-    if (response->rate_limiting != NULL) {
-        jaeger_free(response->rate_limiting);
-        response->rate_limiting = NULL;
+    switch (response->strategy_case) {
+    case JAEGERTRACINGC_STRATEGY_RESPONSE_TYPE(PER_OPERATION): {
+        if (response->per_operation != NULL) {
+            jaeger_per_operation_strategy_destroy(response->per_operation);
+            jaeger_free(response->per_operation);
+            response->per_operation = NULL;
+        }
+    } break;
+    case JAEGERTRACINGC_STRATEGY_RESPONSE_TYPE(PROBABILISTIC): {
+        if (response->probabilistic != NULL) {
+            jaeger_free(response->probabilistic);
+            response->probabilistic = NULL;
+        }
+    } break;
+    case JAEGERTRACINGC_STRATEGY_RESPONSE_TYPE(RATE_LIMITING): {
+        if (response->rate_limiting != NULL) {
+            jaeger_free(response->rate_limiting);
+            response->rate_limiting = NULL;
+        }
+    } break;
+    default:
+        break;
     }
 }
 
