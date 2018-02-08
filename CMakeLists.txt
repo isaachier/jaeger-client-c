@@ -33,7 +33,7 @@ if(JAEGERTRACINGC_COVERAGE)
     "${CMAKE_CURRENT_SOURCE_DIR}/src/jaegertracingc/*_test.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/jaegertracingc/*_test.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/jaegertracingc/protoc-gen/*"
-    "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/unity/src/*")
+    "${CMAKE_CURRENT_SOURCE_DIR}/third_party/unity/src/*")
 endif()
 
 cmake_dependent_option(JAEGERTRACINGC_VERBOSE_ALLOC "Print all allocations" OFF
@@ -97,8 +97,8 @@ if(JAEGERTRACINGC_VERBOSE_ALLOC)
 endif()
 
 if(BUILD_TESTING)
-  add_library(unity "thirdparty/unity/src/unity.c")
-  target_include_directories(unity PUBLIC "thirdparty/unity/src")
+  add_library(unity "third_party/unity/src/unity.c")
+  target_include_directories(unity PUBLIC "third_party/unity/src")
 
   set(TEST_SRC
     "src/jaegertracingc/alloc_test.c"
