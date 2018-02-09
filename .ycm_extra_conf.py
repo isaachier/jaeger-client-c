@@ -28,13 +28,6 @@ def DirectoryOfThisScript():
 
 project_dir = DirectoryOfThisScript()
 
-try:
-    with open('build/_3rdParty/Hunter/install-root-dir') as f:
-        hunter_install_dir = f.readline()
-except IOError:
-    # Ignore if file does not exist
-    hunter_install_dir = ''
-
 flags = [
 '-Wall',
 '-Werror',
@@ -50,9 +43,6 @@ os.path.join(project_dir, 'src'),
 '-I',
 os.path.join(project_dir, 'build/generated/include')
 ]
-
-if hunter_install_dir:
-    flags += ['-I', hunter_install_dir]
 
 compilation_database_folder = os.path.join(project_dir, 'build')
 
