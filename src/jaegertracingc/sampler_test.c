@@ -297,12 +297,18 @@ static void* mock_http_server_run_loop(void* context)
     memset(&settings, 0, sizeof(settings));
     settings.on_url = &mock_http_server_on_url;
 
-    const char strategy_response[] = "{\n"
-                                     "  \"probabilisticSampling\": {\n"
-                                     "      \"samplingRate\": 0.5\n"
-                                     "    }\n"
-                                     "}\n";
-    const char http_response_format[] = "HTTP/1.1 200\r\n"
+    const char strategy_response_format[] = "{\n"
+                                            "  \"probabilisticSampling\": {\n"
+                                            "      \"samplingRate\": %f\n"
+                                            "    }\n"
+                                            "}\n";
+    char strategy_response[strlen(strategy_response_format) + 10];
+    TEST_ASSERT_LESS_THAN(sizeof(strategy_response),
+                          snprintf(strategy_response,
+                                   sizeof(strategy_response),
+                                   strategy_response_format,
+                                   TEST_DEFAULT_SAMPLING_PROBABILITY));
+    const char http_response_format[] = "HTTP/1.1 200 OK\r\n"
                                         "Content-Type: application/json\r\n"
                                         "Content-Length: %zu\r\n\r\n"
                                         "%s";
@@ -403,6 +409,9 @@ void test_remotely_controlled_sampler()
                                                 TEST_DEFAULT_MAX_OPERATIONS,
                                                 &metrics));
     TEST_ASSERT_TRUE(jaeger_remotely_controlled_sampler_update(&r));
+    TEST_ASSERT_EQUAL(jaeger_probabilistic_sampler_type, r.sampler.type);
+    TEST_ASSERT_EQUAL(TEST_DEFAULT_SAMPLING_PROBABILITY,
+                      r.sampler.probabilistic_sampler.sampling_rate);
     r.close((jaeger_sampler*) &r);
     mock_http_server_destroy(&server);
     jaeger_metrics_destroy(&metrics);
