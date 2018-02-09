@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
+#include "jaegertracingc/sampler.h"
 #include <errno.h>
+#include <http_parser.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include "jaegertracingc/sampler.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -260,7 +261,7 @@ mock_http_server_on_url(http_parser* parser, const char* at, size_t len)
 }
 
 static inline void
-read_client_request(int client_fd, void* buffer, int* buffer_len)
+read_client_request(int client_fd, char* buffer, int* buffer_len)
 {
     int num_read = read(client_fd,
                         buffer,
@@ -293,7 +294,7 @@ static void* mock_http_server_run_loop(void* context)
     http_parser_init(&parser, HTTP_REQUEST);
     parser.data = server;
     http_parser_settings settings;
-    http_parser_settings_init(&settings);
+    memset(&settings, 0, sizeof(settings));
     settings.on_url = &mock_http_server_on_url;
 
     const char strategy_response[] = "{\n"
@@ -402,6 +403,7 @@ void test_remotely_controlled_sampler()
                                                 TEST_DEFAULT_MAX_OPERATIONS,
                                                 &metrics));
     TEST_ASSERT_TRUE(jaeger_remotely_controlled_sampler_update(&r));
+    r.close((jaeger_sampler*) &r);
     mock_http_server_destroy(&server);
     jaeger_metrics_destroy(&metrics);
 }

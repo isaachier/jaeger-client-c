@@ -22,6 +22,8 @@
 
 #define HTTP_OK 200
 #define SAMPLER_GROWTH_FACTOR 2
+#define DEFAULT_MAX_OPERATIONS 2000
+#define DEFAULT_SAMPLING_RATE 0.001
 
 static bool jaeger_const_sampler_is_sampled(jaeger_sampler* sampler,
                                             const jaeger_trace_id* trace_id,
@@ -339,6 +341,7 @@ static bool jaeger_adaptive_sampler_is_sampled(jaeger_sampler* sampler,
     (void) trace_id;
     (void) operation_name;
     assert(sampler != NULL);
+    bool use_default_sampler = false;
     jaeger_adaptive_sampler* s = (jaeger_adaptive_sampler*) sampler;
     pthread_mutex_lock(&s->mutex);
     for (int i = 0; i < s->num_op_samplers; i++) {
@@ -353,39 +356,47 @@ static bool jaeger_adaptive_sampler_is_sampled(jaeger_sampler* sampler,
     }
 
     if (s->num_op_samplers >= s->max_operations) {
-        goto default_sampler;
+        use_default_sampler = true;
     }
 
-    if (s->num_op_samplers == s->op_samplers_capacity &&
+    if (!use_default_sampler && s->num_op_samplers == s->op_samplers_capacity &&
         !jaeger_adaptive_sampler_resize_op_samplers(s)) {
         fprintf(stderr,
                 "ERROR: Cannot allocate more operation samplers "
                 "in adaptive sampler\n");
-        goto default_sampler;
     }
-    jaeger_operation_sampler* op_sampler = &s->op_samplers[s->num_op_samplers];
-    op_sampler->operation_name = jaeger_strdup(operation_name);
-    if (op_sampler->operation_name == NULL) {
-        fprintf(stderr,
-                "ERROR: Cannot allocate operation name for new "
-                "operation sampler in adaptive sampler\n");
-        goto default_sampler;
+    if (!use_default_sampler) {
+        jaeger_operation_sampler* op_sampler =
+            &s->op_samplers[s->num_op_samplers];
+        op_sampler->operation_name = jaeger_strdup(operation_name);
+        if (op_sampler->operation_name == NULL) {
+            fprintf(stderr,
+                    "ERROR: Cannot allocate operation name for new "
+                    "operation sampler in adaptive sampler\n");
+            use_default_sampler = true;
+        }
+        else {
+            jaeger_guaranteed_throughput_probabilistic_sampler_init(
+                &op_sampler->sampler,
+                s->lower_bound,
+                s->default_sampler.sampling_rate);
+            s->num_op_samplers++;
+
+            const bool decision = op_sampler->sampler.is_sampled(
+                (jaeger_sampler*) &op_sampler->sampler,
+                trace_id,
+                operation_name,
+                tags);
+            pthread_mutex_unlock(&s->mutex);
+            return decision;
+        }
     }
-    jaeger_guaranteed_throughput_probabilistic_sampler_init(
-        &op_sampler->sampler, s->lower_bound, s->default_sampler.sampling_rate);
-    s->num_op_samplers++;
 
-    const bool decision = op_sampler->sampler.is_sampled(
-        (jaeger_sampler*) &op_sampler->sampler, trace_id, operation_name, tags);
-    pthread_mutex_unlock(&s->mutex);
-    return decision;
-
-default_sampler : {
+    assert(use_default_sampler);
     const bool decision = s->default_sampler.is_sampled(
         (jaeger_sampler*) &s->default_sampler, trace_id, operation_name, tags);
     pthread_mutex_unlock(&s->mutex);
     return decision;
-}
 }
 
 static void jaeger_adaptive_sampler_close(jaeger_sampler* sampler)
@@ -416,6 +427,9 @@ bool jaeger_adaptive_sampler_init(
         return false;
     }
     sampler->op_samplers_capacity = sampler->num_op_samplers;
+    jaeger_probabilistic_sampler_init(&sampler->default_sampler,
+                                      strategies->default_sampling_probability);
+    sampler->lower_bound = strategies->default_lower_bound_traces_per_second;
     sampler->max_operations = max_operations;
     sampler->mutex = (pthread_mutex_t) PTHREAD_MUTEX_INITIALIZER;
     sampler->is_sampled = &jaeger_adaptive_sampler_is_sampled;
@@ -856,6 +870,8 @@ parse_per_operation_sampling_json(jaeger_per_operation_strategy* strategy,
             success = false;
             break;
         }
+        *op_strategy->probabilistic = (jaeger_probabilistic_strategy)
+            JAEGERTRACINGC_PROBABILISTIC_STRATEGY_INIT;
 
         /* Borrow reference */
         json_t* op_json = json_array_get(array, i);
@@ -965,6 +981,8 @@ static inline bool jaeger_http_sampling_manager_parse_response_json(
             success = false;
         }
         else {
+            *response->probabilistic = (jaeger_probabilistic_strategy)
+                JAEGERTRACINGC_PROBABILISTIC_STRATEGY_INIT;
             success = parse_probabilistic_sampling_json(response->probabilistic,
                                                         probabilistic_json);
         }
@@ -1188,9 +1206,6 @@ bool jaeger_remotely_controlled_sampler_update(
     jaeger_strategy_response_destroy(&response);
     return success;
 }
-
-#define DEFAULT_MAX_OPERATIONS 2000
-#define DEFAULT_SAMPLING_RATE 0.001
 
 bool jaeger_remotely_controlled_sampler_init(
     jaeger_remotely_controlled_sampler* sampler,
