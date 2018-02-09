@@ -49,7 +49,7 @@ jaeger_host_port_init(jaeger_host_port* host_port, const char* host, int port)
 {
     assert(host_port != NULL);
 
-    if (host == NULL || strlen(host) < 1) {
+    if (host == NULL || strlen(host) == 0) {
         fprintf(stderr, "ERROR: Empty host passed to host port constructor\n");
         return false;
     }
@@ -133,6 +133,7 @@ static inline bool jaeger_host_port_from_url(jaeger_host_port* host_port,
 
     assert(host_port != NULL);
     assert(url != NULL);
+    assert(url->str != NULL);
 
     int port = 0;
     if (url->parts.field_set & (1 << UF_PORT)) {
@@ -153,15 +154,16 @@ static inline bool jaeger_host_port_from_url(jaeger_host_port* host_port,
         host_segment = (str_segment){.off = url->parts.field_data[UF_HOST].off,
                                      .len = url->parts.field_data[UF_HOST].len};
     }
-    const int host_buffer_len =
-        (host_segment.len == 0) ? sizeof("localhost") : host_segment.len + 1;
-    char host_buffer[host_buffer_len];
-    if (host_segment.len > 0) {
-        memcpy(&host_buffer[0], &url->str[host_segment.off], host_segment.len);
+
+    if (host_segment.len == 0) {
+        fprintf(stderr,
+                "ERROR: Invalid URL, has no host, URL = \"%s\"\n",
+                url->str);
+        return false;
     }
-    else {
-        memcpy(&host_buffer[0], "localhost", strlen("localhost"));
-    }
+
+    char host_buffer[host_segment.len + 1];
+    memcpy(&host_buffer[0], &url->str[host_segment.off], host_segment.len);
     host_buffer[host_segment.len] = '\0';
     return jaeger_host_port_init(host_port, &host_buffer[0], port);
 }
@@ -170,7 +172,8 @@ static inline int jaeger_host_port_format(const jaeger_host_port* host_port,
                                           char* buffer,
                                           int buffer_len)
 {
-    if (host_port == 0) {
+    assert(host_port != NULL);
+    if (host_port->port == 0) {
         return snprintf(buffer, buffer_len, "%s", host_port->host);
     }
     return snprintf(

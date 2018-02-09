@@ -20,6 +20,7 @@
 #include "alloc_test.h"
 #include "duration_test.h"
 #include "metrics_test.h"
+#include "net_test.h"
 #include "sampler_test.h"
 #include "tag_test.h"
 #include "token_bucket_test.h"
@@ -33,6 +34,8 @@ static inline void run_tests()
 {
     RUN_TEST(test_alloc);
     RUN_TEST(test_duration);
+    RUN_TEST(test_metrics);
+    RUN_TEST(test_net);
     RUN_TEST(test_const_sampler);
     RUN_TEST(test_probabilistic_sampler);
     RUN_TEST(test_rate_limiting_sampler);
@@ -40,7 +43,6 @@ static inline void run_tests()
     RUN_TEST(test_adaptive_sampler);
     RUN_TEST(test_remotely_controlled_sampler);
     RUN_TEST(test_tag);
-    RUN_TEST(test_metrics);
     RUN_TEST(test_token_bucket);
 }
 
