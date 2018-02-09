@@ -168,20 +168,6 @@ jaeger_sampler_choice_get_sampler(jaeger_sampler_choice* sampler)
 #undef SAMPLER_TYPE_CASE
 }
 
-static inline bool
-jaeger_sampler_choice_is_sampled(jaeger_sampler_choice* sampler,
-                                 const jaeger_trace_id* trace_id,
-                                 const char* operation,
-                                 jaeger_tag_list* tags)
-{
-    assert(sampler != NULL);
-    jaeger_sampler* s = jaeger_sampler_choice_get_sampler(sampler);
-    if (s != NULL) {
-        return s->is_sampled(s, trace_id, operation, tags);
-    }
-    return false;
-}
-
 static inline void jaeger_sampler_choice_close(jaeger_sampler_choice* sampler)
 {
     assert(sampler != NULL);

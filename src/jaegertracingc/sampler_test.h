@@ -33,6 +33,8 @@ void test_adaptive_sampler();
 
 void test_remotely_controlled_sampler();
 
+void test_sampler_choice();
+
 #ifdef __cplusplus
 } /* extern C */
 #endif /* __cplusplus */

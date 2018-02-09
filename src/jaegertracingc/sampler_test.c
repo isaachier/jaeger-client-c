@@ -407,3 +407,24 @@ void test_remotely_controlled_sampler()
     mock_http_server_destroy(&server);
     jaeger_metrics_destroy(&metrics);
 }
+
+void test_sampler_choice()
+{
+    jaeger_sampler_choice choice;
+
+#define FOR_EACH_SAMPLER_TEST(X)           \
+    X(const)                               \
+    X(probabilistic)                       \
+    X(rate_limiting)                       \
+    X(guaranteed_throughput_probabilistic) \
+    X(adaptive)
+
+#define CHECK_ASSIGN(sampler_type)                                     \
+    do {                                                               \
+        choice.type = jaeger_##sampler_type##_sampler_type;            \
+        TEST_ASSERT_EQUAL(&choice.sampler_type##_sampler,              \
+                          jaeger_sampler_choice_get_sampler(&choice)); \
+    } while (0);
+
+    FOR_EACH_SAMPLER_TEST(CHECK_ASSIGN)
+}

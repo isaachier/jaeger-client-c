@@ -1098,8 +1098,10 @@ jaeger_remotely_controlled_sampler_is_sampled(jaeger_sampler* sampler,
     jaeger_remotely_controlled_sampler* s =
         (jaeger_remotely_controlled_sampler*) sampler;
     pthread_mutex_lock(&s->mutex);
-    const bool result = jaeger_sampler_choice_is_sampled(
-        &s->sampler, trace_id, operation_name, tags);
+    jaeger_sampler* inner_sampler =
+        jaeger_sampler_choice_get_sampler(&s->sampler);
+    const bool result = inner_sampler->is_sampled(
+        inner_sampler, trace_id, operation_name, tags);
     pthread_mutex_unlock(&s->mutex);
     return result;
 }
