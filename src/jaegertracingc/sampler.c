@@ -368,7 +368,7 @@ jaeger_adaptive_sampler_make_room(jaeger_adaptive_sampler* s,
     if (pos < s->num_op_samplers) {
         memmove(&s->op_samplers[pos + 1],
                 &s->op_samplers[pos],
-                sizeof(s->op_samplers[0]) * (s->num_op_samplers - pos - 1));
+                sizeof(s->op_samplers[0]) * (s->num_op_samplers - pos));
     }
     s->num_op_samplers++;
     return &s->op_samplers[pos];

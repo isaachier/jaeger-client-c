@@ -222,8 +222,12 @@ void test_adaptive_sampler()
     a.is_sampled((jaeger_sampler*) &a, &trace_id, operation_name, &tags);
 
     jaeger_tag_list_clear(&tags);
-    a.is_sampled((jaeger_sampler*) &a, &trace_id, "unseen-operation", &tags);
+    a.is_sampled((jaeger_sampler*) &a, &trace_id, "new-operation", &tags);
     TEST_ASSERT_EQUAL(2, a.num_op_samplers);
+    TEST_ASSERT_NOT_NULL(a.op_samplers[0].operation_name);
+    TEST_ASSERT_NOT_NULL(a.op_samplers[1].operation_name);
+    TEST_ASSERT_TRUE(strcmp(a.op_samplers[0].operation_name,
+                            a.op_samplers[1].operation_name) < 0);
 
     jaeger_per_operation_strategy_destroy(&strategies);
     TEAR_DOWN_SAMPLER_TEST(a);
