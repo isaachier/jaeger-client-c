@@ -22,6 +22,20 @@
 #ifdef JAEGERTRACINGC_MT
 #include <pthread.h>
 
+typedef pthread_t jaeger_thread;
+
+static inline int jaeger_thread_init(jaeger_thread* thread,
+                                     void* (*start_routine)(void*),
+                                     void* arg)
+{
+    return pthread_create(thread, NULL, start_routine, arg);
+}
+
+static inline int jaeger_thread_join(jaeger_thread thread, void** return_value)
+{
+    return pthread_join(thread, return_value);
+}
+
 typedef pthread_mutex_t jaeger_mutex;
 
 #define JAEGERTRACINGC_MUTEX_INIT PTHREAD_MUTEX_INITIALIZER
@@ -50,6 +64,25 @@ static inline int jaeger_do_once(jaeger_once* once, void (*init_routine)(void))
 }
 
 #else
+
+typedef int jaeger_thread;
+
+static inline int jaeger_thread_init(jaeger_thread* thread,
+                                     void* (*start_routine)(void*),
+                                     void* arg)
+{
+    (void) thread;
+    (void) start_routine;
+    (void) arg;
+    return 0;
+}
+
+static inline int jaeger_thread_init(jaeger_thread* thread, void** return_value)
+{
+    (void) thread;
+    (void) return_value;
+    return 0;
+}
 
 typedef struct {
 } jaeger_mutex;

@@ -279,12 +279,12 @@ const ProtobufCMessageDescriptor jaegertracing__protobuf__sampling_manager__prob
 static const ProtobufCFieldDescriptor jaegertracing__protobuf__sampling_manager__rate_limiting_sampling_strategy__field_descriptors[1] =
 {
   {
-    "max_traces_per_seconds",
+    "max_traces_per_second",
     1,
     PROTOBUF_C_LABEL_NONE,
     PROTOBUF_C_TYPE_INT32,
     0,   /* quantifier_offset */
-    offsetof(Jaegertracing__Protobuf__SamplingManager__RateLimitingSamplingStrategy, max_traces_per_seconds),
+    offsetof(Jaegertracing__Protobuf__SamplingManager__RateLimitingSamplingStrategy, max_traces_per_second),
     NULL,
     NULL,
     0,             /* flags */
@@ -292,7 +292,7 @@ static const ProtobufCFieldDescriptor jaegertracing__protobuf__sampling_manager_
   },
 };
 static const unsigned jaegertracing__protobuf__sampling_manager__rate_limiting_sampling_strategy__field_indices_by_name[] = {
-  0,   /* field[0] = max_traces_per_seconds */
+  0,   /* field[0] = max_traces_per_second */
 };
 static const ProtobufCIntRange jaegertracing__protobuf__sampling_manager__rate_limiting_sampling_strategy__number_ranges[1 + 1] =
 {

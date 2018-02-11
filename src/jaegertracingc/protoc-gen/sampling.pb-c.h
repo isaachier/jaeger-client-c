@@ -41,7 +41,7 @@ struct  _Jaegertracing__Protobuf__SamplingManager__ProbabilisticSamplingStrategy
 struct  _Jaegertracing__Protobuf__SamplingManager__RateLimitingSamplingStrategy
 {
   ProtobufCMessage base;
-  int32_t max_traces_per_seconds;
+  int32_t max_traces_per_second;
 };
 #define JAEGERTRACING__PROTOBUF__SAMPLING_MANAGER__RATE_LIMITING_SAMPLING_STRATEGY__INIT \
  { PROTOBUF_C_MESSAGE_INIT (&jaegertracing__protobuf__sampling_manager__rate_limiting_sampling_strategy__descriptor) \

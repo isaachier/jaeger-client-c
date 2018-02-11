@@ -576,8 +576,7 @@ jaeger_adaptive_sampler_update(jaeger_adaptive_sampler* sampler,
 
 enum {
     jaeger_http_sampling_manager_state_write,
-    jaeger_http_sampling_manager_state_read,
-    jaeger_http_sampling_manager_state_parse
+    jaeger_http_sampling_manager_state_read
 };
 
 static inline bool jaeger_http_sampling_manager_format_request(
@@ -696,7 +695,7 @@ jaeger_http_sampling_manager_parser_on_message_complete(http_parser* parser)
     assert(parser->data != NULL);
     jaeger_http_sampling_manager* manager =
         (jaeger_http_sampling_manager*) parser->data;
-    manager->state = jaeger_http_sampling_manager_state_parse;
+    manager->state = jaeger_http_sampling_manager_state_write;
     return 0;
 }
 
@@ -811,55 +810,55 @@ jaeger_http_sampling_manager_init(jaeger_http_sampling_manager* manager,
     return decision;
 }
 
-#define ERR_FMT                                                              \
-    "message = \"%s\", source = \"%s\", line = %d, column = %d, position = " \
-    "%d\n"
+#define ERR_FMT                                                   \
+    "message = \"%s\", source = \"%s\", line = %d, column = %d, " \
+    "position = %d\n"
 
-#define ERR_ARGS err.text, err.source, err.line, err.column, err.position
+#define ERR_ARGS(source) err.text, (source), err.line, err.column, err.position
 
-#define PRINT_ERR_MSG                                                         \
-    do {                                                                      \
-        fprintf(                                                              \
-            stderr, "ERROR: Cannot parse JSON response, " ERR_FMT, ERR_ARGS); \
+#define PRINT_ERR_MSG(source)                                  \
+    do {                                                       \
+        fprintf(stderr,                                        \
+                "ERROR: Cannot parse JSON response, " ERR_FMT, \
+                ERR_ARGS(source));                             \
     } while (0)
 
-static inline bool
-parse_probabilistic_sampling_json(jaeger_probabilistic_strategy* strategy,
-                                  json_t* json)
+static inline bool parse_probabilistic_sampling_json(
+    jaeger_probabilistic_strategy* strategy, json_t* json, const char* source)
 {
     assert(strategy != NULL);
     assert(json != NULL);
     json_error_t err;
-    double sampling_rate = 0;
-    const int result =
-        json_unpack_ex(json, &err, 0, "{sf}", "samplingRate", &sampling_rate);
-    if (result != 0) {
-        PRINT_ERR_MSG;
-        return false;
-    }
-    return true;
-}
-
-static inline bool
-parse_rate_limiting_sampling_json(jaeger_rate_limiting_strategy* strategy,
-                                  json_t* json)
-{
-    assert(strategy != NULL);
-    assert(json != NULL);
-    json_error_t err;
-    double max_traces_per_second = 0;
     const int result = json_unpack_ex(
-        json, &err, 0, "{sf}", "maxTracesPerSecond", &max_traces_per_second);
+        json, &err, 0, "{sf}", "samplingRate", &strategy->sampling_rate);
     if (result != 0) {
-        PRINT_ERR_MSG;
+        PRINT_ERR_MSG(source);
         return false;
     }
     return true;
 }
 
-static inline bool
-parse_per_operation_sampling_json(jaeger_per_operation_strategy* strategy,
-                                  json_t* json)
+static inline bool parse_rate_limiting_sampling_json(
+    jaeger_rate_limiting_strategy* strategy, json_t* json, const char* source)
+{
+    assert(strategy != NULL);
+    assert(json != NULL);
+    json_error_t err;
+    const int result = json_unpack_ex(json,
+                                      &err,
+                                      0,
+                                      "{si}",
+                                      "maxTracesPerSecond",
+                                      &strategy->max_traces_per_second);
+    if (result != 0) {
+        PRINT_ERR_MSG(source);
+        return false;
+    }
+    return true;
+}
+
+static inline bool parse_per_operation_sampling_json(
+    jaeger_per_operation_strategy* strategy, json_t* json, const char* source)
 {
     assert(strategy != NULL);
     assert(json != NULL);
@@ -879,7 +878,7 @@ parse_per_operation_sampling_json(jaeger_per_operation_strategy* strategy,
                        &array);
 
     if (result != 0) {
-        PRINT_ERR_MSG;
+        PRINT_ERR_MSG(source);
         return false;
     }
 
@@ -953,7 +952,7 @@ parse_per_operation_sampling_json(jaeger_per_operation_strategy* strategy,
                                           "probabilisticSampling",
                                           &probabilistic_json);
         if (result != 0) {
-            PRINT_ERR_MSG;
+            PRINT_ERR_MSG(source);
             success = false;
             break;
         }
@@ -967,25 +966,16 @@ parse_per_operation_sampling_json(jaeger_per_operation_strategy* strategy,
             success = false;
             break;
         }
-        if (!parse_probabilistic_sampling_json(op_strategy->probabilistic,
-                                               probabilistic_json)) {
+        if (!parse_probabilistic_sampling_json(
+                op_strategy->probabilistic, probabilistic_json, source)) {
             success = false;
             break;
         }
     }
 
-    if (!success) {
-        if (strategy->per_operation_strategy != NULL) {
-            for (int i = 0; i < num_allocated; i++) {
-                jaeger_operation_strategy* op_strategy =
-                    strategy->per_operation_strategy[i];
-                if (op_strategy != NULL) {
-                    jaeger_operation_strategy_destroy(op_strategy);
-                    jaeger_free(op_strategy);
-                }
-            }
-            jaeger_free(strategy->per_operation_strategy);
-        }
+    if (!success && strategy->per_operation_strategy != NULL) {
+        strategy->n_per_operation_strategy = num_allocated;
+        jaeger_per_operation_strategy_destroy(strategy);
     }
 
     json_decref(array);
@@ -1004,7 +994,9 @@ static inline bool jaeger_http_sampling_manager_parse_response_json(
         json_loads(manager->response_buffer, JSON_REJECT_DUPLICATES, &err);
 
     if (response_json == NULL) {
-        fprintf(stderr, "ERROR: JSON decoding error, " ERR_FMT, ERR_ARGS);
+        fprintf(stderr,
+                "ERROR: JSON decoding error, " ERR_FMT,
+                ERR_ARGS(manager->response_buffer));
         return false;
     }
 
@@ -1030,7 +1022,7 @@ static inline bool jaeger_http_sampling_manager_parse_response_json(
                                       &per_operation_json);
     bool success = true;
     if (result != 0) {
-        PRINT_ERR_MSG;
+        PRINT_ERR_MSG(manager->response_buffer);
         success = false;
         goto cleanup;
     }
@@ -1049,8 +1041,10 @@ static inline bool jaeger_http_sampling_manager_parse_response_json(
         else {
             *response->probabilistic = (jaeger_probabilistic_strategy)
                 JAEGERTRACINGC_PROBABILISTIC_STRATEGY_INIT;
-            success = parse_probabilistic_sampling_json(response->probabilistic,
-                                                        probabilistic_json);
+            success =
+                parse_probabilistic_sampling_json(response->probabilistic,
+                                                  probabilistic_json,
+                                                  manager->response_buffer);
         }
     }
     else if (rate_limiting_json != NULL) {
@@ -1065,8 +1059,10 @@ static inline bool jaeger_http_sampling_manager_parse_response_json(
             success = false;
         }
         else {
-            success = parse_rate_limiting_sampling_json(response->rate_limiting,
-                                                        rate_limiting_json);
+            success =
+                parse_rate_limiting_sampling_json(response->rate_limiting,
+                                                  rate_limiting_json,
+                                                  manager->response_buffer);
         }
     }
     else {
@@ -1090,8 +1086,10 @@ static inline bool jaeger_http_sampling_manager_parse_response_json(
             success = false;
         }
         else {
-            success = parse_per_operation_sampling_json(response->per_operation,
-                                                        per_operation_json);
+            success =
+                parse_per_operation_sampling_json(response->per_operation,
+                                                  per_operation_json,
+                                                  manager->response_buffer);
         }
     }
 
@@ -1119,7 +1117,9 @@ static inline bool jaeger_http_sampling_manager_get_sampling_strategies(
     assert(manager != NULL);
     assert(response != NULL);
 
-    assert(manager->state == jaeger_http_sampling_manager_state_write);
+    manager->response_length = 0;
+    manager->state = jaeger_http_sampling_manager_state_write;
+
     const int num_written = write(
         manager->fd, &manager->request_buffer[0], manager->request_length);
     if (num_written != manager->request_length) {
@@ -1135,12 +1135,14 @@ static inline bool jaeger_http_sampling_manager_get_sampling_strategies(
     manager->state = jaeger_http_sampling_manager_state_read;
     char chunk_buffer[JAEGERTRACINGC_HTTP_SAMPLING_MANAGER_REQUEST_MAX_LEN];
     int num_read = read(manager->fd, &chunk_buffer[0], sizeof(chunk_buffer));
-    while (num_read > 0 &&
-           manager->state == jaeger_http_sampling_manager_state_read) {
+    while (num_read > 0) {
         const int num_parsed = http_parser_execute(
             &manager->parser, &manager->settings, &chunk_buffer[0], num_read);
         if (num_parsed != num_read) {
             return false;
+        }
+        if (manager->state != jaeger_http_sampling_manager_state_read) {
+            break;
         }
         num_read = read(manager->fd, &chunk_buffer[0], sizeof(chunk_buffer));
     }
@@ -1262,7 +1264,7 @@ bool jaeger_remotely_controlled_sampler_update(
         else {
             jaeger_sampler_choice_close(&sampler->sampler);
             int max_traces_per_second =
-                response.rate_limiting->max_traces_per_seconds;
+                response.rate_limiting->max_traces_per_second;
             sampler->sampler.type = jaeger_rate_limiting_sampler_type;
             jaeger_rate_limiting_sampler_init(
                 &sampler->sampler.rate_limiting_sampler, max_traces_per_second);
