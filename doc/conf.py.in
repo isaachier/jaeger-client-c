@@ -175,11 +175,6 @@ breathe_projects_source = {
     '@PROJECT_NAME@-constants': (
         '@gen_inc_rel_path@',
         ['constants.h']
-    ),
-    '@PROJECT_NAME@-protoc-gen': (
-        '@src_rel_path@/protoc-gen',
-        [os.path.basename(x) for x in '@protoc_gen_src@'.split(';')
-         if x.endswith('.h')]
     )
 }
 

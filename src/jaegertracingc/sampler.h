@@ -18,7 +18,6 @@
 #define JAEGERTRACINGC_SAMPLER_H
 
 #include <assert.h>
-#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "jaegertracingc/common.h"
@@ -28,6 +27,7 @@
 #include "jaegertracingc/net.h"
 #include "jaegertracingc/sampling_strategy.h"
 #include "jaegertracingc/tag.h"
+#include "jaegertracingc/threading.h"
 #include "jaegertracingc/token_bucket.h"
 #include "jaegertracingc/types.h"
 
@@ -115,7 +115,7 @@ typedef struct jaeger_adaptive_sampler {
     jaeger_probabilistic_sampler default_sampler;
     double lower_bound;
     int max_operations;
-    pthread_mutex_t mutex;
+    jaeger_mutex mutex;
 } jaeger_adaptive_sampler;
 
 bool jaeger_adaptive_sampler_init(
@@ -207,7 +207,7 @@ typedef struct jaeger_remotely_controlled_sampler {
     int max_operations;
     jaeger_metrics* metrics;
     jaeger_http_sampling_manager manager;
-    pthread_mutex_t mutex;
+    jaeger_mutex mutex;
 } jaeger_remotely_controlled_sampler;
 
 bool jaeger_remotely_controlled_sampler_init(

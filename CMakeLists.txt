@@ -44,8 +44,11 @@ find_package(http-parser REQUIRED)
 find_package(Jansson REQUIRED)
 find_package(ProtobufC REQUIRED)
 
-set(CMAKE_THREAD_PREFER_PTHREAD ON)
-find_package(Threads REQUIRED)
+option(JAEGERTRACINGC_MT "Enable multithreading support" ON)
+if(JAEGERTRACINGC_MT)
+  set(CMAKE_THREAD_PREFER_PTHREAD ON)
+  find_package(Threads REQUIRED)
+endif()
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -69,6 +72,8 @@ set(core_src
   "src/jaegertracingc/sampling_strategy.h"
   "src/jaegertracingc/tag.c"
   "src/jaegertracingc/tag.h"
+  "src/jaegertracingc/threading.c"
+  "src/jaegertracingc/threading.h"
   "src/jaegertracingc/token_bucket.c"
   "src/jaegertracingc/token_bucket.h"
   "src/jaegertracingc/types.c"
@@ -88,17 +93,18 @@ add_library(jaegertracingc ${core_src} ${protoc_gen_src})
 
 configure_file(
   "src/jaegertracingc/constants.h.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/generated/include/jaegertracingc/constants.h"
+  "${CMAKE_CURRENT_BINARY_DIR}/include/jaegertracingc/constants.h"
   @ONLY)
 target_include_directories(jaegertracingc PUBLIC
-  "src" "${CMAKE_CURRENT_BINARY_DIR}/generated/include")
+  "src" "${CMAKE_CURRENT_BINARY_DIR}/include")
 
-if(CMAKE_USE_PTHREADS_INIT)
-  target_link_libraries(jaegertracingc PUBLIC
-    http-parser::http-parser
-    Jansson::Jansson
-    ProtobufC::ProtobufC
-    Threads::Threads)
+target_link_libraries(jaegertracingc PUBLIC
+  http-parser::http-parser
+  Jansson::Jansson
+  ProtobufC::ProtobufC)
+if(JAEGERTRACINGC_MT)
+  target_link_libraries(jaegertracingc PUBLIC Threads::Threads)
+  target_compile_definitions(jaegertracingc PUBLIC JAEGERTRACINGC_MT)
 endif()
 
 check_function_exists("rand_r" have_rand_r)
@@ -179,7 +185,7 @@ if(JAEGERTRACINGC_BUILD_DOC)
     DIRECTORY)
   file(RELATIVE_PATH constants_gen_h_rel_path
     ${sphinx_out_path}
-    "${CMAKE_CURRENT_BINARY_DIR}/generated/include/jaegertracingc/constants.h")
+    "${CMAKE_CURRENT_BINARY_DIR}/include/jaegertracingc/constants.h")
   get_filename_component(gen_inc_rel_path
     ${constants_gen_h_rel_path}
     DIRECTORY)

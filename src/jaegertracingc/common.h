@@ -26,7 +26,9 @@ extern "C" {
 #endif /* __cplusplus */
 
 #define JAEGERTRACINGC_MIN(a, b) ((b) < (a) ? (b) : (a))
+
 #define JAEGERTRACINGC_MAX(a, b) ((b) > (a) ? (b) : (a))
+
 #define JAEGERTRACINGC_CLAMP(x, low, high) \
     JAEGERTRACINGC_MIN(JAEGERTRACINGC_MAX((x), (low)), (high))
 

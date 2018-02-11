@@ -400,7 +400,7 @@ static bool jaeger_adaptive_sampler_is_sampled(jaeger_sampler* sampler,
     assert(sampler != NULL);
     bool use_default_sampler = false;
     jaeger_adaptive_sampler* s = (jaeger_adaptive_sampler*) sampler;
-    pthread_mutex_lock(&s->mutex);
+    jaeger_mutex_lock(&s->mutex);
     jaeger_operation_sampler* op_sampler =
         jaeger_adaptive_sampler_find_sampler(s, operation_name);
     if (op_sampler != NULL) {
@@ -409,7 +409,7 @@ static bool jaeger_adaptive_sampler_is_sampled(jaeger_sampler* sampler,
             &op_sampler->sampler;
         const bool decision =
             g->is_sampled((jaeger_sampler*) g, trace_id, operation_name, tags);
-        pthread_mutex_unlock(&s->mutex);
+        jaeger_mutex_unlock(&s->mutex);
         return decision;
     }
 
@@ -449,7 +449,7 @@ static bool jaeger_adaptive_sampler_is_sampled(jaeger_sampler* sampler,
                 trace_id,
                 operation_name,
                 tags);
-            pthread_mutex_unlock(&s->mutex);
+            jaeger_mutex_unlock(&s->mutex);
             return decision;
         }
     }
@@ -457,7 +457,7 @@ static bool jaeger_adaptive_sampler_is_sampled(jaeger_sampler* sampler,
     assert(use_default_sampler);
     const bool decision = s->default_sampler.is_sampled(
         (jaeger_sampler*) &s->default_sampler, trace_id, operation_name, tags);
-    pthread_mutex_unlock(&s->mutex);
+    jaeger_mutex_unlock(&s->mutex);
     return decision;
 }
 
@@ -474,7 +474,7 @@ static void jaeger_adaptive_sampler_close(jaeger_sampler* sampler)
         s->num_op_samplers = 0;
         s->op_samplers_capacity = 0;
     }
-    pthread_mutex_destroy(&s->mutex);
+    jaeger_mutex_destroy(&s->mutex);
 }
 
 bool jaeger_adaptive_sampler_init(
@@ -493,7 +493,7 @@ bool jaeger_adaptive_sampler_init(
                                       strategies->default_sampling_probability);
     sampler->lower_bound = strategies->default_lower_bound_traces_per_second;
     sampler->max_operations = max_operations;
-    sampler->mutex = (pthread_mutex_t) PTHREAD_MUTEX_INITIALIZER;
+    sampler->mutex = (jaeger_mutex) JAEGERTRACINGC_MUTEX_INIT;
     sampler->is_sampled = &jaeger_adaptive_sampler_is_sampled;
     sampler->close = &jaeger_adaptive_sampler_close;
     return true;
@@ -508,7 +508,7 @@ jaeger_adaptive_sampler_update(jaeger_adaptive_sampler* sampler,
     bool success = true;
     const double lower_bound =
         strategies->default_lower_bound_traces_per_second;
-    pthread_mutex_lock(&sampler->mutex);
+    jaeger_mutex_lock(&sampler->mutex);
     for (int i = 0; i < strategies->n_per_operation_strategy; i++) {
         const jaeger_operation_strategy* strategy =
             strategies->per_operation_strategy[i];
@@ -570,7 +570,7 @@ jaeger_adaptive_sampler_update(jaeger_adaptive_sampler* sampler,
                 strategy->probabilistic->sampling_rate);
         }
     }
-    pthread_mutex_unlock(&sampler->mutex);
+    jaeger_mutex_unlock(&sampler->mutex);
     return success;
 }
 
@@ -1163,12 +1163,12 @@ jaeger_remotely_controlled_sampler_is_sampled(jaeger_sampler* sampler,
     assert(sampler != NULL);
     jaeger_remotely_controlled_sampler* s =
         (jaeger_remotely_controlled_sampler*) sampler;
-    pthread_mutex_lock(&s->mutex);
+    jaeger_mutex_lock(&s->mutex);
     jaeger_sampler* inner_sampler =
         jaeger_sampler_choice_get_sampler(&s->sampler);
     const bool result = inner_sampler->is_sampled(
         inner_sampler, trace_id, operation_name, tags);
-    pthread_mutex_unlock(&s->mutex);
+    jaeger_mutex_unlock(&s->mutex);
     return result;
 }
 
@@ -1179,7 +1179,7 @@ static void jaeger_remotely_controlled_sampler_close(jaeger_sampler* sampler)
     jaeger_sampler_choice* sampler_choice = &s->sampler;
     jaeger_sampler_choice_close(sampler_choice);
     jaeger_http_sampling_manager_destroy(&s->manager);
-    pthread_mutex_destroy(&s->mutex);
+    jaeger_mutex_destroy(&s->mutex);
 }
 
 static inline bool jaeger_remotely_controlled_sampler_update_adaptive_sampler(
@@ -1220,7 +1220,7 @@ bool jaeger_remotely_controlled_sampler_update(
         }
     }
 
-    pthread_mutex_lock(&sampler->mutex);
+    jaeger_mutex_lock(&sampler->mutex);
 
     if (sampler->metrics && sampler->metrics->sampler_retrieved) {
         sampler->metrics->sampler_retrieved->inc(
@@ -1270,7 +1270,7 @@ bool jaeger_remotely_controlled_sampler_update(
     } break;
     }
 
-    pthread_mutex_unlock(&sampler->mutex);
+    jaeger_mutex_unlock(&sampler->mutex);
     jaeger_strategy_response_destroy(&response);
     return success;
 }
@@ -1294,7 +1294,7 @@ bool jaeger_remotely_controlled_sampler_init(
         max_operations,
         metrics,
         JAEGERTRACINGC_HTTP_SAMPLING_MANAGER_INIT,
-        PTHREAD_MUTEX_INITIALIZER};
+        JAEGERTRACINGC_MUTEX_INIT};
 
     if (initial_sampler != NULL) {
         sampler->sampler = *initial_sampler;

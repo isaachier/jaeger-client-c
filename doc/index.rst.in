@@ -15,6 +15,3 @@
 
 .. autodoxygenindex::
    :project: @PROJECT_NAME@-constants
-
-.. autodoxygenindex::
-   :project: @PROJECT_NAME@-protoc-gen
