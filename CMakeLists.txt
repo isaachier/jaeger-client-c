@@ -55,7 +55,6 @@ set(core_src
   "src/jaegertracingc/common.c"
   "src/jaegertracingc/common.h"
   "src/jaegertracingc/constants.c"
-  "src/jaegertracingc/constants.h"
   "src/jaegertracingc/duration.c"
   "src/jaegertracingc/duration.h"
   "src/jaegertracingc/init.c"
@@ -75,10 +74,15 @@ set(core_src
   "src/jaegertracingc/types.c"
   "src/jaegertracingc/types.h")
 
-set(protoc_gen_src "src/jaegertracingc/protoc-gen/agent.pb-c.c"
+set(protoc_gen_src
+  "src/jaegertracingc/protoc-gen/agent.pb-c.c"
+  "src/jaegertracingc/protoc-gen/agent.pb-c.h"
   "src/jaegertracingc/protoc-gen/baggage.pb-c.c"
+  "src/jaegertracingc/protoc-gen/baggage.pb-c.h"
   "src/jaegertracingc/protoc-gen/jaeger.pb-c.c"
-  "src/jaegertracingc/protoc-gen/sampling.pb-c.c")
+  "src/jaegertracingc/protoc-gen/jaeger.pb-c.h"
+  "src/jaegertracingc/protoc-gen/sampling.pb-c.c"
+  "src/jaegertracingc/protoc-gen/sampling.pb-c.h")
 
 add_library(jaegertracingc ${core_src} ${protoc_gen_src})
 
@@ -167,6 +171,18 @@ if(JAEGERTRACINGC_BUILD_DOC)
   set(sphinx_out_path "${CMAKE_CURRENT_BINARY_DIR}/${sphinx_relative_path}")
   set(static_path "${sphinx_src_path}/_static")
   set(templates_path "${sphinx_src_path}/_templates")
+  file(RELATIVE_PATH constants_in_h_rel_path
+    ${sphinx_out_path}
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/jaegertracingc/constants.h.in")
+  get_filename_component(src_rel_path
+    ${constants_in_h_rel_path}
+    DIRECTORY)
+  file(RELATIVE_PATH constants_gen_h_rel_path
+    ${sphinx_out_path}
+    "${CMAKE_CURRENT_BINARY_DIR}/generated/include/jaegertracingc/constants.h")
+  get_filename_component(gen_inc_rel_path
+    ${constants_gen_h_rel_path}
+    DIRECTORY)
 
 	configure_file("${sphinx_src_path}/conf.py.in"
                  "${sphinx_out_path}/conf.py" @ONLY)
