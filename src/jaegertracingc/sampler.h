@@ -38,11 +38,11 @@ extern "C" {
 #define JAEGERTRACINGC_DOUBLE_STR_SIZE 16
 
 #define JAEGERTRACINGC_SAMPLER_SUBCLASS                 \
+    JAEGERTRACINGC_DESTRUCTIBLE_SUBCLASS;               \
     bool (*is_sampled)(struct jaeger_sampler * sampler, \
                        const jaeger_trace_id* trace_id, \
                        const char* operation,           \
-                       jaeger_tag_list* tags);          \
-    void (*close)(struct jaeger_sampler * sampler)
+                       jaeger_tag_list* tags)
 
 typedef struct jaeger_sampler {
     JAEGERTRACINGC_SAMPLER_SUBCLASS;
@@ -168,12 +168,12 @@ jaeger_sampler_choice_get_sampler(jaeger_sampler_choice* sampler)
 #undef SAMPLER_TYPE_CASE
 }
 
-static inline void jaeger_sampler_choice_close(jaeger_sampler_choice* sampler)
+static inline void jaeger_sampler_choice_destroy(jaeger_sampler_choice* sampler)
 {
     assert(sampler != NULL);
     jaeger_sampler* s = jaeger_sampler_choice_get_sampler(sampler);
     if (s != NULL) {
-        s->close(s);
+        s->destroy((jaeger_destructible*) s);
     }
 }
 

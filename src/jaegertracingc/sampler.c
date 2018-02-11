@@ -48,9 +48,9 @@ static bool jaeger_const_sampler_is_sampled(jaeger_sampler* sampler,
     return s->decision;
 }
 
-static void jaeger_sampler_noop_close(jaeger_sampler* sampler)
+static void jaeger_sampler_noop_destroy(jaeger_destructible* destructible)
 {
-    (void) sampler;
+    (void) destructible;
 }
 
 void jaeger_const_sampler_init(jaeger_const_sampler* sampler, bool decision)
@@ -58,7 +58,7 @@ void jaeger_const_sampler_init(jaeger_const_sampler* sampler, bool decision)
     assert(sampler != NULL);
     sampler->decision = decision;
     sampler->is_sampled = &jaeger_const_sampler_is_sampled;
-    sampler->close = &jaeger_sampler_noop_close;
+    sampler->destroy = &jaeger_sampler_noop_destroy;
 }
 
 static bool
@@ -96,7 +96,7 @@ void jaeger_probabilistic_sampler_init(jaeger_probabilistic_sampler* sampler,
 {
     assert(sampler != NULL);
     sampler->is_sampled = &jaeger_probabilistic_sampler_is_sampled;
-    sampler->close = &jaeger_sampler_noop_close;
+    sampler->destroy = &jaeger_sampler_noop_destroy;
     sampler->sampling_rate = JAEGERTRACINGC_CLAMP(sampling_rate, 0, 1);
     jaeger_duration duration;
     jaeger_duration_now(&duration);
@@ -134,7 +134,7 @@ void jaeger_rate_limiting_sampler_init(jaeger_rate_limiting_sampler* sampler,
 {
     assert(sampler != NULL);
     sampler->is_sampled = &jaeger_rate_limiting_sampler_is_sampled;
-    sampler->close = &jaeger_sampler_noop_close;
+    sampler->destroy = &jaeger_sampler_noop_destroy;
     jaeger_token_bucket_init(&sampler->tok,
                              max_traces_per_second,
                              JAEGERTRACINGC_MAX(max_traces_per_second, 1));
@@ -197,14 +197,16 @@ static bool jaeger_guaranteed_throughput_probabilistic_sampler_is_sampled(
     return decision;
 }
 
-static void jaeger_guaranteed_throughput_probabilistic_sampler_close(
-    jaeger_sampler* sampler)
+static void jaeger_guaranteed_throughput_probabilistic_sampler_destroy(
+    jaeger_destructible* sampler)
 {
     assert(sampler != NULL);
     jaeger_guaranteed_throughput_probabilistic_sampler* s =
         (jaeger_guaranteed_throughput_probabilistic_sampler*) sampler;
-    s->probabilistic_sampler.close((jaeger_sampler*) &s->probabilistic_sampler);
-    s->lower_bound_sampler.close((jaeger_sampler*) &s->lower_bound_sampler);
+    s->probabilistic_sampler.destroy(
+        (jaeger_destructible*) &s->probabilistic_sampler);
+    s->lower_bound_sampler.destroy(
+        (jaeger_destructible*) &s->lower_bound_sampler);
 }
 
 void jaeger_guaranteed_throughput_probabilistic_sampler_init(
@@ -215,7 +217,8 @@ void jaeger_guaranteed_throughput_probabilistic_sampler_init(
     assert(sampler != NULL);
     sampler->is_sampled =
         &jaeger_guaranteed_throughput_probabilistic_sampler_is_sampled;
-    sampler->close = &jaeger_guaranteed_throughput_probabilistic_sampler_close;
+    sampler->destroy =
+        &jaeger_guaranteed_throughput_probabilistic_sampler_destroy;
     jaeger_probabilistic_sampler_init(&sampler->probabilistic_sampler,
                                       sampling_rate);
     jaeger_rate_limiting_sampler_init(&sampler->lower_bound_sampler,
@@ -229,14 +232,14 @@ void jaeger_guaranteed_throughput_probabilistic_sampler_update(
 {
     assert(sampler != NULL);
     if (sampler->probabilistic_sampler.sampling_rate != sampling_rate) {
-        sampler->probabilistic_sampler.close(
-            (jaeger_sampler*) &sampler->probabilistic_sampler);
+        sampler->probabilistic_sampler.destroy(
+            (jaeger_destructible*) &sampler->probabilistic_sampler);
         jaeger_probabilistic_sampler_init(&sampler->probabilistic_sampler,
                                           sampling_rate);
     }
     if (sampler->lower_bound_sampler.max_traces_per_second != lower_bound) {
-        sampler->lower_bound_sampler.close(
-            (jaeger_sampler*) &sampler->lower_bound_sampler);
+        sampler->lower_bound_sampler.destroy(
+            (jaeger_destructible*) &sampler->lower_bound_sampler);
         jaeger_rate_limiting_sampler_init(&sampler->lower_bound_sampler,
                                           lower_bound);
     }
@@ -461,7 +464,7 @@ static bool jaeger_adaptive_sampler_is_sampled(jaeger_sampler* sampler,
     return decision;
 }
 
-static void jaeger_adaptive_sampler_close(jaeger_sampler* sampler)
+static void jaeger_adaptive_sampler_destroy(jaeger_destructible* sampler)
 {
     assert(sampler != NULL);
     jaeger_adaptive_sampler* s = (jaeger_adaptive_sampler*) sampler;
@@ -495,7 +498,7 @@ bool jaeger_adaptive_sampler_init(
     sampler->max_operations = max_operations;
     sampler->mutex = (jaeger_mutex) JAEGERTRACINGC_MUTEX_INIT;
     sampler->is_sampled = &jaeger_adaptive_sampler_is_sampled;
-    sampler->close = &jaeger_adaptive_sampler_close;
+    sampler->destroy = &jaeger_adaptive_sampler_destroy;
     return true;
 }
 
@@ -1174,12 +1177,13 @@ jaeger_remotely_controlled_sampler_is_sampled(jaeger_sampler* sampler,
     return result;
 }
 
-static void jaeger_remotely_controlled_sampler_close(jaeger_sampler* sampler)
+static void
+jaeger_remotely_controlled_sampler_destroy(jaeger_destructible* sampler)
 {
     jaeger_remotely_controlled_sampler* s =
         (jaeger_remotely_controlled_sampler*) sampler;
     jaeger_sampler_choice* sampler_choice = &s->sampler;
-    jaeger_sampler_choice_close(sampler_choice);
+    jaeger_sampler_choice_destroy(sampler_choice);
     jaeger_http_sampling_manager_destroy(&s->manager);
     jaeger_mutex_destroy(&s->mutex);
 }
@@ -1195,7 +1199,7 @@ static inline bool jaeger_remotely_controlled_sampler_update_adaptive_sampler(
             &sampler->sampler.adaptive_sampler, strategies);
     }
     else {
-        jaeger_sampler_choice_close(&sampler->sampler);
+        jaeger_sampler_choice_destroy(&sampler->sampler);
         sampler->sampler.type = jaeger_adaptive_sampler_type;
         return jaeger_adaptive_sampler_init(&sampler->sampler.adaptive_sampler,
                                             strategies,
@@ -1244,7 +1248,7 @@ bool jaeger_remotely_controlled_sampler_update(
             fprintf(stderr, "ERROR: Received null probabilistic strategy\n");
         }
         else {
-            jaeger_sampler_choice_close(&sampler->sampler);
+            jaeger_sampler_choice_destroy(&sampler->sampler);
             sampler->sampler.type = jaeger_probabilistic_sampler_type;
             sampler->sampler.probabilistic_sampler.sampling_rate =
                 JAEGERTRACINGC_CLAMP(
@@ -1262,7 +1266,7 @@ bool jaeger_remotely_controlled_sampler_update(
             fprintf(stderr, "ERROR: Received null rate limiting strategy\n");
         }
         else {
-            jaeger_sampler_choice_close(&sampler->sampler);
+            jaeger_sampler_choice_destroy(&sampler->sampler);
             int max_traces_per_second =
                 response.rate_limiting->max_traces_per_second;
             sampler->sampler.type = jaeger_rate_limiting_sampler_type;
@@ -1290,8 +1294,8 @@ bool jaeger_remotely_controlled_sampler_init(
     max_operations =
         (max_operations <= 0) ? DEFAULT_MAX_OPERATIONS : max_operations;
     *sampler = (jaeger_remotely_controlled_sampler){
+        &jaeger_remotely_controlled_sampler_destroy,
         &jaeger_remotely_controlled_sampler_is_sampled,
-        &jaeger_remotely_controlled_sampler_close,
         (jaeger_sampler_choice){},
         max_operations,
         metrics,

@@ -34,8 +34,8 @@
     const jaeger_trace_id trace_id = JAEGERTRACINGC_TRACE_ID_INIT; \
     (void) trace_id
 
-#define TEAR_DOWN_SAMPLER_TEST(sampler)        \
-    sampler.close((jaeger_sampler*) &sampler); \
+#define TEAR_DOWN_SAMPLER_TEST(sampler)               \
+    sampler.destroy((jaeger_destructible*) &sampler); \
     jaeger_tag_list_destroy(&tags)
 
 #define TEST_DEFAULT_SAMPLING_PROBABILITY 0.5
@@ -91,7 +91,7 @@ void test_const_sampler()
         c.is_sampled((jaeger_sampler*) &c, &trace_id, operation_name, &tags));
     CHECK_CONST_TAGS(c, tags);
 
-    c.close((jaeger_sampler*) &c);
+    c.destroy((jaeger_destructible*) &c);
     jaeger_tag_list_clear(&tags);
     jaeger_const_sampler_init(&c, false);
     TEST_ASSERT_FALSE(
@@ -110,7 +110,7 @@ void test_probabilistic_sampler()
     TEST_ASSERT_TRUE(
         p.is_sampled((jaeger_sampler*) &p, &trace_id, operation_name, &tags));
     CHECK_PROBABILISTIC_TAGS(p, tags);
-    p.close((jaeger_sampler*) &p);
+    p.destroy((jaeger_destructible*) &p);
 
     sampling_rate = 0;
     jaeger_tag_list_clear(&tags);
@@ -498,7 +498,7 @@ void test_remotely_controlled_sampler()
     jaeger_tag_list_init(&tags);
     r.is_sampled((jaeger_sampler*) &r, &trace_id, "test-operation", &tags);
 
-    r.close((jaeger_sampler*) &r);
+    r.destroy((jaeger_destructible*) &r);
     jaeger_metrics_destroy(&metrics);
 }
 
