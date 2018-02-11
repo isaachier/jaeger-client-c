@@ -49,23 +49,38 @@ find_package(Threads REQUIRED)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-add_library(jaegertracingc
+set(core_src
   "src/jaegertracingc/alloc.c"
+  "src/jaegertracingc/alloc.h"
   "src/jaegertracingc/common.c"
+  "src/jaegertracingc/common.h"
   "src/jaegertracingc/constants.c"
+  "src/jaegertracingc/constants.h"
   "src/jaegertracingc/duration.c"
+  "src/jaegertracingc/duration.h"
   "src/jaegertracingc/init.c"
+  "src/jaegertracingc/init.h"
   "src/jaegertracingc/metrics.c"
+  "src/jaegertracingc/metrics.h"
   "src/jaegertracingc/net.c"
+  "src/jaegertracingc/net.h"
   "src/jaegertracingc/sampler.c"
+  "src/jaegertracingc/sampler.h"
   "src/jaegertracingc/sampling_strategy.c"
+  "src/jaegertracingc/sampling_strategy.h"
   "src/jaegertracingc/tag.c"
+  "src/jaegertracingc/tag.h"
   "src/jaegertracingc/token_bucket.c"
+  "src/jaegertracingc/token_bucket.h"
   "src/jaegertracingc/types.c"
-  "src/jaegertracingc/protoc-gen/agent.pb-c.c"
+  "src/jaegertracingc/types.h")
+
+set(protoc_gen_src "src/jaegertracingc/protoc-gen/agent.pb-c.c"
   "src/jaegertracingc/protoc-gen/baggage.pb-c.c"
   "src/jaegertracingc/protoc-gen/jaeger.pb-c.c"
   "src/jaegertracingc/protoc-gen/sampling.pb-c.c")
+
+add_library(jaegertracingc ${core_src} ${protoc_gen_src})
 
 configure_file(
   "src/jaegertracingc/constants.h.in"
@@ -100,7 +115,7 @@ if(BUILD_TESTING)
   add_library(unity "third_party/unity/src/unity.c")
   target_include_directories(unity PUBLIC "third_party/unity/src")
 
-  set(TEST_SRC
+  set(test_src
     "src/jaegertracingc/alloc_test.c"
     "src/jaegertracingc/duration_test.c"
     "src/jaegertracingc/metrics_test.c"
@@ -108,7 +123,7 @@ if(BUILD_TESTING)
     "src/jaegertracingc/sampler_test.c"
     "src/jaegertracingc/tag_test.c"
     "src/jaegertracingc/token_bucket_test.c")
-  add_library(jaegertracingc_test ${TEST_SRC})
+  add_library(jaegertracingc_test ${test_src})
   target_link_libraries(jaegertracingc_test PUBLIC jaegertracingc unity)
 
   add_executable(default_test "src/jaegertracingc/default_test_driver.c")
@@ -122,7 +137,43 @@ if(BUILD_TESTING)
   if(JAEGERTRACINGC_COVERAGE)
     setup_target_for_coverage(
       NAME unit_test_coverage
-      EXECUTABLE ${CMAKE_CURRENT_BINARY_DIR}/default_test && ${CMAKE_CURRENT_BINARY_DIR}/oom_test
+      EXECUTABLE ${CMAKE_CURRENT_BINARY_DIR}/default_test &&
+								 ${CMAKE_CURRENT_BINARY_DIR}/oom_test
       DEPENDENCIES default_test oom_test)
   endif()
+endif()
+
+find_program(doxygen "doxygen")
+if(doxygen)
+  message(STATUS "Found doxygen: ${doxygen}")
+else()
+  message(STATUS "Will not build documentation because doxygen was not found")
+endif()
+
+find_program(sphinx_build "sphinx-build")
+if(sphinx_build)
+  message(STATUS "Found sphinx-build: ${sphinx_build}")
+else()
+  message(STATUS
+    "Will not build documentation because sphinx-build was not found")
+endif()
+cmake_dependent_option(JAEGERTRACINGC_BUILD_DOC "Build documentation" ON
+                       "doxygen;sphinx_build" OFF)
+if(JAEGERTRACINGC_BUILD_DOC)
+	set(copyright_holder "Uber Technologies, Inc.")
+	string(TIMESTAMP copyright_year "%Y")
+  set(sphinx_relative_path "doc")
+  set(sphinx_src_path "${CMAKE_CURRENT_SOURCE_DIR}/${sphinx_relative_path}")
+  set(sphinx_out_path "${CMAKE_CURRENT_BINARY_DIR}/${sphinx_relative_path}")
+  set(static_path "${sphinx_src_path}/_static")
+  set(templates_path "${sphinx_src_path}/_templates")
+
+	configure_file("${sphinx_src_path}/conf.py.in"
+                 "${sphinx_out_path}/conf.py" @ONLY)
+	configure_file("${sphinx_src_path}/index.rst.in"
+                 "${sphinx_out_path}/index.rst" @ONLY)
+  add_custom_target(doc
+    COMMAND ${sphinx_build} -M html ${sphinx_out_path} ${sphinx_out_path}
+		VERBATIM
+		USES_TERMINAL)
 endif()
