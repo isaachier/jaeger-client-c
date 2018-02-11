@@ -223,6 +223,7 @@ void test_adaptive_sampler()
 
     jaeger_tag_list_clear(&tags);
     a.is_sampled((jaeger_sampler*) &a, &trace_id, "unseen-operation", &tags);
+    TEST_ASSERT_EQUAL(2, a.num_op_samplers);
 
     jaeger_per_operation_strategy_destroy(&strategies);
     TEAR_DOWN_SAMPLER_TEST(a);
@@ -399,7 +400,7 @@ void test_remotely_controlled_sampler()
 #define URL_PREFIX "http://localhost:"
     char buffer[sizeof(URL_PREFIX) + 5];
     const int result = snprintf(buffer, sizeof(buffer), URL_PREFIX "%d", port);
-    TEST_ASSERT_EQUAL(sizeof(buffer) - 1, result);
+    TEST_ASSERT_LESS_OR_EQUAL(sizeof(buffer) - 1, result);
     jaeger_remotely_controlled_sampler r;
     TEST_ASSERT_TRUE(
         jaeger_remotely_controlled_sampler_init(&r,

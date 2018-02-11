@@ -242,6 +242,18 @@ void jaeger_guaranteed_throughput_probabilistic_sampler_update(
     }
 }
 
+static int op_name_cmp(const void* lhs, const void* rhs)
+{
+    assert(lhs != NULL);
+    assert(rhs != NULL);
+    const jaeger_operation_sampler* lhs_op_sampler =
+        (const jaeger_operation_sampler*) lhs;
+    const jaeger_operation_sampler* rhs_op_sampler =
+        (const jaeger_operation_sampler*) rhs;
+    return strcmp(lhs_op_sampler->operation_name,
+                  rhs_op_sampler->operation_name);
+}
+
 static inline jaeger_operation_sampler*
 samplers_from_strategies(const jaeger_per_operation_strategy* strategies,
                          int* const num_op_samplers)
@@ -311,6 +323,7 @@ samplers_from_strategies(const jaeger_per_operation_strategy* strategies,
         return NULL;
     }
 
+    qsort(op_samplers, *num_op_samplers, sizeof(op_samplers[0]), &op_name_cmp);
     return op_samplers;
 }
 
@@ -333,6 +346,50 @@ jaeger_adaptive_sampler_resize_op_samplers(jaeger_adaptive_sampler* sampler)
     return true;
 }
 
+static inline jaeger_operation_sampler*
+jaeger_adaptive_sampler_make_room(jaeger_adaptive_sampler* s,
+                                  const char* operation_name)
+{
+    /* Lower bound based on example in
+     * http://www.cplusplus.com/reference/algorithm/lower_bound/. */
+    int count = s->num_op_samplers;
+    int pos = 0;
+    while (count > 0) {
+        const int step = count / 2;
+        pos += step;
+        if (strcmp(s->op_samplers[pos].operation_name, operation_name) < 0) {
+            pos++;
+            count -= step + 1;
+        }
+        else {
+            count = step;
+        }
+    }
+    if (pos < s->num_op_samplers) {
+        memmove(&s->op_samplers[pos + 1],
+                &s->op_samplers[pos],
+                sizeof(s->op_samplers[0]) * (s->num_op_samplers - pos - 1));
+    }
+    s->num_op_samplers++;
+    return &s->op_samplers[pos];
+}
+
+static inline jaeger_operation_sampler*
+jaeger_adaptive_sampler_find_sampler(jaeger_adaptive_sampler* sampler,
+                                     const char* operation_name)
+{
+    char operation_name_copy[strlen(operation_name) + 1];
+    strncpy(operation_name_copy, operation_name, sizeof(operation_name_copy));
+    const jaeger_operation_sampler key = {.operation_name =
+                                              operation_name_copy};
+    void* op_sampler = bsearch(&key,
+                               sampler->op_samplers,
+                               sampler->num_op_samplers,
+                               sizeof(sampler->op_samplers[0]),
+                               &op_name_cmp);
+    return (jaeger_operation_sampler*) op_sampler;
+}
+
 static bool jaeger_adaptive_sampler_is_sampled(jaeger_sampler* sampler,
                                                const jaeger_trace_id* trace_id,
                                                const char* operation_name,
@@ -344,15 +401,16 @@ static bool jaeger_adaptive_sampler_is_sampled(jaeger_sampler* sampler,
     bool use_default_sampler = false;
     jaeger_adaptive_sampler* s = (jaeger_adaptive_sampler*) sampler;
     pthread_mutex_lock(&s->mutex);
-    for (int i = 0; i < s->num_op_samplers; i++) {
-        if (strcmp(s->op_samplers[i].operation_name, operation_name) == 0) {
-            jaeger_guaranteed_throughput_probabilistic_sampler* g =
-                &s->op_samplers[i].sampler;
-            const bool decision = g->is_sampled(
-                (jaeger_sampler*) g, trace_id, operation_name, tags);
-            pthread_mutex_unlock(&s->mutex);
-            return decision;
-        }
+    jaeger_operation_sampler* op_sampler =
+        jaeger_adaptive_sampler_find_sampler(s, operation_name);
+    if (op_sampler != NULL) {
+        assert(strcmp(op_sampler->operation_name, operation_name) == 0);
+        jaeger_guaranteed_throughput_probabilistic_sampler* g =
+            &op_sampler->sampler;
+        const bool decision =
+            g->is_sampled((jaeger_sampler*) g, trace_id, operation_name, tags);
+        pthread_mutex_unlock(&s->mutex);
+        return decision;
     }
 
     if (s->num_op_samplers >= s->max_operations) {
@@ -364,26 +422,30 @@ static bool jaeger_adaptive_sampler_is_sampled(jaeger_sampler* sampler,
         fprintf(stderr,
                 "ERROR: Cannot allocate more operation samplers "
                 "in adaptive sampler\n");
+        use_default_sampler = true;
     }
+
     if (!use_default_sampler) {
-        jaeger_operation_sampler* op_sampler =
-            &s->op_samplers[s->num_op_samplers];
-        op_sampler->operation_name = jaeger_strdup(operation_name);
-        if (op_sampler->operation_name == NULL) {
+        jaeger_operation_sampler op_sampler = {
+            .operation_name = jaeger_strdup(operation_name)};
+        if (op_sampler.operation_name == NULL) {
             fprintf(stderr,
                     "ERROR: Cannot allocate operation name for new "
                     "operation sampler in adaptive sampler\n");
             use_default_sampler = true;
         }
         else {
+            jaeger_operation_sampler* op_sampler_ptr =
+                jaeger_adaptive_sampler_make_room(s, operation_name);
+            assert(op_sampler_ptr != NULL);
+            *op_sampler_ptr = op_sampler;
             jaeger_guaranteed_throughput_probabilistic_sampler_init(
-                &op_sampler->sampler,
+                &op_sampler_ptr->sampler,
                 s->lower_bound,
                 s->default_sampler.sampling_rate);
-            s->num_op_samplers++;
 
-            const bool decision = op_sampler->sampler.is_sampled(
-                (jaeger_sampler*) &op_sampler->sampler,
+            const bool decision = op_sampler_ptr->sampler.is_sampled(
+                (jaeger_sampler*) &op_sampler_ptr->sampler,
                 trace_id,
                 operation_name,
                 tags);
@@ -461,15 +523,14 @@ jaeger_adaptive_sampler_update(jaeger_adaptive_sampler* sampler,
             continue;
         }
 
-        for (int j = 0; j < sampler->num_op_samplers && !found_match; j++) {
-            jaeger_operation_sampler* op_sampler = &sampler->op_samplers[j];
-            if (strcmp(op_sampler->operation_name, strategy->operation) == 0) {
-                jaeger_guaranteed_throughput_probabilistic_sampler_update(
-                    &op_sampler->sampler,
-                    lower_bound,
-                    strategy->probabilistic->sampling_rate);
-                found_match = true;
-            }
+        jaeger_operation_sampler* op_sampler =
+            jaeger_adaptive_sampler_find_sampler(sampler, strategy->operation);
+        if (op_sampler != NULL) {
+            jaeger_guaranteed_throughput_probabilistic_sampler_update(
+                &op_sampler->sampler,
+                lower_bound,
+                strategy->probabilistic->sampling_rate);
+            found_match = true;
         }
 
         /* Only consider allocating new samplers if we have not had issues with
@@ -487,21 +548,26 @@ jaeger_adaptive_sampler_update(jaeger_adaptive_sampler* sampler,
                  * memory issues. */
                 continue;
             }
-            jaeger_operation_sampler* op_sampler =
-                &sampler->op_samplers[sampler->num_op_samplers];
-            op_sampler->operation_name = jaeger_strdup(strategy->operation);
-            if (op_sampler->operation_name == NULL) {
+            jaeger_operation_sampler op_sampler;
+            op_sampler.operation_name = jaeger_strdup(strategy->operation);
+            if (op_sampler.operation_name == NULL) {
                 fprintf(stderr,
                         "ERROR: Cannot allocate operation sampler, "
                         "operation name = \"%s\"\n",
                         strategy->operation);
-                jaeger_free(op_sampler);
                 success = false;
                 /* Continue with loop so we can update existing samplers despite
                  * memory issues. */
                 continue;
             }
-            sampler->num_op_samplers++;
+            jaeger_operation_sampler* op_sampler_ptr =
+                jaeger_adaptive_sampler_make_room(sampler, strategy->operation);
+            assert(op_sampler_ptr != NULL);
+            *op_sampler_ptr = op_sampler;
+            jaeger_guaranteed_throughput_probabilistic_sampler_init(
+                &op_sampler_ptr->sampler,
+                lower_bound,
+                strategy->probabilistic->sampling_rate);
         }
     }
     pthread_mutex_unlock(&sampler->mutex);
