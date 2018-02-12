@@ -44,27 +44,29 @@ typedef struct jaeger_host_port {
         .host = NULL, .port = 0       \
     }
 
-static inline bool
-jaeger_host_port_init(jaeger_host_port* host_port, const char* host, int port)
+static inline bool jaeger_host_port_init(jaeger_host_port* host_port,
+                                         const char* host,
+                                         int port,
+                                         jaeger_logger* logger)
 {
     assert(host_port != NULL);
+    assert(logger != NULL);
 
     if (host == NULL || strlen(host) == 0) {
-        fprintf(stderr, "ERROR: Empty host passed to host port constructor\n");
+        logger->error(logger, "Empty host passed to host port constructor");
         return false;
     }
 
     if (port < 0 || port > 65535) {
-        fprintf(
-            stderr,
-            "ERROR: Invalid port passed to host port constructor, port = %d\n",
-            port);
+        logger->error(logger,
+                      "Invalid port passed to host port constructor, port = %d",
+                      port);
         return false;
     }
 
-    host_port->host = jaeger_strdup(host);
+    host_port->host = jaeger_strdup(host, logger);
     if (host_port->host == NULL) {
-        fprintf(stderr, "ERROR: Cannot allocate host for host port\n");
+        logger->error(logger, "Cannot allocate host for host port");
         return false;
     }
 
@@ -91,24 +93,24 @@ typedef struct jaeger_url {
         .str = NULL, .parts = {} \
     }
 
-static inline bool jaeger_url_init(jaeger_url* url, const char* url_str)
+static inline bool
+jaeger_url_init(jaeger_url* url, const char* url_str, jaeger_logger* logger)
 {
     assert(url != NULL);
     assert(url_str != NULL && strlen(url_str) > 0);
     const int result =
         http_parser_parse_url(url_str, strlen(url_str), 0, &url->parts);
     if (result != 0) {
-        fprintf(stderr,
-                "ERROR: Cannot parse URL, URL = \"%s\", error code = %d\n",
-                url_str,
-                result);
+        logger->error(logger,
+                      "Cannot parse URL, URL = \"%s\", error code = %d",
+                      url_str,
+                      result);
         return false;
     }
-    url->str = jaeger_strdup(url_str);
+    url->str = jaeger_strdup(url_str, logger);
     if (url->str == NULL) {
-        fprintf(stderr,
-                "ERROR: Cannot allocate URL string, str = \"%s\"\n",
-                url_str);
+        logger->error(
+            logger, "Cannot allocate URL string, str = \"%s\"", url_str);
         return false;
     }
     return true;
@@ -124,7 +126,8 @@ static inline void jaeger_url_destroy(jaeger_url* url)
 }
 
 static inline bool jaeger_host_port_from_url(jaeger_host_port* host_port,
-                                             const jaeger_url* url)
+                                             const jaeger_url* url,
+                                             jaeger_logger* logger)
 {
     typedef struct {
         int off;
@@ -134,6 +137,7 @@ static inline bool jaeger_host_port_from_url(jaeger_host_port* host_port,
     assert(host_port != NULL);
     assert(url != NULL);
     assert(url->str != NULL);
+    assert(logger != NULL);
 
     int port = 0;
     if (url->parts.field_set & (1 << UF_PORT)) {
@@ -144,7 +148,7 @@ static inline bool jaeger_host_port_from_url(jaeger_host_port* host_port,
         port = strtol(&url->str[port_segment.off], &end, 10);
         if (end == NULL ||
             end != &url->str[port_segment.off + port_segment.len]) {
-            fprintf(stderr, "ERROR: Cannot parse port, URL = \"%s\"", url->str);
+            logger->error(logger, "Cannot parse port, URL = \"%s\"", url->str);
             return false;
         }
     }
@@ -156,16 +160,15 @@ static inline bool jaeger_host_port_from_url(jaeger_host_port* host_port,
     }
 
     if (host_segment.len == 0) {
-        fprintf(stderr,
-                "ERROR: Invalid URL, has no host, URL = \"%s\"\n",
-                url->str);
+        logger->error(
+            logger, "Invalid URL, has no host, URL = \"%s\"", url->str);
         return false;
     }
 
     char host_buffer[host_segment.len + 1];
     memcpy(&host_buffer[0], &url->str[host_segment.off], host_segment.len);
     host_buffer[host_segment.len] = '\0';
-    return jaeger_host_port_init(host_port, &host_buffer[0], port);
+    return jaeger_host_port_init(host_port, &host_buffer[0], port, logger);
 }
 
 static inline int jaeger_host_port_format(const jaeger_host_port* host_port,
@@ -181,11 +184,13 @@ static inline int jaeger_host_port_format(const jaeger_host_port* host_port,
 }
 
 static inline bool jaeger_host_port_resolve(const jaeger_host_port* host_port,
-                                            struct addrinfo** host_addrs)
+                                            struct addrinfo** host_addrs,
+                                            jaeger_logger* logger)
 {
     assert(host_addrs != NULL);
     assert(host_port != NULL);
     assert(host_port->host != NULL && strlen(host_port->host) > 0);
+    assert(logger != NULL);
 
     struct addrinfo hints;
     memset(&hints, 0, sizeof(hints));
@@ -197,10 +202,10 @@ static inline bool jaeger_host_port_resolve(const jaeger_host_port* host_port,
     assert(result < JAEGERTRACINGC_MAX_PORT_STR_LEN);
     result = getaddrinfo(host_port->host, &port_buffer[0], &hints, host_addrs);
     if (result != 0) {
-        fprintf(stderr,
-                "ERROR: Cannot resolve host = \"%s\", error = \"%s\"\n",
-                host_port->host,
-                gai_strerror(result));
+        logger->error(logger,
+                      "Cannot resolve host = \"%s\", error = \"%s\"",
+                      host_port->host,
+                      gai_strerror(result));
         return false;
     }
     return true;

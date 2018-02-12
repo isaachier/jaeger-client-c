@@ -62,6 +62,8 @@ set(core_src
   "src/jaegertracingc/duration.h"
   "src/jaegertracingc/init.c"
   "src/jaegertracingc/init.h"
+  "src/jaegertracingc/logging.c"
+  "src/jaegertracingc/logging.h"
   "src/jaegertracingc/metrics.c"
   "src/jaegertracingc/metrics.h"
   "src/jaegertracingc/net.c"

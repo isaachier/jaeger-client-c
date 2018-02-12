@@ -27,8 +27,10 @@
 #include "unity.h"
 
 #define SET_UP_SAMPLER_TEST()                                      \
+    jaeger_logger null_logger;                                     \
+    jaeger_null_logger_init(&null_logger);                         \
     jaeger_tag_list tags;                                          \
-    jaeger_tag_list_init(&tags);                                   \
+    jaeger_tag_list_init(&tags, &null_logger);                     \
     const char* operation_name = "test-operation";                 \
     (void) operation_name;                                         \
     const jaeger_trace_id trace_id = JAEGERTRACINGC_TRACE_ID_INIT; \
@@ -87,15 +89,15 @@ void test_const_sampler()
     jaeger_const_sampler c;
     jaeger_const_sampler_init(&c, true);
 
-    TEST_ASSERT_TRUE(
-        c.is_sampled((jaeger_sampler*) &c, &trace_id, operation_name, &tags));
+    TEST_ASSERT_TRUE(c.is_sampled(
+        (jaeger_sampler*) &c, &trace_id, operation_name, &tags, &null_logger));
     CHECK_CONST_TAGS(c, tags);
 
     c.destroy((jaeger_destructible*) &c);
     jaeger_tag_list_clear(&tags);
     jaeger_const_sampler_init(&c, false);
-    TEST_ASSERT_FALSE(
-        c.is_sampled((jaeger_sampler*) &c, &trace_id, operation_name, &tags));
+    TEST_ASSERT_FALSE(c.is_sampled(
+        (jaeger_sampler*) &c, &trace_id, operation_name, &tags, &null_logger));
 
     TEAR_DOWN_SAMPLER_TEST(c);
 }
@@ -107,16 +109,16 @@ void test_probabilistic_sampler()
     jaeger_probabilistic_sampler p;
     double sampling_rate = 1;
     jaeger_probabilistic_sampler_init(&p, sampling_rate);
-    TEST_ASSERT_TRUE(
-        p.is_sampled((jaeger_sampler*) &p, &trace_id, operation_name, &tags));
+    TEST_ASSERT_TRUE(p.is_sampled(
+        (jaeger_sampler*) &p, &trace_id, operation_name, &tags, &null_logger));
     CHECK_PROBABILISTIC_TAGS(p, tags);
     p.destroy((jaeger_destructible*) &p);
 
     sampling_rate = 0;
     jaeger_tag_list_clear(&tags);
     jaeger_probabilistic_sampler_init(&p, sampling_rate);
-    TEST_ASSERT_FALSE(
-        p.is_sampled((jaeger_sampler*) &p, &trace_id, operation_name, &tags));
+    TEST_ASSERT_FALSE(p.is_sampled(
+        (jaeger_sampler*) &p, &trace_id, operation_name, &tags, &null_logger));
     CHECK_PROBABILISTIC_TAGS(p, tags);
 
     TEAR_DOWN_SAMPLER_TEST(p);
@@ -130,13 +132,13 @@ void test_rate_limiting_sampler()
     jaeger_rate_limiting_sampler r;
     jaeger_rate_limiting_sampler_init(&r, max_traces_per_second);
 
-    TEST_ASSERT_TRUE(
-        r.is_sampled((jaeger_sampler*) &r, &trace_id, operation_name, &tags));
+    TEST_ASSERT_TRUE(r.is_sampled(
+        (jaeger_sampler*) &r, &trace_id, operation_name, &tags, &null_logger));
     CHECK_RATE_LIMITING_TAGS(r, tags);
 
     jaeger_tag_list_clear(&tags);
-    TEST_ASSERT_FALSE(
-        r.is_sampled((jaeger_sampler*) &r, &trace_id, operation_name, &tags));
+    TEST_ASSERT_FALSE(r.is_sampled(
+        (jaeger_sampler*) &r, &trace_id, operation_name, &tags, &null_logger));
     CHECK_RATE_LIMITING_TAGS(r, tags);
 
     TEAR_DOWN_SAMPLER_TEST(r);
@@ -171,16 +173,16 @@ void test_guaranteed_throughput_probabilistic_sampler()
     sampling_rate = 0.0;
     jaeger_guaranteed_throughput_probabilistic_sampler_update(
         &g, lower_bound, sampling_rate);
-    TEST_ASSERT_TRUE(
-        g.is_sampled((jaeger_sampler*) &g, &trace_id, operation_name, &tags));
+    TEST_ASSERT_TRUE(g.is_sampled(
+        (jaeger_sampler*) &g, &trace_id, operation_name, &tags, &null_logger));
     CHECK_LOWER_BOUND_TAGS(g, tags);
 
     jaeger_tag_list_clear(&tags);
     sampling_rate = 1.0;
     jaeger_guaranteed_throughput_probabilistic_sampler_update(
         &g, lower_bound, sampling_rate);
-    TEST_ASSERT_TRUE(
-        g.is_sampled((jaeger_sampler*) &g, &trace_id, operation_name, &tags));
+    TEST_ASSERT_TRUE(g.is_sampled(
+        (jaeger_sampler*) &g, &trace_id, operation_name, &tags, &null_logger));
     CHECK_PROBABILISTIC_TAGS(g.probabilistic_sampler, tags);
 
     TEAR_DOWN_SAMPLER_TEST(g);
@@ -203,7 +205,7 @@ void test_adaptive_sampler()
     *strategies.per_operation_strategy[0] =
         (jaeger_operation_strategy) JAEGERTRACINGC_OPERATION_STRATEGY_INIT;
     strategies.per_operation_strategy[0]->operation =
-        jaeger_strdup(operation_name);
+        jaeger_strdup(operation_name, &null_logger);
     TEST_ASSERT_NOT_NULL(strategies.per_operation_strategy[0]->operation);
     strategies.per_operation_strategy[0]->strategy_case =
         JAEGERTRACINGC_OPERATION_STRATEGY_TYPE(PROBABILISTIC);
@@ -219,7 +221,8 @@ void test_adaptive_sampler()
     strategies.default_sampling_probability = TEST_DEFAULT_SAMPLING_PROBABILITY;
 
     jaeger_adaptive_sampler_init(&a, &strategies, TEST_DEFAULT_MAX_OPERATIONS);
-    a.is_sampled((jaeger_sampler*) &a, &trace_id, operation_name, &tags);
+    a.is_sampled(
+        (jaeger_sampler*) &a, &trace_id, operation_name, &tags, &null_logger);
 
     jaeger_tag_list_clear(&tags);
     for (int i = 0; i < TEST_DEFAULT_MAX_OPERATIONS; i++) {
@@ -227,7 +230,8 @@ void test_adaptive_sampler()
         TEST_ASSERT_LESS_THAN(
             sizeof(op_buffer),
             snprintf(op_buffer, sizeof(op_buffer), "new-operation-%d", i));
-        a.is_sampled((jaeger_sampler*) &a, &trace_id, op_buffer, &tags);
+        a.is_sampled(
+            (jaeger_sampler*) &a, &trace_id, op_buffer, &tags, &null_logger);
     }
     TEST_ASSERT_EQUAL(TEST_DEFAULT_MAX_OPERATIONS, a.num_op_samplers);
     TEST_ASSERT_NOT_NULL(a.op_samplers[0].operation_name);
@@ -292,6 +296,7 @@ read_client_request(int client_fd, char* buffer, int* buffer_len)
         num_read =
             read(client_fd, &buffer[*buffer_len], sizeof(buffer) - *buffer_len);
     }
+    printf("FINISHED READING %d bytes\n", *buffer_len);
 }
 
 static void* mock_http_server_run_loop(void* context)
@@ -395,6 +400,7 @@ static void* mock_http_server_run_loop(void* context)
 
         const int num_written =
             write(client_fd, http_response, strlen(http_response));
+        printf("FINISHED WRITING %d bytes\n", num_written);
         TEST_ASSERT_EQUAL(strlen(http_response), num_written);
     }
     close(client_fd);
@@ -442,8 +448,10 @@ static inline void mock_http_server_destroy(mock_http_server* server)
 
 void test_remotely_controlled_sampler()
 {
+    jaeger_logger null_logger;
+    jaeger_std_logger_init(&null_logger);
     jaeger_metrics metrics;
-    jaeger_null_metrics_init(&metrics);
+    jaeger_null_metrics_init(&metrics, &null_logger);
     mock_http_server server = MOCK_HTTP_SERVER_INIT;
     mock_http_server_start(&server);
     const int port = ntohs(server.addr.sin_port);
@@ -459,7 +467,8 @@ void test_remotely_controlled_sampler()
                                                 buffer,
                                                 NULL,
                                                 TEST_DEFAULT_MAX_OPERATIONS,
-                                                &metrics));
+                                                &metrics,
+                                                &null_logger));
 
     TEST_ASSERT_TRUE(jaeger_remotely_controlled_sampler_update(&r));
     TEST_ASSERT_EQUAL(jaeger_probabilistic_sampler_type, r.sampler.type);
@@ -495,8 +504,9 @@ void test_remotely_controlled_sampler()
 
     const jaeger_trace_id trace_id = {.high = 0, .low = 0};
     jaeger_tag_list tags;
-    jaeger_tag_list_init(&tags);
-    r.is_sampled((jaeger_sampler*) &r, &trace_id, "test-operation", &tags);
+    jaeger_tag_list_init(&tags, &null_logger);
+    r.is_sampled(
+        (jaeger_sampler*) &r, &trace_id, "test-operation", &tags, &null_logger);
 
     r.destroy((jaeger_destructible*) &r);
     jaeger_metrics_destroy(&metrics);
@@ -504,6 +514,8 @@ void test_remotely_controlled_sampler()
 
 void test_sampler_choice()
 {
+    jaeger_logger null_logger;
+    jaeger_null_logger_init(&null_logger);
     jaeger_sampler_choice choice;
 
 #define FOR_EACH_SAMPLER_TEST(X)           \
@@ -516,8 +528,9 @@ void test_sampler_choice()
 #define CHECK_ASSIGN(sampler_type)                                     \
     do {                                                               \
         choice.type = jaeger_##sampler_type##_sampler_type;            \
-        TEST_ASSERT_EQUAL(&choice.sampler_type##_sampler,              \
-                          jaeger_sampler_choice_get_sampler(&choice)); \
+        TEST_ASSERT_EQUAL(                                             \
+            &choice.sampler_type##_sampler,                            \
+            jaeger_sampler_choice_get_sampler(&choice, &null_logger)); \
     } while (0);
 
     FOR_EACH_SAMPLER_TEST(CHECK_ASSIGN)

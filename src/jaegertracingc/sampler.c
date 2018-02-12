@@ -28,7 +28,8 @@
 static bool jaeger_const_sampler_is_sampled(jaeger_sampler* sampler,
                                             const jaeger_trace_id* trace_id,
                                             const char* operation_name,
-                                            jaeger_tag_list* tags)
+                                            jaeger_tag_list* tags,
+                                            jaeger_logger* logger)
 {
     (void) trace_id;
     (void) operation_name;
@@ -38,12 +39,12 @@ static bool jaeger_const_sampler_is_sampled(jaeger_sampler* sampler,
         tag.key = JAEGERTRACINGC_SAMPLER_TYPE_TAG_KEY;
         tag.value_case = JAEGERTRACING__PROTOBUF__TAG__VALUE_STR_VALUE;
         tag.str_value = JAEGERTRACINGC_SAMPLER_TYPE_CONST;
-        jaeger_tag_list_append(tags, &tag);
+        jaeger_tag_list_append(tags, &tag, logger);
 
         tag.key = JAEGERTRACINGC_SAMPLER_PARAM_TAG_KEY;
         tag.value_case = JAEGERTRACING__PROTOBUF__TAG__VALUE_BOOL_VALUE;
         tag.bool_value = s->decision;
-        jaeger_tag_list_append(tags, &tag);
+        jaeger_tag_list_append(tags, &tag, logger);
     }
     return s->decision;
 }
@@ -65,7 +66,8 @@ static bool
 jaeger_probabilistic_sampler_is_sampled(jaeger_sampler* sampler,
                                         const jaeger_trace_id* trace_id,
                                         const char* operation_name,
-                                        jaeger_tag_list* tags)
+                                        jaeger_tag_list* tags,
+                                        jaeger_logger* logger)
 {
     (void) trace_id;
     (void) operation_name;
@@ -81,12 +83,12 @@ jaeger_probabilistic_sampler_is_sampled(jaeger_sampler* sampler,
         tag.key = JAEGERTRACINGC_SAMPLER_TYPE_TAG_KEY;
         tag.value_case = JAEGERTRACING__PROTOBUF__TAG__VALUE_STR_VALUE;
         tag.str_value = JAEGERTRACINGC_SAMPLER_TYPE_PROBABILISTIC;
-        jaeger_tag_list_append(tags, &tag);
+        jaeger_tag_list_append(tags, &tag, logger);
 
         tag.key = JAEGERTRACINGC_SAMPLER_PARAM_TAG_KEY;
         tag.value_case = JAEGERTRACING__PROTOBUF__TAG__VALUE_DOUBLE_VALUE;
         tag.double_value = s->sampling_rate;
-        jaeger_tag_list_append(tags, &tag);
+        jaeger_tag_list_append(tags, &tag, logger);
     }
     return decision;
 }
@@ -107,7 +109,8 @@ static bool
 jaeger_rate_limiting_sampler_is_sampled(jaeger_sampler* sampler,
                                         const jaeger_trace_id* trace_id,
                                         const char* operation_name,
-                                        jaeger_tag_list* tags)
+                                        jaeger_tag_list* tags,
+                                        jaeger_logger* logger)
 {
     (void) trace_id;
     (void) operation_name;
@@ -119,12 +122,12 @@ jaeger_rate_limiting_sampler_is_sampled(jaeger_sampler* sampler,
         tag.key = JAEGERTRACINGC_SAMPLER_TYPE_TAG_KEY;
         tag.value_case = JAEGERTRACING__PROTOBUF__TAG__VALUE_STR_VALUE;
         tag.str_value = JAEGERTRACINGC_SAMPLER_TYPE_RATE_LIMITING;
-        jaeger_tag_list_append(tags, &tag);
+        jaeger_tag_list_append(tags, &tag, logger);
 
         tag.key = JAEGERTRACINGC_SAMPLER_PARAM_TAG_KEY;
         tag.value_case = JAEGERTRACING__PROTOBUF__TAG__VALUE_DOUBLE_VALUE;
         tag.double_value = s->max_traces_per_second;
-        jaeger_tag_list_append(tags, &tag);
+        jaeger_tag_list_append(tags, &tag, logger);
     }
     return decision;
 }
@@ -145,7 +148,8 @@ static bool jaeger_guaranteed_throughput_probabilistic_sampler_is_sampled(
     jaeger_sampler* sampler,
     const jaeger_trace_id* trace_id,
     const char* operation_name,
-    jaeger_tag_list* tags)
+    jaeger_tag_list* tags,
+    jaeger_logger* logger)
 {
     (void) trace_id;
     (void) operation_name;
@@ -156,24 +160,26 @@ static bool jaeger_guaranteed_throughput_probabilistic_sampler_is_sampled(
         (jaeger_sampler*) &s->probabilistic_sampler,
         trace_id,
         operation_name,
-        NULL);
+        NULL,
+        logger);
     if (decision) {
         s->lower_bound_sampler.is_sampled(
             (jaeger_sampler*) &s->lower_bound_sampler,
             trace_id,
             operation_name,
-            NULL);
+            NULL,
+            logger);
         if (tags != NULL) {
             jaeger_tag tag = JAEGERTRACINGC_TAG_INIT;
             tag.key = JAEGERTRACINGC_SAMPLER_TYPE_TAG_KEY;
             tag.value_case = JAEGERTRACING__PROTOBUF__TAG__VALUE_STR_VALUE;
             tag.str_value = JAEGERTRACINGC_SAMPLER_TYPE_PROBABILISTIC;
-            jaeger_tag_list_append(tags, &tag);
+            jaeger_tag_list_append(tags, &tag, logger);
 
             tag.key = JAEGERTRACINGC_SAMPLER_PARAM_TAG_KEY;
             tag.value_case = JAEGERTRACING__PROTOBUF__TAG__VALUE_DOUBLE_VALUE;
             tag.double_value = s->probabilistic_sampler.sampling_rate;
-            jaeger_tag_list_append(tags, &tag);
+            jaeger_tag_list_append(tags, &tag, logger);
         }
         return true;
     }
@@ -181,18 +187,19 @@ static bool jaeger_guaranteed_throughput_probabilistic_sampler_is_sampled(
         (jaeger_sampler*) &s->lower_bound_sampler,
         trace_id,
         operation_name,
-        NULL);
+        NULL,
+        logger);
     if (tags != NULL) {
         jaeger_tag tag = JAEGERTRACINGC_TAG_INIT;
         tag.key = JAEGERTRACINGC_SAMPLER_TYPE_TAG_KEY;
         tag.value_case = JAEGERTRACING__PROTOBUF__TAG__VALUE_STR_VALUE;
         tag.str_value = JAEGERTRACINGC_SAMPLER_TYPE_LOWER_BOUND;
-        jaeger_tag_list_append(tags, &tag);
+        jaeger_tag_list_append(tags, &tag, logger);
 
         tag.key = JAEGERTRACINGC_SAMPLER_PARAM_TAG_KEY;
         tag.value_case = JAEGERTRACING__PROTOBUF__TAG__VALUE_DOUBLE_VALUE;
         tag.double_value = s->lower_bound_sampler.max_traces_per_second;
-        jaeger_tag_list_append(tags, &tag);
+        jaeger_tag_list_append(tags, &tag, logger);
     }
     return decision;
 }
@@ -259,21 +266,22 @@ static int op_name_cmp(const void* lhs, const void* rhs)
 
 static inline jaeger_operation_sampler*
 samplers_from_strategies(const jaeger_per_operation_strategy* strategies,
-                         int* const num_op_samplers)
+                         int* const num_op_samplers,
+                         jaeger_logger* logger)
 {
     assert(strategies != NULL);
     assert(num_op_samplers != NULL);
+    assert(logger != NULL);
     *num_op_samplers = 0;
     for (int i = 0; i < strategies->n_per_operation_strategy; i++) {
         const jaeger_operation_strategy* strategy =
             strategies->per_operation_strategy[i];
         if (strategy == NULL) {
-            fprintf(stderr, "WARNING: Encountered null operation strategy\n");
+            logger->warn(logger, "Encountered null operation strategy");
             continue;
         }
         if (strategy->probabilistic == NULL) {
-            fprintf(stderr,
-                    "WARNING: Encountered null probabilistic strategy\n");
+            logger->warn(logger, "Encountered null probabilistic strategy");
             continue;
         }
         (*num_op_samplers)++;
@@ -287,7 +295,7 @@ samplers_from_strategies(const jaeger_per_operation_strategy* strategies,
         sizeof(jaeger_operation_sampler) * (*num_op_samplers);
     jaeger_operation_sampler* op_samplers = jaeger_malloc(op_samplers_size);
     if (op_samplers == NULL) {
-        fprintf(stderr, "ERROR: Cannot allocate per operation samplers\n");
+        logger->error(logger, "Cannot allocate per operation samplers");
         return NULL;
     }
     memset(op_samplers, 0, op_samplers_size);
@@ -301,12 +309,12 @@ samplers_from_strategies(const jaeger_per_operation_strategy* strategies,
             continue;
         }
         jaeger_operation_sampler* op_sampler = &op_samplers[index];
-        op_sampler->operation_name = jaeger_strdup(strategy->operation);
+        op_sampler->operation_name = jaeger_strdup(strategy->operation, logger);
         if (op_sampler->operation_name == NULL) {
-            fprintf(stderr,
-                    "ERROR: Cannot allocate operation sampler, "
-                    "operation name = \"%s\"\n",
-                    strategy->operation);
+            logger->error(
+                logger,
+                "Cannot allocate operation sampler, operation name = \"%s\"",
+                strategy->operation);
             success = false;
             break;
         }
@@ -396,7 +404,8 @@ jaeger_adaptive_sampler_find_sampler(jaeger_adaptive_sampler* sampler,
 static bool jaeger_adaptive_sampler_is_sampled(jaeger_sampler* sampler,
                                                const jaeger_trace_id* trace_id,
                                                const char* operation_name,
-                                               jaeger_tag_list* tags)
+                                               jaeger_tag_list* tags,
+                                               jaeger_logger* logger)
 {
     (void) trace_id;
     (void) operation_name;
@@ -410,8 +419,8 @@ static bool jaeger_adaptive_sampler_is_sampled(jaeger_sampler* sampler,
         assert(strcmp(op_sampler->operation_name, operation_name) == 0);
         jaeger_guaranteed_throughput_probabilistic_sampler* g =
             &op_sampler->sampler;
-        const bool decision =
-            g->is_sampled((jaeger_sampler*) g, trace_id, operation_name, tags);
+        const bool decision = g->is_sampled(
+            (jaeger_sampler*) g, trace_id, operation_name, tags, logger);
         jaeger_mutex_unlock(&s->mutex);
         return decision;
     }
@@ -422,19 +431,19 @@ static bool jaeger_adaptive_sampler_is_sampled(jaeger_sampler* sampler,
 
     if (!use_default_sampler && s->num_op_samplers == s->op_samplers_capacity &&
         !jaeger_adaptive_sampler_resize_op_samplers(s)) {
-        fprintf(stderr,
-                "ERROR: Cannot allocate more operation samplers "
-                "in adaptive sampler\n");
+        s->logger->error(
+            s->logger,
+            "Cannot allocate more operation samplers in adaptive sampler");
         use_default_sampler = true;
     }
 
     if (!use_default_sampler) {
         jaeger_operation_sampler op_sampler = {
-            .operation_name = jaeger_strdup(operation_name)};
+            .operation_name = jaeger_strdup(operation_name, s->logger)};
         if (op_sampler.operation_name == NULL) {
-            fprintf(stderr,
-                    "ERROR: Cannot allocate operation name for new "
-                    "operation sampler in adaptive sampler\n");
+            s->logger->error(s->logger,
+                             "Cannot allocate operation name for new operation "
+                             "sampler in adaptive sampler");
             use_default_sampler = true;
         }
         else {
@@ -451,15 +460,20 @@ static bool jaeger_adaptive_sampler_is_sampled(jaeger_sampler* sampler,
                 (jaeger_sampler*) &op_sampler_ptr->sampler,
                 trace_id,
                 operation_name,
-                tags);
+                tags,
+                logger);
             jaeger_mutex_unlock(&s->mutex);
             return decision;
         }
     }
 
     assert(use_default_sampler);
-    const bool decision = s->default_sampler.is_sampled(
-        (jaeger_sampler*) &s->default_sampler, trace_id, operation_name, tags);
+    const bool decision =
+        s->default_sampler.is_sampled((jaeger_sampler*) &s->default_sampler,
+                                      trace_id,
+                                      operation_name,
+                                      tags,
+                                      logger);
     jaeger_mutex_unlock(&s->mutex);
     return decision;
 }
@@ -486,8 +500,8 @@ bool jaeger_adaptive_sampler_init(
     int max_operations)
 {
     assert(sampler != NULL);
-    sampler->op_samplers =
-        samplers_from_strategies(strategies, &sampler->num_op_samplers);
+    sampler->op_samplers = samplers_from_strategies(
+        strategies, &sampler->num_op_samplers, sampler->logger);
     if (sampler->num_op_samplers > 0 && sampler->op_samplers == NULL) {
         return false;
     }
@@ -517,12 +531,13 @@ jaeger_adaptive_sampler_update(jaeger_adaptive_sampler* sampler,
             strategies->per_operation_strategy[i];
         bool found_match = false;
         if (strategy == NULL) {
-            fprintf(stderr, "WARNING: Encountered null operation strategy\n");
+            sampler->logger->warn(sampler->logger,
+                                  "Encountered null operation strategy");
             continue;
         }
         if (strategy->probabilistic == NULL) {
-            fprintf(stderr,
-                    "WARNING: Encountered null probabilistic strategy\n");
+            sampler->logger->warn(sampler->logger,
+                                  "Encountered null probabilistic strategy");
             continue;
         }
 
@@ -543,21 +558,22 @@ jaeger_adaptive_sampler_update(jaeger_adaptive_sampler* sampler,
         if (!found_match && success) {
             if (sampler->num_op_samplers == sampler->op_samplers_capacity &&
                 !jaeger_adaptive_sampler_resize_op_samplers(sampler)) {
-                fprintf(stderr,
-                        "ERROR: Cannot allocate more operation samplers "
-                        "in adaptive sampler\n");
+                sampler->logger->error(sampler->logger,
+                                       "Cannot allocate more operation "
+                                       "samplers in adaptive sampler");
                 success = false;
                 /* Continue with loop so we can update existing samplers despite
                  * memory issues. */
                 continue;
             }
             jaeger_operation_sampler op_sampler;
-            op_sampler.operation_name = jaeger_strdup(strategy->operation);
+            op_sampler.operation_name =
+                jaeger_strdup(strategy->operation, sampler->logger);
             if (op_sampler.operation_name == NULL) {
-                fprintf(stderr,
-                        "ERROR: Cannot allocate operation sampler, "
-                        "operation name = \"%s\"\n",
-                        strategy->operation);
+                sampler->logger->error(sampler->logger,
+                                       "Cannot allocate operation sampler, "
+                                       "operation name = \"%s\"",
+                                       strategy->operation);
                 success = false;
                 /* Continue with loop so we can update existing samplers despite
                  * memory issues. */
@@ -612,12 +628,12 @@ static inline bool jaeger_http_sampling_manager_format_request(
     int result = jaeger_host_port_format(
         sampling_host_port, &host_port_buffer[0], sizeof(host_port_buffer));
     if (result > sizeof(host_port_buffer)) {
-        fprintf(
-            stderr,
-            "ERROR: Cannot write entire sampling server host port to buffer, "
-            "buffer size = %zu, host port string length = %d\n",
-            sizeof(host_port_buffer),
-            result);
+        manager->logger->error(
+            manager->logger,
+            "Cannot write entire sampling server host port to buffer, "
+            "buffer size = %zu, host port string length = %d",
+            sizeof(manager->request_buffer),
+            manager->request_length);
         return false;
     }
 
@@ -631,15 +647,14 @@ static inline bool jaeger_http_sampling_manager_format_request(
                       &host_port_buffer[0],
                       JAEGERTRACINGC_CLIENT_VERSION);
     if (result > sizeof(manager->request_buffer)) {
-        fprintf(stderr,
-                "ERROR: Cannot write entire HTTP sampling request to buffer, "
-                "buffer size = %zu, request length = %d\n",
-                sizeof(manager->request_buffer),
-                result);
+        manager->logger->error(manager->logger,
+                               "Cannot write entire HTTP sampling request to "
+                               "buffer, buffer size = %zu, request length = %d",
+                               sizeof(manager->request_buffer),
+                               manager->request_length);
+        manager->request_length = result;
         return false;
     }
-
-    manager->request_length = result;
     return true;
 }
 
@@ -647,14 +662,16 @@ static int
 jaeger_http_sampling_manager_parser_on_headers_complete(http_parser* parser)
 {
     assert(parser != NULL);
+    assert(parser->data != NULL);
+    jaeger_http_sampling_manager* manager =
+        (jaeger_http_sampling_manager*) parser->data;
     if (parser->status_code != HTTP_OK) {
-        fprintf(stderr,
-                "ERROR: HTTP sampling manager cannot retrieve sampling "
-                "strategies, HTTP status code = %d\n",
-                parser->status_code);
+        manager->logger->error(manager->logger,
+                               "HTTP sampling manager cannot retrieve sampling "
+                               "strategies, HTTP status code = %d",
+                               parser->status_code);
         return 1;
     }
-    assert(parser->data != NULL);
     return 0;
 }
 
@@ -676,11 +693,12 @@ static int jaeger_http_sampling_manager_parser_on_body(http_parser* parser,
         char* new_response_buffer =
             jaeger_realloc(manager->response_buffer, new_response_capacity);
         if (new_response_buffer == NULL) {
-            fprintf(stderr,
-                    "ERROR: Cannot allocate larger buffer for JSON sampling "
-                    "response, current length = %d, current capacity = %d\n",
-                    manager->response_length,
-                    manager->response_capacity);
+            manager->logger->error(
+                manager->logger,
+                "Cannot allocate larger buffer for JSON sampling "
+                "response, current length = %d, current capacity = %d",
+                manager->response_length,
+                manager->response_capacity);
             return 1;
         }
         manager->response_capacity = new_response_capacity;
@@ -706,8 +724,10 @@ static inline bool
 jaeger_http_sampling_manager_connect(jaeger_http_sampling_manager* manager,
                                      const jaeger_host_port* sampling_host_port)
 {
+    assert(manager != NULL);
     struct addrinfo* host_addrs = NULL;
-    if (!jaeger_host_port_resolve(sampling_host_port, &host_addrs)) {
+    if (!jaeger_host_port_resolve(
+            sampling_host_port, &host_addrs, manager->logger)) {
         return false;
     }
 
@@ -728,9 +748,10 @@ jaeger_http_sampling_manager_connect(jaeger_http_sampling_manager* manager,
         close(fd);
     }
     if (!success) {
-        fprintf(stderr,
-                "ERROR: Cannot connect to sampling server URL, URL = \"%s\"\n",
-                manager->sampling_server_url.str);
+        manager->logger->error(
+            manager->logger,
+            "Cannot connect to sampling server URL, URL = \"%s\"",
+            manager->sampling_server_url.str);
     }
     freeaddrinfo(host_addrs);
     return success;
@@ -757,28 +778,35 @@ jaeger_http_sampling_manager_destroy(jaeger_http_sampling_manager* manager)
 static inline bool
 jaeger_http_sampling_manager_init(jaeger_http_sampling_manager* manager,
                                   const char* sampling_server_url,
-                                  const char* service_name)
+                                  const char* service_name,
+                                  jaeger_logger* logger)
 {
     assert(manager != NULL);
     assert(service_name != NULL && strlen(service_name) > 0);
+    assert(logger != NULL);
 
-    manager->service_name = jaeger_strdup(service_name);
+    manager->service_name = jaeger_strdup(service_name, logger);
     if (manager->service_name == NULL) {
-        fprintf(stderr,
-                "ERROR: Cannot allocate service name for HTTP sampling "
-                "manager, service name = \"%s\"\n",
-                service_name);
+        logger->error(logger,
+                      "Cannot allocate service name for HTTP sampling "
+                      "manager, service name = \"%s\"",
+                      service_name);
         return false;
     }
+
+    manager->logger = logger;
 
     sampling_server_url =
         (sampling_server_url != NULL && strlen(sampling_server_url) > 0)
             ? sampling_server_url
             : "http://localhost:5778/sampling";
     jaeger_host_port sampling_host_port = {.host = NULL, .port = 0};
-    if (!jaeger_url_init(&manager->sampling_server_url, sampling_server_url) ||
+    if (!jaeger_url_init(&manager->sampling_server_url,
+                         sampling_server_url,
+                         manager->logger) ||
         !jaeger_host_port_from_url(&sampling_host_port,
-                                   &manager->sampling_server_url) ||
+                                   &manager->sampling_server_url,
+                                   manager->logger) ||
         !jaeger_http_sampling_manager_connect(manager, &sampling_host_port)) {
         jaeger_host_port_destroy(&sampling_host_port);
         jaeger_http_sampling_manager_destroy(manager);
@@ -795,10 +823,12 @@ jaeger_http_sampling_manager_init(jaeger_http_sampling_manager* manager,
 
     manager->response_buffer = jaeger_malloc(RESPONSE_BUFFER_INIT_SIZE);
     if (manager->response_buffer == NULL) {
-        fprintf(stderr,
-                "ERROR: Cannot allocate response buffer in HTTP sampling "
-                "manager, size = %d\n",
-                RESPONSE_BUFFER_INIT_SIZE);
+        manager->logger->error(
+            manager->logger,
+            "Cannot allocate response buffer in HTTP sampling "
+            "manager, size = %d",
+            RESPONSE_BUFFER_INIT_SIZE,
+            manager->logger);
         jaeger_host_port_destroy(&sampling_host_port);
         jaeger_http_sampling_manager_destroy(manager);
         return false;
@@ -815,19 +845,20 @@ jaeger_http_sampling_manager_init(jaeger_http_sampling_manager* manager,
 
 #define ERR_FMT                                                   \
     "message = \"%s\", source = \"%s\", line = %d, column = %d, " \
-    "position = %d\n"
+    "position = %d"
 
 #define ERR_ARGS(source) err.text, (source), err.line, err.column, err.position
 
-#define PRINT_ERR_MSG(source)                                  \
-    do {                                                       \
-        fprintf(stderr,                                        \
-                "ERROR: Cannot parse JSON response, " ERR_FMT, \
-                ERR_ARGS(source));                             \
+#define PRINT_ERR_MSG(source, logger)                     \
+    do {                                                  \
+        logger->error(logger, ERR_FMT, ERR_ARGS(source)); \
     } while (0)
 
-static inline bool parse_probabilistic_sampling_json(
-    jaeger_probabilistic_strategy* strategy, json_t* json, const char* source)
+static inline bool
+parse_probabilistic_sampling_json(jaeger_probabilistic_strategy* strategy,
+                                  json_t* json,
+                                  const char* source,
+                                  jaeger_logger* logger)
 {
     assert(strategy != NULL);
     assert(json != NULL);
@@ -835,17 +866,21 @@ static inline bool parse_probabilistic_sampling_json(
     const int result = json_unpack_ex(
         json, &err, 0, "{sf}", "samplingRate", &strategy->sampling_rate);
     if (result != 0) {
-        PRINT_ERR_MSG(source);
+        PRINT_ERR_MSG(source, logger);
         return false;
     }
     return true;
 }
 
-static inline bool parse_rate_limiting_sampling_json(
-    jaeger_rate_limiting_strategy* strategy, json_t* json, const char* source)
+static inline bool
+parse_rate_limiting_sampling_json(jaeger_rate_limiting_strategy* strategy,
+                                  json_t* json,
+                                  const char* source,
+                                  jaeger_logger* logger)
 {
     assert(strategy != NULL);
     assert(json != NULL);
+    assert(logger != NULL);
     json_error_t err;
     const int result = json_unpack_ex(json,
                                       &err,
@@ -854,14 +889,17 @@ static inline bool parse_rate_limiting_sampling_json(
                                       "maxTracesPerSecond",
                                       &strategy->max_traces_per_second);
     if (result != 0) {
-        PRINT_ERR_MSG(source);
+        PRINT_ERR_MSG(source, logger);
         return false;
     }
     return true;
 }
 
-static inline bool parse_per_operation_sampling_json(
-    jaeger_per_operation_strategy* strategy, json_t* json, const char* source)
+static inline bool
+parse_per_operation_sampling_json(jaeger_per_operation_strategy* strategy,
+                                  json_t* json,
+                                  const char* source,
+                                  jaeger_logger* logger)
 {
     assert(strategy != NULL);
     assert(json != NULL);
@@ -881,7 +919,7 @@ static inline bool parse_per_operation_sampling_json(
                        &array);
 
     if (result != 0) {
-        PRINT_ERR_MSG(source);
+        PRINT_ERR_MSG(source, logger);
         return false;
     }
 
@@ -892,10 +930,16 @@ static inline bool parse_per_operation_sampling_json(
     }
 
     if (!json_is_array(array)) {
-        fprintf(stderr,
-                "ERROR: perOperationStrategies must be an array, JSON: ");
-        json_dumpf(array, stderr, 0);
-        fprintf(stderr, "\n");
+        char* json_str = json_dumps(array, 0);
+        if (json_str != NULL) {
+            logger->error(logger,
+                          "perOperationStrategies must be an array, %s",
+                          json_str);
+            jaeger_free(json_str);
+        }
+        else {
+            logger->error(logger, "perOperationStrategies must be an array");
+        }
         json_decref(array);
         return false;
     }
@@ -905,10 +949,10 @@ static inline bool parse_per_operation_sampling_json(
         jaeger_malloc(sizeof(jaeger_operation_strategy*) *
                       strategy->n_per_operation_strategy);
     if (strategy->per_operation_strategy == NULL) {
-        fprintf(stderr,
-                "ERROR: Cannot allocate perOperationStrategies for response "
-                "JSON, num operation strategies = %zu\n",
-                strategy->n_per_operation_strategy);
+        logger->error(logger,
+                      "Cannot allocate perOperationStrategies for response "
+                      "JSON, num operation strategies = %zu",
+                      strategy->n_per_operation_strategy);
         return false;
     }
 
@@ -918,10 +962,10 @@ static inline bool parse_per_operation_sampling_json(
         jaeger_operation_strategy* op_strategy =
             jaeger_malloc(sizeof(jaeger_operation_strategy));
         if (op_strategy == NULL) {
-            fprintf(stderr,
-                    "ERROR: Cannot allocate operation strategy, num operation "
-                    "strategies = %zu\n",
-                    strategy->n_per_operation_strategy);
+            logger->error(logger,
+                          "Cannot allocate operation strategy, num operation "
+                          "strategies = %zu",
+                          strategy->n_per_operation_strategy);
             success = false;
             break;
         }
@@ -931,10 +975,10 @@ static inline bool parse_per_operation_sampling_json(
         op_strategy->probabilistic =
             jaeger_malloc(sizeof(jaeger_probabilistic_strategy));
         if (op_strategy->probabilistic == NULL) {
-            fprintf(stderr,
-                    "ERROR: Cannot allocate probabilistic strategy, num "
-                    "operation strategies = %zu\n",
-                    strategy->n_per_operation_strategy);
+            logger->error(logger,
+                          "Cannot allocate probabilistic strategy, num "
+                          "operation strategies = %zu",
+                          strategy->n_per_operation_strategy);
             success = false;
             break;
         }
@@ -955,22 +999,24 @@ static inline bool parse_per_operation_sampling_json(
                                           "probabilisticSampling",
                                           &probabilistic_json);
         if (result != 0) {
-            PRINT_ERR_MSG(source);
+            PRINT_ERR_MSG(source, logger);
             success = false;
             break;
         }
 
-        op_strategy->operation = jaeger_strdup(operation_name);
+        op_strategy->operation = jaeger_strdup(operation_name, logger);
         if (op_strategy->operation == NULL) {
-            fprintf(stderr,
-                    "ERROR: Cannot allocate operation name for operation "
-                    "strategy, operation name = \"%s\"",
-                    operation_name);
+            logger->error(logger,
+                          "Cannot allocate operation name for operation "
+                          "strategy, operation name = \"%s\"",
+                          operation_name);
             success = false;
             break;
         }
-        if (!parse_probabilistic_sampling_json(
-                op_strategy->probabilistic, probabilistic_json, source)) {
+        if (!parse_probabilistic_sampling_json(op_strategy->probabilistic,
+                                               probabilistic_json,
+                                               source,
+                                               logger)) {
             success = false;
             break;
         }
@@ -997,9 +1043,9 @@ static inline bool jaeger_http_sampling_manager_parse_response_json(
         json_loads(manager->response_buffer, JSON_REJECT_DUPLICATES, &err);
 
     if (response_json == NULL) {
-        fprintf(stderr,
-                "ERROR: JSON decoding error, " ERR_FMT,
-                ERR_ARGS(manager->response_buffer));
+        manager->logger->error(manager->logger,
+                               "JSON decoding error, " ERR_FMT,
+                               ERR_ARGS(manager->response_buffer));
         return false;
     }
 
@@ -1025,7 +1071,7 @@ static inline bool jaeger_http_sampling_manager_parse_response_json(
                                       &per_operation_json);
     bool success = true;
     if (result != 0) {
-        PRINT_ERR_MSG(manager->response_buffer);
+        PRINT_ERR_MSG(manager->response_buffer, manager->logger);
         success = false;
         goto cleanup;
     }
@@ -1036,9 +1082,10 @@ static inline bool jaeger_http_sampling_manager_parse_response_json(
         response->probabilistic =
             jaeger_malloc(sizeof(jaeger_probabilistic_strategy));
         if (response->probabilistic == NULL) {
-            fprintf(stderr,
-                    "ERROR: Cannot allocate probabilistic strategy for HTTP "
-                    "sampling response\n");
+            manager->logger->error(
+                manager->logger,
+                "Cannot allocate probabilistic strategy for HTTP "
+                "sampling response");
             success = false;
         }
         else {
@@ -1047,7 +1094,8 @@ static inline bool jaeger_http_sampling_manager_parse_response_json(
             success =
                 parse_probabilistic_sampling_json(response->probabilistic,
                                                   probabilistic_json,
-                                                  manager->response_buffer);
+                                                  manager->response_buffer,
+                                                  manager->logger);
         }
     }
     else if (rate_limiting_json != NULL) {
@@ -1056,24 +1104,26 @@ static inline bool jaeger_http_sampling_manager_parse_response_json(
         response->rate_limiting =
             jaeger_malloc(sizeof(jaeger_rate_limiting_strategy));
         if (response->rate_limiting == NULL) {
-            fprintf(stderr,
-                    "ERROR: Cannot allocate rate limiting strategy for HTTP "
-                    "sampling response\n");
+            manager->logger->error(
+                manager->logger,
+                "Cannot allocate rate limiting strategy for HTTP "
+                "sampling response");
             success = false;
         }
         else {
             success =
                 parse_rate_limiting_sampling_json(response->rate_limiting,
                                                   rate_limiting_json,
-                                                  manager->response_buffer);
+                                                  manager->response_buffer,
+                                                  manager->logger);
         }
     }
     else {
         if (per_operation_json == NULL) {
-            fprintf(stderr,
-                    "WARNING: JSON response contains no strategies, response = "
-                    "\"%s\"\n",
-                    manager->response_buffer);
+            manager->logger->warn(
+                manager->logger,
+                "JSON response contains no strategies, response = \"%s\"",
+                manager->response_buffer);
             success = false;
             goto cleanup;
         }
@@ -1083,16 +1133,18 @@ static inline bool jaeger_http_sampling_manager_parse_response_json(
         response->per_operation =
             jaeger_malloc(sizeof(jaeger_per_operation_strategy));
         if (response->per_operation == NULL) {
-            fprintf(stderr,
-                    "ERROR: Cannot allocate per operation strategy for HTTP "
-                    "sampling response\n");
+            manager->logger->error(
+                manager->logger,
+                "Cannot allocate per operation strategy for HTTP "
+                "sampling response");
             success = false;
         }
         else {
             success =
                 parse_per_operation_sampling_json(response->per_operation,
                                                   per_operation_json,
-                                                  manager->response_buffer);
+                                                  manager->response_buffer,
+                                                  manager->logger);
         }
     }
 
@@ -1126,12 +1178,13 @@ static inline bool jaeger_http_sampling_manager_get_sampling_strategies(
     const int num_written = write(
         manager->fd, &manager->request_buffer[0], manager->request_length);
     if (num_written != manager->request_length) {
-        fprintf(stderr,
-                "ERROR: Cannot write entire HTTP sampling request, "
-                "num written = %d, request length = %d, errno = %d\n",
-                num_written,
-                manager->request_length,
-                errno);
+        manager->logger->error(
+            manager->logger,
+            "Cannot write entire HTTP sampling request, "
+            "num written = %d, request length = %d, errno = %d",
+            num_written,
+            manager->request_length,
+            errno);
         return false;
     }
 
@@ -1163,16 +1216,17 @@ static bool
 jaeger_remotely_controlled_sampler_is_sampled(jaeger_sampler* sampler,
                                               const jaeger_trace_id* trace_id,
                                               const char* operation_name,
-                                              jaeger_tag_list* tags)
+                                              jaeger_tag_list* tags,
+                                              jaeger_logger* logger)
 {
     assert(sampler != NULL);
     jaeger_remotely_controlled_sampler* s =
         (jaeger_remotely_controlled_sampler*) sampler;
     jaeger_mutex_lock(&s->mutex);
     jaeger_sampler* inner_sampler =
-        jaeger_sampler_choice_get_sampler(&s->sampler);
+        jaeger_sampler_choice_get_sampler(&s->sampler, s->manager.logger);
     const bool result = inner_sampler->is_sampled(
-        inner_sampler, trace_id, operation_name, tags);
+        inner_sampler, trace_id, operation_name, tags, logger);
     jaeger_mutex_unlock(&s->mutex);
     return result;
 }
@@ -1183,7 +1237,7 @@ jaeger_remotely_controlled_sampler_destroy(jaeger_destructible* sampler)
     jaeger_remotely_controlled_sampler* s =
         (jaeger_remotely_controlled_sampler*) sampler;
     jaeger_sampler_choice* sampler_choice = &s->sampler;
-    jaeger_sampler_choice_destroy(sampler_choice);
+    jaeger_sampler_choice_destroy(sampler_choice, s->manager.logger);
     jaeger_http_sampling_manager_destroy(&s->manager);
     jaeger_mutex_destroy(&s->mutex);
 }
@@ -1199,7 +1253,8 @@ static inline bool jaeger_remotely_controlled_sampler_update_adaptive_sampler(
             &sampler->sampler.adaptive_sampler, strategies);
     }
     else {
-        jaeger_sampler_choice_destroy(&sampler->sampler);
+        jaeger_sampler_choice_destroy(&sampler->sampler,
+                                      sampler->manager.logger);
         sampler->sampler.type = jaeger_adaptive_sampler_type;
         return jaeger_adaptive_sampler_init(&sampler->sampler.adaptive_sampler,
                                             strategies,
@@ -1216,11 +1271,12 @@ bool jaeger_remotely_controlled_sampler_update(
     const bool result = jaeger_http_sampling_manager_get_sampling_strategies(
         &sampler->manager, &response);
     if (!result) {
-        fprintf(stderr,
-                "ERROR: Cannot get sampling strategies, will retry later\n");
+        sampler->manager.logger->error(
+            sampler->manager.logger,
+            "Cannot get sampling strategies, will retry later");
         success = false;
         if (sampler->metrics != NULL &&
-            sampler->metrics->sampler_query_failure) {
+            sampler->metrics->sampler_query_failure != NULL) {
             sampler->metrics->sampler_query_failure->inc(
                 sampler->metrics->sampler_query_failure, 1);
         }
@@ -1237,18 +1293,22 @@ bool jaeger_remotely_controlled_sampler_update(
     case JAEGERTRACINGC_STRATEGY_RESPONSE_TYPE(PER_OPERATION): {
         if (!jaeger_remotely_controlled_sampler_update_adaptive_sampler(
                 sampler, response.per_operation)) {
-            fprintf(stderr,
-                    "ERROR: Cannot update adaptive sampler in remotely "
-                    "controlled "
-                    "sampler\n");
+            sampler->manager.logger->error(
+                sampler->manager.logger,
+                "Cannot update adaptive sampler in remotely "
+                "controlled "
+                "sampler");
         }
     } break;
     case JAEGERTRACINGC_STRATEGY_RESPONSE_TYPE(PROBABILISTIC): {
         if (response.probabilistic == NULL) {
-            fprintf(stderr, "ERROR: Received null probabilistic strategy\n");
+            sampler->manager.logger->error(
+                sampler->manager.logger,
+                "Received null probabilistic strategy");
         }
         else {
-            jaeger_sampler_choice_destroy(&sampler->sampler);
+            jaeger_sampler_choice_destroy(&sampler->sampler,
+                                          sampler->manager.logger);
             sampler->sampler.type = jaeger_probabilistic_sampler_type;
             sampler->sampler.probabilistic_sampler.sampling_rate =
                 JAEGERTRACINGC_CLAMP(
@@ -1258,15 +1318,19 @@ bool jaeger_remotely_controlled_sampler_update(
     default: {
         if (response.strategy_case !=
             JAEGERTRACINGC_STRATEGY_RESPONSE_TYPE(RATE_LIMITING)) {
-            fprintf(stderr,
-                    "ERROR: Invalid strategy type in response, type = %d\n",
-                    response.strategy_case);
+            sampler->manager.logger->error(
+                sampler->manager.logger,
+                "Invalid strategy type in response, type = %d",
+                response.strategy_case);
         }
         else if (response.rate_limiting == NULL) {
-            fprintf(stderr, "ERROR: Received null rate limiting strategy\n");
+            sampler->manager.logger->error(
+                sampler->manager.logger,
+                "Received null rate limiting strategy");
         }
         else {
-            jaeger_sampler_choice_destroy(&sampler->sampler);
+            jaeger_sampler_choice_destroy(&sampler->sampler,
+                                          sampler->manager.logger);
             int max_traces_per_second =
                 response.rate_limiting->max_traces_per_second;
             sampler->sampler.type = jaeger_rate_limiting_sampler_type;
@@ -1287,10 +1351,12 @@ bool jaeger_remotely_controlled_sampler_init(
     const char* sampling_server_url,
     const jaeger_sampler_choice* initial_sampler,
     int max_operations,
-    jaeger_metrics* metrics)
+    jaeger_metrics* metrics,
+    jaeger_logger* logger)
 {
     assert(sampler != NULL);
     assert(service_name != NULL && strlen(service_name) > 0);
+    assert(logger != NULL);
     max_operations =
         (max_operations <= 0) ? DEFAULT_MAX_OPERATIONS : max_operations;
     *sampler = (jaeger_remotely_controlled_sampler){
@@ -1313,10 +1379,10 @@ bool jaeger_remotely_controlled_sampler_init(
     }
 
     if (!jaeger_http_sampling_manager_init(
-            &sampler->manager, sampling_server_url, service_name)) {
-        fprintf(stderr,
-                "ERROR: Cannot initialize HTTP manager for remotely "
-                "controlled sampler\n");
+            &sampler->manager, sampling_server_url, service_name, logger)) {
+        logger->error(
+            logger,
+            "Cannot initialize HTTP manager for remotely controlled sampler");
         return false;
     }
 

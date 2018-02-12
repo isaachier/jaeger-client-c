@@ -17,9 +17,11 @@
 #ifndef JAEGERTRACINGC_ALLOC_H
 #define JAEGERTRACINGC_ALLOC_H
 
+#include <assert.h>
 #include <stdio.h>
 #include <string.h>
 #include "jaegertracingc/common.h"
+#include "jaegertracingc/logging.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -50,12 +52,14 @@ static inline void jaeger_free(void* ptr)
     jaeger_alloc->free(jaeger_alloc, ptr);
 }
 
-static inline char* jaeger_strdup(const char* str)
+static inline char* jaeger_strdup(const char* str, jaeger_logger* logger)
 {
+    assert(str != NULL);
+    assert(logger != NULL);
     const int size = strlen(str) + 1;
     char* copy = jaeger_malloc(size);
     if (copy == NULL) {
-        fprintf(stderr, "ERROR: Cannot allocate string copy, size=%d\n", size);
+        logger->error(logger, "Cannot allocate string copy, size = %d", size);
         return NULL;
     }
     memcpy(copy, str, size);

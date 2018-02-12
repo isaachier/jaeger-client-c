@@ -37,30 +37,33 @@ typedef struct jaeger_tag_list {
     int capacity;
 } jaeger_tag_list;
 
-static inline bool jaeger_tag_alloc_list(jaeger_tag_list* list)
+static inline bool jaeger_tag_alloc_list(jaeger_tag_list* list,
+                                         jaeger_logger* logger)
 {
+    assert(logger != NULL);
     list->tags =
         jaeger_malloc(sizeof(jaeger_tag) * JAEGERTRACINGC_TAGS_INIT_SIZE);
     if (list->tags == NULL) {
-        fprintf(stderr, "ERROR: Cannot allocate jaeger_tag_list\n");
+        logger->error(logger, "Cannot allocate jaeger_tag_list");
         return false;
     }
     list->capacity = JAEGERTRACINGC_TAGS_INIT_SIZE;
     return true;
 }
 
-static inline bool jaeger_tag_resize(jaeger_tag_list* list)
+static inline bool jaeger_tag_resize(jaeger_tag_list* list,
+                                     jaeger_logger* logger)
 {
     assert(list != NULL);
     const int new_capacity = list->capacity * JAEGERTRACINGC_TAGS_RESIZE_FACTOR;
     jaeger_tag* new_tags =
         jaeger_realloc(list->tags, sizeof(jaeger_tag) * new_capacity);
     if (new_tags == NULL) {
-        fprintf(stderr,
-                "ERROR: Cannot allocate more space for jaeger_tag_list,"
-                "current capacity = %d, resize factor = %d\n",
-                list->capacity,
-                JAEGERTRACINGC_TAGS_RESIZE_FACTOR);
+        logger->error(logger,
+                      "Cannot allocate more space for jaeger_tag_list,"
+                      "current capacity = %d, resize factor = %d",
+                      list->capacity,
+                      JAEGERTRACINGC_TAGS_RESIZE_FACTOR);
         return false;
     }
     list->capacity = new_capacity;
@@ -68,10 +71,11 @@ static inline bool jaeger_tag_resize(jaeger_tag_list* list)
     return true;
 }
 
-static inline bool jaeger_tag_list_init(jaeger_tag_list* list)
+static inline bool jaeger_tag_list_init(jaeger_tag_list* list,
+                                        jaeger_logger* logger)
 {
     assert(list != NULL);
-    if (!jaeger_tag_alloc_list(list)) {
+    if (!jaeger_tag_alloc_list(list, logger)) {
         return false;
     }
     list->size = 0;
@@ -79,15 +83,16 @@ static inline bool jaeger_tag_list_init(jaeger_tag_list* list)
     return true;
 }
 
-static inline bool jaeger_tag_copy(jaeger_tag* dst, const jaeger_tag* src)
+static inline bool
+jaeger_tag_copy(jaeger_tag* dst, const jaeger_tag* src, jaeger_logger* logger)
 {
     assert(dst != NULL);
     assert(src != NULL);
     *dst = (jaeger_tag) JAEGERTRACING__PROTOBUF__TAG__INIT;
-    dst->key = jaeger_strdup(src->key);
+    dst->key = jaeger_strdup(src->key, logger);
     if (dst->key == NULL) {
-        fprintf(
-            stderr, "ERROR: Cannot allocate tag key, key = \"%s\"\n", src->key);
+        logger->error(
+            logger, "Cannot allocate tag key, key = \"%s\"", src->key);
         *dst = (jaeger_tag) JAEGERTRACING__PROTOBUF__TAG__INIT;
         return false;
     }
@@ -95,11 +100,11 @@ static inline bool jaeger_tag_copy(jaeger_tag* dst, const jaeger_tag* src)
     dst->value_case = src->value_case;
     switch (src->value_case) {
     case JAEGERTRACINGC_TAG_TYPE(STR): {
-        dst->str_value = jaeger_strdup(src->str_value);
+        dst->str_value = jaeger_strdup(src->str_value, logger);
         if (dst->str_value == NULL) {
-            fprintf(stderr,
-                    "ERROR: Cannot allocate tag value string, str = \"%s\"\n",
-                    src->str_value);
+            logger->error(logger,
+                          "Cannot allocate tag value string, str = \"%s\"",
+                          src->str_value);
             *dst = (jaeger_tag) JAEGERTRACING__PROTOBUF__TAG__INIT;
             return false;
         }
@@ -107,9 +112,9 @@ static inline bool jaeger_tag_copy(jaeger_tag* dst, const jaeger_tag* src)
     case JAEGERTRACINGC_TAG_TYPE(BINARY): {
         dst->binary_value.data = jaeger_malloc(src->binary_value.len);
         if (dst->binary_value.data == NULL) {
-            fprintf(stderr,
-                    "ERROR: Cannot allocate tag value binary, size = %zu\n",
-                    src->binary_value.len);
+            logger->error(logger,
+                          "Cannot allocate tag value binary, size = %zu",
+                          src->binary_value.len);
             *dst = (jaeger_tag) JAEGERTRACING__PROTOBUF__TAG__INIT;
             return false;
         }
@@ -166,19 +171,20 @@ static inline void jaeger_tag_list_clear(jaeger_tag_list* list)
 }
 
 static inline bool jaeger_tag_list_append(jaeger_tag_list* list,
-                                          const jaeger_tag* tag)
+                                          const jaeger_tag* tag,
+                                          jaeger_logger* logger)
 {
     assert(list != NULL);
     assert(tag != NULL);
-    if (list->tags == NULL && !jaeger_tag_alloc_list(list)) {
+    if (list->tags == NULL && !jaeger_tag_alloc_list(list, logger)) {
         return false;
     }
     assert(list->size <= list->capacity);
-    if (list->size == list->capacity && !jaeger_tag_resize(list)) {
+    if (list->size == list->capacity && !jaeger_tag_resize(list, logger)) {
         return false;
     }
 
-    if (!jaeger_tag_copy(&list->tags[list->size], tag)) {
+    if (!jaeger_tag_copy(&list->tags[list->size], tag, logger)) {
         return false;
     }
     list->size++;

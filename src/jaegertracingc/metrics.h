@@ -20,6 +20,7 @@
 #include <assert.h>
 #include "jaegertracingc/alloc.h"
 #include "jaegertracingc/common.h"
+#include "jaegertracingc/logging.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -115,25 +116,25 @@ static inline void jaeger_metrics_destroy(jaeger_metrics* metrics)
 #undef JAEGERTRACINGC_METRICS_DESTROY_IF_NOT_NULL
 }
 
-#define JAEGERTRACINGC_METRICS_ALLOC_INIT(member, type, init)            \
-    do {                                                                 \
-        if (success) {                                                   \
-            metrics->member = jaeger_malloc(sizeof(type));               \
-            if (metrics->member == NULL) {                               \
-                fprintf(stderr,                                          \
-                        "ERROR: Cannot allocate metrics member " #member \
-                        "\n");                                           \
-                success = false;                                         \
-            }                                                            \
-            else {                                                       \
-                success = init((type*) metrics->member);                 \
-            }                                                            \
-        }                                                                \
+#define JAEGERTRACINGC_METRICS_ALLOC_INIT(member, type, init)             \
+    do {                                                                  \
+        if (success) {                                                    \
+            metrics->member = jaeger_malloc(sizeof(type));                \
+            if (metrics->member == NULL) {                                \
+                logger->error(logger,                                     \
+                              "Cannot allocate metrics member " #member); \
+                success = false;                                          \
+            }                                                             \
+            else {                                                        \
+                success = init((type*) metrics->member);                  \
+            }                                                             \
+        }                                                                 \
     } while (0)
 
 #define JAEGERTRACINGC_METRICS_INIT_IMPL(counter_init, gauge_init) \
     do {                                                           \
         assert(metrics != NULL);                                   \
+        assert(logger != NULL);                                    \
         memset(metrics, 0, sizeof(*metrics));                      \
         bool success = true;                                       \
                                                                    \
@@ -147,7 +148,8 @@ static inline void jaeger_metrics_destroy(jaeger_metrics* metrics)
         return success;                                            \
     } while (0)
 
-static inline bool jaeger_default_metrics_init(jaeger_metrics* metrics)
+static inline bool jaeger_default_metrics_init(jaeger_metrics* metrics,
+                                               jaeger_logger* logger)
 {
 #define JAEGERTRACINGC_DEFAULT_COUNTER_ALLOC_INIT(member) \
     JAEGERTRACINGC_METRICS_ALLOC_INIT(                    \
@@ -163,7 +165,8 @@ static inline bool jaeger_default_metrics_init(jaeger_metrics* metrics)
 #undef JAEGERTRACINGC_DEFAULT_GAUGE_ALLOC_INIT
 }
 
-static inline bool jaeger_null_metrics_init(jaeger_metrics* metrics)
+static inline bool jaeger_null_metrics_init(jaeger_metrics* metrics,
+                                            jaeger_logger* logger)
 {
 #define JAEGERTRACINGC_NULL_COUNTER_ALLOC_INIT(member) \
     JAEGERTRACINGC_METRICS_ALLOC_INIT(                 \

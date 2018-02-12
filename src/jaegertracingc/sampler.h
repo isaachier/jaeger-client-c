@@ -42,7 +42,8 @@ extern "C" {
     bool (*is_sampled)(struct jaeger_sampler * sampler, \
                        const jaeger_trace_id* trace_id, \
                        const char* operation,           \
-                       jaeger_tag_list* tags)
+                       jaeger_tag_list* tags,           \
+                       jaeger_logger* logger)
 
 typedef struct jaeger_sampler {
     JAEGERTRACINGC_SAMPLER_SUBCLASS;
@@ -116,6 +117,7 @@ typedef struct jaeger_adaptive_sampler {
     double lower_bound;
     int max_operations;
     jaeger_mutex mutex;
+    jaeger_logger* logger;
 } jaeger_adaptive_sampler;
 
 bool jaeger_adaptive_sampler_init(
@@ -144,7 +146,8 @@ typedef struct jaeger_sampler_choice {
 } jaeger_sampler_choice;
 
 static inline jaeger_sampler*
-jaeger_sampler_choice_get_sampler(jaeger_sampler_choice* sampler)
+jaeger_sampler_choice_get_sampler(jaeger_sampler_choice* sampler,
+                                  jaeger_logger* logger)
 {
 #define SAMPLER_TYPE_CASE(type)        \
     case jaeger_##type##_sampler_type: \
@@ -157,10 +160,9 @@ jaeger_sampler_choice_get_sampler(jaeger_sampler_choice* sampler)
         SAMPLER_TYPE_CASE(guaranteed_throughput_probabilistic);
         SAMPLER_TYPE_CASE(adaptive);
     default:
-        fprintf(
-            stderr,
-            "WARNING: Invalid sampler type in sampler choice, sampler type = "
-            "%d\n",
+        logger->warn(
+            logger,
+            "Invalid sampler type in sampler choice, sampler type = %d",
             sampler->type);
         return NULL;
     }
@@ -168,10 +170,12 @@ jaeger_sampler_choice_get_sampler(jaeger_sampler_choice* sampler)
 #undef SAMPLER_TYPE_CASE
 }
 
-static inline void jaeger_sampler_choice_destroy(jaeger_sampler_choice* sampler)
+static inline void jaeger_sampler_choice_destroy(jaeger_sampler_choice* sampler,
+                                                 jaeger_logger* logger)
 {
     assert(sampler != NULL);
-    jaeger_sampler* s = jaeger_sampler_choice_get_sampler(sampler);
+    assert(logger != NULL);
+    jaeger_sampler* s = jaeger_sampler_choice_get_sampler(sampler, logger);
     if (s != NULL) {
         s->destroy((jaeger_destructible*) s);
     }
@@ -191,6 +195,7 @@ typedef struct jaeger_http_sampling_manager {
     int response_capacity;
     char* response_buffer;
     int state;
+    jaeger_logger* logger;
 } jaeger_http_sampling_manager;
 
 #define JAEGERTRACINGC_HTTP_SAMPLING_MANAGER_INIT                             \
@@ -216,7 +221,8 @@ bool jaeger_remotely_controlled_sampler_init(
     const char* sampling_server_url,
     const jaeger_sampler_choice* initial_sampler,
     int max_operations,
-    jaeger_metrics* metrics);
+    jaeger_metrics* metrics,
+    jaeger_logger* logger);
 
 bool jaeger_remotely_controlled_sampler_update(
     jaeger_remotely_controlled_sampler* sampler);
