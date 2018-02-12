@@ -131,13 +131,40 @@ if(BUILD_TESTING)
 
   set(test_src
     "src/jaegertracingc/alloc_test.c"
+    "src/jaegertracingc/alloc_test.h"
     "src/jaegertracingc/duration_test.c"
+    "src/jaegertracingc/duration_test.h"
+    "src/jaegertracingc/logging_test.c"
+    "src/jaegertracingc/logging_test.h"
     "src/jaegertracingc/metrics_test.c"
+    "src/jaegertracingc/metrics_test.h"
     "src/jaegertracingc/net_test.c"
+    "src/jaegertracingc/net_test.h"
     "src/jaegertracingc/sampler_test.c"
+    "src/jaegertracingc/sampler_test.h"
     "src/jaegertracingc/tag_test.c"
-    "src/jaegertracingc/token_bucket_test.c")
+    "src/jaegertracingc/tag_test.h"
+    "src/jaegertracingc/token_bucket_test.c"
+    "src/jaegertracingc/token_bucket_test.h")
+  foreach(test_file ${test_src})
+    get_filename_component(test_ext ${test_file} EXT)
+    if(test_ext STREQUAL ".h")
+      get_filename_component(test_inc ${test_file} NAME_WE)
+      set(unit_test_driver_includes
+          "${unit_test_driver_includes}\n#include \"${test_inc}.h\"")
+      string(REPLACE "_test" "" test_case "${test_inc}")
+      set(unit_test_driver_impl
+          "${unit_test_driver_impl}\n    RUN_TEST(test_${test_case});")
+    endif()
+  endforeach()
+  configure_file(
+    "src/jaegertracingc/unit_test_driver.h.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/include/jaegertracingc/unit_test_driver.h"
+    @ONLY)
   add_library(jaegertracingc_test ${test_src})
+  target_include_directories(jaegertracingc_test PUBLIC
+    "src/jaegertracingc"
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include/jaegertracingc>)
   target_link_libraries(jaegertracingc_test PUBLIC jaegertracingc unity)
 
   add_executable(default_test "src/jaegertracingc/default_test_driver.c")

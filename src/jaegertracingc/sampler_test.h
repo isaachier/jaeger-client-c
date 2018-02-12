@@ -17,6 +17,8 @@
 #ifndef JAEGERTRACINGC_SAMPLER_TEST_H
 #define JAEGERTRACINGC_SAMPLER_TEST_H
 
+#include "unity.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
@@ -34,6 +36,17 @@ void test_adaptive_sampler();
 void test_remotely_controlled_sampler();
 
 void test_sampler_choice();
+
+static inline void test_sampler()
+{
+    RUN_TEST(test_const_sampler);
+    RUN_TEST(test_probabilistic_sampler);
+    RUN_TEST(test_rate_limiting_sampler);
+    RUN_TEST(test_guaranteed_throughput_probabilistic_sampler);
+    RUN_TEST(test_adaptive_sampler);
+    RUN_TEST(test_remotely_controlled_sampler);
+    RUN_TEST(test_sampler_choice);
+}
 
 #ifdef __cplusplus
 } /* extern C */
