@@ -117,7 +117,6 @@ typedef struct jaeger_adaptive_sampler {
     double lower_bound;
     int max_operations;
     jaeger_mutex mutex;
-    jaeger_logger* logger;
 } jaeger_adaptive_sampler;
 
 bool jaeger_adaptive_sampler_init(
@@ -171,12 +170,11 @@ jaeger_sampler_choice_get_sampler(jaeger_sampler_choice* sampler,
 #undef SAMPLER_TYPE_CASE
 }
 
-static inline void jaeger_sampler_choice_destroy(jaeger_sampler_choice* sampler,
-                                                 jaeger_logger* logger)
+static inline void jaeger_sampler_choice_destroy(jaeger_sampler_choice* sampler)
 {
     assert(sampler != NULL);
-    assert(logger != NULL);
-    jaeger_sampler* s = jaeger_sampler_choice_get_sampler(sampler, logger);
+    jaeger_sampler* s =
+        jaeger_sampler_choice_get_sampler(sampler, jaeger_null_logger());
     if (s != NULL) {
         s->destroy((jaeger_destructible*) s);
     }
@@ -195,8 +193,6 @@ typedef struct jaeger_http_sampling_manager {
     int response_length;
     int response_capacity;
     char* response_buffer;
-    int state;
-    jaeger_logger* logger;
 } jaeger_http_sampling_manager;
 
 #define JAEGERTRACINGC_HTTP_SAMPLING_MANAGER_INIT                             \
@@ -204,7 +200,7 @@ typedef struct jaeger_http_sampling_manager {
         .service_name = NULL, .sampling_server_url = JAEGERTRACINGC_URL_INIT, \
         .fd = -1, .parser = {}, .settings = {}, .request_length = 0,          \
         .request_buffer = {'\0'}, .response_length = 0,                       \
-        .response_capacity = 0, .response_buffer = NULL, .state = 0           \
+        .response_capacity = 0, .response_buffer = NULL                       \
     }
 
 typedef struct jaeger_remotely_controlled_sampler {
@@ -226,7 +222,7 @@ bool jaeger_remotely_controlled_sampler_init(
     jaeger_logger* logger);
 
 bool jaeger_remotely_controlled_sampler_update(
-    jaeger_remotely_controlled_sampler* sampler);
+    jaeger_remotely_controlled_sampler* sampler, jaeger_logger* logger);
 
 #ifdef __cplusplus
 } /* extern C */

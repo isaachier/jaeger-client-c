@@ -18,6 +18,7 @@
 #define JAEGERTRACINGC_REPORTER_H
 
 #include "jaegertracingc/common.h"
+#include "jaegertracingc/logging.h"
 #include "jaegertracingc/types.h"
 
 #ifdef __cplusplus
@@ -34,7 +35,27 @@ typedef struct jaeger_reporter {
 
 typedef struct jaeger_logging_reporter {
     JAEGERTRACINGC_REPORTER_SUBCLASS;
-} jaeger_logger_reporter;
+    jaeger_logger* logger;
+} jaeger_logging_reporter;
+
+typedef struct jaeger_in_memory_reporter {
+    JAEGERTRACINGC_REPORTER_SUBCLASS;
+    jaeger_span* spans;
+    int num_spans;
+    int capacity;
+} jaeger_in_memory_reporter;
+
+typedef struct jaeger_composite_reporter {
+    JAEGERTRACINGC_REPORTER_SUBCLASS;
+    jaeger_reporter* reporters;
+    int num_reporters;
+    int capacity;
+} jaeger_composite_reporter;
+
+typedef struct jaeger_remote_reporter {
+    JAEGERTRACINGC_REPORTER_SUBCLASS;
+    /* TODO */
+} jaeger_remote_reporter;
 
 #ifdef __cplusplus
 } /* extern C */

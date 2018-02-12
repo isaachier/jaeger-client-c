@@ -19,6 +19,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
+#include "jaegertracingc/threading.h"
 
 static void null_log(jaeger_logger* logger, const char* format, ...)
 {
@@ -48,12 +49,19 @@ static void std_log(jaeger_logger* logger, const char* format, va_list args)
         va_end(args);                                             \
     }
 
-void jaeger_null_logger_init(jaeger_logger* logger)
+static jaeger_logger null_logger;
+
+static void init_null_logger()
 {
-    assert(logger != NULL);
-    logger->error = &null_log;
-    logger->warn = &null_log;
-    logger->info = &null_log;
+    null_logger = (jaeger_logger){
+        .error = &null_log, .warn = &null_log, .info = &null_log};
+}
+
+jaeger_logger* jaeger_null_logger()
+{
+    static jaeger_once once = JAEGERTRACINGC_ONCE_INIT;
+    jaeger_do_once(&once, &init_null_logger);
+    return &null_logger;
 }
 
 STD_LOG_FUNC(error, ERROR)

@@ -19,15 +19,13 @@
 
 void test_net()
 {
-    jaeger_logger null_logger;
-    jaeger_null_logger_init(&null_logger);
+    jaeger_logger* logger = jaeger_null_logger();
     jaeger_host_port host_port;
-    TEST_ASSERT_FALSE(jaeger_host_port_init(&host_port, NULL, 0, &null_logger));
-    TEST_ASSERT_FALSE(jaeger_host_port_init(&host_port, "", 0, &null_logger));
+    TEST_ASSERT_FALSE(jaeger_host_port_init(&host_port, NULL, 0, logger));
+    TEST_ASSERT_FALSE(jaeger_host_port_init(&host_port, "", 0, logger));
     TEST_ASSERT_FALSE(
-        jaeger_host_port_init(&host_port, "localhost", -1, &null_logger));
-    TEST_ASSERT_TRUE(
-        jaeger_host_port_init(&host_port, "localhost", 0, &null_logger));
+        jaeger_host_port_init(&host_port, "localhost", -1, logger));
+    TEST_ASSERT_TRUE(jaeger_host_port_init(&host_port, "localhost", 0, logger));
 
     char buffer[strlen(host_port.host) + 1];
     TEST_ASSERT_EQUAL(
@@ -40,6 +38,5 @@ void test_net()
     jaeger_url url;
     url.str = "";
     memset(&url.parts, 0, sizeof(url.parts));
-    TEST_ASSERT_FALSE(
-        jaeger_host_port_from_url(&host_port, &url, &null_logger));
+    TEST_ASSERT_FALSE(jaeger_host_port_from_url(&host_port, &url, logger));
 }

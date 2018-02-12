@@ -31,7 +31,8 @@ typedef struct jaeger_logger {
 
 void jaeger_std_logger_init(jaeger_logger* logger);
 
-void jaeger_null_logger_init(jaeger_logger* logger);
+/* Shared instance of null logger. DO NOT MODIFY MEMBERS! */
+jaeger_logger* jaeger_null_logger();
 
 #ifdef __cplusplus
 } /* extern C */
