@@ -68,6 +68,8 @@ set(core_src
   "src/jaegertracingc/metrics.h"
   "src/jaegertracingc/net.c"
   "src/jaegertracingc/net.h"
+  "src/jaegertracingc/reporter.c"
+  "src/jaegertracingc/reporter.h"
   "src/jaegertracingc/sampler.c"
   "src/jaegertracingc/sampler.h"
   "src/jaegertracingc/sampling_strategy.c"
