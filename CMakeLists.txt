@@ -13,6 +13,8 @@ include(CheckFunctionExists)
 include(CMakeDependentOption)
 include(CTest)
 
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
 foreach(flag "-Wall" "-Werror")
   string(MAKE_C_IDENTIFIER "HAVE${flag}" flag_var)
   check_c_compiler_flag(${flag} ${flag_var})
@@ -159,7 +161,7 @@ if(BUILD_TESTING)
   endforeach()
   configure_file(
     "src/jaegertracingc/unit_test_driver.h.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/include/jaegertracingc/unit_test_driver.h"
+    "include/jaegertracingc/unit_test_driver.h"
     @ONLY)
   add_library(jaegertracingc_test ${test_src})
   target_include_directories(jaegertracingc_test PUBLIC
