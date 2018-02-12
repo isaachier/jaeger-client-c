@@ -179,5 +179,9 @@ breathe_projects_source = {
 }
 
 breathe_doxygen_config_options = {
-    'FULL_PATH_NAMES': 'NO'
+    'ENABLE_PREPROCESSING': 'YES',
+    'FULL_PATH_NAMES': 'NO',
+    'PREDEFINED': ' '.join('@defs@'.split(';')),
+    'SEARCH_INCLUDES': 'YES',
+    'INCLUDE_PATH': ' '.join('@inc@'.split(';'))
 }
