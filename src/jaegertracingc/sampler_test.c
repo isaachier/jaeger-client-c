@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-#include "jaegertracingc/sampler.h"
 #include <errno.h>
 #include <http_parser.h>
 #include <netinet/in.h>
@@ -23,6 +22,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include "jaegertracingc/sampler.h"
 #include "jaegertracingc/threading.h"
 #include "unity.h"
 
@@ -220,7 +220,8 @@ void test_adaptive_sampler()
     strategies.default_lower_bound_traces_per_second = 1.0;
     strategies.default_sampling_probability = TEST_DEFAULT_SAMPLING_PROBABILITY;
 
-    jaeger_adaptive_sampler_init(&a, &strategies, TEST_DEFAULT_MAX_OPERATIONS);
+    jaeger_adaptive_sampler_init(
+        &a, &strategies, TEST_DEFAULT_MAX_OPERATIONS, &null_logger);
     a.is_sampled(
         (jaeger_sampler*) &a, &trace_id, operation_name, &tags, &null_logger);
 
@@ -293,10 +294,7 @@ read_client_request(int client_fd, char* buffer, int* buffer_len)
             memcmp(&buffer[*buffer_len - 4], "\r\n\r\n", 4) == 0) {
             break;
         }
-        num_read =
-            read(client_fd, &buffer[*buffer_len], sizeof(buffer) - *buffer_len);
     }
-    printf("FINISHED READING %d bytes\n", *buffer_len);
 }
 
 static void* mock_http_server_run_loop(void* context)
@@ -400,7 +398,6 @@ static void* mock_http_server_run_loop(void* context)
 
         const int num_written =
             write(client_fd, http_response, strlen(http_response));
-        printf("FINISHED WRITING %d bytes\n", num_written);
         TEST_ASSERT_EQUAL(strlen(http_response), num_written);
     }
     close(client_fd);
@@ -449,7 +446,7 @@ static inline void mock_http_server_destroy(mock_http_server* server)
 void test_remotely_controlled_sampler()
 {
     jaeger_logger null_logger;
-    jaeger_std_logger_init(&null_logger);
+    jaeger_null_logger_init(&null_logger);
     jaeger_metrics metrics;
     jaeger_null_metrics_init(&metrics, &null_logger);
     mock_http_server server = MOCK_HTTP_SERVER_INIT;

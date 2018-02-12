@@ -123,7 +123,8 @@ typedef struct jaeger_adaptive_sampler {
 bool jaeger_adaptive_sampler_init(
     jaeger_adaptive_sampler* sampler,
     const jaeger_per_operation_strategy* strategies,
-    int max_operations);
+    int max_operations,
+    jaeger_logger* logger);
 
 typedef enum jaeger_sampler_type {
     jaeger_const_sampler_type,

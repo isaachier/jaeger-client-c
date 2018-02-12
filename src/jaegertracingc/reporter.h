@@ -18,6 +18,7 @@
 #define JAEGERTRACINGC_REPORTER_H
 
 #include "jaegertracingc/common.h"
+#include "jaegertracingc/types.h"
 
 #ifdef __cplusplus
 extern "C" {

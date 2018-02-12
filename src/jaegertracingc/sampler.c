@@ -497,9 +497,12 @@ static void jaeger_adaptive_sampler_destroy(jaeger_destructible* sampler)
 bool jaeger_adaptive_sampler_init(
     jaeger_adaptive_sampler* sampler,
     const jaeger_per_operation_strategy* strategies,
-    int max_operations)
+    int max_operations,
+    jaeger_logger* logger)
 {
     assert(sampler != NULL);
+    assert(logger != NULL);
+    sampler->logger = logger;
     sampler->op_samplers = samplers_from_strategies(
         strategies, &sampler->num_op_samplers, sampler->logger);
     if (sampler->num_op_samplers > 0 && sampler->op_samplers == NULL) {
@@ -652,9 +655,9 @@ static inline bool jaeger_http_sampling_manager_format_request(
                                "buffer, buffer size = %zu, request length = %d",
                                sizeof(manager->request_buffer),
                                manager->request_length);
-        manager->request_length = result;
         return false;
     }
+    manager->request_length = result;
     return true;
 }
 
@@ -1258,7 +1261,8 @@ static inline bool jaeger_remotely_controlled_sampler_update_adaptive_sampler(
         sampler->sampler.type = jaeger_adaptive_sampler_type;
         return jaeger_adaptive_sampler_init(&sampler->sampler.adaptive_sampler,
                                             strategies,
-                                            sampler->max_operations);
+                                            sampler->max_operations,
+                                            sampler->manager.logger);
     }
 }
 
