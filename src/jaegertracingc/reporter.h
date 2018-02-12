@@ -27,11 +27,14 @@ extern "C" {
 
 #define JAEGERTRACINGC_REPORTER_SUBCLASS  \
     JAEGERTRACINGC_DESTRUCTIBLE_SUBCLASS; \
-    void (*report)(const jaeger_span* span)
+    void (*report)(struct jaeger_reporter * reporter, const jaeger_span* span)
 
 typedef struct jaeger_reporter {
     JAEGERTRACINGC_REPORTER_SUBCLASS;
 } jaeger_reporter;
+
+/* Shared instance of null reporter. DO NOT MODIFY MEMBERS! */
+jaeger_reporter* jaeger_null_reporter();
 
 typedef struct jaeger_logging_reporter {
     JAEGERTRACINGC_REPORTER_SUBCLASS;

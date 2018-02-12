@@ -447,8 +447,7 @@ static inline void mock_http_server_destroy(mock_http_server* server)
 void test_remotely_controlled_sampler()
 {
     jaeger_logger* logger = jaeger_null_logger();
-    jaeger_metrics metrics;
-    jaeger_null_metrics_init(&metrics, logger);
+    jaeger_metrics* metrics = jaeger_null_metrics();
     mock_http_server server = MOCK_HTTP_SERVER_INIT;
     mock_http_server_start(&server);
     const int port = ntohs(server.addr.sin_port);
@@ -464,7 +463,7 @@ void test_remotely_controlled_sampler()
                                                 buffer,
                                                 NULL,
                                                 TEST_DEFAULT_MAX_OPERATIONS,
-                                                &metrics,
+                                                metrics,
                                                 logger));
 
     TEST_ASSERT_TRUE(jaeger_remotely_controlled_sampler_update(&r, logger));
@@ -506,7 +505,6 @@ void test_remotely_controlled_sampler()
         (jaeger_sampler*) &r, &trace_id, "test-operation", &tags, logger);
 
     r.destroy((jaeger_destructible*) &r);
-    jaeger_metrics_destroy(&metrics);
 }
 
 void test_sampler_choice()

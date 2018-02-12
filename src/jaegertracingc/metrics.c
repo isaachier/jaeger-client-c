@@ -16,9 +16,9 @@
 
 #include "jaegertracingc/metrics.h"
 #include <assert.h>
-#include <stdio.h>
+#include "jaegertracingc/threading.h"
 
-static void noop_destroy(jaeger_destructible* destructible)
+static void null_destroy(jaeger_destructible* destructible)
 {
     (void) destructible;
 }
@@ -34,23 +34,30 @@ bool jaeger_default_counter_init(jaeger_default_counter* counter)
 {
     assert(counter != NULL);
     counter->total = 0;
-    counter->destroy = &noop_destroy;
+    counter->destroy = &null_destroy;
     counter->inc = &jaeger_default_counter_inc;
     return true;
 }
 
-static void jaeger_null_counter_inc(jaeger_counter* counter, int64_t delta)
+static void null_counter_inc(jaeger_counter* counter, int64_t delta)
 {
     (void) counter;
     (void) delta;
 }
 
-bool jaeger_null_counter_init(jaeger_counter* counter)
+static jaeger_counter null_counter;
+
+static void init_null_counter()
 {
-    assert(counter != NULL);
-    counter->destroy = &noop_destroy;
-    counter->inc = &jaeger_null_counter_inc;
-    return true;
+    null_counter =
+        (jaeger_counter){.destroy = &null_destroy, .inc = &null_counter_inc};
+}
+
+jaeger_counter* jaeger_null_counter()
+{
+    static jaeger_once once = JAEGERTRACINGC_ONCE_INIT;
+    jaeger_do_once(&once, &init_null_counter);
+    return &null_counter;
 }
 
 static void jaeger_default_gauge_update(jaeger_gauge* gauge, int64_t amount)
@@ -63,22 +70,47 @@ static void jaeger_default_gauge_update(jaeger_gauge* gauge, int64_t amount)
 bool jaeger_default_gauge_init(jaeger_default_gauge* gauge)
 {
     assert(gauge != NULL);
-    gauge->destroy = &noop_destroy;
+    gauge->destroy = &null_destroy;
     gauge->update = &jaeger_default_gauge_update;
     gauge->amount = 0;
     return true;
 }
 
-static void jaeger_null_gauge_update(jaeger_gauge* gauge, int64_t amount)
+static void null_gauge_update(jaeger_gauge* gauge, int64_t amount)
 {
     (void) gauge;
     (void) amount;
 }
 
-bool jaeger_null_gauge_init(jaeger_gauge* gauge)
+static jaeger_gauge null_gauge;
+
+static void init_null_gauge()
 {
-    assert(gauge != NULL);
-    gauge->destroy = &noop_destroy;
-    gauge->update = &jaeger_null_gauge_update;
-    return true;
+    null_gauge =
+        (jaeger_gauge){.destroy = null_destroy, .update = null_gauge_update};
+}
+
+jaeger_gauge* jaeger_null_gauge()
+{
+    static jaeger_once once = JAEGERTRACINGC_ONCE_INIT;
+    jaeger_do_once(&once, &init_null_gauge);
+    return &null_gauge;
+}
+
+static jaeger_metrics null_metrics;
+
+static void init_null_metrics()
+{
+    null_metrics = (jaeger_metrics){
+#define SET_COUNTERS(member) .member = jaeger_null_counter(),
+        JAEGERTRACINGC_METRICS_COUNTERS(SET_COUNTERS)
+#define SET_GAUGES(member) .member = jaeger_null_gauge(),
+            JAEGERTRACINGC_METRICS_GAUGES(SET_GAUGES)};
+}
+
+jaeger_metrics* jaeger_null_metrics()
+{
+    static jaeger_once once = JAEGERTRACINGC_ONCE_INIT;
+    jaeger_do_once(&once, &init_null_metrics);
+    return &null_metrics;
 }

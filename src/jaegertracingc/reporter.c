@@ -15,3 +15,30 @@
  */
 
 #include "jaegertracingc/reporter.h"
+#include "jaegertracingc/threading.h"
+
+static jaeger_reporter null_reporter;
+
+static void null_destroy(jaeger_destructible* destructible)
+{
+    (void) destructible;
+}
+
+static void null_report(jaeger_reporter* reporter, const jaeger_span* span)
+{
+    (void) reporter;
+    (void) span;
+}
+
+static void init_null_reporter()
+{
+    null_reporter =
+        (jaeger_reporter){.destroy = &null_destroy, .report = &null_report};
+}
+
+jaeger_reporter* jaeger_null_reporter()
+{
+    static jaeger_once once = JAEGERTRACINGC_ONCE_INIT;
+    jaeger_do_once(&once, &init_null_reporter);
+    return &null_reporter;
+}

@@ -39,9 +39,10 @@ typedef struct jaeger_default_counter {
     int64_t total;
 } jaeger_default_counter;
 
-bool jaeger_default_counter_init(jaeger_default_counter* counter);
+/* Shared instance of null counter. DO NOT MODIFY MEMBERS! */
+jaeger_counter* jaeger_null_counter();
 
-bool jaeger_null_counter_init(jaeger_counter* counter);
+bool jaeger_default_counter_init(jaeger_default_counter* counter);
 
 #define JAEGERTRACINGC_GAUGE_SUBCLASS     \
     JAEGERTRACINGC_DESTRUCTIBLE_SUBCLASS; \
@@ -58,7 +59,8 @@ typedef struct jaeger_default_gauge {
 
 bool jaeger_default_gauge_init(jaeger_default_gauge* gauge);
 
-bool jaeger_null_gauge_init(jaeger_gauge* gauge);
+/* Shared instance of null gauge. DO NOT MODIFY MEMBERS! */
+jaeger_gauge* jaeger_null_gauge();
 
 #define JAEGERTRACINGC_METRICS_COUNTERS(X) \
     X(traces_started_sampled)              \
@@ -165,22 +167,8 @@ static inline bool jaeger_default_metrics_init(jaeger_metrics* metrics,
 #undef JAEGERTRACINGC_DEFAULT_GAUGE_ALLOC_INIT
 }
 
-static inline bool jaeger_null_metrics_init(jaeger_metrics* metrics,
-                                            jaeger_logger* logger)
-{
-#define JAEGERTRACINGC_NULL_COUNTER_ALLOC_INIT(member) \
-    JAEGERTRACINGC_METRICS_ALLOC_INIT(                 \
-        member, jaeger_counter, jaeger_null_counter_init);
-#define JAEGERTRACINGC_NULL_GAUGE_ALLOC_INIT(member) \
-    JAEGERTRACINGC_METRICS_ALLOC_INIT(               \
-        member, jaeger_gauge, jaeger_null_gauge_init);
-
-    JAEGERTRACINGC_METRICS_INIT_IMPL(JAEGERTRACINGC_NULL_COUNTER_ALLOC_INIT,
-                                     JAEGERTRACINGC_NULL_GAUGE_ALLOC_INIT);
-
-#undef JAEGERTRACINGC_NULL_COUNTER_ALLOC_INIT
-#undef JAEGERTRACINGC_NULL_GAUGE_ALLOC_INIT
-}
+/* Shared instance of null metrics. DO NOT MODIFY MEMBERS! */
+jaeger_metrics* jaeger_null_metrics();
 
 #ifdef __cplusplus
 } /* extern C */
