@@ -55,6 +55,12 @@ jaeger_span_format(const jaeger_span* span, char* buffer, int buffer_len)
                     span->flags);
 }
 
+static inline const char*
+jaeger_span_scan(jaeger_span* span, const char* first, const char* last)
+{
+    return NULL;
+}
+
 #ifdef __cplusplus
 } /* extern C */
 #endif /* __cplusplus */

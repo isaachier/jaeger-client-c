@@ -34,6 +34,8 @@ typedef struct jaeger_trace_id {
     }
 
 #define JAEGERTRACINGC_TRACE_ID_MAX_STR_LEN 33
+#define JAEGERTRACINGC_UINT64_MAX_STR_LEN 17
+#define JAEGERTRACINGC_HEX_BASE 16
 
 static inline int jaeger_trace_id_format(const jaeger_trace_id* trace_id,
                                          char* buffer,
@@ -53,37 +55,41 @@ static inline const char* jaeger_trace_id_scan(jaeger_trace_id* trace_id,
                                                const char* first,
                                                const char* last)
 {
-#define JAEGERTRACINGC_UINT64_MAX_STR_LEN 16
-#define JAEGERTRACINGC_HEX_BASE 16
     assert(trace_id != NULL);
     assert(first != NULL);
     assert(last != NULL);
     uint64_t high = 0;
     uint64_t low = 0;
+    char str[JAEGERTRACINGC_UINT64_MAX_STR_LEN];
+    int str_len = 0;
     const int len = last - first;
     char* iter = NULL;
-    if (len <= JAEGERTRACINGC_UINT64_MAX_STR_LEN) {
-        iter = (char*) last;
-        low = strtoull(first, &iter, JAEGERTRACINGC_HEX_BASE);
-    }
-    else {
-        const int high_len = len - JAEGERTRACINGC_UINT64_MAX_STR_LEN;
-        char high_str[JAEGERTRACINGC_UINT64_MAX_STR_LEN];
-        memcpy(high_str, first, high_len);
-        high_str[high_len] = '\0';
-        iter = &high_str[high_len];
-        high = strtoull(high_str, &iter, JAEGERTRACINGC_HEX_BASE);
-        if (iter != &high_str[high_len]) {
-            const int offset = iter - high_str;
+    if (len > JAEGERTRACINGC_UINT64_MAX_STR_LEN - 1) {
+        const char* low_start = last - JAEGERTRACINGC_UINT64_MAX_STR_LEN + 1;
+        const int high_len = low_start - first;
+        memcpy(str, first, high_len);
+        str[high_len] = '\0';
+        iter = &str[high_len];
+        high = strtoull(str, &iter, JAEGERTRACINGC_HEX_BASE);
+        if (iter != &str[high_len]) {
+            const int offset = iter - str;
             return first + offset;
         }
-        iter = (char*) last;
-        low = strtoull(last - JAEGERTRACINGC_UINT64_MAX_STR_LEN,
-                       &iter,
-                       JAEGERTRACINGC_HEX_BASE);
+        memcpy(str, first + high_len, JAEGERTRACINGC_UINT64_MAX_STR_LEN - 1);
+        str[JAEGERTRACINGC_UINT64_MAX_STR_LEN - 1] = '\0';
+        iter = &str[JAEGERTRACINGC_UINT64_MAX_STR_LEN - 1];
+        str_len = JAEGERTRACINGC_UINT64_MAX_STR_LEN - 1;
     }
-    if (iter != last) {
-        return iter;
+    else {
+        memcpy(str, first, len);
+        str[len] = '\0';
+        iter = &str[len];
+        str_len = len;
+    }
+    low = strtoull(str, &iter, JAEGERTRACINGC_HEX_BASE);
+    if (iter != &str[str_len]) {
+        const int offset = iter - str;
+        return first + offset;
     }
     *trace_id = (jaeger_trace_id){.high = high, .low = low};
     return last;
