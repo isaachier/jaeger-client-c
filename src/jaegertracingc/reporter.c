@@ -42,3 +42,8 @@ jaeger_reporter* jaeger_null_reporter()
     jaeger_do_once(&once, &init_null_reporter);
     return &null_reporter;
 }
+
+static void __attribute__((unused))
+reporter_log_span(jaeger_reporter* reporter, const jaeger_span* span)
+{
+}

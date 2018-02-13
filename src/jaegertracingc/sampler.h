@@ -29,7 +29,7 @@
 #include "jaegertracingc/tag.h"
 #include "jaegertracingc/threading.h"
 #include "jaegertracingc/token_bucket.h"
-#include "jaegertracingc/types.h"
+#include "jaegertracingc/trace_id.h"
 
 #ifdef __cplusplus
 extern "C" {

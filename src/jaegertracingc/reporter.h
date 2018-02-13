@@ -19,7 +19,7 @@
 
 #include "jaegertracingc/common.h"
 #include "jaegertracingc/logging.h"
-#include "jaegertracingc/types.h"
+#include "jaegertracingc/span.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -40,6 +40,9 @@ typedef struct jaeger_logging_reporter {
     JAEGERTRACINGC_REPORTER_SUBCLASS;
     jaeger_logger* logger;
 } jaeger_logging_reporter;
+
+void jaeger_logging_reporter_init(jaeger_logging_reporter* reporter,
+                                  jaeger_logger* logger);
 
 typedef struct jaeger_in_memory_reporter {
     JAEGERTRACINGC_REPORTER_SUBCLASS;

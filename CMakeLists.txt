@@ -76,12 +76,16 @@ set(core_src
   "src/jaegertracingc/sampler.h"
   "src/jaegertracingc/sampling_strategy.c"
   "src/jaegertracingc/sampling_strategy.h"
+  "src/jaegertracingc/span.c"
+  "src/jaegertracingc/span.h"
   "src/jaegertracingc/tag.c"
   "src/jaegertracingc/tag.h"
   "src/jaegertracingc/threading.c"
   "src/jaegertracingc/threading.h"
   "src/jaegertracingc/token_bucket.c"
   "src/jaegertracingc/token_bucket.h"
+  "src/jaegertracingc/trace_id.c"
+  "src/jaegertracingc/trace_id.h"
   "src/jaegertracingc/types.c"
   "src/jaegertracingc/types.h")
 
@@ -97,9 +101,10 @@ set(protoc_gen_src
 
 add_library(jaegertracingc ${core_src} ${protoc_gen_src})
 
+set(generated_header_dir "${CMAKE_CURRENT_BINARY_DIR}/include/jaegertracingc")
 configure_file(
   "src/jaegertracingc/constants.h.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/include/jaegertracingc/constants.h"
+  "${generated_header_dir}/constants.h"
   @ONLY)
 target_include_directories(jaegertracingc PUBLIC
   "src" "${CMAKE_CURRENT_BINARY_DIR}/include")
@@ -133,35 +138,31 @@ if(BUILD_TESTING)
 
   set(test_src
     "src/jaegertracingc/alloc_test.c"
-    "src/jaegertracingc/alloc_test.h"
     "src/jaegertracingc/duration_test.c"
-    "src/jaegertracingc/duration_test.h"
     "src/jaegertracingc/logging_test.c"
-    "src/jaegertracingc/logging_test.h"
     "src/jaegertracingc/metrics_test.c"
-    "src/jaegertracingc/metrics_test.h"
     "src/jaegertracingc/net_test.c"
-    "src/jaegertracingc/net_test.h"
     "src/jaegertracingc/sampler_test.c"
-    "src/jaegertracingc/sampler_test.h"
     "src/jaegertracingc/tag_test.c"
-    "src/jaegertracingc/tag_test.h"
-    "src/jaegertracingc/token_bucket_test.c"
-    "src/jaegertracingc/token_bucket_test.h")
+    "src/jaegertracingc/trace_id_test.c"
+    "src/jaegertracingc/token_bucket_test.c")
   foreach(test_file ${test_src})
-    get_filename_component(test_ext ${test_file} EXT)
-    if(test_ext STREQUAL ".h")
-      get_filename_component(test_inc ${test_file} NAME_WE)
-      set(unit_test_driver_includes
-          "${unit_test_driver_includes}\n#include \"${test_inc}.h\"")
-      string(REPLACE "_test" "" test_case "${test_inc}")
-      set(unit_test_driver_impl
-          "${unit_test_driver_impl}\n    RUN_TEST(test_${test_case});")
-    endif()
+    get_filename_component(test_component ${test_file} NAME_WE)
+    string(REPLACE "_test" "" test_component "${test_component}")
+    string(TOUPPER "${test_component}" test_component_upper)
+    configure_file(
+      "src/jaegertracingc/test.h.in"
+      "${generated_header_dir}/${test_component}_test.h"
+      @ONLY)
+
+    set(unit_test_driver_includes
+        "${unit_test_driver_includes}\n#include \"${test_component}_test.h\"")
+    set(unit_test_driver_impl
+        "${unit_test_driver_impl}\n    RUN_TEST(test_${test_component});")
   endforeach()
   configure_file(
     "src/jaegertracingc/unit_test_driver.h.in"
-    "include/jaegertracingc/unit_test_driver.h"
+    "${generated_header_dir}/unit_test_driver.h"
     @ONLY)
   add_library(jaegertracingc_test ${test_src})
   target_include_directories(jaegertracingc_test PUBLIC

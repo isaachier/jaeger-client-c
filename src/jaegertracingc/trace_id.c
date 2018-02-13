@@ -14,17 +14,4 @@
  * limitations under the License.
  */
 
-#ifndef JAEGERTRACINGC_ALLOC_TEST_H
-#define JAEGERTRACINGC_ALLOC_TEST_H
-
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
-void test_alloc();
-
-#ifdef __cplusplus
-} /* extern C */
-#endif /* __cplusplus */
-
-#endif /* JAEGERTRACINGC_ALLOC_TEST_H */
+#include "jaegertracingc/trace_id.h"

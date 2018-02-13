@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include "jaegertracingc/sampler.h"
 #include <errno.h>
 #include <http_parser.h>
 #include <netinet/in.h>
@@ -22,7 +23,6 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include "jaegertracingc/sampler.h"
 #include "jaegertracingc/threading.h"
 #include "unity.h"
 
@@ -81,7 +81,7 @@
                (sampler).lower_bound_sampler.max_traces_per_second, \
                (tags))
 
-void test_const_sampler()
+static inline void test_const_sampler()
 {
     SET_UP_SAMPLER_TEST();
 
@@ -101,7 +101,7 @@ void test_const_sampler()
     TEAR_DOWN_SAMPLER_TEST(c);
 }
 
-void test_probabilistic_sampler()
+static inline void test_probabilistic_sampler()
 {
     SET_UP_SAMPLER_TEST();
 
@@ -123,7 +123,7 @@ void test_probabilistic_sampler()
     TEAR_DOWN_SAMPLER_TEST(p);
 }
 
-void test_rate_limiting_sampler()
+static inline void test_rate_limiting_sampler()
 {
     SET_UP_SAMPLER_TEST();
 
@@ -143,7 +143,7 @@ void test_rate_limiting_sampler()
     TEAR_DOWN_SAMPLER_TEST(r);
 }
 
-void test_guaranteed_throughput_probabilistic_sampler()
+static inline void test_guaranteed_throughput_probabilistic_sampler()
 {
     SET_UP_SAMPLER_TEST();
 
@@ -187,7 +187,7 @@ void test_guaranteed_throughput_probabilistic_sampler()
     TEAR_DOWN_SAMPLER_TEST(g);
 }
 
-void test_adaptive_sampler()
+static inline void test_adaptive_sampler()
 {
     SET_UP_SAMPLER_TEST();
 
@@ -444,7 +444,7 @@ static inline void mock_http_server_destroy(mock_http_server* server)
     memset(&server->addr, 0, sizeof(server->addr));
 }
 
-void test_remotely_controlled_sampler()
+static inline void test_remotely_controlled_sampler()
 {
     jaeger_logger* logger = jaeger_null_logger();
     jaeger_metrics* metrics = jaeger_null_metrics();
@@ -507,7 +507,7 @@ void test_remotely_controlled_sampler()
     r.destroy((jaeger_destructible*) &r);
 }
 
-void test_sampler_choice()
+static inline void test_sampler_choice()
 {
     jaeger_logger* logger = jaeger_null_logger();
     jaeger_sampler_choice choice;
@@ -527,4 +527,15 @@ void test_sampler_choice()
     } while (0);
 
     FOR_EACH_SAMPLER_TEST(CHECK_ASSIGN)
+}
+
+void test_sampler()
+{
+    RUN_TEST(test_const_sampler);
+    RUN_TEST(test_probabilistic_sampler);
+    RUN_TEST(test_rate_limiting_sampler);
+    RUN_TEST(test_guaranteed_throughput_probabilistic_sampler);
+    RUN_TEST(test_adaptive_sampler);
+    RUN_TEST(test_remotely_controlled_sampler);
+    RUN_TEST(test_sampler_choice);
 }

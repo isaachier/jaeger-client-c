@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-#ifndef JAEGERTRACINGC_NET_TEST_H
-#define JAEGERTRACINGC_NET_TEST_H
+#ifndef JAEGERTRACINGC_@test_component_upper@_TEST_H
+#define JAEGERTRACINGC_@test_component_upper@_TEST_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-void test_net();
+void test_@test_component@();
 
 #ifdef __cplusplus
 } /* extern C */
 #endif /* __cplusplus */
 
-#endif /* JAEGERTRACINGC_NET_TEST_H */
+#endif /* JAEGERTRACINGC_@test_component@_TEST_H */

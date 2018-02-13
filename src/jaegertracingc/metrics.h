@@ -17,7 +17,6 @@
 #ifndef JAEGERTRACINGC_METRICS_H
 #define JAEGERTRACINGC_METRICS_H
 
-#include <assert.h>
 #include "jaegertracingc/alloc.h"
 #include "jaegertracingc/common.h"
 #include "jaegertracingc/logging.h"

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-#include <stdlib.h>
 #include "alloc.h"
 #include "init.h"
 #include "unit_test_driver.h"

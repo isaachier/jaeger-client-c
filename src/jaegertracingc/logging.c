@@ -15,10 +15,7 @@
  */
 
 #include "jaegertracingc/logging.h"
-#include <assert.h>
 #include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
 #include "jaegertracingc/threading.h"
 
 static void null_log(jaeger_logger* logger, const char* format, ...)
