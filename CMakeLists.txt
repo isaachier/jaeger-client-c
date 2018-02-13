@@ -34,7 +34,7 @@ if(JAEGERTRACINGC_COVERAGE)
   set(COVERAGE_EXCLUDES
     "${CMAKE_CURRENT_SOURCE_DIR}/src/jaegertracingc/*_test.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/jaegertracingc/*_test.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/jaegertracingc/protoc-gen/*"
+    "${CMAKE_CURRENT_BINARY_DIR}/src/jaegertracingc/protoc-gen/*"
     "${CMAKE_CURRENT_SOURCE_DIR}/third_party/unity/src/*")
 endif()
 
@@ -89,25 +89,46 @@ set(core_src
   "src/jaegertracingc/types.c"
   "src/jaegertracingc/types.h")
 
-set(protoc_gen_src
-  "src/jaegertracingc/protoc-gen/agent.pb-c.c"
-  "src/jaegertracingc/protoc-gen/agent.pb-c.h"
-  "src/jaegertracingc/protoc-gen/baggage.pb-c.c"
-  "src/jaegertracingc/protoc-gen/baggage.pb-c.h"
-  "src/jaegertracingc/protoc-gen/jaeger.pb-c.c"
-  "src/jaegertracingc/protoc-gen/jaeger.pb-c.h"
-  "src/jaegertracingc/protoc-gen/sampling.pb-c.c"
-  "src/jaegertracingc/protoc-gen/sampling.pb-c.h")
+set(generated_src_dir "${CMAKE_CURRENT_BINARY_DIR}/src/jaegertracingc")
 
+if(NOT PROTOC_C_EXECUTABLE)
+  message(FATAL_ERROR "Cannot find protoc-c executable")
+endif()
+
+file(MAKE_DIRECTORY "${generated_src_dir}/protoc-gen")
+function(generate_protobuf_c gen_src)
+  foreach(proto_src ${ARGN})
+    get_filename_component(component ${proto_src} NAME_WE)
+    set(protoc_out_files
+        "${generated_src_dir}/protoc-gen/${component}.pb-c.h"
+        "${generated_src_dir}/protoc-gen/${component}.pb-c.c")
+    add_custom_command(
+      OUTPUT ${protoc_out_files}
+      COMMAND ${PROTOC_C_EXECUTABLE} --c_out "${generated_src_dir}/protoc-gen"
+              -I "${CMAKE_CURRENT_SOURCE_DIR}/idl/protobuf" ${proto_src}
+      MAIN_DEPENDENCY ${proto_src}
+      DEPENDENCIES ${PROTOC_C_EXECUTABLE}
+      VERBATIM
+      USES_TERMINAL)
+    list(APPEND out_files ${protoc_out_files})
+  endforeach()
+  set(${gen_src} ${out_files} PARENT_SCOPE)
+endfunction()
+
+generate_protobuf_c(
+  protoc_gen_src
+  "${CMAKE_CURRENT_SOURCE_DIR}/idl/protobuf/agent.proto"
+  "${CMAKE_CURRENT_SOURCE_DIR}/idl/protobuf/baggage.proto"
+  "${CMAKE_CURRENT_SOURCE_DIR}/idl/protobuf/jaeger.proto"
+  "${CMAKE_CURRENT_SOURCE_DIR}/idl/protobuf/sampling.proto")
 add_library(jaegertracingc ${core_src} ${protoc_gen_src})
 
-set(generated_header_dir "${CMAKE_CURRENT_BINARY_DIR}/include/jaegertracingc")
 configure_file(
   "src/jaegertracingc/constants.h.in"
-  "${generated_header_dir}/constants.h"
+  "${generated_src_dir}/constants.h"
   @ONLY)
 target_include_directories(jaegertracingc PUBLIC
-  "src" "${CMAKE_CURRENT_BINARY_DIR}/include")
+  "src" "${CMAKE_CURRENT_BINARY_DIR}/src")
 
 target_link_libraries(jaegertracingc PUBLIC
   http-parser::http-parser
@@ -152,7 +173,7 @@ if(BUILD_TESTING)
     string(TOUPPER "${test_component}" test_component_upper)
     configure_file(
       "src/jaegertracingc/test.h.in"
-      "${generated_header_dir}/${test_component}_test.h"
+      "${generated_src_dir}/${test_component}_test.h"
       @ONLY)
 
     set(unit_test_driver_includes
@@ -162,12 +183,11 @@ if(BUILD_TESTING)
   endforeach()
   configure_file(
     "src/jaegertracingc/unit_test_driver.h.in"
-    "${generated_header_dir}/unit_test_driver.h"
+    "${generated_src_dir}/unit_test_driver.h"
     @ONLY)
   add_library(jaegertracingc_test ${test_src})
   target_include_directories(jaegertracingc_test PUBLIC
-    "src/jaegertracingc"
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include/jaegertracingc>)
+    "src/jaegertracingc" $<BUILD_INTERFACE:${generated_src_dir}>)
   target_link_libraries(jaegertracingc_test PUBLIC jaegertracingc unity)
 
   add_executable(default_test "src/jaegertracingc/default_test_driver.c")

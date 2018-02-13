@@ -23,6 +23,7 @@
 #
 # PROTOBUF_C_FOUND      - True if the system has the ProtobufC library
 # PROTOBUF_C_VERSION    - The version of the ProtobufC library which was found
+# PROTOC_C_EXECUTABLE   - The protoc-c executable, protoc-c-NOTFOUND otherwise
 #
 # and the following imported targets::
 #
@@ -62,3 +63,5 @@ if(PROTOBUF_C_FOUND AND NOT TARGET ProtobufC::ProtobufC)
     INTERFACE_COMPILE_OPTIONS "${PC_PROTOBUF_C_CFLAGS_OTHER}"
     INTERFACE_INCLUDE_DIRECTORIES "${PROTOBUF_C_INCLUDE_DIR}")
 endif()
+
+find_program(PROTOC_C_EXECUTABLE NAMES protoc-c)
