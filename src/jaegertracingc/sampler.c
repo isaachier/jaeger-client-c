@@ -928,7 +928,7 @@ parse_per_operation_sampling_json(jaeger_per_operation_strategy* strategy,
         json_unpack_ex(json,
                        &err,
                        0,
-                       "{sf sf s?O}",
+                       "{sf sf s?o}",
                        "defaultSamplingProbability",
                        &strategy->default_sampling_probability,
                        "defaultLowerBoundTracesPerSecond",
@@ -958,7 +958,6 @@ parse_per_operation_sampling_json(jaeger_per_operation_strategy* strategy,
         else {
             logger->error(logger, "perOperationStrategies must be an array");
         }
-        json_decref(array);
         return false;
     }
 
@@ -1011,7 +1010,7 @@ parse_per_operation_sampling_json(jaeger_per_operation_strategy* strategy,
         const int result = json_unpack_ex(op_json,
                                           &err,
                                           0,
-                                          "{ss sO}",
+                                          "{ss so}",
                                           "operation",
                                           &operation_name,
                                           "probabilisticSampling",
@@ -1045,8 +1044,6 @@ parse_per_operation_sampling_json(jaeger_per_operation_strategy* strategy,
         jaeger_per_operation_strategy_destroy(strategy);
     }
 
-    json_decref(array);
-
     return success;
 }
 
@@ -1073,8 +1070,7 @@ static inline bool jaeger_http_sampling_manager_parse_response_json(
     /* Although we could shrink the response buffer at this point, the next
      * response will probably need a response buffer about the same size. To
      * avoid incurring performance hits for multiple allocations, we can
-     * keep
-     * the buffer until the manager is freed.
+     * keep the buffer until the manager is freed.
      */
 
     json_t* probabilistic_json = NULL;
@@ -1083,7 +1079,7 @@ static inline bool jaeger_http_sampling_manager_parse_response_json(
     const int result = json_unpack_ex(response_json,
                                       &err,
                                       0,
-                                      "{s?O s?O s?O}",
+                                      "{s?o s?o s?o}",
                                       "probabilisticSampling",
                                       &probabilistic_json,
                                       "rateLimitingSampling",
@@ -1168,15 +1164,6 @@ static inline bool jaeger_http_sampling_manager_parse_response_json(
 
 cleanup:
     json_decref(response_json);
-    if (probabilistic_json != NULL) {
-        json_decref(probabilistic_json);
-    }
-    if (rate_limiting_json != NULL) {
-        json_decref(rate_limiting_json);
-    }
-    if (per_operation_json != NULL) {
-        json_decref(per_operation_json);
-    }
     return success;
 }
 

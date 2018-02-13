@@ -504,6 +504,7 @@ static inline void test_remotely_controlled_sampler()
     r.is_sampled(
         (jaeger_sampler*) &r, &trace_id, "test-operation", &tags, logger);
 
+    jaeger_tag_list_destroy(&tags);
     r.destroy((jaeger_destructible*) &r);
 }
 
