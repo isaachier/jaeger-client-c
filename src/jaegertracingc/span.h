@@ -39,6 +39,14 @@ jaeger_span_format(const jaeger_span* span, char* buffer, int buffer_len)
     assert(buffer_len >= 0);
     const int trace_id_len =
         jaeger_trace_id_format(&span->trace_id, buffer, buffer_len);
+    if (trace_id_len > buffer_len) {
+        return trace_id_len + snprintf(NULL,
+                                       0,
+                                       ":%lx:%lx:%x",
+                                       span->span_id,
+                                       span->parent_id,
+                                       span->flags);
+    }
     return snprintf(&buffer[trace_id_len],
                     buffer_len - trace_id_len,
                     ":%lx:%lx:%x",

@@ -74,7 +74,8 @@ static inline const char* jaeger_trace_id_scan(jaeger_trace_id* trace_id,
         iter = &high_str[high_len];
         high = strtoull(high_str, &iter, JAEGERTRACINGC_HEX_BASE);
         if (iter != &high_str[high_len]) {
-            return iter;
+            const int offset = iter - high_str;
+            return first + offset;
         }
         iter = (char*) last;
         low = strtoull(last - JAEGERTRACINGC_UINT64_MAX_STR_LEN,
