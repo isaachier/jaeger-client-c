@@ -23,64 +23,22 @@
 #include "jaegertracingc/alloc.h"
 #include "jaegertracingc/common.h"
 #include "jaegertracingc/types.h"
+#include "jaegertracingc/vector.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-#define JAEGERTRACINGC_TAGS_INIT_SIZE 10
-#define JAEGERTRACINGC_TAGS_RESIZE_FACTOR 2
-
 typedef struct jaeger_tag_list {
-    jaeger_tag* tags;
-    int size;
-    int capacity;
+    jaeger_vector tags;
 } jaeger_tag_list;
 
-static inline bool jaeger_tag_alloc_list(jaeger_tag_list* list,
-                                         jaeger_logger* logger)
-{
-    assert(logger != NULL);
-    list->tags =
-        jaeger_malloc(sizeof(jaeger_tag) * JAEGERTRACINGC_TAGS_INIT_SIZE);
-    if (list->tags == NULL) {
-        logger->error(logger, "Cannot allocate jaeger_tag_list");
-        return false;
-    }
-    list->capacity = JAEGERTRACINGC_TAGS_INIT_SIZE;
-    return true;
-}
-
-static inline bool jaeger_tag_resize(jaeger_tag_list* list,
-                                     jaeger_logger* logger)
-{
-    assert(list != NULL);
-    const int new_capacity = list->capacity * JAEGERTRACINGC_TAGS_RESIZE_FACTOR;
-    jaeger_tag* new_tags =
-        jaeger_realloc(list->tags, sizeof(jaeger_tag) * new_capacity);
-    if (new_tags == NULL) {
-        logger->error(logger,
-                      "Cannot allocate more space for jaeger_tag_list,"
-                      "current capacity = %d, resize factor = %d",
-                      list->capacity,
-                      JAEGERTRACINGC_TAGS_RESIZE_FACTOR);
-        return false;
-    }
-    list->capacity = new_capacity;
-    list->tags = new_tags;
-    return true;
-}
-
 static inline bool jaeger_tag_list_init(jaeger_tag_list* list,
+                                        jaeger_allocator* alloc,
                                         jaeger_logger* logger)
 {
     assert(list != NULL);
-    if (!jaeger_tag_alloc_list(list, logger)) {
-        return false;
-    }
-    list->size = 0;
-    list->capacity = JAEGERTRACINGC_TAGS_INIT_SIZE;
-    return true;
+    return jaeger_vector_init(&list->tags, sizeof(jaeger_tag), alloc, logger);
 }
 
 static inline bool
@@ -164,10 +122,10 @@ static inline void jaeger_tag_destroy(jaeger_tag* tag)
 static inline void jaeger_tag_list_clear(jaeger_tag_list* list)
 {
     assert(list != NULL);
-    for (int i = 0; i < list->size; i++) {
-        jaeger_tag_destroy(&list->tags[i]);
+    for (int i = 0; i < jaeger_vector_length(&list->tags); i++) {
+        jaeger_tag_destroy(jaeger_vector_get(&list->tags, i, NULL));
     }
-    list->size = 0;
+    jaeger_vector_clear(&list->tags);
 }
 
 static inline bool jaeger_tag_list_append(jaeger_tag_list* list,
@@ -176,30 +134,26 @@ static inline bool jaeger_tag_list_append(jaeger_tag_list* list,
 {
     assert(list != NULL);
     assert(tag != NULL);
-    if (list->tags == NULL && !jaeger_tag_alloc_list(list, logger)) {
+    jaeger_tag tag_copy;
+    if (!jaeger_tag_copy(&tag_copy, tag, logger)) {
         return false;
     }
-    assert(list->size <= list->capacity);
-    if (list->size == list->capacity && !jaeger_tag_resize(list, logger)) {
+    jaeger_tag* new_tag = jaeger_vector_append(&list->tags, logger);
+    if (new_tag == NULL) {
+        jaeger_tag_destroy(&tag_copy);
         return false;
     }
-
-    if (!jaeger_tag_copy(&list->tags[list->size], tag, logger)) {
-        return false;
-    }
-    list->size++;
+    memcpy(new_tag, &tag_copy, sizeof(tag_copy));
     return true;
 }
 
 static inline void jaeger_tag_list_destroy(jaeger_tag_list* list)
 {
-    assert(list != NULL);
-    if (list->tags != NULL) {
-        for (int i = 0; i < list->size; i++) {
-            jaeger_tag_destroy(&list->tags[i]);
+    if (list != NULL) {
+        for (int i = 0; i < jaeger_vector_length(&list->tags); i++) {
+            jaeger_tag_destroy(jaeger_vector_get(&list->tags, i, NULL));
         }
-        jaeger_free(list->tags);
-        list->tags = NULL;
+        jaeger_vector_destroy(&list->tags);
     }
 }
 

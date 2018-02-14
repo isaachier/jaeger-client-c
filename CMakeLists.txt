@@ -102,7 +102,9 @@ set(core_src
   "src/jaegertracingc/trace_id.c"
   "src/jaegertracingc/trace_id.h"
   "src/jaegertracingc/types.c"
-  "src/jaegertracingc/types.h")
+  "src/jaegertracingc/types.h"
+  "src/jaegertracingc/vector.c"
+  "src/jaegertracingc/vector.h")
 
 set(generated_src_dir "${CMAKE_CURRENT_BINARY_DIR}/src/jaegertracingc")
 
@@ -181,7 +183,8 @@ if(BUILD_TESTING)
     "src/jaegertracingc/sampler_test.c"
     "src/jaegertracingc/tag_test.c"
     "src/jaegertracingc/trace_id_test.c"
-    "src/jaegertracingc/token_bucket_test.c")
+    "src/jaegertracingc/token_bucket_test.c"
+    "src/jaegertracingc/vector_test.c")
   foreach(test_file ${test_src})
     get_filename_component(test_component ${test_file} NAME_WE)
     string(REPLACE "_test" "" test_component "${test_component}")

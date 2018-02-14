@@ -58,6 +58,7 @@ jaeger_span_format(const jaeger_span* span, char* buffer, int buffer_len)
 static inline const char*
 jaeger_span_scan(jaeger_span* span, const char* first, const char* last)
 {
+    /* TODO */
     return NULL;
 }
 

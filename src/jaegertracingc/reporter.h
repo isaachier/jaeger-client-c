@@ -46,16 +46,16 @@ void jaeger_logging_reporter_init(jaeger_logging_reporter* reporter,
 
 typedef struct jaeger_in_memory_reporter {
     JAEGERTRACINGC_REPORTER_SUBCLASS;
-    jaeger_span* spans;
     int num_spans;
     int capacity;
+    jaeger_span* spans;
 } jaeger_in_memory_reporter;
 
 typedef struct jaeger_composite_reporter {
     JAEGERTRACINGC_REPORTER_SUBCLASS;
-    jaeger_reporter* reporters;
     int num_reporters;
     int capacity;
+    jaeger_reporter* reporters;
 } jaeger_composite_reporter;
 
 typedef struct jaeger_remote_reporter {

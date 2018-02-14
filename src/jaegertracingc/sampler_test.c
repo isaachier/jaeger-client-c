@@ -29,7 +29,7 @@
 #define SET_UP_SAMPLER_TEST()                                      \
     jaeger_logger* logger = jaeger_null_logger();                  \
     jaeger_tag_list tags;                                          \
-    jaeger_tag_list_init(&tags, logger);                           \
+    jaeger_tag_list_init(&tags, NULL, logger);                     \
     const char* operation_name = "test-operation";                 \
     (void) operation_name;                                         \
     const jaeger_trace_id trace_id = JAEGERTRACINGC_TRACE_ID_INIT; \
@@ -46,18 +46,21 @@
 #define CHECK_TAGS(                                                          \
     sampler_type, param_type, value_member, param_value, tag_list)           \
     do {                                                                     \
-        TEST_ASSERT_EQUAL(2, (tag_list).size);                               \
+        TEST_ASSERT_EQUAL(2, jaeger_vector_length(&tag_list.tags));          \
+        jaeger_tag* tag = jaeger_vector_get(&tag_list.tags, 0, logger);      \
+        TEST_ASSERT_NOT_NULL(tag);                                           \
         TEST_ASSERT_EQUAL_STRING(JAEGERTRACINGC_SAMPLER_TYPE_TAG_KEY,        \
-                                 (tag_list).tags[0].key);                    \
-        TEST_ASSERT_EQUAL(JAEGERTRACINGC_TAG_TYPE(STR),                      \
-                          (tag_list).tags[0].value_case);                    \
+                                 tag->key);                                  \
+        TEST_ASSERT_EQUAL(JAEGERTRACINGC_TAG_TYPE(STR), tag->value_case);    \
         TEST_ASSERT_EQUAL_STRING(JAEGERTRACINGC_SAMPLER_TYPE_##sampler_type, \
-                                 (tag_list).tags[0].str_value);              \
+                                 tag->str_value);                            \
+        tag = jaeger_vector_get(&tag_list.tags, 1, logger);                  \
+        TEST_ASSERT_NOT_NULL(tag);                                           \
         TEST_ASSERT_EQUAL_STRING(JAEGERTRACINGC_SAMPLER_PARAM_TAG_KEY,       \
-                                 (tag_list).tags[1].key);                    \
+                                 tag->key);                                  \
         TEST_ASSERT_EQUAL(JAEGERTRACINGC_TAG_TYPE(param_type),               \
-                          (tag_list).tags[1].value_case);                    \
-        TEST_ASSERT_EQUAL((param_value), (tag_list).tags[1].value_member);   \
+                          tag->value_case);                                  \
+        TEST_ASSERT_EQUAL((param_value), tag->value_member);                 \
     } while (0)
 
 #define CHECK_CONST_TAGS(sampler, tags) \
@@ -500,7 +503,7 @@ static inline void test_remotely_controlled_sampler()
 
     const jaeger_trace_id trace_id = {.high = 0, .low = 0};
     jaeger_tag_list tags;
-    jaeger_tag_list_init(&tags, logger);
+    jaeger_tag_list_init(&tags, NULL, logger);
     r.is_sampled(
         (jaeger_sampler*) &r, &trace_id, "test-operation", &tags, logger);
 

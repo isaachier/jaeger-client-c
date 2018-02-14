@@ -99,7 +99,7 @@ function(setup_target_for_coverage)
   add_custom_target(${Coverage_NAME}
 
     # Cleanup lcov
-    COMMAND  --directory . --zerocounters
+    COMMAND  ${LCOV_INVOKE} --directory . --zerocounters
 
     # Run tests
     ${exe_commands}
