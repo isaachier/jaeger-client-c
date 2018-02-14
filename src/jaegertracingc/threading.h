@@ -84,12 +84,9 @@ static inline int jaeger_thread_init(jaeger_thread* thread, void** return_value)
     return 0;
 }
 
-typedef struct {
-} jaeger_mutex;
+typedef char jaeger_mutex;
 
-#define JAEGERTRACINGC_MUTEX_INIT \
-    {                             \
-    }
+#define JAEGERTRACINGC_MUTEX_INIT '\0'
 
 static inline int jaeger_mutex_lock(jaeger_mutex* mutex)
 {
