@@ -14,22 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -e
+# Based on advice in
+# http://logan.tw/posts/2015/04/28/check-code-coverage-with-clang-and-lcov/.
 
-function main() {
-    local project_dir
-    project_dir=$(git rev-parse --show-toplevel)
-    cd "$project_dir" || exit 1
-
-    local srcs
-    srcs=$(git ls-files src | grep -E '\.(c|h)$' | grep -E -v 'protoc-gen')
-
-    local cmd
-    for src in $srcs; do
-        cmd="clang-format -i $src"
-        echo "$cmd"
-        eval "$cmd"
-    done
-}
-
-main
+exec llvm-cov gcov "$@"

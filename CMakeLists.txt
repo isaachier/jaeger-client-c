@@ -1,3 +1,17 @@
+# Copyright (c) 2018 Uber Technologies, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 cmake_minimum_required(VERSION 3.1)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
@@ -12,6 +26,7 @@ include(CheckCCompilerFlag)
 include(CheckFunctionExists)
 include(CMakeDependentOption)
 include(CTest)
+include(GenerateDocumentation)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -194,16 +209,11 @@ if(BUILD_TESTING)
   target_link_libraries(default_test PUBLIC jaegertracingc_test)
   add_test(default_test default_test)
 
-  add_executable(oom_test "src/jaegertracingc/oom_test_driver.c")
-  target_link_libraries(oom_test PUBLIC jaegertracingc_test)
-  add_test(oom_test oom_test)
-
   if(JAEGERTRACINGC_COVERAGE)
     setup_target_for_coverage(
       NAME unit_test_coverage
-      EXECUTABLE ${CMAKE_CURRENT_BINARY_DIR}/default_test &&
-								 ${CMAKE_CURRENT_BINARY_DIR}/oom_test
-      DEPENDENCIES default_test oom_test)
+      EXECUTABLE ${CMAKE_CURRENT_BINARY_DIR}/default_test
+      DEPENDENCIES default_test)
   endif()
 endif()
 
@@ -221,38 +231,9 @@ else()
   message(STATUS
     "Will not build documentation because sphinx-build was not found")
 endif()
+
 cmake_dependent_option(JAEGERTRACINGC_BUILD_DOC "Build documentation" ON
                        "doxygen;sphinx_build" OFF)
 if(JAEGERTRACINGC_BUILD_DOC)
-	set(copyright_holder "Uber Technologies, Inc.")
-	string(TIMESTAMP copyright_year "%Y")
-  set(sphinx_relative_path "doc")
-  set(sphinx_src_path "${CMAKE_CURRENT_SOURCE_DIR}/${sphinx_relative_path}")
-  set(sphinx_out_path "${CMAKE_CURRENT_BINARY_DIR}/${sphinx_relative_path}")
-  set(static_path "${sphinx_src_path}/_static")
-  set(templates_path "${sphinx_src_path}/_templates")
-  file(RELATIVE_PATH constants_in_h_rel_path
-    ${sphinx_out_path}
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/jaegertracingc/constants.h.in")
-  get_filename_component(src_rel_path
-    ${constants_in_h_rel_path}
-    DIRECTORY)
-  file(RELATIVE_PATH constants_gen_h_rel_path
-    ${sphinx_out_path}
-    "${CMAKE_CURRENT_BINARY_DIR}/include/jaegertracingc/constants.h")
-  get_filename_component(gen_inc_rel_path
-    ${constants_gen_h_rel_path}
-    DIRECTORY)
-
-  get_target_property(defs jaegertracingc COMPILE_DEFINITIONS)
-  get_target_property(inc jaegertracingc INCLUDE_DIRECTORIES)
-
-	configure_file("${sphinx_src_path}/conf.py.in"
-                 "${sphinx_out_path}/conf.py" @ONLY)
-	configure_file("${sphinx_src_path}/index.rst.in"
-                 "${sphinx_out_path}/index.rst" @ONLY)
-  add_custom_target(doc
-    COMMAND ${sphinx_build} -M html ${sphinx_out_path} ${sphinx_out_path}
-		VERBATIM
-		USES_TERMINAL)
+  generate_documentation()
 endif()
