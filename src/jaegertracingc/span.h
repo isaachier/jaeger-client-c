@@ -55,11 +55,56 @@ jaeger_span_format(const jaeger_span* span, char* buffer, int buffer_len)
                     span->flags);
 }
 
-static inline const char*
-jaeger_span_scan(jaeger_span* span, const char* first, const char* last)
+static inline bool jaeger_span_scan(jaeger_span* span, const char* str)
 {
-    /* TODO */
-    return NULL;
+    assert(span != NULL);
+    assert(str != NULL);
+    jaeger_trace_id trace_id = JAEGERTRACINGC_TRACE_ID_INIT;
+    const int len = strlen(str);
+    char buffer[len + 1];
+    memcpy(buffer, str, len);
+    buffer[len] = '\0';
+    uint64_t span_id = 0;
+    uint64_t parent_id = 0;
+    uint8_t flags = 0;
+    char* token = buffer;
+    char* token_context = NULL;
+    char* token_end = NULL;
+    for (int i = 0; i < 5; i++) {
+        token = strtok_r(i == 0 ? token : NULL, ":", &token_context);
+        if (token == NULL && i != 4) {
+            return false;
+        }
+        token_end = NULL;
+        switch (i) {
+        case 0:
+            if (!jaeger_trace_id_scan(&trace_id, token)) {
+                return false;
+            }
+            break;
+        case 1:
+            span_id = strtoull(token, &token_end, 16);
+            break;
+        case 2:
+            parent_id = strtoull(token, &token_end, 16);
+            break;
+        case 3:
+            flags = strtoull(token, &token_end, 16);
+            break;
+        default:
+            assert(i == 4);
+            break;
+        }
+        if (token_end != NULL && *token_end != '\0') {
+            return false;
+        }
+    }
+
+    *span = (jaeger_span){.trace_id = trace_id,
+                          .span_id = span_id,
+                          .parent_id = parent_id,
+                          .flags = flags};
+    return true;
 }
 
 #ifdef __cplusplus

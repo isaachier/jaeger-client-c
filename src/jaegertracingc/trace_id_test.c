@@ -30,24 +30,16 @@ void test_trace_id()
             jaeger_trace_id_format(&trace_id, buffer, sizeof(buffer));
         TEST_ASSERT_LESS_THAN(sizeof(buffer), str_len);
         jaeger_trace_id decoded_trace_id = JAEGERTRACINGC_TRACE_ID_INIT;
-        TEST_ASSERT_EQUAL(
-            buffer + str_len,
-            jaeger_trace_id_scan(&decoded_trace_id, buffer, buffer + str_len));
+        TEST_ASSERT_TRUE(jaeger_trace_id_scan(&decoded_trace_id, buffer));
         TEST_ASSERT_EQUAL(trace_id.high, decoded_trace_id.high);
         TEST_ASSERT_EQUAL(trace_id.low, decoded_trace_id.low);
     }
 
     jaeger_trace_id decoded_trace_id = JAEGERTRACINGC_TRACE_ID_INIT;
     const char* bad_trace_id_str = "abcfg";
-    TEST_ASSERT_EQUAL(
-        &bad_trace_id_str[4],
-        jaeger_trace_id_scan(&decoded_trace_id,
-                             bad_trace_id_str,
-                             bad_trace_id_str + strlen(bad_trace_id_str)));
+    TEST_ASSERT_FALSE(
+        jaeger_trace_id_scan(&decoded_trace_id, bad_trace_id_str));
     bad_trace_id_str = "g0000000000000000";
-    TEST_ASSERT_EQUAL(
-        &bad_trace_id_str[0],
-        jaeger_trace_id_scan(&decoded_trace_id,
-                             bad_trace_id_str,
-                             bad_trace_id_str + strlen(bad_trace_id_str)));
+    TEST_ASSERT_FALSE(
+        jaeger_trace_id_scan(&decoded_trace_id, bad_trace_id_str));
 }

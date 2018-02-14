@@ -181,6 +181,7 @@ if(BUILD_TESTING)
     "src/jaegertracingc/metrics_test.c"
     "src/jaegertracingc/net_test.c"
     "src/jaegertracingc/sampler_test.c"
+    "src/jaegertracingc/span_test.c"
     "src/jaegertracingc/tag_test.c"
     "src/jaegertracingc/trace_id_test.c"
     "src/jaegertracingc/token_bucket_test.c"
