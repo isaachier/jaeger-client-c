@@ -306,6 +306,7 @@ samplers_from_strategies(const jaeger_per_operation_strategy* strategies,
             jaeger_operation_sampler_destroy(
                 jaeger_vector_get(vec, index, NULL));
         }
+        jaeger_vector_clear(vec);
         return false;
     }
 
