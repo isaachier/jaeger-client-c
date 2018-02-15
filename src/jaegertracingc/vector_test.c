@@ -53,7 +53,8 @@ void test_vector()
     TEST_ASSERT_TRUE(jaeger_vector_init(
         &vec, sizeof(char), jaeger_built_in_allocator(), logger));
     vec.alloc = &alloc;
-    while (jaeger_vector_length(&vec) < JAEGERTRACINGC_VECTOR_INIT_CAPACITY) {
+    while (jaeger_vector_length(&vec) <
+           JAEGERTRACINGC_VECTOR_INIT_CAPACITY - 1) {
         TEST_ASSERT_NOT_NULL(jaeger_vector_append(&vec, logger));
     }
     TEST_ASSERT_NULL(jaeger_vector_append(&vec, logger));

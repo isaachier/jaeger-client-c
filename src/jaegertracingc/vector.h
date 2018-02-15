@@ -38,6 +38,12 @@ typedef struct jaeger_vector {
     jaeger_allocator* alloc;
 } jaeger_vector;
 
+static inline int jaeger_vector_length(jaeger_vector* vec)
+{
+    assert(vec != NULL);
+    return vec->len;
+}
+
 static inline bool jaeger_vector_init(jaeger_vector* vec,
                                       int type_size,
                                       jaeger_allocator* alloc,
@@ -77,22 +83,16 @@ jaeger_vector_get(jaeger_vector* vec, int index, jaeger_logger* logger)
 {
     assert(vec != NULL);
     assert(index >= 0);
-    if (index >= vec->len) {
+    if (index >= jaeger_vector_length(vec)) {
         if (logger != NULL) {
             logger->error(logger,
                           "Invalid access to index %d in vector of length %d",
                           index,
-                          vec->len);
+                          jaeger_vector_length(vec));
         }
         return NULL;
     }
     return jaeger_vector_offset(vec, index);
-}
-
-static inline int jaeger_vector_length(jaeger_vector* vec)
-{
-    assert(vec != NULL);
-    return vec->len;
 }
 
 static inline bool jaeger_vector_reserve(jaeger_vector* vec,
@@ -121,29 +121,43 @@ static inline bool jaeger_vector_reserve(jaeger_vector* vec,
     return true;
 }
 
+static inline void* jaeger_vector_extend(jaeger_vector* vec,
+                                         int insertion_pos,
+                                         int num_elements,
+                                         jaeger_logger* logger)
+{
+    assert(vec != NULL);
+    assert(num_elements >= 0);
+    assert(jaeger_vector_length(vec) <= vec->capacity);
+    if (jaeger_vector_length(vec) + num_elements >= vec->capacity &&
+        !jaeger_vector_reserve(
+            vec,
+            JAEGERTRACINGC_MAX(vec->capacity *
+                                   JAEGERTRACINGC_VECTOR_RESIZE_FACTOR,
+                               vec->capacity + num_elements),
+            logger)) {
+        return NULL;
+    }
+    if (insertion_pos < vec->len) {
+        memmove(jaeger_vector_offset(vec, insertion_pos + num_elements),
+                jaeger_vector_offset(vec, insertion_pos),
+                vec->type_size * (vec->len - insertion_pos));
+    }
+    void* offset = jaeger_vector_offset(vec, insertion_pos);
+    vec->len += num_elements;
+    return offset;
+}
+
 static inline void*
 jaeger_vector_insert(jaeger_vector* vec, int index, jaeger_logger* logger)
 {
-    assert(vec != NULL);
-    assert(vec->len <= vec->capacity);
-    if (vec->len == vec->capacity &&
-        !jaeger_vector_reserve(
-            vec, vec->capacity * JAEGERTRACINGC_VECTOR_RESIZE_FACTOR, logger)) {
-        return NULL;
-    }
-    if (index < vec->len) {
-        memmove(jaeger_vector_offset(vec, index + 1),
-                jaeger_vector_offset(vec, index),
-                vec->type_size * (vec->len - index));
-    }
-    vec->len++;
-    return jaeger_vector_offset(vec, index);
+    return jaeger_vector_extend(vec, index, 1, logger);
 }
 
 static inline void* jaeger_vector_append(jaeger_vector* vec,
                                          jaeger_logger* logger)
 {
-    return jaeger_vector_insert(vec, vec->len, logger);
+    return jaeger_vector_insert(vec, jaeger_vector_length(vec), logger);
 }
 
 static inline void jaeger_vector_clear(jaeger_vector* vec)
@@ -166,28 +180,25 @@ static inline void jaeger_vector_destroy(jaeger_vector* vec)
     }
 }
 
-static inline void*
-jaeger_vector_find(jaeger_vector* vec, const void* key, jaeger_comparator cmp)
-{
-    for (int i = 0; i < vec->len; i++) {
-        void* elem = jaeger_vector_offset(vec, i);
-        if (memcmp(elem, key, vec->type_size) == 0) {
-            return elem;
-        }
-    }
-    return NULL;
-}
+#define JAEGERTRACINGC_VECTOR_FOR_EACH(vec, op)                          \
+    do {                                                                 \
+        for (int i = 0, len = jaeger_vector_length(vec); i < len; i++) { \
+            void* elem = jaeger_vector_offset((vec), i);                 \
+            op(elem);                                                    \
+        }                                                                \
+    } while (0)
 
 static inline void jaeger_vector_sort(jaeger_vector* vec, jaeger_comparator cmp)
 {
-    qsort(vec->data, vec->len, vec->type_size, cmp);
+    qsort(vec->data, jaeger_vector_length(vec), vec->type_size, cmp);
 }
 
 static inline void* jaeger_vector_bsearch(jaeger_vector* vec,
                                           const void* key,
                                           jaeger_comparator cmp)
 {
-    return bsearch(key, vec->data, vec->len, vec->type_size, cmp);
+    return bsearch(
+        key, vec->data, jaeger_vector_length(vec), vec->type_size, cmp);
 }
 
 static inline int jaeger_vector_lower_bound(jaeger_vector* vec,
@@ -196,7 +207,7 @@ static inline int jaeger_vector_lower_bound(jaeger_vector* vec,
 {
     /* Lower bound based on example in
      * http://www.cplusplus.com/reference/algorithm/lower_bound/. */
-    int count = vec->len;
+    int count = jaeger_vector_length(vec);
     int pos = 0;
     while (count > 0) {
         const int step = count / 2;

@@ -394,10 +394,8 @@ static void jaeger_adaptive_sampler_destroy(jaeger_destructible* sampler)
 {
     assert(sampler != NULL);
     jaeger_adaptive_sampler* s = (jaeger_adaptive_sampler*) sampler;
-    for (int i = 0; i < jaeger_vector_length(&s->op_samplers); i++) {
-        jaeger_operation_sampler_destroy(
-            jaeger_vector_get(&s->op_samplers, i, NULL));
-    }
+    JAEGERTRACINGC_VECTOR_FOR_EACH(&s->op_samplers,
+                                   jaeger_operation_sampler_destroy);
     jaeger_vector_destroy(&s->op_samplers);
     jaeger_mutex_destroy(&s->mutex);
 }
@@ -583,10 +581,6 @@ jaeger_http_sampling_manager_parser_on_headers_complete(http_parser* parser)
     return 0;
 }
 
-#define RESPONSE_BUFFER_GROWTH_FACTOR 2
-#define RESPONSE_BUFFER_INIT_SIZE \
-    JAEGERTRACINGC_HTTP_SAMPLING_MANAGER_REQUEST_MAX_LEN
-
 static int jaeger_http_sampling_manager_parser_on_body(http_parser* parser,
                                                        const char* at,
                                                        size_t len)
@@ -598,25 +592,12 @@ static int jaeger_http_sampling_manager_parser_on_body(http_parser* parser,
     assert(manager != NULL);
     jaeger_logger* logger = ctx->logger;
     assert(logger != NULL);
-    if (manager->response_length + len > manager->response_capacity) {
-        const int new_response_capacity =
-            manager->response_capacity * RESPONSE_BUFFER_GROWTH_FACTOR;
-        char* new_response_buffer =
-            jaeger_realloc(manager->response_buffer, new_response_capacity);
-        if (new_response_buffer == NULL) {
-            logger->error(
-                logger,
-                "Cannot allocate larger buffer for JSON sampling "
-                "response, current length = %d, current capacity = %d",
-                manager->response_length,
-                manager->response_capacity);
-            return 1;
-        }
-        manager->response_capacity = new_response_capacity;
-        manager->response_buffer = new_response_buffer;
-    }
-    memcpy(&manager->response_buffer[manager->response_length], at, len);
-    manager->response_length += len;
+
+    char* ptr = jaeger_vector_extend(&manager->response,
+                                     jaeger_vector_length(&manager->response),
+                                     len,
+                                     logger);
+    memcpy(ptr, at, len);
     return 0;
 }
 
@@ -669,22 +650,20 @@ jaeger_http_sampling_manager_connect(jaeger_http_sampling_manager* manager,
 static inline void
 jaeger_http_sampling_manager_destroy(jaeger_http_sampling_manager* manager)
 {
-    assert(manager != NULL);
-    if (manager->fd >= 0) {
-        close(manager->fd);
-    }
-    if (manager->response_buffer != NULL) {
-        jaeger_free(manager->response_buffer);
-        manager->response_buffer = NULL;
-    }
-    jaeger_url_destroy(&manager->sampling_server_url);
-    if (manager->service_name != NULL) {
-        jaeger_free(manager->service_name);
-        manager->service_name = NULL;
-    }
-    if (manager->parser.data != NULL) {
-        jaeger_free(manager->parser.data);
-        manager->parser.data = NULL;
+    if (manager != NULL) {
+        if (manager->fd >= 0) {
+            close(manager->fd);
+        }
+        jaeger_url_destroy(&manager->sampling_server_url);
+        if (manager->service_name != NULL) {
+            jaeger_free(manager->service_name);
+            manager->service_name = NULL;
+        }
+        if (manager->parser.data != NULL) {
+            jaeger_free(manager->parser.data);
+            manager->parser.data = NULL;
+        }
+        jaeger_vector_destroy(&manager->response);
     }
 }
 
@@ -700,10 +679,6 @@ jaeger_http_sampling_manager_init(jaeger_http_sampling_manager* manager,
 
     manager->service_name = jaeger_strdup(service_name, logger);
     if (manager->service_name == NULL) {
-        logger->error(logger,
-                      "Cannot allocate service name for HTTP sampling "
-                      "manager, service name = \"%s\"",
-                      service_name);
         return false;
     }
 
@@ -715,23 +690,19 @@ jaeger_http_sampling_manager_init(jaeger_http_sampling_manager* manager,
     if (!jaeger_url_init(
             &manager->sampling_server_url, sampling_server_url, logger) ||
         !jaeger_host_port_from_url(
-            &sampling_host_port, &manager->sampling_server_url, logger) ||
-        !jaeger_http_sampling_manager_connect(
+            &sampling_host_port, &manager->sampling_server_url, logger)) {
+        goto cleanup_manager;
+    }
+    if (!jaeger_http_sampling_manager_connect(
             manager, &sampling_host_port, logger)) {
-        jaeger_host_port_destroy(&sampling_host_port);
-        jaeger_http_sampling_manager_destroy(manager);
-        return false;
+        goto cleanup_host_port;
     }
 
     http_parser_init(&manager->parser, HTTP_RESPONSE);
     parsing_context* ctx = jaeger_malloc(sizeof(parsing_context));
     if (ctx == NULL) {
-        logger->error(
-            logger,
-            "Cannot allocate parsing context for HTTP sampling manager parser");
-        jaeger_host_port_destroy(&sampling_host_port);
-        jaeger_http_sampling_manager_destroy(manager);
-        return false;
+        logger->error(logger, "Cannot allocate parsing context");
+        goto cleanup_host_port;
     }
     memset(ctx, 0, sizeof(*ctx));
     manager->parser.data = ctx;
@@ -741,26 +712,30 @@ jaeger_http_sampling_manager_init(jaeger_http_sampling_manager* manager,
     manager->settings.on_message_complete =
         &jaeger_http_sampling_manager_parser_on_message_complete;
 
-    manager->response_buffer = jaeger_malloc(RESPONSE_BUFFER_INIT_SIZE);
-    if (manager->response_buffer == NULL) {
-        logger->error(logger,
-                      "Cannot allocate response buffer in HTTP sampling "
-                      "manager, size = %d",
-                      RESPONSE_BUFFER_INIT_SIZE,
-                      logger);
-        jaeger_free(ctx);
-        jaeger_host_port_destroy(&sampling_host_port);
-        jaeger_http_sampling_manager_destroy(manager);
-        return false;
+    if (!jaeger_vector_init(&manager->response, sizeof(char), NULL, logger)) {
+        goto cleanup_ctx;
     }
-
-    manager->response_length = 0;
-    manager->response_capacity = RESPONSE_BUFFER_INIT_SIZE;
+    if (!jaeger_vector_reserve(
+            &manager->response,
+            JAEGERTRACINGC_HTTP_SAMPLING_MANAGER_REQUEST_MAX_LEN,
+            logger)) {
+        goto cleanup_vec;
+    }
 
     const bool decision = jaeger_http_sampling_manager_format_request(
         manager, &manager->sampling_server_url, &sampling_host_port, logger);
     jaeger_host_port_destroy(&sampling_host_port);
     return decision;
+
+cleanup_vec:
+    jaeger_vector_destroy(&manager->response);
+cleanup_ctx:
+    jaeger_free(ctx);
+cleanup_host_port:
+    jaeger_host_port_destroy(&sampling_host_port);
+cleanup_manager:
+    jaeger_http_sampling_manager_destroy(manager);
+    return false;
 }
 
 #define ERR_FMT                                                   \
@@ -960,12 +935,15 @@ static inline bool jaeger_http_sampling_manager_parse_response_json(
 
     json_error_t err;
     json_t* response_json =
-        json_loads(manager->response_buffer, JSON_REJECT_DUPLICATES, &err);
+        json_loads(jaeger_vector_get(&manager->response, 0, logger),
+                   JSON_REJECT_DUPLICATES,
+                   &err);
 
     if (response_json == NULL) {
-        logger->error(logger,
-                      "JSON decoding error, " ERR_FMT,
-                      ERR_ARGS(manager->response_buffer));
+        logger->error(
+            logger,
+            "JSON decoding error, " ERR_FMT,
+            ERR_ARGS(jaeger_vector_get(&manager->response, 0, logger)));
         return false;
     }
 
@@ -990,7 +968,7 @@ static inline bool jaeger_http_sampling_manager_parse_response_json(
                                       &per_operation_json);
     bool success = true;
     if (result != 0) {
-        PRINT_ERR_MSG(manager->response_buffer, logger);
+        PRINT_ERR_MSG(jaeger_vector_get(&manager->response, 0, logger), logger);
         success = false;
         goto cleanup;
     }
@@ -1009,11 +987,11 @@ static inline bool jaeger_http_sampling_manager_parse_response_json(
         else {
             *response->probabilistic = (jaeger_probabilistic_strategy)
                 JAEGERTRACINGC_PROBABILISTIC_STRATEGY_INIT;
-            success =
-                parse_probabilistic_sampling_json(response->probabilistic,
-                                                  probabilistic_json,
-                                                  manager->response_buffer,
-                                                  logger);
+            success = parse_probabilistic_sampling_json(
+                response->probabilistic,
+                probabilistic_json,
+                jaeger_vector_get(&manager->response, 0, logger),
+                logger);
         }
     }
     else if (rate_limiting_json != NULL) {
@@ -1028,11 +1006,11 @@ static inline bool jaeger_http_sampling_manager_parse_response_json(
             success = false;
         }
         else {
-            success =
-                parse_rate_limiting_sampling_json(response->rate_limiting,
-                                                  rate_limiting_json,
-                                                  manager->response_buffer,
-                                                  logger);
+            success = parse_rate_limiting_sampling_json(
+                response->rate_limiting,
+                rate_limiting_json,
+                jaeger_vector_get(&manager->response, 0, logger),
+                logger);
         }
     }
     else {
@@ -1040,7 +1018,7 @@ static inline bool jaeger_http_sampling_manager_parse_response_json(
             logger->warn(
                 logger,
                 "JSON response contains no strategies, response = \"%s\"",
-                manager->response_buffer);
+                jaeger_vector_get(&manager->response, 0, logger));
             success = false;
             goto cleanup;
         }
@@ -1056,11 +1034,11 @@ static inline bool jaeger_http_sampling_manager_parse_response_json(
             success = false;
         }
         else {
-            success =
-                parse_per_operation_sampling_json(response->per_operation,
-                                                  per_operation_json,
-                                                  manager->response_buffer,
-                                                  logger);
+            success = parse_per_operation_sampling_json(
+                response->per_operation,
+                per_operation_json,
+                jaeger_vector_get(&manager->response, 0, logger),
+                logger);
         }
     }
 
@@ -1080,13 +1058,12 @@ static inline bool jaeger_http_sampling_manager_get_sampling_strategies(
 {
     assert(manager != NULL);
     assert(response != NULL);
-    manager->response_length = 0;
     parsing_context* ctx = manager->parser.data;
     assert(ctx != NULL);
     *ctx = (parsing_context){.manager = manager,
                              .logger = logger,
                              .state = http_parsing_state_write};
-
+    jaeger_vector_clear(&manager->response);
     const int num_written = write(
         manager->fd, &manager->request_buffer[0], manager->request_length);
     if (num_written != manager->request_length) {
@@ -1116,11 +1093,8 @@ static inline bool jaeger_http_sampling_manager_get_sampling_strategies(
         num_read = read(manager->fd, &chunk_buffer[0], sizeof(chunk_buffer));
     }
 
-    assert(manager->response_buffer != NULL);
-    manager->response_buffer[manager->response_length] = '\0';
-    /* Do not increase length because string should not contain null
-     * byte.
-     */
+    char* null_byte_ptr = jaeger_vector_append(&manager->response, logger);
+    *null_byte_ptr = '\0';
 
     return jaeger_http_sampling_manager_parse_response_json(
         manager, response, logger);

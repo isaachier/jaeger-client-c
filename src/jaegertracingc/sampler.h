@@ -189,17 +189,14 @@ typedef struct jaeger_http_sampling_manager {
     http_parser_settings settings;
     int request_length;
     char request_buffer[JAEGERTRACINGC_HTTP_SAMPLING_MANAGER_REQUEST_MAX_LEN];
-    int response_length;
-    int response_capacity;
-    char* response_buffer;
+    jaeger_vector response;
 } jaeger_http_sampling_manager;
 
 #define JAEGERTRACINGC_HTTP_SAMPLING_MANAGER_INIT                             \
     {                                                                         \
         .service_name = NULL, .sampling_server_url = JAEGERTRACINGC_URL_INIT, \
         .fd = -1, .parser = {}, .settings = {}, .request_length = 0,          \
-        .request_buffer = {'\0'}, .response_length = 0,                       \
-        .response_capacity = 0, .response_buffer = NULL                       \
+        .request_buffer = {'\0'}, .response = {}                              \
     }
 
 typedef struct jaeger_remotely_controlled_sampler {

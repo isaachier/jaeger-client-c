@@ -122,9 +122,7 @@ static inline void jaeger_tag_destroy(jaeger_tag* tag)
 static inline void jaeger_tag_list_clear(jaeger_tag_list* list)
 {
     assert(list != NULL);
-    for (int i = 0; i < jaeger_vector_length(&list->tags); i++) {
-        jaeger_tag_destroy(jaeger_vector_get(&list->tags, i, NULL));
-    }
+    JAEGERTRACINGC_VECTOR_FOR_EACH(&list->tags, jaeger_tag_destroy);
     jaeger_vector_clear(&list->tags);
 }
 
@@ -150,9 +148,7 @@ static inline bool jaeger_tag_list_append(jaeger_tag_list* list,
 static inline void jaeger_tag_list_destroy(jaeger_tag_list* list)
 {
     if (list != NULL) {
-        for (int i = 0; i < jaeger_vector_length(&list->tags); i++) {
-            jaeger_tag_destroy(jaeger_vector_get(&list->tags, i, NULL));
-        }
+        jaeger_tag_list_clear(list);
         jaeger_vector_destroy(&list->tags);
     }
 }
