@@ -30,6 +30,7 @@
 #include "jaegertracingc/threading.h"
 #include "jaegertracingc/token_bucket.h"
 #include "jaegertracingc/trace_id.h"
+#include "jaegertracingc/vector.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -110,9 +111,7 @@ jaeger_operation_sampler_destroy(jaeger_operation_sampler* op_sampler)
 
 typedef struct jaeger_adaptive_sampler {
     JAEGERTRACINGC_SAMPLER_SUBCLASS;
-    int num_op_samplers;
-    int op_samplers_capacity;
-    jaeger_operation_sampler* op_samplers;
+    jaeger_vector op_samplers;
     jaeger_probabilistic_sampler default_sampler;
     double lower_bound;
     int max_operations;

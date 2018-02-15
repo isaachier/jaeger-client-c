@@ -28,6 +28,8 @@ extern "C" {
 #define JAEGERTRACINGC_VECTOR_RESIZE_FACTOR 2
 #define JAEGERTRACINGC_VECTOR_INIT_CAPACITY 10
 
+typedef int (*jaeger_comparator)(const void*, const void*);
+
 typedef struct jaeger_vector {
     int len;
     int capacity;
@@ -64,31 +66,10 @@ static inline bool jaeger_vector_init(jaeger_vector* vec,
     return true;
 }
 
-static inline void* jaeger_vector_append(jaeger_vector* vec,
-                                         jaeger_logger* logger)
+static inline void* jaeger_vector_offset(jaeger_vector* vec, int index)
 {
     assert(vec != NULL);
-    assert(vec->len <= vec->capacity);
-    if (vec->len == vec->capacity) {
-        const int new_capacity =
-            vec->capacity * JAEGERTRACINGC_VECTOR_RESIZE_FACTOR;
-        void* new_data = vec->alloc->realloc(
-            vec->alloc, vec->data, vec->type_size * new_capacity);
-        if (new_data == NULL) {
-            if (logger != NULL) {
-                logger->error(logger,
-                              "Failed to allocate memory for vector resize, "
-                              "current size = %d, new size = %d",
-                              vec->type_size * vec->capacity,
-                              vec->type_size * new_capacity);
-            }
-            return NULL;
-        }
-        vec->data = new_data;
-        vec->capacity = new_capacity;
-    }
-    vec->len++;
-    return (vec->data + vec->type_size * (vec->len - 1));
+    return vec->data + vec->type_size * index;
 }
 
 static inline void*
@@ -105,13 +86,64 @@ jaeger_vector_get(jaeger_vector* vec, int index, jaeger_logger* logger)
         }
         return NULL;
     }
-    return (vec->data + vec->type_size * index);
+    return jaeger_vector_offset(vec, index);
 }
 
 static inline int jaeger_vector_length(jaeger_vector* vec)
 {
     assert(vec != NULL);
     return vec->len;
+}
+
+static inline bool jaeger_vector_reserve(jaeger_vector* vec,
+                                         int new_capacity,
+                                         jaeger_logger* logger)
+{
+    assert(vec != NULL);
+    if (vec->capacity >= new_capacity) {
+        return true;
+    }
+
+    void* new_data = vec->alloc->realloc(
+        vec->alloc, vec->data, vec->type_size * new_capacity);
+    if (new_data == NULL) {
+        if (logger != NULL) {
+            logger->error(logger,
+                          "Failed to allocate memory for vector resize, "
+                          "current size = %d, new size = %d",
+                          vec->type_size * vec->capacity,
+                          vec->type_size * new_capacity);
+        }
+        return false;
+    }
+    vec->data = new_data;
+    vec->capacity = new_capacity;
+    return true;
+}
+
+static inline void*
+jaeger_vector_insert(jaeger_vector* vec, int index, jaeger_logger* logger)
+{
+    assert(vec != NULL);
+    assert(vec->len <= vec->capacity);
+    if (vec->len == vec->capacity &&
+        !jaeger_vector_reserve(
+            vec, vec->capacity * JAEGERTRACINGC_VECTOR_RESIZE_FACTOR, logger)) {
+        return NULL;
+    }
+    if (index < vec->len) {
+        memmove(jaeger_vector_offset(vec, index + 1),
+                jaeger_vector_offset(vec, index),
+                vec->type_size * (vec->len - index));
+    }
+    vec->len++;
+    return jaeger_vector_offset(vec, index);
+}
+
+static inline void* jaeger_vector_append(jaeger_vector* vec,
+                                         jaeger_logger* logger)
+{
+    return jaeger_vector_insert(vec, vec->len, logger);
 }
 
 static inline void jaeger_vector_clear(jaeger_vector* vec)
@@ -132,6 +164,52 @@ static inline void jaeger_vector_destroy(jaeger_vector* vec)
         vec->type_size = 0;
         vec->alloc = 0;
     }
+}
+
+static inline void*
+jaeger_vector_find(jaeger_vector* vec, const void* key, jaeger_comparator cmp)
+{
+    for (int i = 0; i < vec->len; i++) {
+        void* elem = jaeger_vector_offset(vec, i);
+        if (memcmp(elem, key, vec->type_size) == 0) {
+            return elem;
+        }
+    }
+    return NULL;
+}
+
+static inline void jaeger_vector_sort(jaeger_vector* vec, jaeger_comparator cmp)
+{
+    qsort(vec->data, vec->len, vec->type_size, cmp);
+}
+
+static inline void* jaeger_vector_bsearch(jaeger_vector* vec,
+                                          const void* key,
+                                          jaeger_comparator cmp)
+{
+    return bsearch(key, vec->data, vec->len, vec->type_size, cmp);
+}
+
+static inline int jaeger_vector_lower_bound(jaeger_vector* vec,
+                                            const void* key,
+                                            jaeger_comparator cmp)
+{
+    /* Lower bound based on example in
+     * http://www.cplusplus.com/reference/algorithm/lower_bound/. */
+    int count = vec->len;
+    int pos = 0;
+    while (count > 0) {
+        const int step = count / 2;
+        pos += step;
+        if (cmp(jaeger_vector_offset(vec, pos), key) < 0) {
+            pos++;
+            count -= step + 1;
+        }
+        else {
+            count = step;
+        }
+    }
+    return pos;
 }
 
 #ifdef __cplusplus

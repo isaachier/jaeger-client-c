@@ -235,11 +235,19 @@ static inline void test_adaptive_sampler()
             snprintf(op_buffer, sizeof(op_buffer), "new-operation-%d", i));
         a.is_sampled((jaeger_sampler*) &a, &trace_id, op_buffer, &tags, logger);
     }
-    TEST_ASSERT_EQUAL(TEST_DEFAULT_MAX_OPERATIONS, a.num_op_samplers);
-    TEST_ASSERT_NOT_NULL(a.op_samplers[0].operation_name);
-    TEST_ASSERT_NOT_NULL(a.op_samplers[1].operation_name);
-    TEST_ASSERT_TRUE(strcmp(a.op_samplers[0].operation_name,
-                            a.op_samplers[1].operation_name) < 0);
+    TEST_ASSERT_EQUAL(TEST_DEFAULT_MAX_OPERATIONS,
+                      jaeger_vector_length(&a.op_samplers));
+    jaeger_operation_sampler* op_sampler_lhs =
+        jaeger_vector_get(&a.op_samplers, 0, logger);
+    TEST_ASSERT_NOT_NULL(op_sampler_lhs);
+    TEST_ASSERT_NOT_NULL(op_sampler_lhs->operation_name);
+    jaeger_operation_sampler* op_sampler_rhs =
+        jaeger_vector_get(&a.op_samplers, 1, logger);
+    TEST_ASSERT_NOT_NULL(op_sampler_rhs);
+    TEST_ASSERT_NOT_NULL(op_sampler_rhs->operation_name);
+    TEST_ASSERT_LESS_THAN(
+        0,
+        strcmp(op_sampler_lhs->operation_name, op_sampler_rhs->operation_name));
 
     jaeger_per_operation_strategy_destroy(&strategies);
     TEAR_DOWN_SAMPLER_TEST(a);
@@ -481,25 +489,31 @@ static inline void test_remotely_controlled_sampler()
 
     TEST_ASSERT_TRUE(jaeger_remotely_controlled_sampler_update(&r, logger));
     TEST_ASSERT_EQUAL(jaeger_adaptive_sampler_type, r.sampler.type);
-    TEST_ASSERT_EQUAL(1, r.sampler.adaptive_sampler.num_op_samplers);
-    TEST_ASSERT_EQUAL_STRING(
-        "test-operation",
-        r.sampler.adaptive_sampler.op_samplers[0].operation_name);
+    TEST_ASSERT_EQUAL(
+        1, jaeger_vector_length(&r.sampler.adaptive_sampler.op_samplers));
+    jaeger_operation_sampler* op_sampler =
+        jaeger_vector_get(&r.sampler.adaptive_sampler.op_samplers, 0, logger);
+    TEST_ASSERT_NOT_NULL(op_sampler);
+    TEST_ASSERT_EQUAL_STRING("test-operation", op_sampler->operation_name);
 
     TEST_ASSERT_TRUE(jaeger_remotely_controlled_sampler_update(&r, logger));
     TEST_ASSERT_EQUAL(jaeger_adaptive_sampler_type, r.sampler.type);
-    TEST_ASSERT_EQUAL(1, r.sampler.adaptive_sampler.num_op_samplers);
-    TEST_ASSERT_EQUAL_STRING(
-        "test-operation",
-        r.sampler.adaptive_sampler.op_samplers[0].operation_name);
+    TEST_ASSERT_EQUAL(
+        1, jaeger_vector_length(&r.sampler.adaptive_sampler.op_samplers));
+    op_sampler =
+        jaeger_vector_get(&r.sampler.adaptive_sampler.op_samplers, 0, logger);
+    TEST_ASSERT_NOT_NULL(op_sampler);
+    TEST_ASSERT_EQUAL_STRING("test-operation", op_sampler->operation_name);
 
     mock_http_server_destroy(&server);
     TEST_ASSERT_FALSE(jaeger_remotely_controlled_sampler_update(&r, logger));
     TEST_ASSERT_EQUAL(jaeger_adaptive_sampler_type, r.sampler.type);
-    TEST_ASSERT_EQUAL(1, r.sampler.adaptive_sampler.num_op_samplers);
-    TEST_ASSERT_EQUAL_STRING(
-        "test-operation",
-        r.sampler.adaptive_sampler.op_samplers[0].operation_name);
+    TEST_ASSERT_EQUAL(
+        1, jaeger_vector_length(&r.sampler.adaptive_sampler.op_samplers));
+    op_sampler =
+        jaeger_vector_get(&r.sampler.adaptive_sampler.op_samplers, 0, logger);
+    TEST_ASSERT_NOT_NULL(op_sampler);
+    TEST_ASSERT_EQUAL_STRING("test-operation", op_sampler->operation_name);
 
     const jaeger_trace_id trace_id = {.high = 0, .low = 0};
     jaeger_tag_list tags;
