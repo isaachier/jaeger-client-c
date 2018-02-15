@@ -86,6 +86,12 @@ jaeger_tag_copy(jaeger_tag* dst, const jaeger_tag* src, jaeger_logger* logger)
     return true;
 }
 
+static inline bool
+jaeger_tag_copy_wrapper(void* dst, const void* src, jaeger_logger* logger)
+{
+    return jaeger_tag_copy(dst, src, logger);
+}
+
 static inline void jaeger_tag_destroy(jaeger_tag* tag)
 {
     if (tag->key != NULL) {
@@ -143,6 +149,23 @@ static inline void jaeger_tag_list_destroy(jaeger_tag_list* list)
         jaeger_tag_list_clear(list);
         jaeger_vector_destroy(&list->tags);
     }
+}
+
+static inline bool jaeger_tag_list_copy(jaeger_tag_list* dst,
+                                        const jaeger_tag_list* src,
+                                        jaeger_logger* logger)
+{
+    assert(dst != NULL);
+    assert(src != NULL);
+    if (jaeger_vector_length(&dst->tags) > 0) {
+        jaeger_tag_list_clear(dst);
+    }
+    if (!jaeger_vector_copy(
+            &dst->tags, &src->tags, &jaeger_tag_copy_wrapper, logger)) {
+        jaeger_tag_list_clear(dst);
+        return false;
+    }
+    return true;
 }
 
 #ifdef __cplusplus

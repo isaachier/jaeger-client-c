@@ -38,7 +38,7 @@ typedef struct jaeger_vector {
     jaeger_allocator* alloc;
 } jaeger_vector;
 
-static inline int jaeger_vector_length(jaeger_vector* vec)
+static inline int jaeger_vector_length(const jaeger_vector* vec)
 {
     assert(vec != NULL);
     return vec->len;
@@ -221,6 +221,44 @@ static inline int jaeger_vector_lower_bound(jaeger_vector* vec,
         }
     }
     return pos;
+}
+
+#define JAEGERTRACINGC_DEFAULT_COPY(type)                  \
+    static inline bool type##_copy(                        \
+        void* dst, const void* src, jaeger_logger* logger) \
+    {                                                      \
+        assert(dst != NULL);                               \
+        assert(src != NULL);                               \
+        (void) logger;                                     \
+        *(type*) dst = *(type*) src;                       \
+        return true;                                       \
+    }
+
+static inline bool
+jaeger_vector_copy(jaeger_vector* dst,
+                   const jaeger_vector* src,
+                   bool (*copy)(void*, const void*, jaeger_logger* logger),
+                   jaeger_logger* logger)
+{
+    assert(dst != NULL);
+    assert(src != NULL);
+    assert(jaeger_vector_length(dst) == 0);
+    if (!jaeger_vector_reserve(dst, jaeger_vector_length(src), logger)) {
+        return false;
+    }
+    for (int i = 0, len = jaeger_vector_length(src); i < len; i++) {
+        void* dst_elem = jaeger_vector_append(dst, logger);
+        /* Should not be possible to have a NULL returned from append, seeing
+         * as all spaced was allocated when jaeger_vector_reserve was called. */
+        assert(dst_elem != NULL);
+        const void* src_elem = jaeger_vector_offset((jaeger_vector*) src, i);
+        assert(src_elem != NULL);
+        if (!copy(dst_elem, src_elem, logger)) {
+            dst->len--;
+            return false;
+        }
+    }
+    return true;
 }
 
 #ifdef __cplusplus

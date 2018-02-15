@@ -20,14 +20,18 @@
 #include "jaegertracingc/common.h"
 #include "jaegertracingc/logging.h"
 #include "jaegertracingc/span.h"
+#include "jaegertracingc/threading.h"
+#include "jaegertracingc/vector.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-#define JAEGERTRACINGC_REPORTER_SUBCLASS  \
-    JAEGERTRACINGC_DESTRUCTIBLE_SUBCLASS; \
-    void (*report)(struct jaeger_reporter * reporter, const jaeger_span* span)
+#define JAEGERTRACINGC_REPORTER_SUBCLASS              \
+    JAEGERTRACINGC_DESTRUCTIBLE_SUBCLASS;             \
+    void (*report)(struct jaeger_reporter * reporter, \
+                   const jaeger_span* span,           \
+                   jaeger_logger* logger)
 
 typedef struct jaeger_reporter {
     JAEGERTRACINGC_REPORTER_SUBCLASS;
@@ -36,26 +40,20 @@ typedef struct jaeger_reporter {
 /* Shared instance of null reporter. DO NOT MODIFY MEMBERS! */
 jaeger_reporter* jaeger_null_reporter();
 
-typedef struct jaeger_logging_reporter {
-    JAEGERTRACINGC_REPORTER_SUBCLASS;
-    jaeger_logger* logger;
-} jaeger_logging_reporter;
-
-void jaeger_logging_reporter_init(jaeger_logging_reporter* reporter,
-                                  jaeger_logger* logger);
+void jaeger_logging_reporter_init(jaeger_reporter* reporter);
 
 typedef struct jaeger_in_memory_reporter {
     JAEGERTRACINGC_REPORTER_SUBCLASS;
-    int num_spans;
-    int capacity;
-    jaeger_span* spans;
+    jaeger_vector spans;
+    jaeger_mutex mutex;
 } jaeger_in_memory_reporter;
+
+bool jaeger_in_memory_reporter_init(jaeger_in_memory_reporter* reporter,
+                                    jaeger_logger* logger);
 
 typedef struct jaeger_composite_reporter {
     JAEGERTRACINGC_REPORTER_SUBCLASS;
-    int num_reporters;
-    int capacity;
-    jaeger_reporter* reporters;
+    jaeger_vector reporters;
 } jaeger_composite_reporter;
 
 typedef struct jaeger_remote_reporter {

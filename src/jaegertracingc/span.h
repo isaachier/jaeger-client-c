@@ -28,6 +28,11 @@
 extern "C" {
 #endif /* __cplusplus */
 
+/* 3 delimiters, 2 uint64_t hex (8 characters each), 1 short hex (2 characters).
+ * 3 + 16 + 2 = 21 */
+#define JAEGERTRACINGC_SPAN_CONTEXT_MAX_STR_LEN \
+    JAEGERTRACINGC_TRACE_ID_MAX_STR_LEN + 21
+
 typedef struct jaeger_log_record {
     time_t timestamp;
     jaeger_tag_list tags;
@@ -39,6 +44,26 @@ static inline bool jaeger_log_record_init(jaeger_log_record* log_record,
     assert(log_record != NULL);
     time(&log_record->timestamp);
     return jaeger_tag_list_init(&log_record->tags, logger);
+}
+
+static inline bool jaeger_log_record_copy(jaeger_log_record* dst,
+                                          const jaeger_log_record* src,
+                                          jaeger_logger* logger)
+{
+    assert(dst != NULL);
+    assert(src != NULL);
+    if (!jaeger_tag_list_copy(&dst->tags, &src->tags, logger)) {
+        return false;
+    }
+    dst->timestamp = src->timestamp;
+    return true;
+}
+
+static inline bool jaeger_log_record_copy_wrapper(void* dst,
+                                                  const void* src,
+                                                  jaeger_logger* logger)
+{
+    return jaeger_log_record_copy(dst, src, logger);
 }
 
 static inline void jaeger_log_record_destroy(jaeger_log_record* log_record)
@@ -61,6 +86,8 @@ typedef struct jaeger_span_ref {
     jaeger_span_context context;
     int type;
 } jaeger_span_ref;
+
+JAEGERTRACINGC_DEFAULT_COPY(jaeger_span_ref)
 
 typedef struct jaeger_span {
     jaeger_span_context context;
@@ -96,6 +123,53 @@ cleanup_logs:
     JAEGERTRACINGC_VECTOR_FOR_EACH(&span->refs, jaeger_log_record_destroy);
 cleanup_tags:
     jaeger_tag_list_destroy(&span->tags);
+    return false;
+}
+
+static inline bool jaeger_span_copy(jaeger_span* dst,
+                                    const jaeger_span* src,
+                                    jaeger_logger* logger)
+{
+    assert(dst != NULL);
+    assert(src != NULL);
+    jaeger_lock(&dst->mutex, (jaeger_mutex*) &src->mutex);
+    dst->context = src->context;
+    dst->start_time_system = src->start_time_system;
+    dst->start_time_steady = src->start_time_steady;
+    dst->duration = src->duration;
+    dst->operation_name = jaeger_strdup(src->operation_name, logger);
+    if (dst->operation_name == NULL) {
+        goto cleanup_locks;
+    }
+    if (!jaeger_tag_list_copy(&dst->tags, &src->tags, logger)) {
+        goto cleanup_operation_name;
+    }
+
+    if (!jaeger_vector_copy(
+            &dst->logs, &src->logs, &jaeger_log_record_copy_wrapper, logger)) {
+        goto cleanup_logs;
+    }
+
+    if (!jaeger_vector_copy(
+            &dst->refs, &src->refs, &jaeger_span_ref_copy, logger)) {
+        goto cleanup_span_refs;
+    }
+
+    jaeger_mutex_unlock(&dst->mutex);
+    jaeger_mutex_unlock((jaeger_mutex*) &src->mutex);
+    return true;
+
+cleanup_span_refs:
+    jaeger_vector_clear(&dst->refs);
+cleanup_logs:
+    JAEGERTRACINGC_VECTOR_FOR_EACH(&dst->logs, jaeger_log_record_destroy);
+    jaeger_vector_clear(&dst->logs);
+cleanup_operation_name:
+    jaeger_free(dst->operation_name);
+    dst->operation_name = NULL;
+cleanup_locks:
+    jaeger_mutex_unlock(&dst->mutex);
+    jaeger_mutex_unlock((jaeger_mutex*) &src->mutex);
     return false;
 }
 
