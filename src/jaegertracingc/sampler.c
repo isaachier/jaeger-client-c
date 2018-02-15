@@ -290,6 +290,7 @@ samplers_from_strategies(const jaeger_per_operation_strategy* strategies,
             jaeger_vector_append(vec, logger);
         op_sampler->operation_name = jaeger_strdup(strategy->operation, logger);
         if (op_sampler->operation_name == NULL) {
+            success = false;
             break;
         }
 
