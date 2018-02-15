@@ -45,10 +45,13 @@ static inline int jaeger_trace_id_format(const jaeger_trace_id* trace_id,
     assert(buffer != NULL);
     assert(buffer_len >= 0);
     if (trace_id->high == 0) {
-        return snprintf(buffer, buffer_len, "%lx", trace_id->low);
+        return snprintf(buffer, buffer_len, "%" PRIx64, trace_id->low);
     }
-    return snprintf(
-        buffer, buffer_len, "%lx%016lx", trace_id->high, trace_id->low);
+    return snprintf(buffer,
+                    buffer_len,
+                    "%" PRIx64 "%016" PRIx64,
+                    trace_id->high,
+                    trace_id->low);
 }
 
 static inline bool jaeger_trace_id_scan(jaeger_trace_id* trace_id,

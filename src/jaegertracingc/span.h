@@ -42,14 +42,14 @@ jaeger_span_format(const jaeger_span* span, char* buffer, int buffer_len)
     if (trace_id_len > buffer_len) {
         return trace_id_len + snprintf(NULL,
                                        0,
-                                       ":%lx:%lx:%x",
+                                       ":%" PRIx64 ":%" PRIx64 ":%" PRIx8,
                                        span->span_id,
                                        span->parent_id,
                                        span->flags);
     }
     return snprintf(&buffer[trace_id_len],
                     buffer_len - trace_id_len,
-                    ":%lx:%lx:%x",
+                    ":%" PRIx64 ":%" PRIx64 ":%" PRIx8,
                     span->span_id,
                     span->parent_id,
                     span->flags);
