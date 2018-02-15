@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-#include "jaegertracingc/tag.h"
 #include <stdio.h>
 #include <string.h>
+#include "jaegertracingc/tag.h"
 #include "unity.h"
 
 void test_tag()
 {
     jaeger_logger* logger = jaeger_null_logger();
     jaeger_tag_list list;
-    bool result = jaeger_tag_list_init(&list, NULL, logger);
+    bool result = jaeger_tag_list_init(&list, logger);
     TEST_ASSERT_TRUE(result);
 
     for (int i = 0; i < 10; i++) {

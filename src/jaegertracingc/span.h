@@ -18,46 +18,116 @@
 #define JAEGERTRACINGC_SPAN_H
 
 #include "jaegertracingc/common.h"
+#include "jaegertracingc/duration.h"
+#include "jaegertracingc/tag.h"
+#include "jaegertracingc/threading.h"
 #include "jaegertracingc/trace_id.h"
+#include "jaegertracingc/vector.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-typedef struct jaeger_span {
+typedef struct jaeger_log_record {
+    time_t timestamp;
+    jaeger_tag_list tags;
+} jaeger_log_record;
+
+static inline bool jaeger_log_record_init(jaeger_log_record* log_record,
+                                          jaeger_logger* logger)
+{
+    assert(log_record != NULL);
+    time(&log_record->timestamp);
+    return jaeger_tag_list_init(&log_record->tags, logger);
+}
+
+static inline void jaeger_log_record_destroy(jaeger_log_record* log_record)
+{
+    if (log_record != NULL) {
+        jaeger_tag_list_destroy(&log_record->tags);
+    }
+}
+
+typedef struct jaeger_span_context {
     jaeger_trace_id trace_id;
     uint64_t span_id;
     uint64_t parent_id;
     uint8_t flags;
+} jaeger_span_context;
+
+enum { jaeger_span_ref_child_of = 0, jaeger_span_ref_follows_from = 1 };
+
+typedef struct jaeger_span_ref {
+    jaeger_span_context context;
+    int type;
+} jaeger_span_ref;
+
+typedef struct jaeger_span {
+    jaeger_span_context context;
+    char* operation_name;
+    time_t start_time_system;
+    jaeger_duration start_time_steady;
+    jaeger_duration duration;
+    jaeger_tag_list tags;
+    jaeger_vector logs;
+    jaeger_vector refs;
+    jaeger_mutex mutex;
 } jaeger_span;
 
-static inline int
-jaeger_span_format(const jaeger_span* span, char* buffer, int buffer_len)
+static inline bool jaeger_span_init(jaeger_span* span, jaeger_logger* logger)
 {
     assert(span != NULL);
+    memset(span, 0, sizeof(*span));
+    if (!jaeger_tag_list_init(&span->tags, logger)) {
+        return false;
+    }
+    if (!jaeger_vector_init(
+            &span->logs, sizeof(jaeger_log_record), NULL, logger)) {
+        goto cleanup_tags;
+    }
+    if (!jaeger_vector_init(
+            &span->refs, sizeof(jaeger_span_ref), NULL, logger)) {
+        goto cleanup_logs;
+    }
+    span->mutex = (jaeger_mutex) JAEGERTRACINGC_MUTEX_INIT;
+    return true;
+
+cleanup_logs:
+    JAEGERTRACINGC_VECTOR_FOR_EACH(&span->refs, jaeger_log_record_destroy);
+cleanup_tags:
+    jaeger_tag_list_destroy(&span->tags);
+    return false;
+}
+
+static inline int jaeger_span_context_format(const jaeger_span_context* ctx,
+                                             char* buffer,
+                                             int buffer_len)
+{
+    assert(ctx != NULL);
     assert(buffer != NULL);
     assert(buffer_len >= 0);
     const int trace_id_len =
-        jaeger_trace_id_format(&span->trace_id, buffer, buffer_len);
+        jaeger_trace_id_format(&ctx->trace_id, buffer, buffer_len);
     if (trace_id_len > buffer_len) {
         return trace_id_len + snprintf(NULL,
                                        0,
                                        ":%" PRIx64 ":%" PRIx64 ":%" PRIx8,
-                                       span->span_id,
-                                       span->parent_id,
-                                       span->flags);
+                                       ctx->span_id,
+                                       ctx->parent_id,
+                                       ctx->flags);
     }
     return snprintf(&buffer[trace_id_len],
                     buffer_len - trace_id_len,
                     ":%" PRIx64 ":%" PRIx64 ":%" PRIx8,
-                    span->span_id,
-                    span->parent_id,
-                    span->flags);
+                    ctx->span_id,
+                    ctx->parent_id,
+                    ctx->flags);
 }
 
-static inline bool jaeger_span_scan(jaeger_span* span, const char* str)
+static inline bool jaeger_span_context_scan(jaeger_span_context* ctx,
+                                            const char* str)
 {
-    assert(span != NULL);
+    assert(ctx != NULL);
     assert(str != NULL);
     jaeger_trace_id trace_id = JAEGERTRACINGC_TRACE_ID_INIT;
     const int len = strlen(str);
@@ -100,10 +170,10 @@ static inline bool jaeger_span_scan(jaeger_span* span, const char* str)
         }
     }
 
-    *span = (jaeger_span){.trace_id = trace_id,
-                          .span_id = span_id,
-                          .parent_id = parent_id,
-                          .flags = flags};
+    *ctx = (jaeger_span_context){.trace_id = trace_id,
+                                 .span_id = span_id,
+                                 .parent_id = parent_id,
+                                 .flags = flags};
     return true;
 }
 
