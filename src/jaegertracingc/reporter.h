@@ -19,6 +19,7 @@
 
 #include "jaegertracingc/common.h"
 #include "jaegertracingc/logging.h"
+#include "jaegertracingc/metrics.h"
 #include "jaegertracingc/net.h"
 #include "jaegertracingc/span.h"
 #include "jaegertracingc/threading.h"
@@ -27,6 +28,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
+
+#define JAEGERTRACINGC_DEFAULT_UDP_SPAN_SERVER_HOST_PORT "localhost:6831"
 
 #define JAEGERTRACINGC_REPORTER_SUBCLASS              \
     JAEGERTRACINGC_DESTRUCTIBLE_SUBCLASS;             \
@@ -80,13 +83,19 @@ typedef struct jaeger_remote_reporter {
     JAEGERTRACINGC_REPORTER_SUBCLASS;
     int max_packet_size;
     int fd;
-    jaeger_vector buffer;
+    jaeger_metrics* metrics;
+    Jaegertracing__Protobuf__Batch batch;
+    jaeger_vector spans;
 } jaeger_remote_reporter;
 
 bool jaeger_remote_reporter_init(jaeger_remote_reporter* reporter,
                                  const char* host_port,
                                  int max_packet_size,
+                                 jaeger_metrics* metrics,
                                  jaeger_logger* logger);
+
+bool jaeger_remote_reporter_flush(jaeger_remote_reporter* reporter,
+                                  jaeger_logger* logger);
 
 #ifdef __cplusplus
 } /* extern C */

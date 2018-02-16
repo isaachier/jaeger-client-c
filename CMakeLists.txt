@@ -103,8 +103,8 @@ set(core_src
   "src/jaegertracingc/token_bucket.h"
   "src/jaegertracingc/trace_id.c"
   "src/jaegertracingc/trace_id.h"
-  "src/jaegertracingc/types.c"
-  "src/jaegertracingc/types.h"
+  "src/jaegertracingc/tracer.c"
+  "src/jaegertracingc/tracer.h"
   "src/jaegertracingc/vector.c"
   "src/jaegertracingc/vector.h")
 

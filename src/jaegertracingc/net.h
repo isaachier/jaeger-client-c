@@ -206,6 +206,9 @@ static inline bool jaeger_host_port_scan(jaeger_host_port* host_port,
         }
         return false;
     }
+    if (strlen(token) == 0) {
+        token = "localhost";
+    }
     host_port->host = jaeger_strdup(token, logger);
     if (host_port->host == NULL) {
         return false;

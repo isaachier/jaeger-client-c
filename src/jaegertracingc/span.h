@@ -33,6 +33,37 @@ extern "C" {
 #define JAEGERTRACINGC_SPAN_CONTEXT_MAX_STR_LEN \
     JAEGERTRACINGC_TRACE_ID_MAX_STR_LEN + 21
 
+#define JAEGERTRACINGC_COPY_VECTOR_PROTOBUF(                                \
+    src, src_member, dst, dst_member, copy_fn, logger, cleanup_label)       \
+    do {                                                                    \
+        dst->n_##dst_member = jaeger_vector_length(&src->src_member);       \
+        const int allocated_size =                                          \
+            sizeof(*dst->dst_member) * dst->n_##dst_member;                 \
+        dst->dst_member = jaeger_malloc(allocated_size);                    \
+        if (dst->dst_member == NULL) {                                      \
+            if (logger != NULL) {                                           \
+                logger->error(logger, "Cannot allocate " #dst_member);      \
+            }                                                               \
+            goto cleanup_label;                                             \
+        }                                                                   \
+        memset(dst->dst_member, 0, allocated_size);                         \
+        for (int i = 0; i < dst->n_##dst_member; i++) {                     \
+            dst->dst_member[i] = jaeger_malloc(sizeof(*dst->dst_member));   \
+            if (dst->dst_member[i] == NULL) {                               \
+                if (logger != NULL) {                                       \
+                    logger->error(logger, "Cannot allocate " #dst_member);  \
+                }                                                           \
+                goto cleanup_label;                                         \
+            }                                                               \
+            if (!copy_fn(dst->dst_member[i],                                \
+                         jaeger_vector_get(                                 \
+                             (jaeger_vector*) &src->src_member, i, logger), \
+                         logger)) {                                         \
+                goto cleanup_label;                                         \
+            }                                                               \
+        }                                                                   \
+    } while (0)
+
 typedef struct jaeger_log_record {
     time_t timestamp;
     jaeger_tag_list tags;
@@ -80,16 +111,52 @@ typedef struct jaeger_span_context {
     uint8_t flags;
 } jaeger_span_context;
 
-enum { jaeger_span_ref_child_of = 0, jaeger_span_ref_follows_from = 1 };
+typedef Jaegertracing__Protobuf__SpanRef__Type jaeger_span_ref_type;
 
 typedef struct jaeger_span_ref {
     jaeger_span_context context;
-    int type;
+    jaeger_span_ref_type type;
 } jaeger_span_ref;
+
+static inline void
+jaeger_span_ref_protobuf_destroy(Jaegertracing__Protobuf__SpanRef* span_ref)
+{
+    if (span_ref != NULL) {
+        if (span_ref->trace_id != NULL) {
+            jaeger_free(span_ref->trace_id);
+            span_ref->trace_id = NULL;
+        }
+    }
+}
+
+static inline bool
+jaeger_span_ref_to_protobuf(Jaegertracing__Protobuf__SpanRef* dst,
+                            const jaeger_span_ref* src,
+                            jaeger_logger* logger)
+{
+    assert(dst != NULL);
+    assert(src != NULL);
+    dst->trace_id = jaeger_malloc(sizeof(Jaegertracing__Protobuf__TraceID));
+    if (dst->trace_id == NULL) {
+        if (logger != NULL) {
+            logger->error(logger,
+                          "Cannot allocate trace ID for span ref message");
+        }
+        return false;
+    }
+    jaeger_trace_id_to_protobuf(dst->trace_id, &src->context.trace_id);
+    dst->has_type = true;
+    dst->type = src->type;
+    dst->span_id = src->context.span_id;
+    return true;
+}
 
 JAEGERTRACINGC_DEFAULT_COPY(jaeger_span_ref)
 
+typedef struct jaeger_tracer jaeger_tracer;
+
 typedef struct jaeger_span {
+    jaeger_tracer* tracer;
     jaeger_span_context context;
     char* operation_name;
     time_t start_time_system;
@@ -170,6 +237,69 @@ cleanup_operation_name:
 cleanup_locks:
     jaeger_mutex_unlock(&dst->mutex);
     jaeger_mutex_unlock((jaeger_mutex*) &src->mutex);
+    return false;
+}
+
+static inline void
+jaeger_span_protobuf_destroy(Jaegertracing__Protobuf__Span* span)
+{
+    if (span != NULL) {
+        if (span->trace_id != NULL) {
+            jaeger_free(span->trace_id);
+            span->trace_id = NULL;
+        }
+        if (span->operation_name != NULL) {
+            jaeger_free(span->operation_name);
+            span->operation_name = NULL;
+        }
+        if (span->references != NULL) {
+            for (int i = 0; i < span->n_references; i++) {
+                if (span->references[i] != NULL) {
+                    jaeger_span_ref_protobuf_destroy(span->references[i]);
+                    jaeger_free(span->references[i]);
+                }
+            }
+            jaeger_free(span->references);
+            span->references = NULL;
+            span->n_references = 0;
+        }
+    }
+}
+
+static inline bool jaeger_span_to_protobuf(Jaegertracing__Protobuf__Span* dst,
+                                           const jaeger_span* src,
+                                           jaeger_logger* logger)
+{
+    assert(dst != NULL);
+    assert(src != NULL);
+    dst->trace_id = jaeger_malloc(sizeof(Jaegertracing__Protobuf__TraceID));
+    if (dst->trace_id == NULL) {
+        if (logger != NULL) {
+            logger->error(logger, "Cannot allocate trace ID for span message");
+        }
+        return false;
+    }
+    dst->has_span_id = true;
+    dst->has_parent_span_id = true;
+    jaeger_mutex_lock((jaeger_mutex*) &src->mutex);
+    jaeger_trace_id_to_protobuf(dst->trace_id, &src->context.trace_id);
+    dst->span_id = src->context.span_id;
+    dst->parent_span_id = src->context.parent_id;
+    dst->operation_name = jaeger_strdup(src->operation_name, logger);
+    if (dst->operation_name == NULL) {
+        goto cleanup;
+    }
+    JAEGERTRACINGC_COPY_VECTOR_PROTOBUF(
+        src, refs, dst, references, jaeger_span_ref_copy, logger, cleanup);
+    JAEGERTRACINGC_COPY_VECTOR_PROTOBUF(
+        src, tags.tags, dst, tags, jaeger_tag_copy, logger, cleanup);
+    jaeger_mutex_unlock((jaeger_mutex*) &src->mutex);
+    return true;
+
+cleanup:
+    jaeger_mutex_unlock((jaeger_mutex*) &src->mutex);
+    jaeger_span_protobuf_destroy(dst);
+    *dst = (Jaegertracing__Protobuf__Span) JAEGERTRACING__PROTOBUF__SPAN__INIT;
     return false;
 }
 

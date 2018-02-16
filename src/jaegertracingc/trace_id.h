@@ -18,6 +18,7 @@
 #define JAEGERTRACINGC_TRACE_ID_H
 
 #include "jaegertracingc/common.h"
+#include "jaegertracingc/protoc-gen/jaeger.pb-c.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -36,6 +37,18 @@ typedef struct jaeger_trace_id {
 #define JAEGERTRACINGC_TRACE_ID_MAX_STR_LEN 32
 #define JAEGERTRACINGC_UINT64_MAX_STR_LEN 16
 #define JAEGERTRACINGC_HEX_BASE 16
+
+static inline void
+jaeger_trace_id_to_protobuf(Jaegertracing__Protobuf__TraceID* dst,
+                            const jaeger_trace_id* src)
+{
+    assert(dst != NULL);
+    assert(src != NULL);
+    dst->has_high = true;
+    dst->high = src->high;
+    dst->has_low = true;
+    dst->low = src->low;
+}
 
 static inline int jaeger_trace_id_format(const jaeger_trace_id* trace_id,
                                          char* buffer,
