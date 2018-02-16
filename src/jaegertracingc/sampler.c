@@ -620,7 +620,8 @@ jaeger_http_sampling_manager_connect(jaeger_http_sampling_manager* manager,
 {
     assert(manager != NULL);
     struct addrinfo* host_addrs = NULL;
-    if (!jaeger_host_port_resolve(sampling_host_port, &host_addrs, logger)) {
+    if (!jaeger_host_port_resolve(
+            sampling_host_port, SOCK_STREAM, &host_addrs, logger)) {
         return false;
     }
 

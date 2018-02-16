@@ -70,6 +70,7 @@ static void in_memory_reporter_destroy(jaeger_destructible* destructible)
         jaeger_in_memory_reporter* r =
             (jaeger_in_memory_reporter*) destructible;
         jaeger_vector_destroy(&r->spans);
+        jaeger_mutex_destroy(&r->mutex);
     }
 }
 
@@ -101,4 +102,153 @@ bool jaeger_in_memory_reporter_init(jaeger_in_memory_reporter* reporter,
     reporter->report = &in_memory_reporter_report;
     reporter->mutex = (jaeger_mutex) JAEGERTRACINGC_MUTEX_INIT;
     return true;
+}
+
+static void composite_reporter_destroy(jaeger_destructible* destructible)
+{
+    if (destructible != NULL) {
+        jaeger_composite_reporter* r =
+            (jaeger_composite_reporter*) destructible;
+
+#define DESTROY(x)                   \
+    do {                             \
+        if (x == NULL) {             \
+            continue;                \
+        }                            \
+        jaeger_destructible** d = x; \
+        if (*d == NULL) {            \
+            continue;                \
+        }                            \
+        (*d)->destroy(*d);           \
+        jaeger_free(*d);             \
+    } while (0)
+
+        JAEGERTRACINGC_VECTOR_FOR_EACH(&r->reporters, DESTROY);
+
+#undef DESTROY
+    }
+}
+
+static void composite_reporter_report(jaeger_reporter* reporter,
+                                      const jaeger_span* span,
+                                      jaeger_logger* logger)
+{
+    assert(reporter != NULL);
+    if (span != NULL) {
+        jaeger_composite_reporter* r = (jaeger_composite_reporter*) reporter;
+
+#define REPORT(x)                                                 \
+    do {                                                          \
+        if (x == NULL) {                                          \
+            continue;                                             \
+        }                                                         \
+        jaeger_reporter** child_reporter = x;                     \
+        if (*child_reporter == NULL) {                            \
+            continue;                                             \
+        }                                                         \
+        (*child_reporter)->report(*child_reporter, span, logger); \
+    } while (0)
+
+        JAEGERTRACINGC_VECTOR_FOR_EACH(&r->reporters, REPORT);
+
+#undef REPORT
+    }
+}
+
+bool jaeger_composite_reporter_init(jaeger_composite_reporter* reporter,
+                                    jaeger_logger* logger)
+{
+    assert(reporter != NULL);
+    if (!jaeger_vector_init(
+            &reporter->reporters, sizeof(jaeger_reporter*), NULL, logger)) {
+        return false;
+    }
+
+    reporter->destroy = &composite_reporter_destroy;
+    reporter->report = &composite_reporter_report;
+    return true;
+}
+
+static void remote_reporter_destroy(jaeger_destructible* destructible)
+{
+    if (destructible != NULL) {
+        jaeger_remote_reporter* r = (jaeger_remote_reporter*) destructible;
+        if (r->fd >= 0) {
+            close(r->fd);
+        }
+        jaeger_vector_destroy(&r->buffer);
+    }
+}
+
+static void remote_reporter_report(jaeger_reporter* reporter,
+                                   const jaeger_span* span,
+                                   jaeger_logger* logger)
+{
+    assert(reporter != NULL);
+    /* TODO
+    jaeger_remote_reporter* r = (jaeger_remote_reporter*) reporter; */
+}
+
+#define DEFAULT_UDP_BUFFER_SIZE USHRT_MAX
+
+bool jaeger_remote_reporter_init(jaeger_remote_reporter* reporter,
+                                 const char* host_port_str,
+                                 int max_packet_size,
+                                 jaeger_logger* logger)
+{
+    assert(reporter != NULL);
+
+    const int fd = socket(AF_INET, SOCK_DGRAM, 0);
+    if (fd < 0) {
+        return false;
+    }
+
+    if (!jaeger_vector_init(&reporter->buffer, sizeof(char), NULL, logger)) {
+        goto cleanup_fd;
+        return false;
+    }
+    max_packet_size =
+        (max_packet_size > 0) ? max_packet_size : DEFAULT_UDP_BUFFER_SIZE;
+    if (!jaeger_vector_reserve(&reporter->buffer, max_packet_size, logger)) {
+        goto cleanup_buffer;
+    }
+
+    jaeger_host_port host_port =
+        (jaeger_host_port) JAEGERTRACINGC_HOST_PORT_INIT;
+    if (!jaeger_host_port_scan(&host_port, host_port_str, logger)) {
+        goto cleanup_buffer;
+    }
+    struct addrinfo* addrs;
+    if (!jaeger_host_port_resolve(&host_port, SOCK_DGRAM, &addrs, logger)) {
+        goto cleanup_host_port;
+    }
+    bool success = false;
+    for (struct addrinfo* iter = addrs; iter != NULL; iter = iter->ai_next) {
+        if (connect(fd, iter->ai_addr, iter->ai_addrlen) == 0) {
+            success = true;
+            break;
+        }
+    }
+    freeaddrinfo(addrs);
+    if (!success) {
+        if (logger != NULL) {
+            logger->error(logger,
+                          "Failed to resolve remote reporter host port, host "
+                          "port = \"%s\"",
+                          host_port_str);
+        }
+        goto cleanup_host_port;
+    }
+    jaeger_host_port_destroy(&host_port);
+    reporter->destroy = &remote_reporter_destroy;
+    reporter->report = &remote_reporter_report;
+    return true;
+
+cleanup_host_port:
+    jaeger_host_port_destroy(&host_port);
+cleanup_buffer:
+    jaeger_vector_destroy(&reporter->buffer);
+cleanup_fd:
+    close(fd);
+    return false;
 }

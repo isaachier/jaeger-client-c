@@ -19,6 +19,7 @@
 
 #include "jaegertracingc/common.h"
 #include "jaegertracingc/logging.h"
+#include "jaegertracingc/net.h"
 #include "jaegertracingc/span.h"
 #include "jaegertracingc/threading.h"
 #include "jaegertracingc/vector.h"
@@ -56,10 +57,36 @@ typedef struct jaeger_composite_reporter {
     jaeger_vector reporters;
 } jaeger_composite_reporter;
 
+bool jaeger_composite_reporter_init(jaeger_composite_reporter* reporter,
+                                    jaeger_logger* logger);
+
+static inline bool
+jaeger_composite_reporter_add(jaeger_composite_reporter* reporter,
+                              jaeger_reporter* new_reporter,
+                              jaeger_logger* logger)
+{
+    assert(reporter != NULL);
+    assert(new_reporter != NULL);
+    jaeger_reporter** reporter_ptr =
+        jaeger_vector_append(&reporter->reporters, logger);
+    if (reporter_ptr == NULL) {
+        return false;
+    }
+    *reporter_ptr = new_reporter;
+    return true;
+}
+
 typedef struct jaeger_remote_reporter {
     JAEGERTRACINGC_REPORTER_SUBCLASS;
-    /* TODO */
+    int max_packet_size;
+    int fd;
+    jaeger_vector buffer;
 } jaeger_remote_reporter;
+
+bool jaeger_remote_reporter_init(jaeger_remote_reporter* reporter,
+                                 const char* host_port,
+                                 int max_packet_size,
+                                 jaeger_logger* logger);
 
 #ifdef __cplusplus
 } /* extern C */
