@@ -325,9 +325,11 @@ static inline bool jaeger_span_to_protobuf(Jaegertracing__Protobuf__Span* dst,
         goto cleanup;
     }
     JAEGERTRACINGC_COPY_VECTOR_PROTOBUF(
-        src, refs, dst, references, jaeger_span_ref_copy, logger, cleanup);
-    JAEGERTRACINGC_COPY_VECTOR_PROTOBUF(
         src, tags, dst, tags, jaeger_tag_copy, logger, cleanup);
+    JAEGERTRACINGC_COPY_VECTOR_PROTOBUF(
+        src, logs, dst, logs, jaeger_log_record_copy_wrapper, logger, cleanup);
+    JAEGERTRACINGC_COPY_VECTOR_PROTOBUF(
+        src, refs, dst, references, jaeger_span_ref_copy, logger, cleanup);
     jaeger_mutex_unlock((jaeger_mutex*) &src->mutex);
     return true;
 

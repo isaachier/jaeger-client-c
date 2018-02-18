@@ -36,60 +36,12 @@ typedef Jaegertracing__Protobuf__Tag jaeger_tag;
 #define JAEGERTRACINGC_TAG_TYPE(type) \
     JAEGERTRACING__PROTOBUF__TAG__VALUE_##type##_VALUE
 
-static inline bool
-jaeger_tag_copy(jaeger_tag* dst, const jaeger_tag* src, jaeger_logger* logger)
-{
-    assert(dst != NULL);
-    assert(src != NULL);
-    *dst = (jaeger_tag) JAEGERTRACING__PROTOBUF__TAG__INIT;
-    dst->key = jaeger_strdup(src->key, logger);
-    if (dst->key == NULL) {
-        return false;
-    }
-
-    dst->value_case = src->value_case;
-    switch (src->value_case) {
-    case JAEGERTRACINGC_TAG_TYPE(STR): {
-        dst->str_value = jaeger_strdup(src->str_value, logger);
-        if (dst->str_value == NULL) {
-            jaeger_free(src->key);
-            *dst = (jaeger_tag) JAEGERTRACING__PROTOBUF__TAG__INIT;
-            return false;
-        }
-    } break;
-    case JAEGERTRACINGC_TAG_TYPE(BINARY): {
-        dst->binary_value.data = jaeger_malloc(src->binary_value.len);
-        if (dst->binary_value.data == NULL) {
-            jaeger_free(src->key);
-            *dst = (jaeger_tag) JAEGERTRACING__PROTOBUF__TAG__INIT;
-            return false;
-        }
-        memcpy(dst->binary_value.data,
-               src->binary_value.data,
-               src->binary_value.len);
-    } break;
-    case JAEGERTRACINGC_TAG_TYPE(DOUBLE): {
-        dst->double_value = src->double_value;
-    } break;
-    case JAEGERTRACINGC_TAG_TYPE(BOOL): {
-        dst->bool_value = src->bool_value;
-    } break;
-    default: {
-        assert(dst->value_case == JAEGERTRACINGC_TAG_TYPE(LONG));
-        dst->long_value = src->long_value;
-    } break;
-    }
-    return true;
-}
-
-static inline bool
-jaeger_tag_copy_wrapper(void* dst, const void* src, jaeger_logger* logger)
-{
-    return jaeger_tag_copy(dst, src, logger);
-}
-
 static inline void jaeger_tag_destroy(jaeger_tag* tag)
 {
+    if (tag == NULL) {
+        return;
+    }
+
     if (tag->key != NULL) {
         jaeger_free(tag->key);
         tag->key = NULL;
@@ -111,6 +63,71 @@ static inline void jaeger_tag_destroy(jaeger_tag* tag)
     default:
         break;
     }
+}
+
+static inline void jaeger_tag_clear(jaeger_tag* tag)
+{
+    jaeger_tag_destroy(tag);
+    *tag = (jaeger_tag) JAEGERTRACINGC_TAG_INIT;
+}
+
+static inline bool
+jaeger_tag_copy(jaeger_tag* dst, const jaeger_tag* src, jaeger_logger* logger)
+{
+    assert(dst != NULL);
+    assert(src != NULL);
+    *dst = (jaeger_tag) JAEGERTRACINGC_TAG_INIT;
+    if (src->key != NULL) {
+        dst->key = jaeger_strdup(src->key, logger);
+        if (dst->key == NULL) {
+            return false;
+        }
+    }
+
+    dst->value_case = src->value_case;
+    switch (src->value_case) {
+    case JAEGERTRACINGC_TAG_TYPE(STR): {
+        if (src->str_value != NULL) {
+            dst->str_value = jaeger_strdup(src->str_value, logger);
+            if (dst->str_value == NULL) {
+                goto cleanup;
+            }
+        }
+    } break;
+    case JAEGERTRACINGC_TAG_TYPE(BINARY): {
+        if (src->binary_value.len > 0 && src->binary_value.data != NULL) {
+            dst->binary_value.data = jaeger_malloc(src->binary_value.len);
+            if (dst->binary_value.data == NULL) {
+                goto cleanup;
+            }
+            memcpy(dst->binary_value.data,
+                   src->binary_value.data,
+                   src->binary_value.len);
+        }
+    } break;
+    case JAEGERTRACINGC_TAG_TYPE(DOUBLE): {
+        dst->double_value = src->double_value;
+    } break;
+    case JAEGERTRACINGC_TAG_TYPE(BOOL): {
+        dst->bool_value = src->bool_value;
+    } break;
+    default: {
+        assert(dst->value_case == JAEGERTRACINGC_TAG_TYPE(LONG));
+        dst->long_value = src->long_value;
+    } break;
+    }
+
+    return true;
+
+cleanup:
+    jaeger_tag_clear(dst);
+    return false;
+}
+
+static inline bool
+jaeger_tag_copy_wrapper(void* dst, const void* src, jaeger_logger* logger)
+{
+    return jaeger_tag_copy(dst, src, logger);
 }
 
 static inline bool jaeger_tag_vector_append(jaeger_vector* vec,
