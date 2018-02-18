@@ -6,7 +6,7 @@ addons:
   apt:
     sources:
       - ubuntu-toolchain-r-test
-    packages:
+    packages: &common_deps
       - libhttp-parser-dev
       - libjansson-dev
       - libprotobuf-c0-dev
@@ -19,6 +19,7 @@ matrix:
       addons:
         apt:
           packages:
+            - *common_deps
             - gcc-4.9
       env:
          - MATRIX_EVAL="CC=gcc-4.9"
@@ -30,6 +31,7 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
           packages:
+            - *common_deps
             - gcc-5
       env:
          - MATRIX_EVAL="CC=gcc-5"
@@ -41,6 +43,7 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
           packages:
+            - *common_deps
             - gcc-6
       env:
         - MATRIX_EVAL="CC=gcc-6"
@@ -52,6 +55,7 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
           packages:
+            - *common_deps
             - gcc-7
             - lcov
       env:
@@ -65,6 +69,7 @@ matrix:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.6
           packages:
+            - *common_deps
             - clang-3.6
       env:
         - MATRIX_EVAL="CC=clang-3.6"
@@ -77,6 +82,7 @@ matrix:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.7
           packages:
+            - *common_deps
             - clang-3.7
       env:
         - MATRIX_EVAL="CC=clang-3.7"
@@ -89,6 +95,7 @@ matrix:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.8
           packages:
+            - *common_deps
             - clang-3.8
       env:
         - MATRIX_EVAL="CC=clang-3.8"
@@ -100,6 +107,7 @@ matrix:
           sources:
             - llvm-toolchain-trusty-3.9
           packages:
+            - *common_deps
             - clang-3.9
       env:
         - MATRIX_EVAL="CC=clang-3.9"
@@ -111,6 +119,7 @@ matrix:
           sources:
             - llvm-toolchain-trusty-4.0
           packages:
+            - *common_deps
             - clang-4.0
       env:
         - MATRIX_EVAL="CC=clang-4.0"
@@ -122,6 +131,7 @@ matrix:
           sources:
             - llvm-toolchain-trusty-5.0
           packages:
+            - *common_deps
             - clang-5.0
       env:
         - MATRIX_EVAL="CC=clang-5.0"
