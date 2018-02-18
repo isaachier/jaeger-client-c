@@ -35,6 +35,7 @@ function info() {
 function working() {
     echo -e "${BLUE}$1${NO_COLOR}"
 }
+
 function main() {
     local project_dir
     project_dir=$(git rev-parse --show-toplevel)
@@ -42,24 +43,14 @@ function main() {
 
     mkdir -p build
     cd build || exit
-    if [ "x$COVERAGE" != "x" ]; then
-      cmake -DCMAKE_BUILD_TYPE=Debug -DJAEGERTRACINGC_COVERAGE=ON ..
-    else
-      cmake -DCMAKE_BUILD_TYPE=Debug -DJAEGERTRACINGC_COVERAGE=OFF ..
-    fi
+    working "Building project"
+    cmake -DCMAKE_BUILD_TYPE=Debug -DJAEGERTRACINGC_COVERAGE=${COVERAGE:OFF} ..
 
-    if make -j3 unit_test; then
+    if make -j3 unit_test_coverage; then
         true
     else
         error "Error: compilation errors"
         exit 3
-    fi
-
-    working "Running tests..."
-    if ./unit_test; then
-        true
-    else
-        error "Error: test failure"
     fi
 
     info "All tests compiled and passed"
