@@ -43,7 +43,7 @@ extern "C" {
     bool (*is_sampled)(struct jaeger_sampler * sampler, \
                        const jaeger_trace_id* trace_id, \
                        const char* operation,           \
-                       jaeger_tag_list* tags,           \
+                       jaeger_vector* tags,             \
                        jaeger_logger* logger)
 
 typedef struct jaeger_sampler {

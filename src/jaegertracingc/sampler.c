@@ -28,23 +28,26 @@
 static bool jaeger_const_sampler_is_sampled(jaeger_sampler* sampler,
                                             const jaeger_trace_id* trace_id,
                                             const char* operation_name,
-                                            jaeger_tag_list* tags,
+                                            jaeger_vector* tags,
                                             jaeger_logger* logger)
 {
     (void) trace_id;
     (void) operation_name;
     jaeger_const_sampler* s = (jaeger_const_sampler*) sampler;
-    if (tags != NULL) {
+    if (tags != NULL &&
+        jaeger_vector_reserve(tags, jaeger_vector_length(tags) + 2, logger)) {
         jaeger_tag tag = JAEGERTRACINGC_TAG_INIT;
         tag.key = JAEGERTRACINGC_SAMPLER_TYPE_TAG_KEY;
         tag.value_case = JAEGERTRACING__PROTOBUF__TAG__VALUE_STR_VALUE;
         tag.str_value = JAEGERTRACINGC_SAMPLER_TYPE_CONST;
-        jaeger_tag_list_append(tags, &tag, logger);
+        if (!jaeger_tag_vector_append(tags, &tag, logger)) {
+            return s->decision;
+        }
 
         tag.key = JAEGERTRACINGC_SAMPLER_PARAM_TAG_KEY;
         tag.value_case = JAEGERTRACING__PROTOBUF__TAG__VALUE_BOOL_VALUE;
         tag.bool_value = s->decision;
-        jaeger_tag_list_append(tags, &tag, logger);
+        jaeger_tag_vector_append(tags, &tag, logger);
     }
     return s->decision;
 }
@@ -66,7 +69,7 @@ static bool
 jaeger_probabilistic_sampler_is_sampled(jaeger_sampler* sampler,
                                         const jaeger_trace_id* trace_id,
                                         const char* operation_name,
-                                        jaeger_tag_list* tags,
+                                        jaeger_vector* tags,
                                         jaeger_logger* logger)
 {
     (void) trace_id;
@@ -78,17 +81,20 @@ jaeger_probabilistic_sampler_is_sampled(jaeger_sampler* sampler,
     const double random_value = ((double) rand() + 1) / RAND_MAX;
 #endif /* HAVE_RAND_R */
     const bool decision = (s->sampling_rate >= random_value);
-    if (tags != NULL) {
+    if (tags != NULL &&
+        jaeger_vector_reserve(tags, jaeger_vector_length(tags) + 2, logger)) {
         jaeger_tag tag = JAEGERTRACINGC_TAG_INIT;
         tag.key = JAEGERTRACINGC_SAMPLER_TYPE_TAG_KEY;
         tag.value_case = JAEGERTRACING__PROTOBUF__TAG__VALUE_STR_VALUE;
         tag.str_value = JAEGERTRACINGC_SAMPLER_TYPE_PROBABILISTIC;
-        jaeger_tag_list_append(tags, &tag, logger);
+        if (!jaeger_tag_vector_append(tags, &tag, logger)) {
+            return decision;
+        }
 
         tag.key = JAEGERTRACINGC_SAMPLER_PARAM_TAG_KEY;
         tag.value_case = JAEGERTRACING__PROTOBUF__TAG__VALUE_DOUBLE_VALUE;
         tag.double_value = s->sampling_rate;
-        jaeger_tag_list_append(tags, &tag, logger);
+        jaeger_tag_vector_append(tags, &tag, logger);
     }
     return decision;
 }
@@ -109,7 +115,7 @@ static bool
 jaeger_rate_limiting_sampler_is_sampled(jaeger_sampler* sampler,
                                         const jaeger_trace_id* trace_id,
                                         const char* operation_name,
-                                        jaeger_tag_list* tags,
+                                        jaeger_vector* tags,
                                         jaeger_logger* logger)
 {
     (void) trace_id;
@@ -117,17 +123,18 @@ jaeger_rate_limiting_sampler_is_sampled(jaeger_sampler* sampler,
     assert(sampler != NULL);
     jaeger_rate_limiting_sampler* s = (jaeger_rate_limiting_sampler*) sampler;
     const bool decision = jaeger_token_bucket_check_credit(&s->tok, 1);
-    if (tags != NULL) {
+    if (tags != NULL &&
+        jaeger_vector_reserve(tags, jaeger_vector_length(tags) + 2, logger)) {
         jaeger_tag tag = JAEGERTRACINGC_TAG_INIT;
         tag.key = JAEGERTRACINGC_SAMPLER_TYPE_TAG_KEY;
         tag.value_case = JAEGERTRACING__PROTOBUF__TAG__VALUE_STR_VALUE;
         tag.str_value = JAEGERTRACINGC_SAMPLER_TYPE_RATE_LIMITING;
-        jaeger_tag_list_append(tags, &tag, logger);
+        jaeger_tag_vector_append(tags, &tag, logger);
 
         tag.key = JAEGERTRACINGC_SAMPLER_PARAM_TAG_KEY;
         tag.value_case = JAEGERTRACING__PROTOBUF__TAG__VALUE_DOUBLE_VALUE;
         tag.double_value = s->max_traces_per_second;
-        jaeger_tag_list_append(tags, &tag, logger);
+        jaeger_tag_vector_append(tags, &tag, logger);
     }
     return decision;
 }
@@ -148,7 +155,7 @@ static bool jaeger_guaranteed_throughput_probabilistic_sampler_is_sampled(
     jaeger_sampler* sampler,
     const jaeger_trace_id* trace_id,
     const char* operation_name,
-    jaeger_tag_list* tags,
+    jaeger_vector* tags,
     jaeger_logger* logger)
 {
     (void) trace_id;
@@ -169,17 +176,18 @@ static bool jaeger_guaranteed_throughput_probabilistic_sampler_is_sampled(
             operation_name,
             NULL,
             logger);
-        if (tags != NULL) {
+        if (tags != NULL && jaeger_vector_reserve(
+                                tags, jaeger_vector_length(tags) + 2, logger)) {
             jaeger_tag tag = JAEGERTRACINGC_TAG_INIT;
             tag.key = JAEGERTRACINGC_SAMPLER_TYPE_TAG_KEY;
             tag.value_case = JAEGERTRACING__PROTOBUF__TAG__VALUE_STR_VALUE;
             tag.str_value = JAEGERTRACINGC_SAMPLER_TYPE_PROBABILISTIC;
-            jaeger_tag_list_append(tags, &tag, logger);
+            jaeger_tag_vector_append(tags, &tag, logger);
 
             tag.key = JAEGERTRACINGC_SAMPLER_PARAM_TAG_KEY;
             tag.value_case = JAEGERTRACING__PROTOBUF__TAG__VALUE_DOUBLE_VALUE;
             tag.double_value = s->probabilistic_sampler.sampling_rate;
-            jaeger_tag_list_append(tags, &tag, logger);
+            jaeger_tag_vector_append(tags, &tag, logger);
         }
         return true;
     }
@@ -189,17 +197,18 @@ static bool jaeger_guaranteed_throughput_probabilistic_sampler_is_sampled(
         operation_name,
         NULL,
         logger);
-    if (tags != NULL) {
+    if (tags != NULL &&
+        jaeger_vector_reserve(tags, jaeger_vector_length(tags) + 2, logger)) {
         jaeger_tag tag = JAEGERTRACINGC_TAG_INIT;
         tag.key = JAEGERTRACINGC_SAMPLER_TYPE_TAG_KEY;
         tag.value_case = JAEGERTRACING__PROTOBUF__TAG__VALUE_STR_VALUE;
         tag.str_value = JAEGERTRACINGC_SAMPLER_TYPE_LOWER_BOUND;
-        jaeger_tag_list_append(tags, &tag, logger);
+        jaeger_tag_vector_append(tags, &tag, logger);
 
         tag.key = JAEGERTRACINGC_SAMPLER_PARAM_TAG_KEY;
         tag.value_case = JAEGERTRACING__PROTOBUF__TAG__VALUE_DOUBLE_VALUE;
         tag.double_value = s->lower_bound_sampler.max_traces_per_second;
-        jaeger_tag_list_append(tags, &tag, logger);
+        jaeger_tag_vector_append(tags, &tag, logger);
     }
     return decision;
 }
@@ -328,7 +337,7 @@ jaeger_adaptive_sampler_find_sampler(jaeger_adaptive_sampler* sampler,
 static bool jaeger_adaptive_sampler_is_sampled(jaeger_sampler* sampler,
                                                const jaeger_trace_id* trace_id,
                                                const char* operation_name,
-                                               jaeger_tag_list* tags,
+                                               jaeger_vector* tags,
                                                jaeger_logger* logger)
 {
     (void) trace_id;
@@ -1107,7 +1116,7 @@ static bool
 jaeger_remotely_controlled_sampler_is_sampled(jaeger_sampler* sampler,
                                               const jaeger_trace_id* trace_id,
                                               const char* operation_name,
-                                              jaeger_tag_list* tags,
+                                              jaeger_vector* tags,
                                               jaeger_logger* logger)
 {
     assert(sampler != NULL);

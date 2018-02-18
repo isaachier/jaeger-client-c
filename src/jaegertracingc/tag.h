@@ -36,17 +36,6 @@ typedef Jaegertracing__Protobuf__Tag jaeger_tag;
 #define JAEGERTRACINGC_TAG_TYPE(type) \
     JAEGERTRACING__PROTOBUF__TAG__VALUE_##type##_VALUE
 
-typedef struct jaeger_tag_list {
-    jaeger_vector tags;
-} jaeger_tag_list;
-
-static inline bool jaeger_tag_list_init(jaeger_tag_list* list,
-                                        jaeger_logger* logger)
-{
-    assert(list != NULL);
-    return jaeger_vector_init(&list->tags, sizeof(jaeger_tag), NULL, logger);
-}
-
 static inline bool
 jaeger_tag_copy(jaeger_tag* dst, const jaeger_tag* src, jaeger_logger* logger)
 {
@@ -124,52 +113,16 @@ static inline void jaeger_tag_destroy(jaeger_tag* tag)
     }
 }
 
-static inline void jaeger_tag_list_clear(jaeger_tag_list* list)
+static inline bool jaeger_tag_vector_append(jaeger_vector* vec,
+                                            const jaeger_tag* tag,
+                                            jaeger_logger* logger)
 {
-    assert(list != NULL);
-    JAEGERTRACINGC_VECTOR_FOR_EACH(&list->tags, jaeger_tag_destroy);
-    jaeger_vector_clear(&list->tags);
-}
-
-static inline bool jaeger_tag_list_append(jaeger_tag_list* list,
-                                          const jaeger_tag* tag,
-                                          jaeger_logger* logger)
-{
-    assert(list != NULL);
-    assert(tag != NULL);
-    jaeger_tag tag_copy;
-    if (!jaeger_tag_copy(&tag_copy, tag, logger)) {
+    jaeger_tag* tag_copy = jaeger_vector_append(vec, logger);
+    if (tag_copy == NULL) {
         return false;
     }
-    jaeger_tag* new_tag = jaeger_vector_append(&list->tags, logger);
-    if (new_tag == NULL) {
-        jaeger_tag_destroy(&tag_copy);
-        return false;
-    }
-    memcpy(new_tag, &tag_copy, sizeof(tag_copy));
-    return true;
-}
-
-static inline void jaeger_tag_list_destroy(jaeger_tag_list* list)
-{
-    if (list != NULL) {
-        jaeger_tag_list_clear(list);
-        jaeger_vector_destroy(&list->tags);
-    }
-}
-
-static inline bool jaeger_tag_list_copy(jaeger_tag_list* dst,
-                                        const jaeger_tag_list* src,
-                                        jaeger_logger* logger)
-{
-    assert(dst != NULL);
-    assert(src != NULL);
-    if (jaeger_vector_length(&dst->tags) > 0) {
-        jaeger_tag_list_clear(dst);
-    }
-    if (!jaeger_vector_copy(
-            &dst->tags, &src->tags, &jaeger_tag_copy_wrapper, logger)) {
-        jaeger_tag_list_clear(dst);
+    if (!jaeger_tag_copy(tag_copy, tag, logger)) {
+        vec->len--;
         return false;
     }
     return true;

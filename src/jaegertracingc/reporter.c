@@ -218,7 +218,9 @@ static inline jaeger_process* build_process(const jaeger_tracer* tracer,
         }
         return NULL;
     }
-    process->n_tags = jaeger_vector_length(&tracer->tags.tags);
+    process->n_tags = jaeger_vector_length(&tracer->tags);
+    JAEGERTRACINGC_COPY_VECTOR_PROTOBUF(
+        tracer, tags, process, tags, jaeger_tag_copy, logger, cleanup);
     if (process->n_tags > 0) {
         const int allocated_size = sizeof(jaeger_tag*) * process->n_tags;
         process->tags = jaeger_malloc(allocated_size);
@@ -245,8 +247,8 @@ static inline jaeger_process* build_process(const jaeger_tracer* tracer,
                 }
                 goto cleanup;
             }
-            const jaeger_tag* tag_src = jaeger_vector_get(
-                (jaeger_vector*) &tracer->tags.tags, i, logger);
+            const jaeger_tag* tag_src =
+                jaeger_vector_get((jaeger_vector*) &tracer->tags, i, logger);
             if (!jaeger_tag_copy(tag, tag_src, logger)) {
                 goto cleanup;
             }

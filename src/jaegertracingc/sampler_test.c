@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include "jaegertracingc/sampler.h"
 #include <errno.h>
 #include <http_parser.h>
 #include <netinet/in.h>
@@ -22,14 +23,13 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include "jaegertracingc/sampler.h"
 #include "jaegertracingc/threading.h"
 #include "unity.h"
 
 #define SET_UP_SAMPLER_TEST()                                      \
     jaeger_logger* logger = jaeger_null_logger();                  \
-    jaeger_tag_list tags;                                          \
-    jaeger_tag_list_init(&tags, logger);                           \
+    jaeger_vector tags;                                            \
+    jaeger_vector_init(&tags, sizeof(jaeger_tag), NULL, logger);   \
     const char* operation_name = "test-operation";                 \
     (void) operation_name;                                         \
     const jaeger_trace_id trace_id = JAEGERTRACINGC_TRACE_ID_INIT; \
@@ -37,7 +37,7 @@
 
 #define TEAR_DOWN_SAMPLER_TEST(sampler)               \
     sampler.destroy((jaeger_destructible*) &sampler); \
-    jaeger_tag_list_destroy(&tags)
+    jaeger_vector_destroy(&tags)
 
 #define TEST_DEFAULT_SAMPLING_PROBABILITY 0.5
 #define TEST_DEFAULT_MAX_TRACES_PER_SECOND 3
@@ -46,15 +46,15 @@
 #define CHECK_TAGS(                                                          \
     sampler_type, param_type, value_member, param_value, tag_list)           \
     do {                                                                     \
-        TEST_ASSERT_EQUAL(2, jaeger_vector_length(&tag_list.tags));          \
-        jaeger_tag* tag = jaeger_vector_get(&tag_list.tags, 0, logger);      \
+        TEST_ASSERT_EQUAL(2, jaeger_vector_length(&tag_list));               \
+        jaeger_tag* tag = jaeger_vector_get(&tag_list, 0, logger);           \
         TEST_ASSERT_NOT_NULL(tag);                                           \
         TEST_ASSERT_EQUAL_STRING(JAEGERTRACINGC_SAMPLER_TYPE_TAG_KEY,        \
                                  tag->key);                                  \
         TEST_ASSERT_EQUAL(JAEGERTRACINGC_TAG_TYPE(STR), tag->value_case);    \
         TEST_ASSERT_EQUAL_STRING(JAEGERTRACINGC_SAMPLER_TYPE_##sampler_type, \
                                  tag->str_value);                            \
-        tag = jaeger_vector_get(&tag_list.tags, 1, logger);                  \
+        tag = jaeger_vector_get(&tag_list, 1, logger);                       \
         TEST_ASSERT_NOT_NULL(tag);                                           \
         TEST_ASSERT_EQUAL_STRING(JAEGERTRACINGC_SAMPLER_PARAM_TAG_KEY,       \
                                  tag->key);                                  \
@@ -96,7 +96,7 @@ static inline void test_const_sampler()
     CHECK_CONST_TAGS(c, tags);
 
     c.destroy((jaeger_destructible*) &c);
-    jaeger_tag_list_clear(&tags);
+    jaeger_vector_clear(&tags);
     jaeger_const_sampler_init(&c, false);
     TEST_ASSERT_FALSE(c.is_sampled(
         (jaeger_sampler*) &c, &trace_id, operation_name, &tags, logger));
@@ -117,7 +117,7 @@ static inline void test_probabilistic_sampler()
     p.destroy((jaeger_destructible*) &p);
 
     sampling_rate = 0;
-    jaeger_tag_list_clear(&tags);
+    jaeger_vector_clear(&tags);
     jaeger_probabilistic_sampler_init(&p, sampling_rate);
     TEST_ASSERT_FALSE(p.is_sampled(
         (jaeger_sampler*) &p, &trace_id, operation_name, &tags, logger));
@@ -138,7 +138,7 @@ static inline void test_rate_limiting_sampler()
         (jaeger_sampler*) &r, &trace_id, operation_name, &tags, logger));
     CHECK_RATE_LIMITING_TAGS(r, tags);
 
-    jaeger_tag_list_clear(&tags);
+    jaeger_vector_clear(&tags);
     TEST_ASSERT_FALSE(r.is_sampled(
         (jaeger_sampler*) &r, &trace_id, operation_name, &tags, logger));
     CHECK_RATE_LIMITING_TAGS(r, tags);
@@ -179,7 +179,7 @@ static inline void test_guaranteed_throughput_probabilistic_sampler()
         (jaeger_sampler*) &g, &trace_id, operation_name, &tags, logger));
     CHECK_LOWER_BOUND_TAGS(g, tags);
 
-    jaeger_tag_list_clear(&tags);
+    jaeger_vector_clear(&tags);
     sampling_rate = 1.0;
     jaeger_guaranteed_throughput_probabilistic_sampler_update(
         &g, lower_bound, sampling_rate);
@@ -227,7 +227,7 @@ static inline void test_adaptive_sampler()
     a.is_sampled(
         (jaeger_sampler*) &a, &trace_id, operation_name, &tags, logger);
 
-    jaeger_tag_list_clear(&tags);
+    jaeger_vector_clear(&tags);
     for (int i = 0; i < TEST_DEFAULT_MAX_OPERATIONS; i++) {
         char op_buffer[strlen("new-operation") + 3];
         TEST_ASSERT_LESS_THAN(
@@ -516,12 +516,12 @@ static inline void test_remotely_controlled_sampler()
     TEST_ASSERT_EQUAL_STRING("test-operation", op_sampler->operation_name);
 
     const jaeger_trace_id trace_id = {.high = 0, .low = 0};
-    jaeger_tag_list tags;
-    jaeger_tag_list_init(&tags, logger);
+    jaeger_vector tags;
+    jaeger_vector_init(&tags, sizeof(jaeger_tag), NULL, logger);
     r.is_sampled(
         (jaeger_sampler*) &r, &trace_id, "test-operation", &tags, logger);
 
-    jaeger_tag_list_destroy(&tags);
+    jaeger_vector_destroy(&tags);
     r.destroy((jaeger_destructible*) &r);
 }
 
