@@ -35,8 +35,9 @@
     const jaeger_trace_id trace_id = JAEGERTRACINGC_TRACE_ID_INIT; \
     (void) trace_id
 
-#define TEAR_DOWN_SAMPLER_TEST(sampler)               \
-    sampler.destroy((jaeger_destructible*) &sampler); \
+#define TEAR_DOWN_SAMPLER_TEST(sampler)                        \
+    sampler.destroy((jaeger_destructible*) &sampler);          \
+    JAEGERTRACINGC_VECTOR_FOR_EACH(&tags, jaeger_tag_destroy); \
     jaeger_vector_destroy(&tags)
 
 #define TEST_DEFAULT_SAMPLING_PROBABILITY 0.5
@@ -96,6 +97,7 @@ static inline void test_const_sampler()
     CHECK_CONST_TAGS(c, tags);
 
     c.destroy((jaeger_destructible*) &c);
+    JAEGERTRACINGC_VECTOR_FOR_EACH(&tags, jaeger_tag_destroy);
     jaeger_vector_clear(&tags);
     jaeger_const_sampler_init(&c, false);
     TEST_ASSERT_FALSE(c.is_sampled(
@@ -117,6 +119,7 @@ static inline void test_probabilistic_sampler()
     p.destroy((jaeger_destructible*) &p);
 
     sampling_rate = 0;
+    JAEGERTRACINGC_VECTOR_FOR_EACH(&tags, jaeger_tag_destroy);
     jaeger_vector_clear(&tags);
     jaeger_probabilistic_sampler_init(&p, sampling_rate);
     TEST_ASSERT_FALSE(p.is_sampled(
@@ -138,6 +141,7 @@ static inline void test_rate_limiting_sampler()
         (jaeger_sampler*) &r, &trace_id, operation_name, &tags, logger));
     CHECK_RATE_LIMITING_TAGS(r, tags);
 
+    JAEGERTRACINGC_VECTOR_FOR_EACH(&tags, jaeger_tag_destroy);
     jaeger_vector_clear(&tags);
     TEST_ASSERT_FALSE(r.is_sampled(
         (jaeger_sampler*) &r, &trace_id, operation_name, &tags, logger));
@@ -179,6 +183,7 @@ static inline void test_guaranteed_throughput_probabilistic_sampler()
         (jaeger_sampler*) &g, &trace_id, operation_name, &tags, logger));
     CHECK_LOWER_BOUND_TAGS(g, tags);
 
+    JAEGERTRACINGC_VECTOR_FOR_EACH(&tags, jaeger_tag_destroy);
     jaeger_vector_clear(&tags);
     sampling_rate = 1.0;
     jaeger_guaranteed_throughput_probabilistic_sampler_update(
@@ -227,6 +232,7 @@ static inline void test_adaptive_sampler()
     a.is_sampled(
         (jaeger_sampler*) &a, &trace_id, operation_name, &tags, logger);
 
+    JAEGERTRACINGC_VECTOR_FOR_EACH(&tags, jaeger_tag_destroy);
     jaeger_vector_clear(&tags);
     for (int i = 0; i < TEST_DEFAULT_MAX_OPERATIONS; i++) {
         char op_buffer[strlen("new-operation") + 3];
@@ -521,6 +527,7 @@ static inline void test_remotely_controlled_sampler()
     r.is_sampled(
         (jaeger_sampler*) &r, &trace_id, "test-operation", &tags, logger);
 
+    JAEGERTRACINGC_VECTOR_FOR_EACH(&tags, jaeger_tag_destroy);
     jaeger_vector_destroy(&tags);
     r.destroy((jaeger_destructible*) &r);
 }
