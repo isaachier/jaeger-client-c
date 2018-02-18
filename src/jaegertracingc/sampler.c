@@ -1125,6 +1125,7 @@ jaeger_remotely_controlled_sampler_is_sampled(jaeger_sampler* sampler,
     jaeger_mutex_lock(&s->mutex);
     jaeger_sampler* inner_sampler =
         jaeger_sampler_choice_get_sampler(&s->sampler, logger);
+    assert(inner_sampler != NULL);
     const bool result = inner_sampler->is_sampled(
         inner_sampler, trace_id, operation_name, tags, logger);
     jaeger_mutex_unlock(&s->mutex);
