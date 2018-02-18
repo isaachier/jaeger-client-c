@@ -14,4 +14,4 @@
  * limitations under the License.
  */
 
-#include "jaegertracingc/duration.h"
+#include "jaegertracingc/clock.h"

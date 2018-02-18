@@ -218,47 +218,21 @@ static inline jaeger_process* build_process(const jaeger_tracer* tracer,
         }
         return NULL;
     }
-    process->n_tags = jaeger_vector_length(&tracer->tags);
-    JAEGERTRACINGC_COPY_VECTOR_PROTOBUF(
-        tracer, tags, process, tags, jaeger_tag_copy, logger, cleanup);
-    if (process->n_tags > 0) {
-        const int allocated_size = sizeof(jaeger_tag*) * process->n_tags;
-        process->tags = jaeger_malloc(allocated_size);
-        memset(process->tags, 0, allocated_size);
-        if (process->tags == NULL) {
-            if (logger != NULL) {
-                logger->error(logger,
-                              "Cannot allocate process tags for batch message, "
-                              "num process tags = %d",
-                              process->n_tags);
-            }
-            goto cleanup;
-        }
-        const int num_tags = process->n_tags;
-        for (int i = 0; i < num_tags; i++) {
-            jaeger_tag* tag = jaeger_malloc(sizeof(jaeger_tag));
-            if (tag == NULL) {
-                if (logger != NULL) {
-                    logger->error(
-                        logger,
-                        "Cannot allocate process tag for batch message, "
-                        "tag size = %s",
-                        sizeof(jaeger_tag));
-                }
-                goto cleanup;
-            }
-            const jaeger_tag* tag_src =
-                jaeger_vector_get((jaeger_vector*) &tracer->tags, i, logger);
-            if (!jaeger_tag_copy(tag, tag_src, logger)) {
-                goto cleanup;
-            }
-        }
-    }
     process->service_name = jaeger_strdup(tracer->service_name, logger);
     if (process->service_name == NULL) {
         goto cleanup;
     }
 
+    if (!jaeger_vector_protobuf_copy((void***) &process->tags,
+                                     &process->n_tags,
+                                     &tracer->tags,
+                                     sizeof(jaeger_tag),
+                                     &jaeger_tag_copy_wrapper,
+                                     &jaeger_tag_destroy_wrapper,
+                                     NULL,
+                                     logger)) {
+        goto cleanup;
+    }
     return process;
 
 cleanup:
@@ -291,7 +265,7 @@ static void remote_reporter_report(jaeger_reporter* reporter,
     *span_copy =
         (Jaegertracing__Protobuf__Span) JAEGERTRACING__PROTOBUF__SPAN__INIT;
     if (!jaeger_span_to_protobuf(span_copy, span, logger)) {
-        goto cleanup_span_copy;
+        goto cleanup;
     }
 
     if (r->batch.process == NULL) {
@@ -299,13 +273,13 @@ static void remote_reporter_report(jaeger_reporter* reporter,
         r->batch.process = build_process(span->tracer, logger);
         jaeger_mutex_unlock((jaeger_mutex*) &span->mutex);
         if (r->batch.process == NULL) {
-            goto cleanup_span_copy;
+            goto cleanup;
         }
     }
 
     return;
 
-cleanup_span_copy:
+cleanup:
     jaeger_free(span_copy);
 }
 

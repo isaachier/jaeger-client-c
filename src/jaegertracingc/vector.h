@@ -54,8 +54,8 @@ static inline bool jaeger_vector_init(jaeger_vector* vec,
     if (alloc == NULL) {
         alloc = jaeger_built_in_allocator();
     }
-    void* data =
-        alloc->malloc(alloc, type_size * JAEGERTRACINGC_VECTOR_INIT_CAPACITY);
+    const int allocated_size = type_size * JAEGERTRACINGC_VECTOR_INIT_CAPACITY;
+    void* data = alloc->malloc(alloc, allocated_size);
     if (data == NULL) {
         if (logger != NULL) {
             logger->error(logger,
@@ -64,6 +64,7 @@ static inline bool jaeger_vector_init(jaeger_vector* vec,
         }
         return false;
     }
+    memset(data, 0, allocated_size);
     *vec = (jaeger_vector){.data = data,
                            .len = 0,
                            .capacity = JAEGERTRACINGC_VECTOR_INIT_CAPACITY,
@@ -116,6 +117,9 @@ static inline bool jaeger_vector_reserve(jaeger_vector* vec,
         }
         return false;
     }
+    void* old_end = new_data + vec->type_size * vec->capacity;
+    void* new_end = new_data + vec->type_size * new_capacity;
+    memset(old_end, 0, new_end - old_end);
     vec->data = new_data;
     vec->capacity = new_capacity;
     return true;
@@ -223,25 +227,42 @@ static inline int jaeger_vector_lower_bound(jaeger_vector* vec,
     return pos;
 }
 
-#define JAEGERTRACINGC_DEFAULT_COPY(type)                  \
-    static inline bool type##_copy(                        \
-        void* dst, const void* src, jaeger_logger* logger) \
-    {                                                      \
-        assert(dst != NULL);                               \
-        assert(src != NULL);                               \
-        (void) logger;                                     \
-        *(type*) dst = *(type*) src;                       \
-        return true;                                       \
+#define JAEGERTRACINGC_WRAP_COPY(copy)                                \
+    static inline bool copy##_wrapper(                                \
+        void* arg, void* dst, const void* src, jaeger_logger* logger) \
+    {                                                                 \
+        (void) arg;                                                   \
+        return copy(dst, src, logger);                                \
+    }
+
+#define JAEGERTRACINGC_WRAP_DESTROY(destroy)      \
+    static inline void destroy##_wrapper(void* x) \
+    {                                             \
+        destroy(x);                               \
+    }
+
+#define JAEGERTRACINGC_DEFAULT_COPY(type)                             \
+    static inline bool type##_copy(                                   \
+        void* arg, void* dst, const void* src, jaeger_logger* logger) \
+    {                                                                 \
+        (void) arg;                                                   \
+        assert(dst != NULL);                                          \
+        assert(src != NULL);                                          \
+        (void) logger;                                                \
+        *(type*) dst = *(type*) src;                                  \
+        return true;                                                  \
     }
 
 static inline bool
 jaeger_vector_copy(jaeger_vector* dst,
                    const jaeger_vector* src,
-                   bool (*copy)(void*, const void*, jaeger_logger* logger),
+                   bool (*copy)(void*, void*, const void*, jaeger_logger*),
+                   void* arg,
                    jaeger_logger* logger)
 {
     assert(dst != NULL);
     assert(src != NULL);
+    assert(copy != NULL);
     assert(jaeger_vector_length(dst) == 0);
     if (!jaeger_vector_reserve(dst, jaeger_vector_length(src), logger)) {
         return false;
@@ -253,11 +274,114 @@ jaeger_vector_copy(jaeger_vector* dst,
         assert(dst_elem != NULL);
         const void* src_elem = jaeger_vector_offset((jaeger_vector*) src, i);
         assert(src_elem != NULL);
-        if (!copy(dst_elem, src_elem, logger)) {
+        if (!copy(arg, dst_elem, src_elem, logger)) {
             dst->len--;
             return false;
         }
     }
+    return true;
+}
+
+typedef struct jaeger_vector_ptr_copy_arg {
+    jaeger_allocator* alloc;
+    int type_size;
+    bool (*copy)(void*, void*, const void*, jaeger_logger*);
+    void* arg;
+} jaeger_vector_ptr_copy_arg;
+
+static inline bool jaeger_vector_ptr_copy_helper(void* arg,
+                                                 void* dst,
+                                                 const void* src,
+                                                 jaeger_logger* logger)
+{
+    assert(arg != NULL);
+    jaeger_vector_ptr_copy_arg* ctx = arg;
+    void** ptr = dst;
+    *ptr = ctx->alloc->malloc(ctx->alloc, ctx->type_size);
+    if (*ptr == NULL) {
+        if (logger != NULL) {
+            logger->error(logger,
+                          "Cannot allocate %d bytes for vector pointer",
+                          ctx->type_size);
+        }
+        return false;
+    }
+    if (!ctx->copy(ctx->arg, *ptr, src, logger)) {
+        ctx->alloc->free(ctx->alloc, *ptr);
+        *ptr = NULL;
+        return false;
+    }
+    return true;
+}
+
+static inline bool
+jaeger_vector_ptr_copy(jaeger_vector* dst,
+                       const jaeger_vector* src,
+                       int value_size,
+                       bool (*copy)(void*, void*, const void*, jaeger_logger*),
+                       void (*dtor)(void*),
+                       void* arg,
+                       jaeger_logger* logger)
+{
+    assert(dst != NULL);
+    if (dst->type_size != sizeof(void*)) {
+        if (logger != NULL) {
+            logger->error(logger,
+                          "Cannot copy to vector that does not hold pointers, "
+                          "type size = %d",
+                          dst->type_size);
+        }
+        return false;
+    }
+    jaeger_vector_ptr_copy_arg ctx = {dst->alloc, value_size, copy, arg};
+    if (!jaeger_vector_copy(
+            dst, src, jaeger_vector_ptr_copy_helper, &ctx, logger)) {
+
+#define JAEGERTRACINGC_DST_VECTOR_ALLOC_FREE(x) \
+    do {                                        \
+        void** ptr = x;                         \
+        if (*ptr != NULL) {                     \
+            if (dtor != NULL) {                 \
+                dtor(*ptr);                     \
+            }                                   \
+            dst->alloc->free(dst->alloc, *ptr); \
+        }                                       \
+    } while (0)
+
+        JAEGERTRACINGC_VECTOR_FOR_EACH(dst,
+                                       JAEGERTRACINGC_DST_VECTOR_ALLOC_FREE);
+
+#undef JAEGERTRACINGC_DST_VECTOR_ALLOC_FREE
+
+        return false;
+    }
+
+    return true;
+}
+
+static inline bool jaeger_vector_protobuf_copy(
+    void*** dst,
+    size_t* n_dst,
+    const jaeger_vector* src,
+    int value_size,
+    bool (*copy)(void*, void*, const void*, jaeger_logger*),
+    void (*dtor)(void*),
+    void* arg,
+    jaeger_logger* logger)
+{
+    assert(dst != NULL);
+    assert(n_dst != NULL);
+    jaeger_vector vec;
+    if (!jaeger_vector_init(&vec, sizeof(void*), NULL, logger)) {
+        return false;
+    }
+    if (!jaeger_vector_ptr_copy(
+            &vec, src, value_size, copy, dtor, arg, logger)) {
+        jaeger_vector_destroy(&vec);
+        return false;
+    }
+    *dst = vec.data;
+    *n_dst = jaeger_vector_length(&vec);
     return true;
 }
 

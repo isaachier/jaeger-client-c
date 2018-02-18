@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
+#include "jaegertracingc/clock.h"
 #include <time.h>
-#include "jaegertracingc/duration.h"
 #include "unity.h"
 
 #define NS_PER_S JAEGERTRACINGC_NANOSECONDS_PER_SECOND
 
-void test_duration()
+void test_clock()
 {
     {
         jaeger_duration x = {.tv_sec = 1, .tv_nsec = 0};

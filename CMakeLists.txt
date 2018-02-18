@@ -74,11 +74,11 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(core_src
   "src/jaegertracingc/alloc.c"
   "src/jaegertracingc/alloc.h"
+  "src/jaegertracingc/clock.c"
+  "src/jaegertracingc/clock.h"
   "src/jaegertracingc/common.c"
   "src/jaegertracingc/common.h"
   "src/jaegertracingc/constants.c"
-  "src/jaegertracingc/duration.c"
-  "src/jaegertracingc/duration.h"
   "src/jaegertracingc/init.c"
   "src/jaegertracingc/init.h"
   "src/jaegertracingc/logging.c"
@@ -178,7 +178,7 @@ if(BUILD_TESTING)
 
   set(test_src
     "src/jaegertracingc/alloc_test.c"
-    "src/jaegertracingc/duration_test.c"
+    "src/jaegertracingc/clock_test.c"
     "src/jaegertracingc/logging_test.c"
     "src/jaegertracingc/metrics_test.c"
     "src/jaegertracingc/net_test.c"

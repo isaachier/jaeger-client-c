@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef JAEGERTRACINGC_DURATION_H
-#define JAEGERTRACINGC_DURATION_H
+#ifndef JAEGERTRACINGC_CLOCK_H
+#define JAEGERTRACINGC_CLOCK_H
 
 #include <assert.h>
 #include <time.h>
@@ -26,6 +26,24 @@ extern "C" {
 #endif /* __cplusplus */
 
 #define JAEGERTRACINGC_NANOSECONDS_PER_SECOND 1000000000
+#define JAEGERTRACINGC_MICROSECONDS_PER_SECOND 1000000
+#define JAEGERTRACINGC_NANOSECONDS_PER_MICROSECOND 1000
+
+typedef struct timespec jaeger_timestamp;
+
+static inline void jaeger_timestamp_now(jaeger_timestamp* timestamp)
+{
+    assert(timestamp != NULL);
+    clock_gettime(CLOCK_REALTIME, timestamp);
+}
+
+static inline int64_t
+jaeger_timestamp_microseconds(const jaeger_timestamp* const timestamp)
+{
+    assert(timestamp != NULL);
+    return timestamp->tv_sec * JAEGERTRACINGC_MICROSECONDS_PER_SECOND +
+           timestamp->tv_nsec * JAEGERTRACINGC_NANOSECONDS_PER_MICROSECOND;
+}
 
 typedef struct timespec jaeger_duration;
 
@@ -37,8 +55,8 @@ static inline void jaeger_duration_now(jaeger_duration* duration)
 
 // Algorithm based on
 // http://www.gnu.org/software/libc/manual/html_node/Elapsed-Time.html.
-static inline bool jaeger_duration_subtract(const jaeger_duration* lhs,
-                                            const jaeger_duration* rhs,
+static inline bool jaeger_duration_subtract(const jaeger_duration* const lhs,
+                                            const jaeger_duration* const rhs,
                                             jaeger_duration* result)
 {
     assert(lhs != NULL);
@@ -71,4 +89,4 @@ static inline bool jaeger_duration_subtract(const jaeger_duration* lhs,
 } /* extern C */
 #endif /* __cplusplus */
 
-#endif /* JAEGERTRACINGC_DURATION_H */
+#endif /* JAEGERTRACINGC_CLOCK_H */

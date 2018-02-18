@@ -18,8 +18,8 @@
 #define JAEGERTRACINGC_TOKEN_BUCKET_H
 
 #include <assert.h>
+#include "jaegertracingc/clock.h"
 #include "jaegertracingc/common.h"
-#include "jaegertracingc/duration.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -65,6 +65,8 @@ static inline void jaeger_tag_destroy(jaeger_tag* tag)
     }
 }
 
+JAEGERTRACINGC_WRAP_DESTROY(jaeger_tag_destroy)
+
 static inline void jaeger_tag_clear(jaeger_tag* tag)
 {
     jaeger_tag_destroy(tag);
@@ -124,11 +126,7 @@ cleanup:
     return false;
 }
 
-static inline bool
-jaeger_tag_copy_wrapper(void* dst, const void* src, jaeger_logger* logger)
-{
-    return jaeger_tag_copy(dst, src, logger);
-}
+JAEGERTRACINGC_WRAP_COPY(jaeger_tag_copy)
 
 static inline bool jaeger_tag_vector_append(jaeger_vector* vec,
                                             const jaeger_tag* tag,
