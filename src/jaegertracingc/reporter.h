@@ -31,6 +31,8 @@ extern "C" {
 
 #define JAEGERTRACINGC_DEFAULT_UDP_SPAN_SERVER_HOST_PORT "localhost:6831"
 
+#define JAEGERTRACINGC_DEFAULT_UDP_BUFFER_SIZE USHRT_MAX
+
 #define JAEGERTRACINGC_REPORTER_SUBCLASS              \
     JAEGERTRACINGC_DESTRUCTIBLE_SUBCLASS;             \
     void (*report)(struct jaeger_reporter * reporter, \
@@ -84,7 +86,7 @@ typedef struct jaeger_remote_reporter {
     int max_packet_size;
     int fd;
     jaeger_metrics* metrics;
-    Jaegertracing__Protobuf__Batch batch;
+    Jaegertracing__Protobuf__Process process;
     jaeger_vector spans;
 } jaeger_remote_reporter;
 
@@ -94,8 +96,8 @@ bool jaeger_remote_reporter_init(jaeger_remote_reporter* reporter,
                                  jaeger_metrics* metrics,
                                  jaeger_logger* logger);
 
-bool jaeger_remote_reporter_flush(jaeger_remote_reporter* reporter,
-                                  jaeger_logger* logger);
+int jaeger_remote_reporter_flush(jaeger_remote_reporter* reporter,
+                                 jaeger_logger* logger);
 
 #ifdef __cplusplus
 } /* extern C */
