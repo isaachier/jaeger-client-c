@@ -1,14 +1,23 @@
 language: c
 sudo: false
 dist: trusty
+
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - libhttp-parser-dev
+      - libjansson-dev
+      - libprotobuf-c0-dev
+      - protobuf-c-compiler
+
 matrix:
   include:
     # works on Precise and Trusty
     - os: linux
       addons:
         apt:
-          sources:
-            - ubuntu-toolchain-r-test
           packages:
             - gcc-4.9
       env:
@@ -46,8 +55,7 @@ matrix:
             - gcc-7
             - lcov
       env:
-        - MATRIX_EVAL="CC=gcc-7"
-        - COVERAGE=ON
+        - MATRIX_EVAL="CC=gcc-7 && COVERAGE=ON"
 
     # works on Precise and Trusty
     - os: linux
