@@ -129,7 +129,7 @@ static inline void* jaeger_vector_extend(jaeger_vector* vec,
     assert(vec != NULL);
     assert(num_elements >= 0);
     assert(jaeger_vector_length(vec) <= vec->capacity);
-    if (jaeger_vector_length(vec) + num_elements >= vec->capacity &&
+    if (jaeger_vector_length(vec) + num_elements > vec->capacity &&
         !jaeger_vector_reserve(
             vec,
             JAEGERTRACINGC_MAX(vec->capacity *

@@ -53,8 +53,7 @@ void test_vector()
 
     TEST_ASSERT_TRUE(jaeger_vector_init(&vec, sizeof(char), NULL, logger));
     vec.alloc = &alloc;
-    while (jaeger_vector_length(&vec) <
-           JAEGERTRACINGC_VECTOR_INIT_CAPACITY - 1) {
+    while (jaeger_vector_length(&vec) < JAEGERTRACINGC_VECTOR_INIT_CAPACITY) {
         TEST_ASSERT_NOT_NULL(jaeger_vector_append(&vec, logger));
     }
     TEST_ASSERT_NULL(jaeger_vector_append(&vec, logger));
@@ -69,6 +68,8 @@ void test_vector()
     jaeger_tag tag = JAEGERTRACINGC_TAG_INIT;
     tag.value_case = JAEGERTRACINGC_TAG_TYPE(LONG);
     tag.long_value = 0;
+    TEST_ASSERT_TRUE(jaeger_vector_extend(
+        &vec, 0, JAEGERTRACINGC_VECTOR_INIT_CAPACITY, logger));
     TEST_ASSERT_FALSE(jaeger_tag_vector_append(&vec, &tag, logger));
     jaeger_vector_destroy(&vec);
 }
