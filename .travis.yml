@@ -64,7 +64,6 @@ matrix:
           packages:
             - *common_deps
             - g++-7
-            - lcov
       env:
         - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
 
