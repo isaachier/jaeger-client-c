@@ -18,7 +18,7 @@ matrix:
             - *common_deps
             - gcc-4.8
       env:
-         - MATRIX_EVAL="CC=gcc-4.9"
+         - MATRIX_EVAL="CC=gcc-4.8"
 
     # works on Precise and Trusty
     - os: linux
