@@ -20,7 +20,6 @@ matrix:
         apt:
           packages:
             - *common_deps
-            - gcc-4.8
             - g++-4.8
       env:
          - MATRIX_EVAL="CC=gcc-4.8 && CXX=g++-4.8"
@@ -30,10 +29,9 @@ matrix:
         apt:
           packages:
             - *common_deps
-            - gcc-4.9
             - g++-4.9
       env:
-         - MATRIX_EVAL="CC=gcc && CXX=g++"
+         - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
 
     - os: linux
       addons:
@@ -42,7 +40,6 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - *common_deps
-            - gcc-5
             - g++-5
       env:
          - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
@@ -54,7 +51,6 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - *common_deps
-            - gcc-6
             - g++-6
       env:
         - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
@@ -66,7 +62,6 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - *common_deps
-            - gcc-7
             - g++-7
             - lcov
       env:
