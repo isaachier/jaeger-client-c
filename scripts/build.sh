@@ -44,7 +44,10 @@ function main() {
     mkdir -p build
     cd build || exit
     working "Building project"
-    cmake -DCMAKE_BUILD_TYPE=Debug -DJAEGERTRACINGC_COVERAGE=${COVERAGE:OFF} ..
+    local prefix_arg
+    prefix_arg=$1
+    prefix_arg=${prefix_arg:+"-DCMAKE_INSTALL_PREFIX=$prefix_arg"}
+    cmake -DCMAKE_BUILD_TYPE=Debug ${prefix_arg} -DJAEGERTRACINGC_COVERAGE=${COVERAGE:OFF} ..
 
     if make -j3 unit_test_coverage; then
         true
@@ -56,4 +59,4 @@ function main() {
     info "All tests compiled and passed"
 }
 
-main
+main $@

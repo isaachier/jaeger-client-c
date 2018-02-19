@@ -150,7 +150,7 @@ before_install:
   - eval "${MATRIX_EVAL}"
   - ./scripts/install-deps.sh "$HOME/install"
 script:
-  - ./scripts/build.sh
+  - ./scripts/build.sh "$HOME/install"
 after_success:
   - for f in $(find build -name '*.gcno'); do gcov-6 $f; done
   - bash <(curl -s https://codecov.io/bash) ||
