@@ -42,21 +42,26 @@ function main() {
     cd "$project_dir" || exit 1
 
     mkdir -p build
-    cd build || exit
+    cd build || exit 1
     working "Building project"
     local prefix_arg
     prefix_arg=$1
     prefix_arg=${prefix_arg:+"-DCMAKE_INSTALL_PREFIX=$prefix_arg"}
     cmake -DCMAKE_BUILD_TYPE=Debug ${prefix_arg} -DJAEGERTRACINGC_COVERAGE=${COVERAGE:OFF} ..
 
-    if make -j3 unit_test_coverage; then
-        true
+    local target
+    if [ "x$COVERAGE" = "x" ]; then
+        target=test
     else
-        error "Error: compilation errors"
-        exit 3
+        target=unit_test_coverage
     fi
 
-    info "All tests compiled and passed"
+    if make "$target" -j3; then
+        info "All tests compiled and passed"
+    else
+        error "Failed to build/run tests"
+        exit 1
+    fi
 }
 
 main $@
