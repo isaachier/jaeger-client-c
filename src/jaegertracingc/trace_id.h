@@ -44,9 +44,11 @@ jaeger_trace_id_to_protobuf(Jaegertracing__Protobuf__TraceID* dst,
 {
     assert(dst != NULL);
     assert(src != NULL);
+#ifdef JAEGERTRACINGC_HAVE_PROTOBUF_OPTIONAL_FIELDS
     dst->has_high = true;
-    dst->high = src->high;
     dst->has_low = true;
+#endif /* JAEGERTRACINGC_HAVE_PROTOBUF_OPTIONAL_FIELDS */
+    dst->high = src->high;
     dst->low = src->low;
 }
 

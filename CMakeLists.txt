@@ -24,6 +24,7 @@ project(jaegertracingc VERSION 0.0.1 LANGUAGES C)
 
 include(CheckCCompilerFlag)
 include(CheckFunctionExists)
+include(CheckStructHasMember)
 include(CMakeDependentOption)
 include(CTest)
 include(GenerateDocumentation)
@@ -118,15 +119,17 @@ file(MAKE_DIRECTORY "${generated_src_dir}/protoc-gen")
 function(generate_protobuf_c gen_src)
   foreach(proto_src ${ARGN})
     get_filename_component(component ${proto_src} NAME_WE)
+    get_filename_component(dir ${proto_src} DIRECTORY)
     set(protoc_out_files
         "${generated_src_dir}/protoc-gen/${component}.pb-c.h"
         "${generated_src_dir}/protoc-gen/${component}.pb-c.c")
     add_custom_command(
       OUTPUT ${protoc_out_files}
       COMMAND ${PROTOC_C_EXECUTABLE} --c_out "${generated_src_dir}/protoc-gen"
-              -I "${CMAKE_CURRENT_SOURCE_DIR}/idl/protobuf" ${proto_src}
+              -I. "${component}.proto"
       MAIN_DEPENDENCY ${proto_src}
       DEPENDENCIES ${PROTOC_C_EXECUTABLE}
+      WORKING_DIRECTORY ${dir}
       VERBATIM
       USES_TERMINAL)
     list(APPEND out_files ${protoc_out_files})
@@ -141,6 +144,17 @@ generate_protobuf_c(
   "${CMAKE_CURRENT_SOURCE_DIR}/idl/protobuf/jaeger.proto"
   "${CMAKE_CURRENT_SOURCE_DIR}/idl/protobuf/sampling.proto")
 add_library(jaegertracingc ${core_src} ${protoc_gen_src})
+
+if(NOT DEFINED protobuf_has_optional_field)
+  try_compile(protobuf_has_optional_field
+    "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/protobuf_test_project"
+    protobuf_test_project)
+endif()
+if(protobuf_has_optional_field)
+  target_compile_definitions(jaegertracingc PUBLIC
+    JAEGERTRACINGC_HAVE_PROTOBUF_OPTIONAL_FIELDS)
+endif()
 
 configure_file(
   "src/jaegertracingc/constants.h.in"

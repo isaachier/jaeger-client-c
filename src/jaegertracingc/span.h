@@ -100,7 +100,9 @@ jaeger_log_record_to_protobuf(Jaegertracing__Protobuf__Log* dst,
 {
     assert(dst != NULL);
     assert(src != NULL);
+#ifdef JAEGERTRACINGC_HAVE_PROTOBUF_OPTIONAL_FIELDS
     dst->has_timestamp = true;
+#endif /* JAEGERTRACINGC_HAVE_PROTOBUF_OPTIONAL_FIELDS */
     dst->timestamp = jaeger_timestamp_microseconds(&src->timestamp);
     if (!jaeger_vector_protobuf_copy((void***) &dst->fields,
                                      &dst->n_fields,
@@ -179,7 +181,9 @@ jaeger_span_ref_to_protobuf(Jaegertracing__Protobuf__SpanRef* dst,
         return false;
     }
     jaeger_trace_id_to_protobuf(dst->trace_id, &src->context.trace_id);
+#ifdef JAEGERTRACINGC_HAVE_PROTOBUF_OPTIONAL_FIELDS
     dst->has_type = true;
+#endif /* JAEGERTRACINGC_HAVE_PROTOBUF_OPTIONAL_FIELDS */
     dst->type = src->type;
     dst->span_id = src->context.span_id;
     return true;
@@ -343,8 +347,10 @@ static inline bool jaeger_span_to_protobuf(Jaegertracing__Protobuf__Span* dst,
         }
         return false;
     }
+#ifdef JAEGERTRACINGC_HAVE_PROTOBUF_OPTIONAL_FIELDS
     dst->has_span_id = true;
     dst->has_parent_span_id = true;
+#endif /* JAEGERTRACINGC_HAVE_PROTOBUF_OPTIONAL_FIELDS */
     jaeger_mutex_lock((jaeger_mutex*) &src->mutex);
     jaeger_trace_id_to_protobuf(dst->trace_id, &src->context.trace_id);
     dst->span_id = src->context.span_id;

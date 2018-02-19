@@ -32,7 +32,7 @@
 # Based on https://cmake.org/cmake/help/v3.10/manual/cmake-developer.7.html#a-sample-find-module
 
 find_package(PkgConfig)
-pkg_check_modules(PC_PROTOBUF_C protobuf-c)
+pkg_check_modules(PC_PROTOBUF_C protobuf-c QUIET)
 
 find_path(PROTOBUF_C_INCLUDE_DIR
   NAMES protobuf-c/protobuf-c.h
