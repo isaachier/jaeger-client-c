@@ -35,9 +35,8 @@ find_package(PkgConfig)
 pkg_check_modules(PC_PROTOBUF_C protobuf-c)
 
 find_path(PROTOBUF_C_INCLUDE_DIR
-  NAMES protobuf-c.h
-  PATHS ${PC_PROTOBUF_C_INCLUDE_DIRS}
-  PATH_SUFFIXES protobuf-c)
+  NAMES protobuf-c/protobuf-c.h
+  PATHS ${PC_PROTOBUF_C_INCLUDE_DIRS})
 find_library(PROTOBUF_C_LIBRARY
   NAMES protobuf-c
   PATHS ${PC_PROTOBUF_C_LIBRARY_DIRS})
