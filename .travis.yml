@@ -7,29 +7,35 @@ addons:
       - libhttp-parser-dev
       - libjansson-dev
       - pkg-config
+      - install
+      - autoconf
+      - automake
+      - libtool
+      - curl
+      - make
+      - unzip
 matrix:
   include:
-    # works on Precise and Trusty
     - os: linux
       addons:
         apt:
           packages:
             - *common_deps
             - gcc-4.8
+            - g++-4.8
       env:
-         - MATRIX_EVAL="CC=gcc-4.8"
+         - MATRIX_EVAL="CC=gcc-4.8 && CXX=g++-4.8"
 
-    # works on Precise and Trusty
     - os: linux
       addons:
         apt:
           packages:
             - *common_deps
             - gcc-4.9
+            - g++-4.9
       env:
-         - MATRIX_EVAL="CC=gcc-4.9"
+         - MATRIX_EVAL="CC=gcc && CXX=g++"
 
-    # works on Precise and Trusty
     - os: linux
       addons:
         apt:
@@ -38,10 +44,10 @@ matrix:
           packages:
             - *common_deps
             - gcc-5
+            - g++-5
       env:
-         - MATRIX_EVAL="CC=gcc-5"
+         - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
 
-    # works on Precise and Trusty
     - os: linux
       addons:
         apt:
@@ -50,10 +56,10 @@ matrix:
           packages:
             - *common_deps
             - gcc-6
+            - g++-6
       env:
-        - MATRIX_EVAL="CC=gcc-6"
+        - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
 
-    # works on Precise and Trusty
     - os: linux
       addons:
         apt:
@@ -62,11 +68,11 @@ matrix:
           packages:
             - *common_deps
             - gcc-7
+            - g++-7
             - lcov
       env:
-        - MATRIX_EVAL="CC=gcc-7 && COVERAGE=ON"
+        - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
 
-    # works on Precise and Trusty
     - os: linux
       addons:
         apt:
@@ -77,9 +83,8 @@ matrix:
             - *common_deps
             - clang-3.6
       env:
-        - MATRIX_EVAL="CC=clang-3.6"
+        - MATRIX_EVAL="CC=clang-3.6 && CXX=clang++-3.6"
 
-    # works on Precise and Trusty
     - os: linux
       addons:
         apt:
@@ -90,9 +95,8 @@ matrix:
             - *common_deps
             - clang-3.7
       env:
-        - MATRIX_EVAL="CC=clang-3.7"
+        - MATRIX_EVAL="CC=clang-3.7 && CXX=clang++-3.7"
 
-    # works on Precise and Trusty
     - os: linux
       addons:
         apt:
@@ -103,9 +107,8 @@ matrix:
             - *common_deps
             - clang-3.8
       env:
-        - MATRIX_EVAL="CC=clang-3.8"
+        - MATRIX_EVAL="CC=clang-3.8 && CXX=clang++-3.8"
 
-    # works on Trusty
     - os: linux
       addons:
         apt:
@@ -115,9 +118,8 @@ matrix:
             - *common_deps
             - clang-3.9
       env:
-        - MATRIX_EVAL="CC=clang-3.9"
+        - MATRIX_EVAL="CC=clang-3.9 && CXX=clang++-3.9"
 
-    # works on Trusty
     - os: linux
       addons:
         apt:
@@ -127,9 +129,8 @@ matrix:
             - *common_deps
             - clang-4.0
       env:
-        - MATRIX_EVAL="CC=clang-4.0"
+        - MATRIX_EVAL="CC=clang-4.0 && CXX=clang++-4.0"
 
-    # works on Trusty
     - os: linux
       addons:
         apt:
@@ -139,7 +140,7 @@ matrix:
             - *common_deps
             - clang-5.0
       env:
-        - MATRIX_EVAL="CC=clang-5.0"
+        - MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0"
 branches:
   only:
   - master
@@ -148,22 +149,7 @@ cache:
     - $HOME/install
 before_install:
   - eval "${MATRIX_EVAL}"
-  - if [ ! -f "$HOME/install/bin/cmake" ]; then
-      mkdir cmake-download &&
-      cd cmake-download &&
-      curl -O https://cmake.org/files/v3.10/cmake-3.10.0-rc5-Linux-x86_64.sh &&
-      bash cmake-3.10.0-rc5-Linux-x86_64.sh --skip-license --prefix=$HOME/install &&
-      cd ..
-    fi
-  - if [ ! -f "$HOME/install/bin/protoc-c" ]; then
-      curl -O https://github.com/protobuf-c/protobuf-c/releases/download/v1.3.0/protobuf-c-1.3.0.tar.gz &&
-      tar -xvzf protobuf-c-1.3.0.tar.gz &&
-      cd protobuf-c-1.3.0 &&
-      ./configure --prefix=$HOME/install &&
-      make &&
-      make install &&
-      cd ..
-    fi
+  - ./scripts/install-deps.sh
 script:
   - ./scripts/build.sh
 after_success:
