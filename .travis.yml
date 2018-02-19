@@ -109,17 +109,6 @@ matrix:
       addons:
         apt:
           sources:
-            - llvm-toolchain-trusty-3.9
-          packages:
-            - *common_deps
-            - clang-3.9
-      env:
-        - MATRIX_EVAL="CC=clang-3.9 && CXX=clang++-3.9"
-
-    - os: linux
-      addons:
-        apt:
-          sources:
             - llvm-toolchain-trusty-4.0
           packages:
             - *common_deps
