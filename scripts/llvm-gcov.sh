@@ -17,4 +17,4 @@
 # Based on advice in
 # http://logan.tw/posts/2015/04/28/check-code-coverage-with-clang-and-lcov/.
 
-exec llvm-cov gcov "$@"
+llvm-cov gcov "$@"

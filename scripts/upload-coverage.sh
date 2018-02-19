@@ -28,7 +28,7 @@ function main() {
     *) gcov_tool="$project_dir/scripts/llvm-gcov.sh"
         ;;
     esac
-    find build -name '*.gcno' -exec "$gcov_tool" {} \; -print
+    find build -name '*.gcno' -exec "$gcov_tool" {} \;
     bash <(curl -s https://codecov.io/bash) || \
         echo "Codecov did not collect coverage reports"
 }
