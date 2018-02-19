@@ -167,14 +167,12 @@ jaeger_vector_remove(jaeger_vector* vec, int index, jaeger_logger* logger)
         return;
     }
 
-    if (index == len - 1) {
-        vec->len--;
-        return;
+    if (index < len - 1) {
+        const void* end = jaeger_vector_offset(vec, len);
+        void* removed_ptr = jaeger_vector_offset(vec, index);
+        void* new_ptr = removed_ptr + vec->type_size;
+        memmove(removed_ptr, new_ptr, end - new_ptr);
     }
-
-    const void* old_end = jaeger_vector_offset(vec, len);
-    void* ptr = jaeger_vector_offset(vec, index);
-    memmove(ptr, ptr + vec->type_size, old_end - ptr);
     vec->len--;
 }
 

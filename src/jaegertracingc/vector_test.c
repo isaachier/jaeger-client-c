@@ -57,6 +57,7 @@ void test_vector()
         TEST_ASSERT_NOT_NULL(jaeger_vector_append(&vec, logger));
     }
     TEST_ASSERT_NULL(jaeger_vector_append(&vec, logger));
+    jaeger_vector_remove(&vec, 0, logger);
     vec.alloc = jaeger_built_in_allocator();
     TEST_ASSERT_NULL(
         jaeger_vector_get(&vec, jaeger_vector_length(&vec), logger));
@@ -71,5 +72,6 @@ void test_vector()
     TEST_ASSERT_TRUE(jaeger_vector_extend(
         &vec, 0, JAEGERTRACINGC_VECTOR_INIT_CAPACITY, logger));
     TEST_ASSERT_FALSE(jaeger_tag_vector_append(&vec, &tag, logger));
+    vec.alloc = jaeger_built_in_allocator();
     jaeger_vector_destroy(&vec);
 }
