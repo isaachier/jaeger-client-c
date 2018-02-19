@@ -28,6 +28,8 @@ matrix:
     - os: linux
       addons:
         apt:
+          sources:
+            - ubuntu-toolchain-r-test
           packages:
             - *common_deps
             - g++-4.9
