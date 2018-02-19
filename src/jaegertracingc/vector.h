@@ -152,6 +152,32 @@ static inline void* jaeger_vector_extend(jaeger_vector* vec,
     return offset;
 }
 
+static inline void
+jaeger_vector_remove(jaeger_vector* vec, int index, jaeger_logger* logger)
+{
+    assert(vec != NULL);
+    const int len = jaeger_vector_length(vec);
+    if (index < 0 || index >= len) {
+        if (logger != NULL) {
+            logger->error(logger,
+                          "Invalid removal of index %d in vector of length %d",
+                          index,
+                          len);
+        }
+        return;
+    }
+
+    if (index == len - 1) {
+        vec->len--;
+        return;
+    }
+
+    const void* old_end = jaeger_vector_offset(vec, len);
+    void* ptr = jaeger_vector_offset(vec, index);
+    memmove(ptr, ptr + vec->type_size, old_end - ptr);
+    vec->len--;
+}
+
 static inline void*
 jaeger_vector_insert(jaeger_vector* vec, int index, jaeger_logger* logger)
 {
