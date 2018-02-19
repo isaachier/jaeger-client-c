@@ -23,10 +23,10 @@ function main() {
 
     local gcov_tool
     case "$CC" in
-    gcc*) gcov_tool=${CC/gcc/gcov}
-        ;;
-    *) gcov_tool="$project_dir/scripts/llvm-gcov.sh"
-        ;;
+        gcc*) gcov_tool=${CC/gcc/gcov}
+            ;;
+        *) gcov_tool="$project_dir/scripts/llvm-gcov.sh"
+            ;;
     esac
     find build -name '*.gcno' -exec "$gcov_tool" {} \;
     bash <(curl -s https://codecov.io/bash) || \

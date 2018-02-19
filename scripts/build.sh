@@ -53,7 +53,12 @@ function main() {
     if [ "x$COVERAGE" = "x" ]; then
         target=test
     else
-        target=unit_test_coverage
+        case "$CC" in
+            gcc*) target=unit_test_coverage
+                ;;
+            *) target=test
+                ;;
+        esac
     fi
 
     if make all $target -j3; then
