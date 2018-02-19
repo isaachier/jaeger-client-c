@@ -7,7 +7,6 @@ addons:
       - libhttp-parser-dev
       - libjansson-dev
       - pkg-config
-      - install
       - autoconf
       - automake
       - libtool
