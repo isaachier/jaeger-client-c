@@ -56,7 +56,7 @@ function main() {
         target=unit_test_coverage
     fi
 
-    if make "$target" -j3; then
+    if make all $target -j3; then
         info "All tests compiled and passed"
     else
         error "Failed to build/run tests"
