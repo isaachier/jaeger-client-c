@@ -191,10 +191,10 @@ jaeger_span_ref_to_protobuf(Jaegertracing__Protobuf__SpanRef* dst,
 
 JAEGERTRACINGC_WRAP_COPY(jaeger_span_ref_to_protobuf)
 
-typedef struct jaeger_tracer jaeger_tracer;
+struct jaeger_tracer;
 
 typedef struct jaeger_span {
-    jaeger_tracer* tracer;
+    struct jaeger_tracer* tracer;
     jaeger_span_context context;
     char* operation_name;
     time_t start_time_system;
