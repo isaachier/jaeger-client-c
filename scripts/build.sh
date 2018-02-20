@@ -54,9 +54,11 @@ function main() {
             info "All tests compiled and passed"
         else
             error "Tests failed"
+            exit 1
         fi
     else
         error "Failed to build project"
+        exit 1
         exit 1
     fi
 }
