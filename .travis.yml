@@ -14,6 +14,7 @@ addons:
       - make
       - unzip
       - lcov
+      - valgrind
 matrix:
   include:
     - os: linux

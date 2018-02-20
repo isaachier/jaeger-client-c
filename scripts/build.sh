@@ -49,22 +49,14 @@ function main() {
     prefix_arg=${prefix_arg:+"-DCMAKE_INSTALL_PREFIX=$prefix_arg"}
     cmake -DCMAKE_BUILD_TYPE=Debug ${prefix_arg} -DJAEGERTRACINGC_COVERAGE=${COVERAGE:OFF} ..
 
-    local target
-    if [ "x$COVERAGE" = "x" ]; then
-        target=test
+    if make all -j3; then
+        if valgrind --leak-check=full ./default_test; then
+            info "All tests compiled and passed"
+        else
+            error "Tests failed"
+        fi
     else
-        case "$CC" in
-            gcc*) target=unit_test_coverage
-                ;;
-            *) target=test
-                ;;
-        esac
-    fi
-
-    if make all $target -j3; then
-        info "All tests compiled and passed"
-    else
-        error "Failed to build/run tests"
+        error "Failed to build project"
         exit 1
     fi
 }
