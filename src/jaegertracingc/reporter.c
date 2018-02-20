@@ -87,10 +87,12 @@ static void in_memory_reporter_report(jaeger_reporter* reporter,
         return;
     }
     jaeger_mutex_lock(&r->mutex);
-    jaeger_span* span_copy = jaeger_vector_append(&r->spans, NULL);
+    jaeger_span* span_copy = jaeger_vector_append(&r->spans, logger);
     if (span_copy != NULL) {
         if (jaeger_span_init(span_copy, logger)) {
-            jaeger_span_copy(span_copy, span, logger);
+            if (!jaeger_span_copy(span_copy, span, logger)) {
+                r->spans.len--;
+            }
         }
         else {
             jaeger_free(span_copy);
@@ -415,7 +417,8 @@ static void remote_reporter_report(jaeger_reporter* reporter,
         queue_length->update(queue_length, jaeger_vector_length(&r->spans));
     }
 
-    if (r->process.service_name == NULL) {
+    if (r->process.service_name == NULL ||
+        strlen(r->process.service_name) == 0) {
         jaeger_mutex_lock((jaeger_mutex*) &span->mutex);
         /* Building process will not affect this span, so ignore return value.
          */
