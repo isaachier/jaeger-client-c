@@ -1,5 +1,5 @@
 fixes:
   - "build/::"
 ignore:
-  - "*_test.c"
-  - "build/src/jaegertracingc/protoc-gen/**"
+  - "^src/jaegertracingc/[^\\/]+_test.c$"
+  - "^src/jaegertracingc/protoc-gen/.*"
