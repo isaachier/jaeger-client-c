@@ -65,6 +65,14 @@ void test_reporter()
     jaeger_log_record* log_ptr = jaeger_vector_append(&span.logs, logger);
     TEST_ASSERT_NOT_NULL(log_ptr);
     TEST_ASSERT_TRUE(jaeger_log_record_init(log_ptr, logger));
+    jaeger_span_ref* span_ref_ptr = jaeger_vector_append(&span.refs, logger);
+    TEST_ASSERT_NOT_NULL(span_ref_ptr);
+    span_ref_ptr->context =
+        (jaeger_span_context){.trace_id = {.high = 0xDEAD, .low = 0xBEEF},
+                              .span_id = 0xCAFE,
+                              .parent_id = 0,
+                              .flags = 0};
+    span_ref_ptr->type = JAEGERTRACING__PROTOBUF__SPAN_REF__TYPE__CHILD_OF;
 
     jaeger_reporter* r = jaeger_null_reporter();
     r->report(r, &span, logger);
