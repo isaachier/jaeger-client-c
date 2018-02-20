@@ -25,6 +25,8 @@
 #include "jaegertracingc/tracer.h"
 #include "unity.h"
 
+#define MAX_PORT_LEN 5
+
 static inline int start_udp_server()
 {
     struct sockaddr_in addr;
@@ -91,8 +93,7 @@ void test_reporter()
     TEST_ASSERT_EQUAL(
         0, getsockname(server_fd, (struct sockaddr*) &addr, &addr_len));
     TEST_ASSERT_EQUAL(sizeof(addr), addr_len);
-    const int max_port_len = 5;
-    char host_port[INET_ADDRSTRLEN + 1 + max_port_len];
+    char host_port[INET_ADDRSTRLEN + 1 + MAX_PORT_LEN];
     TEST_ASSERT_NOT_NULL(
         inet_ntop(AF_INET, &addr.sin_addr, host_port, sizeof(host_port)));
     const int host_end = strlen(host_port);
@@ -135,4 +136,8 @@ void test_reporter()
     r->destroy((jaeger_destructible*) r);
 
     jaeger_span_destroy(&span);
+
+    /* TODO: Update once tracer is implemented */
+    JAEGERTRACINGC_VECTOR_FOR_EACH(&tracer.tags, jaeger_tag_destroy);
+    jaeger_vector_destroy(&tracer.tags);
 }

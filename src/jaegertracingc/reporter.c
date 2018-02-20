@@ -67,12 +67,14 @@ void jaeger_logging_reporter_init(jaeger_reporter* reporter)
 
 static void in_memory_reporter_destroy(jaeger_destructible* destructible)
 {
-    if (destructible != NULL) {
-        jaeger_in_memory_reporter* r =
-            (jaeger_in_memory_reporter*) destructible;
-        jaeger_vector_destroy(&r->spans);
-        jaeger_mutex_destroy(&r->mutex);
+    if (destructible == NULL) {
+        return;
     }
+
+    jaeger_in_memory_reporter* r = (jaeger_in_memory_reporter*) destructible;
+    JAEGERTRACINGC_VECTOR_FOR_EACH(&r->spans, jaeger_span_destroy);
+    jaeger_vector_destroy(&r->spans);
+    jaeger_mutex_destroy(&r->mutex);
 }
 
 static void in_memory_reporter_report(jaeger_reporter* reporter,
@@ -107,15 +109,14 @@ bool jaeger_in_memory_reporter_init(jaeger_in_memory_reporter* reporter,
 
 static void composite_reporter_destroy(jaeger_destructible* destructible)
 {
-    if (destructible != NULL) {
-        jaeger_composite_reporter* r =
-            (jaeger_composite_reporter*) destructible;
+    if (destructible == NULL) {
+        return;
+    }
+    jaeger_composite_reporter* r = (jaeger_composite_reporter*) destructible;
 
 #define DESTROY(x)                   \
     do {                             \
-        if (x == NULL) {             \
-            continue;                \
-        }                            \
+        assert(x != NULL);           \
         jaeger_destructible** d = x; \
         if (*d == NULL) {            \
             continue;                \
@@ -124,10 +125,11 @@ static void composite_reporter_destroy(jaeger_destructible* destructible)
         jaeger_free(*d);             \
     } while (0)
 
-        JAEGERTRACINGC_VECTOR_FOR_EACH(&r->reporters, DESTROY);
+    JAEGERTRACINGC_VECTOR_FOR_EACH(&r->reporters, DESTROY);
 
 #undef DESTROY
-    }
+
+    jaeger_vector_destroy(&r->reporters);
 }
 
 static void composite_reporter_report(jaeger_reporter* reporter,
@@ -354,10 +356,12 @@ static void remote_reporter_destroy(jaeger_destructible* destructible)
     for (int i = 0, len = jaeger_vector_length(&r->spans); i < len; i++) {
         Jaegertracing__Protobuf__Span** span =
             jaeger_vector_offset(&r->spans, i);
-        if (span != NULL && *span != NULL) {
-            jaeger_span_protobuf_destroy(*span);
-            jaeger_free(*span);
+        assert(span != NULL);
+        if (*span != NULL) {
+            continue;
         }
+        jaeger_span_protobuf_destroy(*span);
+        jaeger_free(*span);
     }
     jaeger_vector_destroy(&r->spans);
 }
@@ -534,6 +538,7 @@ int jaeger_remote_reporter_flush(jaeger_remote_reporter* reporter,
     for (int i = 0; i < num_flushed; i++) {
         if (batch.spans[i] != NULL) {
             jaeger_span_protobuf_destroy(batch.spans[i]);
+            jaeger_free(batch.spans[i]);
         }
     }
     jaeger_free(batch.spans);

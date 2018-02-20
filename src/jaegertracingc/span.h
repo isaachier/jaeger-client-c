@@ -313,26 +313,52 @@ cleanup:
 static inline void
 jaeger_span_protobuf_destroy(Jaegertracing__Protobuf__Span* span)
 {
-    if (span != NULL) {
-        if (span->trace_id != NULL) {
-            jaeger_free(span->trace_id);
-            span->trace_id = NULL;
-        }
-        if (span->operation_name != NULL) {
-            jaeger_free(span->operation_name);
-            span->operation_name = NULL;
-        }
-        if (span->references != NULL) {
-            for (int i = 0; i < span->n_references; i++) {
-                if (span->references[i] != NULL) {
-                    jaeger_span_ref_protobuf_destroy(span->references[i]);
-                    jaeger_free(span->references[i]);
-                }
+    if (span == NULL) {
+        return;
+    }
+    if (span->trace_id != NULL) {
+        jaeger_free(span->trace_id);
+        span->trace_id = NULL;
+    }
+    if (span->operation_name != NULL) {
+        jaeger_free(span->operation_name);
+        span->operation_name = NULL;
+    }
+    if (span->references != NULL) {
+        for (int i = 0; i < span->n_references; i++) {
+            if (span->references[i] == NULL) {
+                continue;
             }
-            jaeger_free(span->references);
-            span->references = NULL;
-            span->n_references = 0;
+            jaeger_span_ref_protobuf_destroy(span->references[i]);
+            jaeger_free(span->references[i]);
         }
+        jaeger_free(span->references);
+        span->references = NULL;
+        span->n_references = 0;
+    }
+    if (span->logs != NULL) {
+        for (int i = 0; i < span->n_logs; i++) {
+            if (span->logs[i] == NULL) {
+                continue;
+            }
+            jaeger_log_record_protobuf_destroy(span->logs[i]);
+            jaeger_free(span->logs[i]);
+        }
+        jaeger_free(span->logs);
+        span->logs = NULL;
+        span->n_logs = 0;
+    }
+    if (span->tags != NULL) {
+        for (int i = 0; i < span->n_tags; i++) {
+            if (span->tags[i] == NULL) {
+                continue;
+            }
+            jaeger_tag_destroy(span->tags[i]);
+            jaeger_free(span->tags[i]);
+        }
+        jaeger_free(span->tags);
+        span->tags = NULL;
+        span->n_tags = 0;
     }
 }
 
