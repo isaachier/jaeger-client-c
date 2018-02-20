@@ -41,9 +41,8 @@ static inline int start_udp_server()
 static void* flush_reporter(void* arg)
 {
     assert(arg != NULL);
-    jaeger_logger logger;
-    jaeger_std_logger_init(&logger);
-    const int num_flushed = jaeger_remote_reporter_flush(arg, &logger);
+    const int num_flushed =
+        jaeger_remote_reporter_flush(arg, jaeger_null_logger());
     int* return_value = jaeger_malloc(sizeof(int));
     TEST_ASSERT_NOT_NULL(return_value);
     *return_value = num_flushed;
@@ -117,15 +116,7 @@ void test_reporter()
     TEST_ASSERT_EQUAL(
         0, jaeger_thread_init(&thread, &flush_reporter, &remote_reporter));
     char buffer[1024];
-    struct sockaddr_in peer_addr;
-    memset(&peer_addr, 0, sizeof(peer_addr));
-    socklen_t peer_addr_len = sizeof(peer_addr);
-    const int num_read = recvfrom(server_fd,
-                                  buffer,
-                                  sizeof(buffer),
-                                  0,
-                                  (struct sockaddr*) &peer_addr,
-                                  &peer_addr_len);
+    const int num_read = recv(server_fd, buffer, sizeof(buffer), 0);
     Jaegertracing__Protobuf__Batch* batch =
         jaegertracing__protobuf__batch__unpack(
             NULL, num_read, (const uint8_t*) buffer);
@@ -133,10 +124,23 @@ void test_reporter()
     void* num_flushed = NULL;
     jaeger_thread_join(thread, &num_flushed);
     TEST_ASSERT_EQUAL(*(int*) num_flushed, batch->n_spans);
-    jaeger_free(num_flushed);
     jaegertracing__protobuf__batch__free_unpacked(batch, NULL);
-    close(server_fd);
     r->destroy((jaeger_destructible*) r);
+    jaeger_free(num_flushed);
+
+    const int small_packet_size = 1;
+    TEST_ASSERT_TRUE(jaeger_remote_reporter_init(
+        &remote_reporter, host_port, small_packet_size, metrics, logger));
+    r->report(r, &span, logger);
+    TEST_ASSERT_EQUAL(
+        0, jaeger_thread_init(&thread, &flush_reporter, &remote_reporter));
+    num_flushed = NULL;
+    jaeger_thread_join(thread, &num_flushed);
+    TEST_ASSERT_EQUAL(-1, *(int*) num_flushed);
+    jaeger_free(num_flushed);
+    r->destroy((jaeger_destructible*) r);
+
+    close(server_fd);
 
     jaeger_span_destroy(&span);
 

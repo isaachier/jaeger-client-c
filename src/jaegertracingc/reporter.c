@@ -268,9 +268,9 @@ static inline void large_batch_error(Jaegertracing__Protobuf__Batch* batch,
     spans->len = initial_num_spans;
     *batch =
         (Jaegertracing__Protobuf__Batch) JAEGERTRACING__PROTOBUF__BATCH__INIT;
-    Jaegertracing__Protobuf__Span* span = jaeger_vector_get(spans, 0, logger);
-    jaeger_span_protobuf_destroy(span);
-    jaeger_free(span);
+    Jaegertracing__Protobuf__Span** span = jaeger_vector_get(spans, 0, logger);
+    jaeger_span_protobuf_destroy(*span);
+    jaeger_free(*span);
     jaeger_vector_remove(spans, 0, logger);
 
     if (metrics != NULL) {
