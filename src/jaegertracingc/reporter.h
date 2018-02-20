@@ -88,6 +88,7 @@ typedef struct jaeger_remote_reporter {
     jaeger_metrics* metrics;
     Jaegertracing__Protobuf__Process process;
     jaeger_vector spans;
+    struct sockaddr_in addr;
 } jaeger_remote_reporter;
 
 bool jaeger_remote_reporter_init(jaeger_remote_reporter* reporter,

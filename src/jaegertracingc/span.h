@@ -180,6 +180,8 @@ jaeger_span_ref_to_protobuf(Jaegertracing__Protobuf__SpanRef* dst,
         }
         return false;
     }
+    *dst->trace_id = (Jaegertracing__Protobuf__TraceID)
+        JAEGERTRACING__PROTOBUF__TRACE_ID__INIT;
     jaeger_trace_id_to_protobuf(dst->trace_id, &src->context.trace_id);
 #ifdef JAEGERTRACINGC_HAVE_PROTOBUF_OPTIONAL_FIELDS
     dst->has_type = true;
@@ -347,6 +349,8 @@ static inline bool jaeger_span_to_protobuf(Jaegertracing__Protobuf__Span* dst,
         }
         return false;
     }
+    *dst->trace_id = (Jaegertracing__Protobuf__TraceID)
+        JAEGERTRACING__PROTOBUF__TRACE_ID__INIT;
 #ifdef JAEGERTRACINGC_HAVE_PROTOBUF_OPTIONAL_FIELDS
     dst->has_span_id = true;
     dst->has_parent_span_id = true;

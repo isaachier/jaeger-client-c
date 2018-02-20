@@ -428,7 +428,7 @@ static inline void mock_http_server_start(mock_http_server* server)
 
     server->socket_fd = socket(AF_INET, SOCK_STREAM, 0);
     TEST_ASSERT_GREATER_OR_EQUAL(0, server->socket_fd);
-    server->addr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+    server->addr.sin_addr.s_addr = htonl(INADDR_ANY);
     server->addr.sin_family = AF_INET;
     server->addr.sin_port = 0;
     TEST_ASSERT_EQUAL(0,

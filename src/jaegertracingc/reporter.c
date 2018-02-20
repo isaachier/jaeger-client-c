@@ -460,7 +460,9 @@ bool jaeger_remote_reporter_init(jaeger_remote_reporter* reporter,
     }
     bool success = false;
     for (struct addrinfo* iter = addrs; iter != NULL; iter = iter->ai_next) {
-        if (connect(fd, iter->ai_addr, iter->ai_addrlen) == 0) {
+        if (connect(fd, iter->ai_addr, iter->ai_addrlen) == 0 &&
+            sizeof(reporter->addr) == iter->ai_addrlen) {
+            memcpy(&reporter->addr, iter->ai_addr, sizeof(reporter->addr));
             success = true;
             break;
         }
@@ -512,7 +514,12 @@ int jaeger_remote_reporter_flush(jaeger_remote_reporter* reporter,
     jaegertracing__protobuf__batch__pack_to_buffer(&batch,
                                                    (ProtobufCBuffer*) &simple);
     assert(simple.len <= reporter->max_packet_size);
-    const int num_written = write(reporter->fd, simple.data, simple.len);
+    const int num_written = sendto(reporter->fd,
+                                   simple.data,
+                                   simple.len,
+                                   0,
+                                   (struct sockaddr*) &reporter->addr,
+                                   sizeof(reporter->addr));
     if (num_written != simple.len) {
         if (logger != NULL) {
             logger->error(logger,
