@@ -194,7 +194,7 @@ static inline void process_destroy(Jaegertracing__Protobuf__Process* process)
         process->tags = NULL;
         process->n_tags = 0;
     }
-    if (process->service_name != NULL) {
+    if (process->service_name != NULL && strlen(process->service_name) > 0) {
         jaeger_free(process->service_name);
         process->service_name = NULL;
     }
@@ -206,6 +206,12 @@ static inline bool build_process(Jaegertracing__Protobuf__Process* process,
 {
     assert(process != NULL);
     assert(tracer != NULL);
+    if (tracer->service_name == NULL || strlen(tracer->service_name) == 0) {
+        if (logger != NULL) {
+            logger->error(logger, "Invalid null or empty service name");
+        }
+        return false;
+    }
     process->service_name = jaeger_strdup(tracer->service_name, logger);
     if (process->service_name == NULL) {
         goto cleanup;
