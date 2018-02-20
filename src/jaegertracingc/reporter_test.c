@@ -63,6 +63,9 @@ void test_reporter()
     span.tracer = &tracer;
     span.operation_name = jaeger_strdup("test-operation", logger);
     TEST_ASSERT_NOT_NULL(span.operation_name);
+    jaeger_log_record* log_ptr = jaeger_vector_append(&span.logs, logger);
+    TEST_ASSERT_NOT_NULL(log_ptr);
+    TEST_ASSERT_TRUE(jaeger_log_record_init(log_ptr, logger));
 
     jaeger_reporter* r = jaeger_null_reporter();
     r->report(r, &span, logger);

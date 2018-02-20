@@ -83,14 +83,20 @@ static void in_memory_reporter_report(jaeger_reporter* reporter,
 {
     assert(reporter != NULL);
     jaeger_in_memory_reporter* r = (jaeger_in_memory_reporter*) reporter;
-    if (span != NULL) {
-        jaeger_mutex_lock(&r->mutex);
-        jaeger_span* span_copy = jaeger_vector_append(&r->spans, NULL);
-        if (span_copy != NULL) {
+    if (span == NULL) {
+        return;
+    }
+    jaeger_mutex_lock(&r->mutex);
+    jaeger_span* span_copy = jaeger_vector_append(&r->spans, NULL);
+    if (span_copy != NULL) {
+        if (jaeger_span_init(span_copy, logger)) {
             jaeger_span_copy(span_copy, span, logger);
         }
-        jaeger_mutex_unlock(&r->mutex);
+        else {
+            jaeger_free(span_copy);
+        }
     }
+    jaeger_mutex_unlock(&r->mutex);
 }
 
 bool jaeger_in_memory_reporter_init(jaeger_in_memory_reporter* reporter,

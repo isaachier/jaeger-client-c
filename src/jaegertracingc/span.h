@@ -65,10 +65,11 @@ JAEGERTRACINGC_WRAP_COPY(jaeger_log_record_copy)
 
 static inline void jaeger_log_record_destroy(jaeger_log_record* log_record)
 {
-    if (log_record != NULL) {
-        JAEGERTRACINGC_VECTOR_FOR_EACH(&log_record->tags, jaeger_tag_destroy);
-        jaeger_vector_destroy(&log_record->tags);
+    if (log_record == NULL) {
+        return;
     }
+    JAEGERTRACINGC_VECTOR_FOR_EACH(&log_record->tags, jaeger_tag_destroy);
+    jaeger_vector_destroy(&log_record->tags);
 }
 
 JAEGERTRACINGC_WRAP_DESTROY(jaeger_log_record_destroy)
@@ -100,6 +101,7 @@ jaeger_log_record_to_protobuf(Jaegertracing__Protobuf__Log* dst,
 {
     assert(dst != NULL);
     assert(src != NULL);
+    *dst = (Jaegertracing__Protobuf__Log) JAEGERTRACING__PROTOBUF__LOG__INIT;
 #ifdef JAEGERTRACINGC_HAVE_PROTOBUF_OPTIONAL_FIELDS
     dst->has_timestamp = true;
 #endif /* JAEGERTRACINGC_HAVE_PROTOBUF_OPTIONAL_FIELDS */
@@ -172,6 +174,8 @@ jaeger_span_ref_to_protobuf(Jaegertracing__Protobuf__SpanRef* dst,
 {
     assert(dst != NULL);
     assert(src != NULL);
+    *dst = (Jaegertracing__Protobuf__SpanRef)
+        JAEGERTRACING__PROTOBUF__SPAN_REF__INIT;
     dst->trace_id = jaeger_malloc(sizeof(Jaegertracing__Protobuf__TraceID));
     if (dst->trace_id == NULL) {
         if (logger != NULL) {
@@ -288,8 +292,8 @@ static inline bool jaeger_span_copy(jaeger_span* dst,
 
     if (!jaeger_vector_copy(&dst->logs,
                             &src->logs,
-                            &jaeger_log_record_to_protobuf_wrapper,
-                            &jaeger_log_record_protobuf_destroy_wrapper,
+                            &jaeger_log_record_copy_wrapper,
+                            &jaeger_log_record_destroy_wrapper,
                             logger)) {
         goto cleanup;
     }
@@ -368,6 +372,7 @@ static inline bool jaeger_span_to_protobuf(Jaegertracing__Protobuf__Span* dst,
 {
     assert(dst != NULL);
     assert(src != NULL);
+    *dst = (Jaegertracing__Protobuf__Span) JAEGERTRACING__PROTOBUF__SPAN__INIT;
     dst->trace_id = jaeger_malloc(sizeof(Jaegertracing__Protobuf__TraceID));
     if (dst->trace_id == NULL) {
         if (logger != NULL) {
