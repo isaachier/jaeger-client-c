@@ -115,14 +115,16 @@ void test_reporter()
 
     jaeger_remote_reporter remote_reporter;
     jaeger_metrics* metrics = jaeger_null_metrics();
+    char buffer[1024];
     TEST_ASSERT_TRUE(jaeger_remote_reporter_init(
-        &remote_reporter, host_port, 0, metrics, logger));
+        &remote_reporter, host_port, sizeof(buffer), metrics, logger));
     r = (jaeger_reporter*) &remote_reporter;
-    r->report(r, &span, logger);
+    for (int i = 0; i < 100; i++) {
+        r->report(r, &span, logger);
+    }
     jaeger_thread thread;
     TEST_ASSERT_EQUAL(
         0, jaeger_thread_init(&thread, &flush_reporter, &remote_reporter));
-    char buffer[1024];
     const int num_read = recv(server_fd, buffer, sizeof(buffer), 0);
     Jaegertracing__Protobuf__Batch* batch =
         jaegertracing__protobuf__batch__unpack(

@@ -371,7 +371,7 @@ static void remote_reporter_destroy(jaeger_destructible* destructible)
         Jaegertracing__Protobuf__Span** span =
             jaeger_vector_offset(&r->spans, i);
         assert(span != NULL);
-        if (*span != NULL) {
+        if (*span == NULL) {
             continue;
         }
         jaeger_span_protobuf_destroy(*span);
@@ -551,10 +551,11 @@ int jaeger_remote_reporter_flush(jaeger_remote_reporter* reporter,
     PROTOBUF_C_BUFFER_SIMPLE_CLEAR(&simple);
     const int num_flushed = batch.n_spans;
     for (int i = 0; i < num_flushed; i++) {
-        if (batch.spans[i] != NULL) {
-            jaeger_span_protobuf_destroy(batch.spans[i]);
-            jaeger_free(batch.spans[i]);
+        if (batch.spans[i] == NULL) {
+            continue;
         }
+        jaeger_span_protobuf_destroy(batch.spans[i]);
+        jaeger_free(batch.spans[i]);
     }
     jaeger_free(batch.spans);
     if (reporter->metrics != NULL) {

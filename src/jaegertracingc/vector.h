@@ -104,24 +104,28 @@ static inline bool jaeger_vector_reserve(jaeger_vector* vec,
     if (vec->capacity >= new_capacity) {
         return true;
     }
+    int aligned_capacity = vec->capacity;
+    while (aligned_capacity < new_capacity) {
+        aligned_capacity *= JAEGERTRACINGC_VECTOR_RESIZE_FACTOR;
+    }
 
     void* new_data = vec->alloc->realloc(
-        vec->alloc, vec->data, vec->type_size * new_capacity);
+        vec->alloc, vec->data, vec->type_size * aligned_capacity);
     if (new_data == NULL) {
         if (logger != NULL) {
             logger->error(logger,
                           "Failed to allocate memory for vector resize, "
                           "current size = %d, new size = %d",
                           vec->type_size * vec->capacity,
-                          vec->type_size * new_capacity);
+                          vec->type_size * aligned_capacity);
         }
         return false;
     }
     void* old_end = new_data + vec->type_size * vec->capacity;
-    void* new_end = new_data + vec->type_size * new_capacity;
+    void* new_end = new_data + vec->type_size * aligned_capacity;
     memset(old_end, 0, new_end - old_end);
     vec->data = new_data;
-    vec->capacity = new_capacity;
+    vec->capacity = aligned_capacity;
     return true;
 }
 
@@ -134,12 +138,7 @@ static inline void* jaeger_vector_extend(jaeger_vector* vec,
     assert(num_elements >= 0);
     assert(jaeger_vector_length(vec) <= vec->capacity);
     if (jaeger_vector_length(vec) + num_elements > vec->capacity &&
-        !jaeger_vector_reserve(
-            vec,
-            JAEGERTRACINGC_MAX(vec->capacity *
-                                   JAEGERTRACINGC_VECTOR_RESIZE_FACTOR,
-                               vec->capacity + num_elements),
-            logger)) {
+        !jaeger_vector_reserve(vec, vec->capacity + num_elements, logger)) {
         return NULL;
     }
     if (insertion_pos < vec->len) {
