@@ -368,6 +368,11 @@ static void remote_reporter_destroy(jaeger_destructible* destructible)
         r->fd = -1;
     }
 
+    if (r->candidates != NULL) {
+        freeaddrinfo(r->candidates);
+        r->candidates = NULL;
+    }
+
     process_destroy(&r->process);
 
     for (int i = 0, len = jaeger_vector_length(&r->spans); i < len; i++) {
