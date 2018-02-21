@@ -70,9 +70,6 @@ static inline bool jaeger_host_port_init(jaeger_host_port* host_port,
 
     host_port->host = jaeger_strdup(host, logger);
     if (host_port->host == NULL) {
-        if (logger != NULL) {
-            logger->error(logger, "Cannot allocate host for host port");
-        }
         return false;
     }
 
@@ -156,14 +153,7 @@ static inline bool jaeger_host_port_from_url(jaeger_host_port* host_port,
             .len = url->parts.field_data[UF_PORT].len};
         char* end = NULL;
         port = strtol(&url->str[port_segment.off], &end, 10);
-        if (end == NULL ||
-            end != &url->str[port_segment.off + port_segment.len]) {
-            if (logger != NULL) {
-                logger->error(
-                    logger, "Cannot parse port, URL = \"%s\"", url->str);
-            }
-            return false;
-        }
+        assert(end == &url->str[port_segment.off + port_segment.len]);
     }
 
     str_segment host_segment = {.off = -1, .len = 0};
@@ -173,17 +163,13 @@ static inline bool jaeger_host_port_from_url(jaeger_host_port* host_port,
     }
 
     if (host_segment.len == 0) {
-        if (logger != NULL) {
-            logger->error(
-                logger, "Invalid URL, has no host, URL = \"%s\"", url->str);
-        }
-        return false;
+        return jaeger_host_port_init(host_port, "localhost", port, logger);
     }
 
     char host_buffer[host_segment.len + 1];
-    memcpy(&host_buffer[0], &url->str[host_segment.off], host_segment.len);
+    memcpy(host_buffer, &url->str[host_segment.off], host_segment.len);
     host_buffer[host_segment.len] = '\0';
-    return jaeger_host_port_init(host_port, &host_buffer[0], port, logger);
+    return jaeger_host_port_init(host_port, host_buffer, port, logger);
 }
 
 static inline bool jaeger_host_port_scan(jaeger_host_port* host_port,
@@ -191,7 +177,14 @@ static inline bool jaeger_host_port_scan(jaeger_host_port* host_port,
                                          jaeger_logger* logger)
 {
     assert(host_port != NULL);
+    if (str == NULL) {
+        return false;
+    }
     const int len = strlen(str);
+    if (len == 0) {
+        return false;
+    }
+
     char str_copy[len + 1];
     strncpy(str_copy, str, len);
     str_copy[len] = '\0';
@@ -206,7 +199,11 @@ static inline bool jaeger_host_port_scan(jaeger_host_port* host_port,
         }
         return false;
     }
-    if (strlen(token) == 0) {
+    /* When host is omitted, first character is ':'. The first consumed token
+     * will be the port, which must not be consumed as the host. */
+    const char* port_token = NULL;
+    if (str_copy[0] == ':') {
+        port_token = token;
         token = "localhost";
     }
     host_port->host = jaeger_strdup(token, logger);
@@ -214,10 +211,18 @@ static inline bool jaeger_host_port_scan(jaeger_host_port* host_port,
         return false;
     }
 
-    token = strtok_r(NULL, ":", &token_context);
-    if (token == NULL) {
-        host_port->port = 0;
-        return true;
+    /* If the host port started with a port string, we must use the previously
+     * preserved port token.
+     */
+    if (port_token != NULL) {
+        token = port_token;
+    }
+    else {
+        token = strtok_r(NULL, ":", &token_context);
+        if (token == NULL) {
+            host_port->port = 0;
+            return true;
+        }
     }
     char* end = NULL;
     const int port = strtol(token, &end, 10);
