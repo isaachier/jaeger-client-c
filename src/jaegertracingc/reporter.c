@@ -15,6 +15,9 @@
  */
 
 #include "jaegertracingc/reporter.h"
+
+#include <errno.h>
+
 #include "jaegertracingc/threading.h"
 #include "jaegertracingc/tracer.h"
 
@@ -471,41 +474,84 @@ bool jaeger_remote_reporter_init(jaeger_remote_reporter* reporter,
         host_port_str = JAEGERTRACINGC_DEFAULT_UDP_SPAN_SERVER_HOST_PORT;
     }
     if (!jaeger_host_port_scan(&host_port, host_port_str, logger)) {
-        goto cleanup;
+        goto cleanup_host_port;
     }
-    struct addrinfo* addrs;
-    if (!jaeger_host_port_resolve(&host_port, SOCK_DGRAM, &addrs, logger)) {
-        goto cleanup;
+
+    reporter->candidates = NULL;
+    struct addrinfo* candidates = NULL;
+    memset(&reporter->addr, 0, sizeof(reporter->addr));
+    if (!jaeger_host_port_resolve(
+            &host_port, SOCK_DGRAM, &candidates, logger)) {
+        goto cleanup_host_port;
     }
-    bool success = false;
-    for (struct addrinfo* iter = addrs; iter != NULL; iter = iter->ai_next) {
-        if (connect(fd, iter->ai_addr, iter->ai_addrlen) == 0 &&
-            sizeof(reporter->addr) == iter->ai_addrlen) {
-            memcpy(&reporter->addr, iter->ai_addr, sizeof(reporter->addr));
-            success = true;
-            break;
-        }
-    }
-    freeaddrinfo(addrs);
-    if (!success) {
-        if (logger != NULL) {
-            logger->error(logger,
-                          "Failed to resolve remote reporter host port, host "
-                          "port = \"%s\"",
-                          host_port_str);
-        }
-        goto cleanup;
-    }
+    reporter->candidates = candidates;
+
     jaeger_host_port_destroy(&host_port);
     reporter->metrics = metrics;
     reporter->destroy = &remote_reporter_destroy;
     reporter->report = &remote_reporter_report;
     return true;
 
-cleanup:
+cleanup_host_port:
     jaeger_host_port_destroy(&host_port);
+cleanup:
     remote_reporter_destroy((jaeger_destructible*) reporter);
     return false;
+}
+
+static bool remote_reporter_write_to_socket(jaeger_remote_reporter* reporter,
+                                            const uint8_t* buffer,
+                                            int buf_len,
+                                            jaeger_logger* logger)
+{
+    /* Delay address resolution until the first write. */
+    if (reporter->candidates != NULL) {
+        bool success = false;
+        for (struct addrinfo* iter = reporter->candidates; iter != NULL;
+             iter = iter->ai_next) {
+            if (sendto(reporter->fd,
+                       buffer,
+                       buf_len,
+                       0,
+                       iter->ai_addr,
+                       iter->ai_addrlen) == buf_len &&
+                sizeof(reporter->addr) == iter->ai_addrlen) {
+                memcpy(&reporter->addr, iter->ai_addr, sizeof(reporter->addr));
+                success = true;
+                break;
+            }
+        }
+
+        freeaddrinfo(reporter->candidates);
+        reporter->candidates = NULL;
+        if (!success) {
+            if (logger != NULL) {
+                logger->error(logger,
+                              "Failed to resolve remote reporter host port");
+            }
+        }
+
+        return success;
+    }
+
+    const int num_written = sendto(reporter->fd,
+                                   buffer,
+                                   buf_len,
+                                   0,
+                                   (struct sockaddr*) &reporter->addr,
+                                   sizeof(reporter->addr));
+    const bool success = (num_written == buf_len);
+    if (success) {
+        if (logger != NULL) {
+            logger->error(logger,
+                          "Cannot write entire message to UDP socket, "
+                          "num written = %d, errno = %d",
+                          num_written,
+                          errno);
+        }
+    }
+
+    return success;
 }
 
 int jaeger_remote_reporter_flush(jaeger_remote_reporter* reporter,
@@ -533,22 +579,12 @@ int jaeger_remote_reporter_flush(jaeger_remote_reporter* reporter,
     jaegertracing__protobuf__batch__pack_to_buffer(&batch,
                                                    (ProtobufCBuffer*) &simple);
     assert(simple.len <= reporter->max_packet_size);
-    const int num_written = sendto(reporter->fd,
-                                   simple.data,
-                                   simple.len,
-                                   0,
-                                   (struct sockaddr*) &reporter->addr,
-                                   sizeof(reporter->addr));
-    if (num_written != simple.len) {
-        if (logger != NULL) {
-            logger->error(logger,
-                          "Cannot write entire message to UDP socket, "
-                          "num written = %d",
-                          num_written);
-        }
+    const bool write_succeeded = remote_reporter_write_to_socket(
+        reporter, simple.data, simple.len, logger);
+    PROTOBUF_C_BUFFER_SIMPLE_CLEAR(&simple);
+    if (!write_succeeded) {
         goto cleanup;
     }
-    PROTOBUF_C_BUFFER_SIMPLE_CLEAR(&simple);
     const int num_flushed = batch.n_spans;
     for (int i = 0; i < num_flushed; i++) {
         if (batch.spans[i] == NULL) {
@@ -567,8 +603,8 @@ int jaeger_remote_reporter_flush(jaeger_remote_reporter* reporter,
 
 cleanup:
     if (reporter->spans.data != NULL) {
-        /* No need to delete the span pointers because they are still valid and
-         * in batch's buffer. */
+        /* No need to delete the span pointers because they are still valid
+         * and in batch's buffer. */
         jaeger_free(reporter->spans.data);
         reporter->spans.data = NULL;
     }
