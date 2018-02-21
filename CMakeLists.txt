@@ -200,6 +200,7 @@ if(BUILD_TESTING)
     "src/jaegertracingc/sampler_test.c"
     "src/jaegertracingc/span_test.c"
     "src/jaegertracingc/tag_test.c"
+    "src/jaegertracingc/threading_test.c"
     "src/jaegertracingc/trace_id_test.c"
     "src/jaegertracingc/token_bucket_test.c"
     "src/jaegertracingc/vector_test.c")
