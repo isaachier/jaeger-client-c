@@ -40,6 +40,7 @@ void test_net()
     url.str = "";
     memset(&url.parts, 0, sizeof(url.parts));
     TEST_ASSERT_TRUE(jaeger_host_port_from_url(&host_port, &url, logger));
+    jaeger_host_port_destroy(&host_port);
 
     TEST_ASSERT_FALSE(jaeger_host_port_scan(&host_port, NULL, logger));
     TEST_ASSERT_FALSE(jaeger_host_port_scan(&host_port, "", logger));
