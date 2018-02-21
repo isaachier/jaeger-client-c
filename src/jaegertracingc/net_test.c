@@ -35,7 +35,7 @@ void test_net()
 
     jaeger_host_port_destroy(&host_port);
 
-    jaeger_url url;
+    jaeger_url url = JAEGERTRACINGC_URL_INIT;
     TEST_ASSERT_FALSE(jaeger_url_init(&url, "test", logger));
     url.str = "";
     memset(&url.parts, 0, sizeof(url.parts));
