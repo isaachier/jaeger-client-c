@@ -19,8 +19,8 @@
 #include "jaegertracingc/logging.h"
 #include "unity.h"
 
-#define NUM_PHILOSOPHERS 100
-#define NUM_ATTEMPTS 100
+#define NUM_PHILOSOPHERS 10
+#define NUM_ATTEMPTS 10
 #define MAX_EAT_TIME 50
 #define MAX_THINK_TIME (MAX_EAT_TIME / 10)
 #define MAX_JITTER MAX_THINK_TIME
@@ -88,6 +88,16 @@ static void* philosopher_func(void* arg)
     return NULL;
 }
 
+static void* lock_func(void* arg)
+{
+    TEST_ASSERT_NOT_NULL(arg);
+    jaeger_mutex* locks = arg;
+    jaeger_lock(&locks[0], &locks[1]);
+    jaeger_mutex_unlock(&locks[0]);
+    jaeger_mutex_unlock(&locks[1]);
+    return NULL;
+}
+
 void test_threading()
 {
     srand(time(NULL));
@@ -123,4 +133,18 @@ void test_threading()
     for (int i = 0; i < NUM_PHILOSOPHERS; i++) {
         jaeger_mutex_destroy(&forks[i]);
     }
+
+    jaeger_mutex locks[2] = {JAEGERTRACINGC_MUTEX_INIT,
+                             JAEGERTRACINGC_MUTEX_INIT};
+    jaeger_lock(&locks[0], &locks[1]);
+    jaeger_thread thread;
+    jaeger_thread_init(&thread, &lock_func, locks);
+    jaeger_duration sleep_duration = {
+        .tv_sec = 0, .tv_nsec = 0.5 * JAEGERTRACINGC_NANOSECONDS_PER_SECOND};
+    nanosleep(&sleep_duration, NULL);
+    jaeger_mutex_unlock(&locks[0]);
+    jaeger_mutex_unlock(&locks[1]);
+    jaeger_thread_join(thread, NULL);
+    jaeger_mutex_destroy(&locks[0]);
+    jaeger_mutex_destroy(&locks[1]);
 }
