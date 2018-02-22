@@ -19,10 +19,10 @@
 #include "jaegertracingc/logging.h"
 #include "unity.h"
 
-#define NUM_PHILOSOPHERS 5
-#define NUM_ATTEMPTS 10
+#define NUM_PHILOSOPHERS 100
+#define NUM_ATTEMPTS 100
 #define MAX_EAT_TIME 50
-#define MAX_THINK_TIME (MAX_EAT_TIME / 2)
+#define MAX_THINK_TIME (MAX_EAT_TIME / 10)
 #define MAX_JITTER MAX_THINK_TIME
 #define NS_PER_MS 1000000
 
