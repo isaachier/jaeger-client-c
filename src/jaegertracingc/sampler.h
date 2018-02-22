@@ -20,9 +20,9 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "jaegertracingc/clock.h"
 #include "jaegertracingc/common.h"
 #include "jaegertracingc/constants.h"
-#include "jaegertracingc/clock.h"
 #include "jaegertracingc/metrics.h"
 #include "jaegertracingc/net.h"
 #include "jaegertracingc/sampling_strategy.h"
