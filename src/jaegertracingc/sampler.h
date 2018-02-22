@@ -17,9 +17,6 @@
 #ifndef JAEGERTRACINGC_SAMPLER_H
 #define JAEGERTRACINGC_SAMPLER_H
 
-#include <assert.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include "jaegertracingc/clock.h"
 #include "jaegertracingc/common.h"
 #include "jaegertracingc/constants.h"

@@ -17,7 +17,6 @@
 #ifndef JAEGERTRACINGC_NET_H
 #define JAEGERTRACINGC_NET_H
 
-#include <assert.h>
 #include <http_parser.h>
 #include <netdb.h>
 #include <netinet/in.h>

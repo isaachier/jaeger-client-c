@@ -15,7 +15,6 @@
  */
 
 #include "jaegertracingc/metrics.h"
-#include <assert.h>
 #include "jaegertracingc/threading.h"
 
 static void null_destroy(jaeger_destructible* destructible)

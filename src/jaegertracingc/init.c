@@ -17,8 +17,6 @@
 #include "jaegertracingc/init.h"
 #include <jansson.h>
 #include <pthread.h>
-#include <stdlib.h>
-#include <time.h>
 #include "jaegertracingc/threading.h"
 
 static inline void init_lib()

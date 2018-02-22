@@ -17,7 +17,6 @@
 #ifndef JAEGERTRACINGC_TOKEN_BUCKET_H
 #define JAEGERTRACINGC_TOKEN_BUCKET_H
 
-#include <assert.h>
 #include "jaegertracingc/clock.h"
 #include "jaegertracingc/common.h"
 

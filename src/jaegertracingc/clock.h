@@ -17,8 +17,6 @@
 #ifndef JAEGERTRACINGC_CLOCK_H
 #define JAEGERTRACINGC_CLOCK_H
 
-#include <assert.h>
-#include <time.h>
 #include "jaegertracingc/common.h"
 
 #ifdef __cplusplus

@@ -17,9 +17,6 @@
 #ifndef JAEGERTRACINGC_TAG_H
 #define JAEGERTRACINGC_TAG_H
 
-#include <assert.h>
-#include <stdio.h>
-#include <string.h>
 #include "jaegertracingc/alloc.h"
 #include "jaegertracingc/common.h"
 #include "jaegertracingc/protoc-gen/jaeger.pb-c.h"
