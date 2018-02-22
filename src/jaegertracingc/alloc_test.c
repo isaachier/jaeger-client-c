@@ -31,4 +31,6 @@ void test_alloc()
     jaeger_logger* logger = jaeger_null_logger();
     char* str = jaeger_strdup_alloc("hello world", alloc, logger);
     TEST_ASSERT_NULL(str);
+    alloc->free(alloc, str); /* Calling free even though null to improve
+                                coverage of null allocator */
 }
