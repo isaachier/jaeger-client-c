@@ -24,7 +24,8 @@ static void null_log(jaeger_logger* logger, const char* format, ...)
     (void) format;
 }
 
-static void std_log(jaeger_logger* logger, const char* format, va_list args)
+static inline void
+std_log(jaeger_logger* logger, const char* format, va_list args)
 {
     assert(logger != NULL);
     assert(format != NULL);

@@ -194,6 +194,7 @@ if(BUILD_TESTING)
     "src/jaegertracingc/logging_test.c"
     "src/jaegertracingc/metrics_test.c"
     "src/jaegertracingc/net_test.c"
+    "src/jaegertracingc/random_test.c"
     "src/jaegertracingc/reporter_test.c"
     "src/jaegertracingc/sampler_test.c"
     "src/jaegertracingc/span_test.c"
