@@ -18,41 +18,18 @@
 #include "jaegertracingc/tag.h"
 #include "unity.h"
 
-static inline void* null_malloc(jaeger_allocator* alloc, size_t size)
-{
-    (void) alloc;
-    (void) size;
-    return NULL;
-}
-
-static inline void*
-null_realloc(jaeger_allocator* alloc, void* ptr, size_t size)
-{
-    (void) alloc;
-    (void) ptr;
-    (void) size;
-    return NULL;
-}
-
-static inline void null_free(jaeger_allocator* alloc, void* ptr)
-{
-    (void) alloc;
-    (void) ptr;
-}
-
 void test_vector()
 {
     /* Most of vector is covered in tag_test. This test covers only edge cases.
      */
-    jaeger_allocator alloc = {
-        .malloc = &null_malloc, .realloc = &null_realloc, .free = &null_free};
+    jaeger_allocator* alloc = jaeger_null_allocator();
     jaeger_vector vec;
     jaeger_logger* logger = jaeger_null_logger();
 
-    TEST_ASSERT_FALSE(jaeger_vector_init(&vec, sizeof(char), &alloc, logger));
+    TEST_ASSERT_FALSE(jaeger_vector_init(&vec, sizeof(char), alloc, logger));
 
     TEST_ASSERT_TRUE(jaeger_vector_init(&vec, sizeof(char), NULL, logger));
-    vec.alloc = &alloc;
+    vec.alloc = alloc;
     while (jaeger_vector_length(&vec) < JAEGERTRACINGC_VECTOR_INIT_CAPACITY) {
         TEST_ASSERT_NOT_NULL(jaeger_vector_append(&vec, logger));
     }
@@ -65,7 +42,7 @@ void test_vector()
 
     TEST_ASSERT_TRUE(
         jaeger_vector_init(&vec, sizeof(jaeger_tag), NULL, logger));
-    vec.alloc = &alloc;
+    vec.alloc = alloc;
     jaeger_tag tag = JAEGERTRACINGC_TAG_INIT;
     tag.value_case = JAEGERTRACINGC_TAG_TYPE(LONG);
     tag.long_value = 0;

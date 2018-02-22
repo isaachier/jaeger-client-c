@@ -15,7 +15,10 @@
  */
 
 #include "jaegertracingc/alloc.h"
+
 #include <time.h>
+
+#include "jaegertracingc/logging.h"
 #include "unity.h"
 
 void test_alloc()
@@ -23,4 +26,9 @@ void test_alloc()
     void* mem = jaeger_malloc(2);
     mem = jaeger_realloc(mem, 4);
     jaeger_free(mem);
+
+    jaeger_allocator* alloc = jaeger_null_allocator();
+    jaeger_logger* logger = jaeger_null_logger();
+    char* str = jaeger_strdup_alloc("hello world", alloc, logger);
+    TEST_ASSERT_NULL(str);
 }

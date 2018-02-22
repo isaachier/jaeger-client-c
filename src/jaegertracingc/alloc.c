@@ -56,6 +56,27 @@ static void built_in_free(jaeger_allocator* alloc, void* ptr)
 #endif /* JAEGERTRACINGC_VERBOSE_ALLOC */
 }
 
+static void* null_malloc(jaeger_allocator* alloc, size_t size)
+{
+    (void) alloc;
+    (void) size;
+    return NULL;
+}
+
+static void* null_realloc(jaeger_allocator* alloc, void* ptr, size_t size)
+{
+    (void) alloc;
+    (void) ptr;
+    (void) size;
+    return NULL;
+}
+
+static void null_free(jaeger_allocator* alloc, void* ptr)
+{
+    (void) alloc;
+    (void) ptr;
+}
+
 jaeger_allocator* jaeger_built_in_allocator()
 {
     static struct jaeger_allocator built_in_alloc = {.malloc = &built_in_malloc,
@@ -63,6 +84,13 @@ jaeger_allocator* jaeger_built_in_allocator()
                                                          &built_in_realloc,
                                                      .free = &built_in_free};
     return &built_in_alloc;
+}
+
+jaeger_allocator* jaeger_null_allocator()
+{
+    static struct jaeger_allocator null_alloc = {
+        .malloc = &null_malloc, .realloc = &null_realloc, .free = &null_free};
+    return &null_alloc;
 }
 
 jaeger_allocator* jaeger_alloc;

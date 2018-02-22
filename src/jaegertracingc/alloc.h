@@ -35,6 +35,8 @@ typedef struct jaeger_allocator {
 
 jaeger_allocator* jaeger_built_in_allocator();
 
+jaeger_allocator* jaeger_null_allocator();
+
 extern jaeger_allocator* jaeger_alloc;
 
 static inline void* jaeger_malloc(size_t sz)
@@ -52,18 +54,26 @@ static inline void jaeger_free(void* ptr)
     jaeger_alloc->free(jaeger_alloc, ptr);
 }
 
-static inline char* jaeger_strdup(const char* str, jaeger_logger* logger)
+static inline char* jaeger_strdup_alloc(const char* str,
+                                        jaeger_allocator* alloc,
+                                        jaeger_logger* logger)
 {
-    assert(str != NULL);
-    assert(logger != NULL);
+    if (alloc == NULL) {
+        alloc = jaeger_built_in_allocator();
+    }
     const int size = strlen(str) + 1;
-    char* copy = jaeger_malloc(size);
+    char* copy = alloc->malloc(alloc, size);
     if (copy == NULL) {
         logger->error(logger, "Cannot allocate string copy, size = %d", size);
         return NULL;
     }
     memcpy(copy, str, size);
     return copy;
+}
+
+static inline char* jaeger_strdup(const char* str, jaeger_logger* logger)
+{
+    return jaeger_strdup_alloc(str, NULL, logger);
 }
 
 #ifdef __cplusplus
