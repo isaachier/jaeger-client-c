@@ -14,25 +14,21 @@
  * limitations under the License.
  */
 
-#include "jaegertracingc/init.h"
-#include <jansson.h>
-#include <pthread.h>
-#include "jaegertracingc/threading.h"
+#ifndef JAEGERTRACINGC_RANDOM_H
+#define JAEGERTRACINGC_RANDOM_H
 
-static inline void init_lib()
-{
-    jaeger_alloc = jaeger_built_in_allocator();
-    json_set_alloc_funcs(&jaeger_malloc, &jaeger_free);
+#include "jaegertracingc/common.h"
 
-    /* Set up global random seed */
-    srand(time(NULL));
-}
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
-void jaeger_init_lib(jaeger_allocator* alloc)
-{
-    static jaeger_once is_initialized = JAEGERTRACINGC_ONCE_INIT;
-    const int result = jaeger_do_once(&is_initialized, init_lib);
-    if (result == 0 && alloc != NULL) {
-        jaeger_alloc = alloc;
-    }
-}
+struct jaeger_logger;
+
+int64_t random64(struct jaeger_logger* logger);
+
+#ifdef __cplusplus
+} /* extern C */
+#endif /* __cplusplus */
+
+#endif /* JAEGERTRACINGC_RANDOM_H */

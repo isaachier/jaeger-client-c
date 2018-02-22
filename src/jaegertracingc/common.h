@@ -47,6 +47,19 @@ typedef struct jaeger_destructible {
     JAEGERTRACINGC_DESTRUCTIBLE_SUBCLASS;
 } jaeger_destructible;
 
+static inline void jaeger_destructible_destroy(jaeger_destructible* d)
+{
+    if (d == NULL) {
+        return;
+    }
+    d->destroy(d);
+}
+
+static inline void jaeger_destructible_destroy_wrapper(void* d)
+{
+    jaeger_destructible_destroy(d);
+}
+
 #ifdef __cplusplus
 } /* extern C */
 #endif /* __cplusplus */

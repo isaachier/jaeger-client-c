@@ -57,9 +57,6 @@ void jaeger_const_sampler_init(jaeger_const_sampler* sampler, bool decision);
 typedef struct jaeger_probabilistic_sampler {
     JAEGERTRACINGC_SAMPLER_SUBCLASS;
     double sampling_rate;
-#ifdef HAVE_RAND_R
-    unsigned int seed;
-#endif /* HAVE_RAND_R */
 } jaeger_probabilistic_sampler;
 
 void jaeger_probabilistic_sampler_init(jaeger_probabilistic_sampler* sampler,

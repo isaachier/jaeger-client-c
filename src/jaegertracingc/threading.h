@@ -18,8 +18,10 @@
 #define JAEGERTRACINGC_THREADING_H
 
 #include "jaegertracingc/common.h"
+#include "jaegertracingc/logging.h"
 
 #ifdef JAEGERTRACINGC_MT
+#include <errno.h>
 #include <pthread.h>
 #include <sched.h>
 
@@ -72,6 +74,89 @@ typedef pthread_once_t jaeger_once;
 static inline int jaeger_do_once(jaeger_once* once, void (*init_routine)(void))
 {
     return pthread_once(once, init_routine);
+}
+
+typedef struct jaeger_thread_local {
+    pthread_key_t key;
+    bool initialized;
+} jaeger_thread_local;
+
+static inline void jaeger_thread_local_destroy(jaeger_thread_local* d)
+{
+    if (d == NULL) {
+        return;
+    }
+    jaeger_thread_local* local = (jaeger_thread_local*) d;
+    if (!local->initialized) {
+        return;
+    }
+    jaeger_destructible_destroy(pthread_getspecific(local->key));
+    pthread_key_delete(local->key);
+    local->initialized = false;
+}
+
+static inline bool jaeger_thread_local_init(jaeger_thread_local* local,
+                                            jaeger_logger* logger)
+{
+    assert(local != NULL);
+    local->initialized = false;
+    const int return_code =
+        pthread_key_create(&local->key, &jaeger_destructible_destroy_wrapper);
+    if (return_code != 0) {
+        if (logger != NULL) {
+            logger->error(logger,
+                          "Cannot create jaeger_thread_local, return code = "
+                          "%d, errno = %d",
+                          return_code,
+                          errno);
+        }
+        return false;
+    }
+
+    local->initialized = true;
+    return true;
+}
+
+static inline bool
+jaeger_thread_local_check_initialized(jaeger_thread_local* local,
+                                      jaeger_logger* logger)
+{
+    if (!local->initialized && logger != NULL) {
+        logger->error(logger, "Tried to access uninitialized thread local");
+    }
+    return local->initialized;
+}
+
+static inline jaeger_destructible*
+jaeger_thread_local_get_value(jaeger_thread_local* local, jaeger_logger* logger)
+{
+    assert(local != NULL);
+    if (!jaeger_thread_local_check_initialized(local, logger)) {
+        return NULL;
+    }
+    return pthread_getspecific(local->key);
+}
+
+static inline bool jaeger_thread_local_set_value(jaeger_thread_local* local,
+                                                 jaeger_destructible* value,
+                                                 jaeger_logger* logger)
+{
+    assert(local != NULL);
+    if (!jaeger_thread_local_check_initialized(local, logger)) {
+        return false;
+    }
+    /* Destroy the current value. jaeger_destructible_destroy handles NULL, so
+     * not checking here. */
+    jaeger_destructible_destroy(pthread_getspecific(local->key));
+    const int return_code = pthread_setspecific(local->key, value);
+    if (return_code != 0 && logger != NULL) {
+        logger->error(logger,
+                      "Cannot create jaeger_thread_local, return code = "
+                      "%d, errno = %d",
+                      return_code,
+                      errno);
+    }
+    return (return_code == 0);
 }
 
 #else
@@ -134,6 +219,46 @@ static inline int jaeger_do_once(jaeger_once* once, void (*init_routine)(void))
         *once = 1;
         init_routine();
     }
+}
+
+typedef struct jaeger_thread_local {
+    jaeger_destructible* value;
+} jaeger_thread_local;
+
+static inline void jaeger_thread_local_destroy(jaeger_thread_local* local)
+{
+    if (local == NULL) {
+        return;
+    }
+    jaeger_destructible_destroy(local->value);
+}
+
+static inline bool jaeger_thread_local_init(jaeger_thread_local* local,
+                                            jaeger_logger* logger)
+{
+    (void) logger;
+    assert(local != NULL);
+    local->value = NULL;
+    return 0;
+}
+
+static inline jaeger_destructible*
+jaeger_thread_local_get_value(jaeger_thread_local* local, jaeger_logger* logger)
+{
+    (void) logger;
+    assert(local != NULL);
+    return local->value;
+}
+
+static inline bool jaeger_thread_local_set_value(jaeger_thread_local* local,
+                                                 jaeger_destructible* value,
+                                                 jaeger_logger* logger)
+{
+    (void) logger;
+    assert(local != NULL);
+    jaeger_destructible_destroy(local->value);
+    local->value = value;
+    return local->value;
 }
 
 #endif /* JAEGERTRACINGC_MT */

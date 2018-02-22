@@ -88,6 +88,8 @@ set(core_src
   "src/jaegertracingc/metrics.h"
   "src/jaegertracingc/net.c"
   "src/jaegertracingc/net.h"
+  "src/jaegertracingc/random.c"
+  "src/jaegertracingc/random.h"
   "src/jaegertracingc/reporter.c"
   "src/jaegertracingc/reporter.h"
   "src/jaegertracingc/sampler.c"
@@ -172,13 +174,9 @@ if(JAEGERTRACINGC_MT)
   target_compile_definitions(jaegertracingc PUBLIC JAEGERTRACINGC_MT)
 endif()
 
-check_function_exists("rand_r" have_rand_r)
-if(have_rand_r)
-  target_compile_definitions(jaegertracingc PUBLIC "-DHAVE_RAND_R")
-else()
-  message(WARN
-    "Cannot find rand_r, so using rand, which may negatively affect "
-    "probabilistic sampling")
+check_function_exists("getrandom" have_getrandom)
+if(have_getrandom)
+  target_compile_definitions(jaegertracingc PUBLIC "-DHAVE_GETRANDOM")
 endif()
 
 if(JAEGERTRACINGC_VERBOSE_ALLOC)

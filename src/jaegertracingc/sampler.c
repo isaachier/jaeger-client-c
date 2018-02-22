@@ -20,6 +20,8 @@
 #include <errno.h>
 #include <jansson.h>
 
+#include "jaegertracingc/random.h"
+
 #define HTTP_OK 200
 #define SAMPLER_GROWTH_FACTOR 2
 #define DEFAULT_MAX_OPERATIONS 2000
@@ -75,11 +77,7 @@ jaeger_probabilistic_sampler_is_sampled(jaeger_sampler* sampler,
     (void) trace_id;
     (void) operation_name;
     jaeger_probabilistic_sampler* s = (jaeger_probabilistic_sampler*) sampler;
-#ifdef HAVE_RAND_R
-    const double random_value = ((double) rand_r(&s->seed) + 1) / RAND_MAX;
-#else
-    const double random_value = ((double) rand() + 1) / RAND_MAX;
-#endif /* HAVE_RAND_R */
+    const double random_value = ((double) random64(logger)) / INT64_MAX;
     const bool decision = (s->sampling_rate >= random_value);
     if (tags != NULL &&
         jaeger_vector_reserve(tags, jaeger_vector_length(tags) + 2, logger)) {
@@ -108,7 +106,6 @@ void jaeger_probabilistic_sampler_init(jaeger_probabilistic_sampler* sampler,
     sampler->sampling_rate = JAEGERTRACINGC_CLAMP(sampling_rate, 0, 1);
     jaeger_duration duration;
     jaeger_duration_now(&duration);
-    sampler->seed = (unsigned int) (duration.tv_nsec >> 32);
 }
 
 static bool
