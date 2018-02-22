@@ -285,10 +285,6 @@ static inline void large_batch_error(Jaegertracing__Protobuf__Batch* batch,
     jaeger_vector_remove(spans, 0, logger);
 
     if (metrics != NULL) {
-        jaeger_gauge* queue_length = metrics->reporter_queue_length;
-        assert(queue_length != NULL);
-        queue_length->update(queue_length, jaeger_vector_length(spans));
-
         jaeger_counter* dropped = metrics->reporter_dropped;
         assert(dropped != NULL);
         dropped->inc(dropped, 1);
@@ -350,7 +346,7 @@ static inline bool build_batch(Jaegertracing__Protobuf__Batch* batch,
         if (metrics != NULL) {
             jaeger_counter* dropped = metrics->reporter_dropped;
             assert(dropped != NULL);
-            dropped->inc(dropped, 1);
+            dropped->inc(dropped, remaining_spans);
         }
     }
     return true;
@@ -388,6 +384,20 @@ static void remote_reporter_destroy(jaeger_destructible* destructible)
     jaeger_vector_destroy(&r->spans);
 }
 
+static inline void
+remote_reporter_update_queue_length(jaeger_remote_reporter* reporter)
+{
+    assert(reporter != NULL);
+    if (reporter->metrics == NULL) {
+        return;
+    }
+    if (reporter->metrics != NULL) {
+        jaeger_counter* dropped = reporter->metrics->reporter_dropped;
+        assert(dropped != NULL);
+        dropped->inc(dropped, 1);
+    }
+}
+
 static void remote_reporter_report(jaeger_reporter* reporter,
                                    const jaeger_span* span,
                                    jaeger_logger* logger)
@@ -398,17 +408,19 @@ static void remote_reporter_report(jaeger_reporter* reporter,
     }
 
     jaeger_remote_reporter* r = (jaeger_remote_reporter*) reporter;
+
     if (!jaeger_vector_reserve(
             &r->spans, jaeger_vector_length(&r->spans) + 1, logger)) {
-        goto update_counter;
+        return;
     }
 
     Jaegertracing__Protobuf__Span* span_copy =
         jaeger_malloc(sizeof(Jaegertracing__Protobuf__Span));
     if (span_copy == NULL) {
         logger->error(logger, "Cannot allocate span for reporter batch");
-        goto update_counter;
+        return;
     }
+
     *span_copy =
         (Jaegertracing__Protobuf__Span) JAEGERTRACING__PROTOBUF__SPAN__INIT;
     if (!jaeger_span_to_protobuf(span_copy, span, logger)) {
@@ -418,12 +430,7 @@ static void remote_reporter_report(jaeger_reporter* reporter,
         jaeger_vector_append(&r->spans, logger);
     assert(span_ptr != NULL);
     *span_ptr = span_copy;
-
-    if (r->metrics != NULL) {
-        jaeger_gauge* queue_length = r->metrics->reporter_queue_length;
-        assert(queue_length != NULL);
-        queue_length->update(queue_length, jaeger_vector_length(&r->spans));
-    }
+    remote_reporter_update_queue_length(r);
 
     if (r->process.service_name == NULL ||
         strlen(r->process.service_name) == 0) {
@@ -439,12 +446,6 @@ static void remote_reporter_report(jaeger_reporter* reporter,
 cleanup:
     jaeger_span_protobuf_destroy(span_copy);
     jaeger_free(span_copy);
-update_counter:
-    if (r->metrics != NULL) {
-        jaeger_counter* dropped = r->metrics->reporter_dropped;
-        assert(dropped != NULL);
-        dropped->inc(dropped, 1);
-    }
 }
 
 bool jaeger_remote_reporter_init(jaeger_remote_reporter* reporter,
@@ -534,6 +535,11 @@ static bool remote_reporter_write_to_socket(jaeger_remote_reporter* reporter,
                 logger->error(logger,
                               "Failed to resolve remote reporter host port");
             }
+            if (reporter->metrics != NULL) {
+                jaeger_counter* failed = reporter->metrics->reporter_failure;
+                assert(failed != NULL);
+                failed->inc(failed, 1);
+            }
         }
 
         return success;
@@ -546,13 +552,18 @@ static bool remote_reporter_write_to_socket(jaeger_remote_reporter* reporter,
                                    (struct sockaddr*) &reporter->addr,
                                    sizeof(reporter->addr));
     const bool success = (num_written == buf_len);
-    if (success) {
+    if (!success) {
         if (logger != NULL) {
             logger->error(logger,
                           "Cannot write entire message to UDP socket, "
                           "num written = %d, errno = %d",
                           num_written,
                           errno);
+        }
+        if (reporter->metrics != NULL) {
+            jaeger_counter* failed = reporter->metrics->reporter_failure;
+            assert(failed != NULL);
+            failed->inc(failed, 1);
         }
     }
 
@@ -604,6 +615,7 @@ int jaeger_remote_reporter_flush(jaeger_remote_reporter* reporter,
         assert(num_success != NULL);
         num_success->inc(num_success, num_flushed);
     }
+    remote_reporter_update_queue_length(reporter);
     return num_flushed;
 
 cleanup:
@@ -615,5 +627,6 @@ cleanup:
     }
     reporter->spans.data = batch.spans;
     reporter->spans.len = num_spans;
+    remote_reporter_update_queue_length(reporter);
     return -1;
 }
