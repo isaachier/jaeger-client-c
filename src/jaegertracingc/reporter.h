@@ -90,6 +90,7 @@ typedef struct jaeger_remote_reporter {
     jaeger_vector spans;
     struct addrinfo* candidates;
     struct sockaddr_in addr;
+    jaeger_mutex mutex;
 } jaeger_remote_reporter;
 
 bool jaeger_remote_reporter_init(jaeger_remote_reporter* reporter,

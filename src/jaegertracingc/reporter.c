@@ -382,6 +382,8 @@ static void remote_reporter_destroy(jaeger_destructible* destructible)
         jaeger_free(*span);
     }
     jaeger_vector_destroy(&r->spans);
+
+    jaeger_mutex_destroy(&r->mutex);
 }
 
 static inline void
@@ -408,17 +410,20 @@ static void remote_reporter_report(jaeger_reporter* reporter,
     }
 
     jaeger_remote_reporter* r = (jaeger_remote_reporter*) reporter;
+    jaeger_mutex_lock(&r->mutex);
 
     if (!jaeger_vector_reserve(
             &r->spans, jaeger_vector_length(&r->spans) + 1, logger)) {
-        return;
+        goto unlock;
     }
 
     Jaegertracing__Protobuf__Span* span_copy =
         jaeger_malloc(sizeof(Jaegertracing__Protobuf__Span));
     if (span_copy == NULL) {
-        logger->error(logger, "Cannot allocate span for reporter batch");
-        return;
+        if (logger != NULL) {
+            logger->error(logger, "Cannot allocate span for reporter batch");
+        }
+        goto unlock;
     }
 
     *span_copy =
@@ -441,11 +446,13 @@ static void remote_reporter_report(jaeger_reporter* reporter,
         jaeger_mutex_unlock((jaeger_mutex*) &span->mutex);
     }
 
-    return;
+    goto unlock;
 
 cleanup:
     jaeger_span_protobuf_destroy(span_copy);
     jaeger_free(span_copy);
+unlock:
+    jaeger_mutex_unlock(&r->mutex);
 }
 
 bool jaeger_remote_reporter_init(jaeger_remote_reporter* reporter,
@@ -496,6 +503,7 @@ bool jaeger_remote_reporter_init(jaeger_remote_reporter* reporter,
     reporter->metrics = metrics;
     reporter->destroy = &remote_reporter_destroy;
     reporter->report = &remote_reporter_report;
+    reporter->mutex = (jaeger_mutex) JAEGERTRACINGC_MUTEX_INIT;
     return true;
 
 cleanup_host_port:
@@ -575,6 +583,8 @@ int jaeger_remote_reporter_flush(jaeger_remote_reporter* reporter,
 {
     assert(reporter != NULL);
 
+    jaeger_mutex_lock(&reporter->mutex);
+
     const int num_spans = jaeger_vector_length(&reporter->spans);
     if (num_spans == 0) {
         return 0;
@@ -616,6 +626,7 @@ int jaeger_remote_reporter_flush(jaeger_remote_reporter* reporter,
         num_success->inc(num_success, num_flushed);
     }
     remote_reporter_update_queue_length(reporter);
+    jaeger_mutex_unlock(&reporter->mutex);
     return num_flushed;
 
 cleanup:
@@ -628,5 +639,6 @@ cleanup:
     reporter->spans.data = batch.spans;
     reporter->spans.len = num_spans;
     remote_reporter_update_queue_length(reporter);
+    jaeger_mutex_lock(&reporter->mutex);
     return -1;
 }
