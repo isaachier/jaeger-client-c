@@ -250,12 +250,14 @@ static inline int jaeger_vector_lower_bound(jaeger_vector* vec,
     return pos;
 }
 
-#define JAEGERTRACINGC_WRAP_COPY(copy)                                \
-    static inline bool copy##_wrapper(                                \
-        void* arg, void* dst, const void* src, jaeger_logger* logger) \
-    {                                                                 \
-        (void) arg;                                                   \
-        return copy(dst, src, logger);                                \
+#define JAEGERTRACINGC_WRAP_COPY(copy)                          \
+    static inline bool copy##_wrapper(void* arg,                \
+                                      void* restrict dst,       \
+                                      const void* restrict src, \
+                                      jaeger_logger* logger)    \
+    {                                                           \
+        (void) arg;                                             \
+        return copy(dst, src, logger);                          \
     }
 
 #define JAEGERTRACINGC_WRAP_DESTROY(destroy)      \
@@ -264,24 +266,12 @@ static inline int jaeger_vector_lower_bound(jaeger_vector* vec,
         destroy(x);                               \
     }
 
-#define JAEGERTRACINGC_DEFAULT_COPY(type)                             \
-    static inline bool type##_copy(                                   \
-        void* arg, void* dst, const void* src, jaeger_logger* logger) \
-    {                                                                 \
-        (void) arg;                                                   \
-        assert(dst != NULL);                                          \
-        assert(src != NULL);                                          \
-        (void) logger;                                                \
-        *(type*) dst = *(type*) src;                                  \
-        return true;                                                  \
-    }
-
-static inline bool
-jaeger_vector_copy(jaeger_vector* dst,
-                   const jaeger_vector* src,
-                   bool (*copy)(void*, void*, const void*, jaeger_logger*),
-                   void* arg,
-                   jaeger_logger* logger)
+static inline bool jaeger_vector_copy(
+    jaeger_vector* restrict dst,
+    const jaeger_vector* restrict src,
+    bool (*copy)(void*, void* restrict, const void* restrict, jaeger_logger*),
+    void* arg,
+    jaeger_logger* logger)
 {
     assert(dst != NULL);
     assert(src != NULL);
@@ -313,8 +303,8 @@ typedef struct jaeger_vector_ptr_copy_arg {
 } jaeger_vector_ptr_copy_arg;
 
 static inline bool jaeger_vector_ptr_copy_helper(void* arg,
-                                                 void* dst,
-                                                 const void* src,
+                                                 void* restrict dst,
+                                                 const void* restrict src,
                                                  jaeger_logger* logger)
 {
     assert(arg != NULL);
@@ -338,8 +328,8 @@ static inline bool jaeger_vector_ptr_copy_helper(void* arg,
 }
 
 static inline bool
-jaeger_vector_ptr_copy(jaeger_vector* dst,
-                       const jaeger_vector* src,
+jaeger_vector_ptr_copy(jaeger_vector* restrict dst,
+                       const jaeger_vector* restrict src,
                        int value_size,
                        bool (*copy)(void*, void*, const void*, jaeger_logger*),
                        void (*dtor)(void*),
@@ -383,9 +373,9 @@ jaeger_vector_ptr_copy(jaeger_vector* dst,
 }
 
 static inline bool jaeger_vector_protobuf_copy(
-    void*** dst,
+    void*** restrict dst,
     size_t* n_dst,
-    const jaeger_vector* src,
+    const jaeger_vector* restrict src,
     int value_size,
     bool (*copy)(void*, void*, const void*, jaeger_logger*),
     void (*dtor)(void*),

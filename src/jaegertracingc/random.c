@@ -87,7 +87,7 @@ static inline void jaeger_rng_init(jaeger_rng* rng, jaeger_logger* logger)
     }
     else if (num_read == -1) {
         for (int i = 0; i < num_requested; i++) {
-            for (int j = 0; j < sizeof(seed[0]); j++) {
+            for (int j = 0; j < (int) sizeof(seed[0]); j++) {
                 uint8_t byte = rand() & 0xff;
                 seed[i] <<= CHAR_BIT;
                 seed[i] |= byte;

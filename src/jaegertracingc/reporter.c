@@ -34,6 +34,7 @@ static void null_report(jaeger_reporter* reporter,
 {
     (void) reporter;
     (void) span;
+    (void) logger;
 }
 
 static void init_null_reporter()
@@ -189,7 +190,7 @@ static inline void process_destroy(Jaegertracing__Protobuf__Process* process)
         return;
     }
     if (process->tags != NULL) {
-        for (int i = 0; i < process->n_tags; i++) {
+        for (int i = 0; i < (int) process->n_tags; i++) {
             if (process->tags[i] != NULL) {
                 jaeger_tag_destroy(process->tags[i]);
                 jaeger_free(process->tags[i]);
@@ -310,7 +311,7 @@ static inline bool build_batch(Jaegertracing__Protobuf__Batch* batch,
     spans->data = NULL;
 
     for (; batch->n_spans > 0 &&
-           jaegertracing__protobuf__batch__get_packed_size(batch) >
+           (int) jaegertracing__protobuf__batch__get_packed_size(batch) >
                max_packet_size;
          batch->n_spans--)
         ;
@@ -604,7 +605,7 @@ int jaeger_remote_reporter_flush(jaeger_remote_reporter* reporter,
     ProtobufCBufferSimple simple = PROTOBUF_C_BUFFER_SIMPLE_INIT(buffer);
     jaegertracing__protobuf__batch__pack_to_buffer(&batch,
                                                    (ProtobufCBuffer*) &simple);
-    assert(simple.len <= reporter->max_packet_size);
+    assert((int) simple.len <= reporter->max_packet_size);
     const bool write_succeeded = remote_reporter_write_to_socket(
         reporter, simple.data, simple.len, logger);
     PROTOBUF_C_BUFFER_SIMPLE_CLEAR(&simple);

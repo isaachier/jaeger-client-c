@@ -87,7 +87,7 @@ jaeger_per_operation_strategy_destroy(jaeger_per_operation_strategy* strategy)
 {
     assert(strategy != NULL);
     if (strategy->per_operation_strategy != NULL) {
-        for (int i = 0; i < strategy->n_per_operation_strategy; i++) {
+        for (int i = 0; i < (int) strategy->n_per_operation_strategy; i++) {
             if (strategy->per_operation_strategy[i] != NULL) {
                 jaeger_operation_strategy_destroy(
                     strategy->per_operation_strategy[i]);

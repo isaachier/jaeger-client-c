@@ -40,7 +40,7 @@ std_log(jaeger_logger* logger, const char* format, va_list args)
         const int result =                                        \
             snprintf(fmt, sizeof(fmt), #prefix ": %s\n", format); \
         (void) result;                                            \
-        assert(result < sizeof(fmt));                             \
+        assert(result < (int) sizeof(fmt));                       \
         va_list args;                                             \
         va_start(args, format);                                   \
         std_log(logger, fmt, args);                               \

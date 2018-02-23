@@ -53,9 +53,10 @@ static inline void jaeger_duration_now(jaeger_duration* duration)
 
 // Algorithm based on
 // http://www.gnu.org/software/libc/manual/html_node/Elapsed-Time.html.
-static inline bool jaeger_duration_subtract(const jaeger_duration* const lhs,
-                                            const jaeger_duration* const rhs,
-                                            jaeger_duration* result)
+static inline bool
+jaeger_duration_subtract(const jaeger_duration* restrict const lhs,
+                         const jaeger_duration* restrict const rhs,
+                         jaeger_duration* restrict result)
 {
     assert(lhs != NULL);
     assert(rhs != NULL);

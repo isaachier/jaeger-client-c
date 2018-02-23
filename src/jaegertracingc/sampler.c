@@ -287,7 +287,7 @@ samplers_from_strategies(const jaeger_per_operation_strategy* strategies,
 
     bool success = true;
     int index = 0;
-    for (int i = 0; i < strategies->n_per_operation_strategy; i++) {
+    for (int i = 0; i < (int) strategies->n_per_operation_strategy; i++) {
         const jaeger_operation_strategy* strategy =
             strategies->per_operation_strategy[i];
         if (strategy == NULL || strategy->probabilistic == NULL) {
@@ -448,7 +448,7 @@ jaeger_adaptive_sampler_update(jaeger_adaptive_sampler* sampler,
     const double lower_bound =
         strategies->default_lower_bound_traces_per_second;
     jaeger_mutex_lock(&sampler->mutex);
-    for (int i = 0; i < strategies->n_per_operation_strategy; i++) {
+    for (int i = 0; i < (int) strategies->n_per_operation_strategy; i++) {
         const jaeger_operation_strategy* strategy =
             strategies->per_operation_strategy[i];
         bool found_match = false;
@@ -537,7 +537,7 @@ static inline bool jaeger_http_sampling_manager_format_request(
     char host_port_buffer[256];
     int result = jaeger_host_port_format(
         sampling_host_port, &host_port_buffer[0], sizeof(host_port_buffer));
-    if (result > sizeof(host_port_buffer)) {
+    if (result > (int) sizeof(host_port_buffer)) {
         if (logger != NULL) {
             logger->error(
                 logger,
@@ -558,7 +558,7 @@ static inline bool jaeger_http_sampling_manager_format_request(
                       manager->service_name,
                       &host_port_buffer[0],
                       JAEGERTRACINGC_CLIENT_VERSION);
-    if (result > sizeof(manager->request_buffer)) {
+    if (result > (int) sizeof(manager->request_buffer)) {
         if (logger != NULL) {
             logger->error(logger,
                           "Cannot write entire HTTP sampling request to "
@@ -1310,8 +1310,7 @@ bool jaeger_remotely_controlled_sampler_init(
         sampler->sampler = *initial_sampler;
     }
     else {
-        sampler->sampler =
-            (jaeger_sampler_choice){jaeger_probabilistic_sampler_type};
+        sampler->sampler.type = jaeger_probabilistic_sampler_type;
         jaeger_probabilistic_sampler_init(
             &sampler->sampler.probabilistic_sampler, DEFAULT_SAMPLING_RATE);
     }

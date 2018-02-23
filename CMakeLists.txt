@@ -31,7 +31,7 @@ include(GenerateDocumentation)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-foreach(flag "-Wall" "-Werror")
+foreach(flag "-Wall" "-Wextra" "-Werror")
   string(MAKE_C_IDENTIFIER "HAVE${flag}" flag_var)
   check_c_compiler_flag(${flag} ${flag_var})
   if(${flag_var})
