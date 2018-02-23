@@ -23,7 +23,7 @@
 #include <unistd.h>
 #endif /* HAVE_GETRANDOM */
 
-#include "jaegertracingc/random.h"
+#include "pcg_variants.h"
 
 #include "jaegertracingc/alloc.h"
 #include "jaegertracingc/logging.h"
@@ -35,8 +35,7 @@ static jaeger_thread_local rng_storage = {.initialized = false};
 
 typedef struct jaeger_rng {
     JAEGERTRACINGC_DESTRUCTIBLE_SUBCLASS;
-    uint64_t state[16];
-    int index;
+    struct pcg_state_setseq_64 state;
 } jaeger_rng;
 
 static void rng_destroy(jaeger_destructible* d)
@@ -47,37 +46,38 @@ static void rng_destroy(jaeger_destructible* d)
     jaeger_free(d);
 }
 
-static inline bool jaeger_rng_init(jaeger_rng* rng, jaeger_logger* logger)
+static inline void jaeger_rng_init(jaeger_rng* rng, jaeger_logger* logger)
 {
     assert(rng != NULL);
     rng->destroy = &rng_destroy;
-    rng->index = 0;
-    const int num_requested = sizeof(rng->state);
+    uint64_t seed[2] = {0};
+    const int num_requested = sizeof(seed);
 #ifdef HAVE_GETRANDOM
     const int num_read =
-        syscall(SYS_getrandom, rng->state, num_requested, GRND_NONBLOCK);
+        syscall(SYS_getrandom, &seed, num_requested, GRND_NONBLOCK);
 #elif defined(HAVE_ARC4RANDOM)
-    const int num_read = arc4random(rng->state, num_requested);
+    const int num_read = arc4random(&seed, num_requested);
 #else
+    int num_read = 0;
     FILE* random_device = fopen("/dev/random", "rb");
     if (random_device == NULL) {
         if (logger != NULL) {
-            logger->error(logger,
-                          "Cannot open /dev/random to initialize random state, "
-                          "errno = %d",
-                          errno);
+            logger->warn(logger,
+                         "Cannot open /dev/random to initialize random seed, "
+                         "errno = %d",
+                         errno);
         }
-        return false;
+        num_read = -1;
     }
-    const int num_read = fread(rng->state,
-                               sizeof(uint64_t),
-                               num_requested / sizeof(uint64_t),
-                               random_device);
+    num_read = fread(&seed,
+                     sizeof(uint64_t),
+                     num_requested / sizeof(uint64_t),
+                     random_device);
     fclose(random_device);
 #endif /* HAVE_ARC4RANDOM */
-       /* Warn if we could not read entire state from random source, but not an
+       /* Warn if we could not read entire seed from random source, but not an
         * error regardless. */
-    if (num_read != num_requested && logger != NULL) {
+    if (num_read >= 0 && num_read != num_requested && logger != NULL) {
         logger->warn(logger,
                      "Could not read entire random block, "
                      "bytes requested = %d, bytes read = %d, errno = %d",
@@ -85,7 +85,17 @@ static inline bool jaeger_rng_init(jaeger_rng* rng, jaeger_logger* logger)
                      num_read,
                      errno);
     }
-    return true;
+    else if (num_read == -1) {
+        for (int i = 0; i < num_requested; i++) {
+            for (int j = 0; j < sizeof(seed[0]); j++) {
+                uint8_t byte = rand() & 0xff;
+                seed[i] <<= CHAR_BIT;
+                seed[i] |= byte;
+            }
+        }
+    }
+
+    pcg32_srandom_r(&rng->state, seed[0], seed[1]);
 }
 
 static inline jaeger_rng* jaeger_rng_alloc(jaeger_logger* logger)
@@ -111,8 +121,8 @@ int64_t random64(jaeger_logger* logger)
         if (rng == NULL) {
             return 0;
         }
-        if (!jaeger_rng_init(rng, logger) ||
-            !jaeger_thread_local_set_value(
+        jaeger_rng_init(rng, logger);
+        if (!jaeger_thread_local_set_value(
                 &rng_storage, (jaeger_destructible*) rng, logger)) {
             jaeger_free(rng);
             return 0;
@@ -120,13 +130,8 @@ int64_t random64(jaeger_logger* logger)
     }
 
     assert(rng != NULL);
-    /* Based on xorshift1024star from https://en.wikipedia.org/wiki/Xorshift. */
-    const uint64_t s0 = rng->state[rng->index];
-    rng->index = (rng->index + 1) & 15;
-    uint64_t s1 = rng->state[rng->index];
-    s1 ^= s1 << 31;
-    s1 ^= s1 >> 11;
-    s1 ^= s0 ^ (s0 >> 30);
-    rng->state[rng->index] = s1;
-    return s1 * ((uint64_t) 1181783497276652981);
+    int64_t result = pcg32_random_r(&rng->state);
+    result <<= 32;
+    result |= pcg32_random_r(&rng->state);
+    return result;
 }

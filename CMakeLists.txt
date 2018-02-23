@@ -53,6 +53,7 @@ if(JAEGERTRACINGC_COVERAGE)
     "${CMAKE_CURRENT_SOURCE_DIR}/src/jaegertracingc/*_test_driver.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/jaegertracingc/*_test_driver.h"
     "${CMAKE_CURRENT_BINARY_DIR}/src/jaegertracingc/protoc-gen/*"
+		"${CMAKE_CURRENT_SOURCE_DIR}/third_party/pcg-c/src/*"
     "${CMAKE_CURRENT_SOURCE_DIR}/third_party/unity/src/*")
 endif()
 
@@ -63,6 +64,28 @@ mark_as_advanced(JAEGERTRACINGC_VERBOSE_ALLOC)
 find_package(http-parser REQUIRED)
 find_package(Jansson REQUIRED)
 find_package(ProtobufC REQUIRED)
+
+add_library(pcg-c
+	"third_party/pcg-c/src/pcg-advance-128.c"
+	"third_party/pcg-c/src/pcg-advance-16.c"
+	"third_party/pcg-c/src/pcg-advance-32.c"
+	"third_party/pcg-c/src/pcg-advance-64.c"
+	"third_party/pcg-c/src/pcg-advance-8.c"
+	"third_party/pcg-c/src/pcg-global-32.c"
+	"third_party/pcg-c/src/pcg-global-64.c"
+	"third_party/pcg-c/src/pcg-output-128.c"
+	"third_party/pcg-c/src/pcg-output-16.c"
+	"third_party/pcg-c/src/pcg-output-32.c"
+	"third_party/pcg-c/src/pcg-output-64.c"
+	"third_party/pcg-c/src/pcg-output-8.c"
+	"third_party/pcg-c/src/pcg-rngs-128.c"
+	"third_party/pcg-c/src/pcg-rngs-16.c"
+	"third_party/pcg-c/src/pcg-rngs-32.c"
+	"third_party/pcg-c/src/pcg-rngs-64.c"
+	"third_party/pcg-c/src/pcg-rngs-8.c")
+
+target_include_directories(pcg-c PUBLIC "third_party/pcg-c/include")
+target_compile_definitions(pcg-c PUBLIC PCG_USE_INLINE_ASM)
 
 option(JAEGERTRACINGC_MT "Enable multithreading support" ON)
 if(JAEGERTRACINGC_MT)
@@ -168,6 +191,7 @@ target_include_directories(jaegertracingc PUBLIC
   "src" "${CMAKE_CURRENT_BINARY_DIR}/src")
 
 target_link_libraries(jaegertracingc PUBLIC
+	pcg-c
   http-parser::http-parser
   Jansson::Jansson
   ProtobufC::ProtobufC)
