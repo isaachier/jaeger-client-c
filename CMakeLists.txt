@@ -31,7 +31,13 @@ include(GenerateDocumentation)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-foreach(flag "-Wall" "-Wextra" "-Werror")
+unset(extra_flag)
+if(CMAKE_C_COMPILER_ID STREQUAL "GNU" AND
+   CMAKE_C_COMPILER_VERSION VERSION_GREATER_EQUAL "5.0")
+  set(extra_flag "-Wextra")
+endif()
+
+foreach(flag "-Wall" "-Werror" ${extra_flag})
   string(MAKE_C_IDENTIFIER "HAVE${flag}" flag_var)
   check_c_compiler_flag(${flag} ${flag_var})
   if(${flag_var})
