@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-#include "jaegertracingc/sampler.h"
 #include <errno.h>
 #include <http_parser.h>
 #include <netinet/in.h>
@@ -23,6 +22,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include "jaegertracingc/sampler.h"
 #include "jaegertracingc/threading.h"
 #include "unity.h"
 
@@ -270,12 +270,12 @@ typedef struct mock_http_server {
     char url_buffer[MOCK_HTTP_MAX_URL];
 } mock_http_server;
 
-#define MOCK_HTTP_SERVER_INIT                                    \
-    {                                                            \
-        .socket_fd = -1, .addr = {0}, .thread = 0, .url_len = 0, \
-        .url_buffer = {                                          \
-            '\0'                                                 \
-        }                                                        \
+#define MOCK_HTTP_SERVER_INIT                                   \
+    {                                                           \
+        .socket_fd = -1, .addr = {}, .thread = 0, .url_len = 0, \
+        .url_buffer = {                                         \
+            '\0'                                                \
+        }                                                       \
     }
 
 static int

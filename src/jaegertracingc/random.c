@@ -55,8 +55,9 @@ static inline void jaeger_rng_init(jaeger_rng* rng, jaeger_logger* logger)
 #ifdef HAVE_GETRANDOM
     const int num_read =
         syscall(SYS_getrandom, &seed, num_requested, GRND_NONBLOCK);
-#elif defined(HAVE_ARC4RANDOM)
-    const int num_read = arc4random(&seed, num_requested);
+#elif defined(HAVE_ARC4RANDOM_BUF)
+    arc4random_buf(&seed, num_requested);
+    const int num_read = num_requested;
 #else
     int num_read = 0;
     FILE* random_device = fopen("/dev/random", "rb");
