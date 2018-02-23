@@ -50,7 +50,8 @@ function main() {
     cmake -DCMAKE_BUILD_TYPE=Debug ${prefix_arg} -DJAEGERTRACINGC_COVERAGE=${COVERAGE:OFF} ..
 
     if make all -j3; then
-        if valgrind --error-exitcode=1 --leak-check=full ./default_test; then
+        if valgrind --error-exitcode=1 --track-origins=yes \
+            --leak-check=full ./default_test; then
             info "All tests compiled and passed"
         else
             error "Tests failed"

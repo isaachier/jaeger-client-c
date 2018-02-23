@@ -418,9 +418,9 @@ bool jaeger_adaptive_sampler_init(
     assert(sampler != NULL);
     assert(logger != NULL);
     if (!jaeger_vector_alloc(&sampler->op_samplers,
-                            sizeof(jaeger_operation_sampler),
-                            NULL,
-                            logger)) {
+                             sizeof(jaeger_operation_sampler),
+                             NULL,
+                             logger)) {
         return false;
     }
     if (!samplers_from_strategies(strategies, &sampler->op_samplers, logger)) {
@@ -1203,7 +1203,6 @@ bool jaeger_remotely_controlled_sampler_update(
     jaeger_remotely_controlled_sampler* sampler, jaeger_logger* logger)
 {
     assert(sampler != NULL);
-    bool success = true;
     jaeger_strategy_response response = JAEGERTRACINGC_STRATEGY_RESPONSE_INIT;
     const bool result = jaeger_http_sampling_manager_get_sampling_strategies(
         &sampler->manager, &response, logger);
@@ -1212,19 +1211,22 @@ bool jaeger_remotely_controlled_sampler_update(
             logger->error(logger,
                           "Cannot get sampling strategies, will retry later");
         }
-        success = false;
-        if (sampler->metrics != NULL &&
-            sampler->metrics->sampler_query_failure != NULL) {
-            sampler->metrics->sampler_query_failure->inc(
-                sampler->metrics->sampler_query_failure, 1);
+        if (sampler->metrics != NULL) {
+            jaeger_counter* query_failure =
+                sampler->metrics->sampler_query_failure;
+            assert(query_failure != NULL);
+            query_failure->inc(query_failure, 1);
         }
+        return false;
     }
 
+    bool success = true;
     jaeger_mutex_lock(&sampler->mutex);
 
-    if (sampler->metrics && sampler->metrics->sampler_retrieved) {
-        sampler->metrics->sampler_retrieved->inc(
-            sampler->metrics->sampler_retrieved, 1);
+    if (sampler->metrics != NULL) {
+        jaeger_counter* retrieved = sampler->metrics->sampler_retrieved;
+        assert(retrieved != NULL);
+        retrieved->inc(retrieved, 1);
     }
 
     switch (response.strategy_case) {
@@ -1237,23 +1239,29 @@ bool jaeger_remotely_controlled_sampler_update(
                               "controlled "
                               "sampler");
             }
+            success = false;
         }
     } break;
     case JAEGERTRACINGC_STRATEGY_RESPONSE_TYPE(PROBABILISTIC): {
-        if (response.probabilistic == NULL) {
+        success = (response.probabilistic != NULL);
+        if (success) {
+            jaeger_sampler_choice_destroy(&sampler->sampler);
+            sampler->sampler.type = jaeger_probabilistic_sampler_type;
+            jaeger_probabilistic_sampler_init(
+                &sampler->sampler.probabilistic_sampler,
+                JAEGERTRACINGC_CLAMP(
+                    response.probabilistic->sampling_rate, 0, 1));
+        }
+        else {
             if (logger != NULL) {
                 logger->error(logger, "Received null probabilistic strategy");
             }
         }
-        else {
-            jaeger_sampler_choice_destroy(&sampler->sampler);
-            sampler->sampler.type = jaeger_probabilistic_sampler_type;
-            sampler->sampler.probabilistic_sampler.sampling_rate =
-                JAEGERTRACINGC_CLAMP(
-                    response.probabilistic->sampling_rate, 0, 1);
-        }
     } break;
     default: {
+        success = (response.strategy_case ==
+                       JAEGERTRACINGC_STRATEGY_RESPONSE_TYPE(RATE_LIMITING) &&
+                   response.rate_limiting != NULL);
         if (response.strategy_case !=
             JAEGERTRACINGC_STRATEGY_RESPONSE_TYPE(RATE_LIMITING)) {
             if (logger != NULL) {
@@ -1276,6 +1284,14 @@ bool jaeger_remotely_controlled_sampler_update(
                 &sampler->sampler.rate_limiting_sampler, max_traces_per_second);
         }
     } break;
+    }
+
+    if (sampler->metrics != NULL) {
+        jaeger_counter* sampler_update_metric =
+            (success ? sampler->metrics->sampler_updated
+                     : sampler->metrics->sampler_update_failure);
+        assert(sampler_update_metric != NULL);
+        sampler_update_metric->inc(sampler_update_metric, 1);
     }
 
     jaeger_mutex_unlock(&sampler->mutex);

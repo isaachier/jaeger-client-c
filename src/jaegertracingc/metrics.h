@@ -78,7 +78,6 @@ jaeger_gauge* jaeger_null_gauge();
     X(sampler_updated)                     \
     X(sampler_update_failure)              \
     X(sampler_query_failure)               \
-    X(sampler_parsing_failure)             \
     X(baggage_update_success)              \
     X(baggage_update_failure)              \
     X(baggage_truncate)                    \
