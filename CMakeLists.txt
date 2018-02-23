@@ -88,6 +88,8 @@ set(core_src
   "src/jaegertracingc/metrics.h"
   "src/jaegertracingc/net.c"
   "src/jaegertracingc/net.h"
+  "src/jaegertracingc/propagation.c"
+  "src/jaegertracingc/propagation.h"
   "src/jaegertracingc/random.c"
   "src/jaegertracingc/random.h"
   "src/jaegertracingc/reporter.c"
