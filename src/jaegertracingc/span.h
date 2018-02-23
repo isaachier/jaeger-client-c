@@ -199,8 +199,10 @@ static inline bool jaeger_span_context_init(jaeger_span_context* ctx,
                                             jaeger_logger* logger)
 {
     assert(ctx != NULL);
-    *ctx = (jaeger_span_context){
-        .trace_id = 0, .span_id = 0, .parent_id = 0, .flags = 0};
+    *ctx = (jaeger_span_context){.trace_id = JAEGERTRACINGC_TRACE_ID_INIT,
+                                 .span_id = 0,
+                                 .parent_id = 0,
+                                 .flags = 0};
     return jaeger_vector_init(
         &ctx->baggage, sizeof(jaeger_key_value), NULL, logger);
 }
