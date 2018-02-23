@@ -90,9 +90,12 @@ typedef struct jaeger_url {
     struct http_parser_url parts;
 } jaeger_url;
 
-#define JAEGERTRACINGC_URL_INIT  \
-    {                            \
-        .str = NULL, .parts = {} \
+#define JAEGERTRACINGC_URL_INIT                   \
+    {                                             \
+        .str = NULL, .parts = {                   \
+            .field_set = 0,                       \
+            .field_data = {{.len = 0, .off = -1}} \
+        }                                         \
     }
 
 static inline bool

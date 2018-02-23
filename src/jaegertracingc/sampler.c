@@ -1300,7 +1300,7 @@ bool jaeger_remotely_controlled_sampler_init(
     *sampler = (jaeger_remotely_controlled_sampler){
         &jaeger_remotely_controlled_sampler_destroy,
         &jaeger_remotely_controlled_sampler_is_sampled,
-        (jaeger_sampler_choice){},
+        JAEGERTRACINGC_SAMPLER_CHOICE_INIT,
         max_operations,
         metrics,
         JAEGERTRACINGC_HTTP_SAMPLING_MANAGER_INIT,

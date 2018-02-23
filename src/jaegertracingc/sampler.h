@@ -138,20 +138,27 @@ typedef struct jaeger_sampler_choice {
     };
 } jaeger_sampler_choice;
 
+#define JAEGERTRACINGC_SAMPLER_CHOICE_INIT \
+    {                                      \
+        .type = -1,                        \
+        {                                  \
+        }                                  \
+    }
+
 static inline jaeger_sampler*
 jaeger_sampler_choice_get_sampler(jaeger_sampler_choice* sampler,
                                   jaeger_logger* logger)
 {
-#define SAMPLER_TYPE_CASE(type)        \
-    case jaeger_##type##_sampler_type: \
+#define JAEGERTRACINGC_SAMPLER_TYPE_CASE(type) \
+    case jaeger_##type##_sampler_type:         \
         return (jaeger_sampler*) &sampler->type##_sampler;
 
     switch (sampler->type) {
-        SAMPLER_TYPE_CASE(const);
-        SAMPLER_TYPE_CASE(probabilistic);
-        SAMPLER_TYPE_CASE(rate_limiting);
-        SAMPLER_TYPE_CASE(guaranteed_throughput_probabilistic);
-        SAMPLER_TYPE_CASE(adaptive);
+        JAEGERTRACINGC_SAMPLER_TYPE_CASE(const);
+        JAEGERTRACINGC_SAMPLER_TYPE_CASE(probabilistic);
+        JAEGERTRACINGC_SAMPLER_TYPE_CASE(rate_limiting);
+        JAEGERTRACINGC_SAMPLER_TYPE_CASE(guaranteed_throughput_probabilistic);
+        JAEGERTRACINGC_SAMPLER_TYPE_CASE(adaptive);
     default:
         logger->warn(
             logger,
@@ -160,7 +167,7 @@ jaeger_sampler_choice_get_sampler(jaeger_sampler_choice* sampler,
         return NULL;
     }
 
-#undef SAMPLER_TYPE_CASE
+#undef JAEGERTRACINGC_SAMPLER_TYPE_CASE
 }
 
 static inline void jaeger_sampler_choice_destroy(jaeger_sampler_choice* sampler)
@@ -189,8 +196,8 @@ typedef struct jaeger_http_sampling_manager {
 #define JAEGERTRACINGC_HTTP_SAMPLING_MANAGER_INIT                             \
     {                                                                         \
         .service_name = NULL, .sampling_server_url = JAEGERTRACINGC_URL_INIT, \
-        .fd = -1, .parser = {}, .settings = {}, .request_length = 0,          \
-        .request_buffer = {'\0'}, .response = {}                              \
+        .fd = -1, .parser = (http_parser){0}, .settings = {0},                \
+        .request_length = 0, .request_buffer = {'\0'}, .response = {}         \
     }
 
 typedef struct jaeger_remotely_controlled_sampler {
