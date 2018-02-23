@@ -279,15 +279,14 @@ static inline void jaeger_lock(jaeger_mutex* lock0, jaeger_mutex* lock1)
         /* Be polite. */
         jaeger_yield();
 
-        /* Lock lock1, then try locking lock0. */
-        jaeger_mutex_lock(lock1);
-        if (jaeger_mutex_try_lock(lock0) == 0) {
-            break;
-        }
-        jaeger_mutex_unlock(lock1);
-
-        /* Be polite. */
-        jaeger_yield();
+        /* Originally written as a separate block attempting to lock lock1
+         * first, then attempting jaeger_mutex_try_lock on lock0. However, this
+         * swapping trick allows the unit test to hit 100% coverage without
+         * calling jaeger_yield more than once.
+         */
+        jaeger_mutex* tmp = lock0;
+        lock0 = lock1;
+        lock1 = tmp;
     }
 }
 
