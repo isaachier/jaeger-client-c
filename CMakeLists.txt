@@ -53,6 +53,7 @@ if(JAEGERTRACINGC_COVERAGE)
     "${CMAKE_CURRENT_SOURCE_DIR}/src/jaegertracingc/*_test_driver.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/jaegertracingc/*_test_driver.h"
     "${CMAKE_CURRENT_BINARY_DIR}/src/jaegertracingc/protoc-gen/*"
+		"${CMAKE_CURRENT_SOURCE_DIR}/third_party/pcg-c/include/*"
 		"${CMAKE_CURRENT_SOURCE_DIR}/third_party/pcg-c/src/*"
     "${CMAKE_CURRENT_SOURCE_DIR}/third_party/unity/src/*")
 endif()
@@ -258,14 +259,17 @@ if(BUILD_TESTING)
     "src/jaegertracingc" $<BUILD_INTERFACE:${generated_src_dir}>)
   target_link_libraries(jaegertracingc_test PUBLIC jaegertracingc unity)
 
-  add_executable(default_test "src/jaegertracingc/default_test_driver.c")
-  target_link_libraries(default_test PUBLIC jaegertracingc_test)
-  add_test(default_test default_test)
+	foreach(driver default init)
+	  add_executable(${driver}_test "src/jaegertracingc/${driver}_test_driver.c")
+	  target_link_libraries(${driver}_test PUBLIC jaegertracingc_test)
+  	add_test(${driver}_test ${driver}_test)
+	endforeach()
 
   if(JAEGERTRACINGC_COVERAGE)
     setup_target_for_coverage(
       NAME unit_test_coverage
       EXECUTABLE ${CMAKE_CURRENT_BINARY_DIR}/default_test
+			EXECUTABLE ${CMAKE_CURRENT_BINARY_DIR}/init_test
       DEPENDENCIES default_test)
   endif()
 endif()

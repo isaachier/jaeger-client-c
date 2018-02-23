@@ -74,7 +74,7 @@ static inline void jaeger_rng_init(jaeger_rng* rng, jaeger_logger* logger)
                      num_requested / sizeof(uint64_t),
                      random_device);
     fclose(random_device);
-#endif /* HAVE_ARC4RANDOM */
+#endif /* HAVE_GETRANDOM */
        /* Warn if we could not read entire seed from random source, but not an
         * error regardless. */
     if (num_read >= 0 && num_read != num_requested && logger != NULL) {

@@ -2,4 +2,5 @@ fixes:
   - "build/::"
 ignore:
   - "^src/jaegertracingc/[^\\/]+_test.c$"
+  - "^src/jaegertracingc/[^\\/]+_test_driver.c$"
   - "^src/jaegertracingc/protoc-gen/.*"
