@@ -23,7 +23,7 @@ set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/toolchain.cmake"
 project(jaegertracingc VERSION 0.0.1 LANGUAGES C)
 
 include(CheckCCompilerFlag)
-include(CheckFunctionExists)
+include(CheckSymbolExists)
 include(CheckStructHasMember)
 include(CMakeDependentOption)
 include(CTest)
@@ -151,7 +151,7 @@ add_library(jaegertracingc ${core_src} ${protoc_gen_src})
 
 if(NOT DEFINED protobuf_has_optional_field)
   try_compile(protobuf_has_optional_field
-    "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp"
+    "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/protobuf_test_project"
     "${CMAKE_CURRENT_SOURCE_DIR}/cmake/protobuf_test_project"
     protobuf_test_project)
 endif()
@@ -176,9 +176,15 @@ if(JAEGERTRACINGC_MT)
   target_compile_definitions(jaegertracingc PUBLIC JAEGERTRACINGC_MT)
 endif()
 
-check_function_exists("getrandom" have_getrandom)
+check_symbol_exists(
+  "SYS_getrandom" "linux/random.h;sys/syscall.h;unistd.h" have_getrandom)
 if(have_getrandom)
   target_compile_definitions(jaegertracingc PUBLIC "-DHAVE_GETRANDOM")
+else()
+  check_symbol_exists("arc4random" "stdlib.h" have_arc4random)
+  if(have_arc4random)
+    target_compile_definitions(jaegertracingc PUBLIC "-DHAVE_ARC4RANDOM")
+  endif()
 endif()
 
 if(JAEGERTRACINGC_VERBOSE_ALLOC)

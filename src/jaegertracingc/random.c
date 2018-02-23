@@ -18,7 +18,9 @@
 
 #include <errno.h>
 #ifdef HAVE_GETRANDOM
-#include <sys/random.h>
+#include <linux/random.h>
+#include <sys/syscall.h>
+#include <unistd.h>
 #endif /* HAVE_GETRANDOM */
 
 #include "jaegertracingc/random.h"
@@ -52,7 +54,10 @@ static inline bool jaeger_rng_init(jaeger_rng* rng, jaeger_logger* logger)
     rng->index = 0;
     const int num_requested = sizeof(rng->state);
 #ifdef HAVE_GETRANDOM
-    const int num_read = getrandom(rng->state, num_requested, GRND_NONBLOCK);
+    const int num_read =
+        syscall(SYS_getrandom, rng->state, num_requested, GRND_NONBLOCK);
+#elif defined(HAVE_ARC4RANDOM)
+    const int num_read = arc4random(rng->state, num_requested);
 #else
     FILE* random_device = fopen("/dev/random", "rb");
     if (random_device == NULL) {
@@ -69,9 +74,9 @@ static inline bool jaeger_rng_init(jaeger_rng* rng, jaeger_logger* logger)
                                num_requested / sizeof(uint64_t),
                                random_device);
     fclose(random_device);
-#endif /* HAVE_GETRANDOM */
-    /* Warn if we could not read entire state from random source, but not an
-     * error regardless. */
+#endif /* HAVE_ARC4RANDOM */
+       /* Warn if we could not read entire state from random source, but not an
+        * error regardless. */
     if (num_read != num_requested && logger != NULL) {
         logger->warn(logger,
                      "Could not read entire random block, "
