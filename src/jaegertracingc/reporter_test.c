@@ -58,7 +58,7 @@ void test_reporter()
     jaeger_tracer tracer;
     tracer.service_name = "test service";
     TEST_ASSERT_TRUE(
-        jaeger_vector_init(&tracer.tags, sizeof(jaeger_tag), NULL, logger));
+        jaeger_vector_alloc(&tracer.tags, sizeof(jaeger_tag), NULL, logger));
     span.tracer = &tracer;
     span.operation_name = jaeger_strdup("test-operation", logger);
     TEST_ASSERT_NOT_NULL(span.operation_name);

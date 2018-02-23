@@ -43,7 +43,7 @@ static inline bool jaeger_log_record_init(jaeger_log_record* log_record,
 {
     assert(log_record != NULL);
     jaeger_timestamp_now(&log_record->timestamp);
-    return jaeger_vector_init(
+    return jaeger_vector_alloc(
         &log_record->tags, sizeof(jaeger_tag), NULL, logger);
 }
 
@@ -203,7 +203,7 @@ static inline bool jaeger_span_context_init(jaeger_span_context* ctx,
                                  .span_id = 0,
                                  .parent_id = 0,
                                  .flags = 0};
-    return jaeger_vector_init(
+    return jaeger_vector_alloc(
         &ctx->baggage, sizeof(jaeger_key_value), NULL, logger);
 }
 
@@ -361,14 +361,14 @@ static inline bool jaeger_span_init(jaeger_span* span, jaeger_logger* logger)
 {
     assert(span != NULL);
     memset(span, 0, sizeof(*span));
-    if (!jaeger_vector_init(&span->tags, sizeof(jaeger_tag), NULL, logger)) {
+    if (!jaeger_vector_alloc(&span->tags, sizeof(jaeger_tag), NULL, logger)) {
         return false;
     }
-    if (!jaeger_vector_init(
+    if (!jaeger_vector_alloc(
             &span->logs, sizeof(jaeger_log_record), NULL, logger)) {
         goto cleanup;
     }
-    if (!jaeger_vector_init(
+    if (!jaeger_vector_alloc(
             &span->refs, sizeof(jaeger_span_ref), NULL, logger)) {
         goto cleanup;
     }

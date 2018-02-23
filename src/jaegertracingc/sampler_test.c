@@ -29,7 +29,7 @@
 #define SET_UP_SAMPLER_TEST()                                      \
     jaeger_logger* logger = jaeger_null_logger();                  \
     jaeger_vector tags;                                            \
-    jaeger_vector_init(&tags, sizeof(jaeger_tag), NULL, logger);   \
+    jaeger_vector_alloc(&tags, sizeof(jaeger_tag), NULL, logger);   \
     const char* operation_name = "test-operation";                 \
     (void) operation_name;                                         \
     const jaeger_trace_id trace_id = JAEGERTRACINGC_TRACE_ID_INIT; \
@@ -523,7 +523,7 @@ static inline void test_remotely_controlled_sampler()
 
     const jaeger_trace_id trace_id = {.high = 0, .low = 0};
     jaeger_vector tags;
-    jaeger_vector_init(&tags, sizeof(jaeger_tag), NULL, logger);
+    jaeger_vector_alloc(&tags, sizeof(jaeger_tag), NULL, logger);
     r.is_sampled(
         (jaeger_sampler*) &r, &trace_id, "test-operation", &tags, logger);
 

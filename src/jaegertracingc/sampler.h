@@ -140,8 +140,10 @@ typedef struct jaeger_sampler_choice {
 
 #define JAEGERTRACINGC_SAMPLER_CHOICE_INIT \
     {                                      \
-        .type = -1,                        \
-        {                                  \
+        .type = -1, .const_sampler = {     \
+            .is_sampled = NULL,            \
+            .destroy = NULL,               \
+            .decision = false              \
         }                                  \
     }
 
@@ -196,8 +198,8 @@ typedef struct jaeger_http_sampling_manager {
 #define JAEGERTRACINGC_HTTP_SAMPLING_MANAGER_INIT                             \
     {                                                                         \
         .service_name = NULL, .sampling_server_url = JAEGERTRACINGC_URL_INIT, \
-        .fd = -1, .parser = (http_parser){0}, .settings = {0},                \
-        .request_length = 0, .request_buffer = {'\0'}, .response = {}         \
+        .fd = -1, .parser = {}, .settings = {}, .request_length = 0,          \
+        .request_buffer = {'\0'}, .response = JAEGERTRACINGC_VECTOR_INIT      \
     }
 
 typedef struct jaeger_remotely_controlled_sampler {

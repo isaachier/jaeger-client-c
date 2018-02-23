@@ -23,7 +23,7 @@ void test_tag()
 {
     jaeger_logger* logger = jaeger_null_logger();
     jaeger_vector list;
-    bool result = jaeger_vector_init(&list, sizeof(jaeger_tag), NULL, logger);
+    bool result = jaeger_vector_alloc(&list, sizeof(jaeger_tag), NULL, logger);
     TEST_ASSERT_TRUE(result);
 
     for (int i = 0; i < 10; i++) {

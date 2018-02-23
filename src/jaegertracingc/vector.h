@@ -38,16 +38,21 @@ typedef struct jaeger_vector {
     jaeger_allocator* alloc;
 } jaeger_vector;
 
+#define JAEGERTRACINGC_VECTOR_INIT                                           \
+    {                                                                        \
+        .len = 0, .capacity = 0, .data = NULL, .type_size = 0, .alloc = NULL \
+    }
+
 static inline int jaeger_vector_length(const jaeger_vector* vec)
 {
     assert(vec != NULL);
     return vec->len;
 }
 
-static inline bool jaeger_vector_init(jaeger_vector* vec,
-                                      int type_size,
-                                      jaeger_allocator* alloc,
-                                      jaeger_logger* logger)
+static inline bool jaeger_vector_alloc(jaeger_vector* vec,
+                                       int type_size,
+                                       jaeger_allocator* alloc,
+                                       jaeger_logger* logger)
 {
     assert(vec != NULL);
     assert(type_size > 0);
@@ -385,7 +390,7 @@ static inline bool jaeger_vector_protobuf_copy(
     assert(dst != NULL);
     assert(n_dst != NULL);
     jaeger_vector vec;
-    if (!jaeger_vector_init(&vec, sizeof(void*), NULL, logger)) {
+    if (!jaeger_vector_alloc(&vec, sizeof(void*), NULL, logger)) {
         return false;
     }
     if (!jaeger_vector_ptr_copy(
