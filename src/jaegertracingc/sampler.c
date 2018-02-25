@@ -417,10 +417,10 @@ bool jaeger_adaptive_sampler_init(
 {
     assert(sampler != NULL);
     assert(logger != NULL);
-    if (!jaeger_vector_alloc(&sampler->op_samplers,
-                             sizeof(jaeger_operation_sampler),
-                             NULL,
-                             logger)) {
+    if (!jaeger_vector_init(&sampler->op_samplers,
+                            sizeof(jaeger_operation_sampler),
+                            NULL,
+                            logger)) {
         return false;
     }
     if (!samplers_from_strategies(strategies, &sampler->op_samplers, logger)) {
@@ -734,7 +734,7 @@ jaeger_http_sampling_manager_init(jaeger_http_sampling_manager* manager,
     manager->settings.on_message_complete =
         &jaeger_http_sampling_manager_parser_on_message_complete;
 
-    if (!jaeger_vector_alloc(&manager->response, sizeof(char), NULL, logger)) {
+    if (!jaeger_vector_init(&manager->response, sizeof(char), NULL, logger)) {
         goto cleanup_ctx;
     }
     if (!jaeger_vector_reserve(

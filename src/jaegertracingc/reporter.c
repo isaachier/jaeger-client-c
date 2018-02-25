@@ -92,7 +92,7 @@ static void in_memory_reporter_report(jaeger_reporter* reporter,
     }
     jaeger_mutex_lock(&r->mutex);
     jaeger_span* span_copy = jaeger_vector_append(&r->spans, logger);
-    if (span_copy != NULL && jaeger_span_alloc(span_copy, logger)) {
+    if (span_copy != NULL && jaeger_span_init(span_copy, logger)) {
         if (!jaeger_span_copy(span_copy, span, logger)) {
             jaeger_span_destroy(span_copy);
             r->spans.len--;
@@ -106,7 +106,7 @@ bool jaeger_in_memory_reporter_init(jaeger_in_memory_reporter* reporter,
                                     jaeger_logger* logger)
 {
     assert(reporter != NULL);
-    if (!jaeger_vector_alloc(
+    if (!jaeger_vector_init(
             &reporter->spans, sizeof(jaeger_span), NULL, logger)) {
         return false;
     }
@@ -171,7 +171,7 @@ bool jaeger_composite_reporter_init(jaeger_composite_reporter* reporter,
                                     jaeger_logger* logger)
 {
     assert(reporter != NULL);
-    if (!jaeger_vector_alloc(
+    if (!jaeger_vector_init(
             &reporter->reporters, sizeof(jaeger_reporter*), NULL, logger)) {
         return false;
     }
@@ -320,7 +320,7 @@ static inline bool build_batch(Jaegertracing__Protobuf__Batch* batch,
 
     const int remaining_spans = num_spans - batch->n_spans;
     if (remaining_spans > 0 &&
-        jaeger_vector_alloc(
+        jaeger_vector_init(
             spans, sizeof(Jaegertracing__Protobuf__Span*), NULL, logger) &&
         jaeger_vector_reserve(spans, remaining_spans, logger)) {
         for (int i = 0; i < remaining_spans; i++) {
@@ -472,10 +472,10 @@ bool jaeger_remote_reporter_init(jaeger_remote_reporter* reporter,
     reporter->max_packet_size = (max_packet_size > 0)
                                     ? max_packet_size
                                     : JAEGERTRACINGC_DEFAULT_UDP_BUFFER_SIZE;
-    if (!jaeger_vector_alloc(&reporter->spans,
-                             sizeof(Jaegertracing__Protobuf__Span*),
-                             NULL,
-                             logger)) {
+    if (!jaeger_vector_init(&reporter->spans,
+                            sizeof(Jaegertracing__Protobuf__Span*),
+                            NULL,
+                            logger)) {
         goto cleanup;
     }
 

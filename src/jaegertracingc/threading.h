@@ -173,7 +173,7 @@ static inline int jaeger_thread_init(jaeger_thread* thread,
     return 0;
 }
 
-static inline int jaeger_thread_init(jaeger_thread* thread, void** return_value)
+static inline int jaeger_thread_join(jaeger_thread thread, void** return_value)
 {
     (void) thread;
     (void) return_value;
