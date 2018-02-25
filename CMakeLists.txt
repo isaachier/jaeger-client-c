@@ -264,6 +264,8 @@ if(BUILD_TESTING)
   target_include_directories(jaegertracingc_test PUBLIC
     "src/jaegertracingc" $<BUILD_INTERFACE:${generated_src_dir}>)
   target_link_libraries(jaegertracingc_test PUBLIC jaegertracingc unity)
+  target_compile_definitions(jaegertracingc_test PUBLIC
+    UNITY_USE_COMMAND_LINE_ARGS)
 
 	foreach(driver default init)
 	  add_executable(${driver}_test "src/jaegertracingc/${driver}_test_driver.c")

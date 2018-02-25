@@ -15,6 +15,7 @@
  */
 
 #include "jaegertracingc/random.h"
+#include "jaegertracingc/internal/random.h"
 #include "jaegertracingc/threading.h"
 #include "unity.h"
 
@@ -41,4 +42,21 @@ void test_random()
     for (int i = 0; i < NUM_THREADS; i++) {
         jaeger_thread_join(threads[i], NULL);
     }
+
+    jaeger_logger* logger = jaeger_null_logger();
+    uint64_t seed[NUM_UINT64_IN_SEED];
+    memset(seed, 0, sizeof(seed));
+    read_random_seed(seed, "bad-path", logger);
+    TEST_ASSERT_EQUAL(0, seed[0]);
+    TEST_ASSERT_EQUAL(0, seed[1]);
+
+    FILE* f = fopen("good-path", "w+");
+    TEST_ASSERT_NOT_NULL(f);
+    const uint64_t seed_values[NUM_UINT64_IN_SEED] = {0x0123456789ABCDEF, 0};
+    TEST_ASSERT_EQUAL(1, fwrite(seed_values, sizeof(seed_values[0]), 1, f));
+    fclose(f);
+    read_random_seed(seed, "good-path", logger);
+    TEST_ASSERT_EQUAL_HEX64(seed_values[0], seed[0]);
+    TEST_ASSERT_EQUAL_HEX64(seed_values[1], seed[1]);
+    remove("good-path");
 }
