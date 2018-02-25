@@ -15,13 +15,18 @@
  */
 
 #include "init.h"
+#include "alloc.h"
+#include "logging.h"
 #include "unit_test_driver.h"
 
 int main()
 {
+    jaeger_logger* logger = jaeger_null_logger();
     jaeger_allocator* alloc = jaeger_null_allocator();
+    TEST_ASSERT_NOT_NULL(logger);
     TEST_ASSERT_NOT_NULL(alloc);
-    jaeger_init_lib(alloc);
-    TEST_ASSERT_EQUAL(alloc, jaeger_alloc);
+    jaeger_init_lib(logger, alloc);
+    TEST_ASSERT_EQUAL(alloc, jaeger_default_allocator());
+    TEST_ASSERT_EQUAL(logger, jaeger_default_logger());
     return 0;
 }

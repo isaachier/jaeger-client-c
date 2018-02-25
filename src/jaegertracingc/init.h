@@ -17,16 +17,26 @@
 #ifndef JAEGERTRACINGC_INIT_H
 #define JAEGERTRACINGC_INIT_H
 
-#include "jaegertracingc/alloc.h"
 #include "jaegertracingc/common.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
+struct jaeger_allocator;
+struct jaeger_logger;
+
 /* Use this function to initialize the library before calling any functions.
- * Either pass in a custom allocator or NULL to use the built-in allocator. */
-void jaeger_init_lib(jaeger_allocator* alloc);
+ * For logger, use a custom logger, or NULL to use the built-in stdout/stderr
+ * logger.
+ * For alloc, use a custom allocator, or NULL to use the built-in allocator.
+ */
+void jaeger_init_lib(struct jaeger_logger* logger,
+                     struct jaeger_allocator* alloc);
+
+struct jaeger_allocator* jaeger_default_allocator();
+
+struct jaeger_logger* jaeger_default_logger();
 
 #ifdef __cplusplus
 } /* extern C */

@@ -92,5 +92,3 @@ jaeger_allocator* jaeger_null_allocator()
         .malloc = &null_malloc, .realloc = &null_realloc, .free = &null_free};
     return &null_alloc;
 }
-
-jaeger_allocator* jaeger_alloc;

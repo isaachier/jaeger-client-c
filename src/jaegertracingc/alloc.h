@@ -18,6 +18,7 @@
 #define JAEGERTRACINGC_ALLOC_H
 
 #include "jaegertracingc/common.h"
+#include "jaegertracingc/init.h"
 #include "jaegertracingc/logging.h"
 
 #ifdef __cplusplus
@@ -34,21 +35,20 @@ jaeger_allocator* jaeger_built_in_allocator();
 
 jaeger_allocator* jaeger_null_allocator();
 
-extern jaeger_allocator* jaeger_alloc;
-
 static inline void* jaeger_malloc(size_t sz)
 {
-    return jaeger_alloc->malloc(jaeger_alloc, sz);
+    return jaeger_default_allocator()->malloc(jaeger_default_allocator(), sz);
 }
 
 static inline void* jaeger_realloc(void* ptr, size_t sz)
 {
-    return jaeger_alloc->realloc(jaeger_alloc, ptr, sz);
+    return jaeger_default_allocator()->realloc(
+        jaeger_default_allocator(), ptr, sz);
 }
 
 static inline void jaeger_free(void* ptr)
 {
-    jaeger_alloc->free(jaeger_alloc, ptr);
+    jaeger_default_allocator()->free(jaeger_default_allocator(), ptr);
 }
 
 static inline char* jaeger_strdup_alloc(const char* str,

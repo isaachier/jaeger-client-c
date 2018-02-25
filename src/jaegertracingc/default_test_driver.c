@@ -19,7 +19,7 @@
 
 int main()
 {
-    jaeger_init_lib(NULL);
+    jaeger_init_lib(NULL, NULL);
     run_tests();
     return 0;
 }

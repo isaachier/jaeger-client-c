@@ -34,6 +34,8 @@ void jaeger_std_logger_init(jaeger_logger* logger);
 /* Shared instance of null logger. DO NOT MODIFY MEMBERS! */
 jaeger_logger* jaeger_null_logger();
 
+jaeger_logger* jaeger_default_logger();
+
 #ifdef __cplusplus
 } /* extern C */
 #endif /* __cplusplus */

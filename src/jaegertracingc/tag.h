@@ -64,12 +64,6 @@ static inline void jaeger_tag_destroy(jaeger_tag* tag)
 
 JAEGERTRACINGC_WRAP_DESTROY(jaeger_tag_destroy)
 
-static inline void jaeger_tag_clear(jaeger_tag* tag)
-{
-    jaeger_tag_destroy(tag);
-    *tag = (jaeger_tag) JAEGERTRACINGC_TAG_INIT;
-}
-
 static inline bool
 jaeger_tag_copy(jaeger_tag* dst, const jaeger_tag* src, jaeger_logger* logger)
 {
@@ -119,7 +113,8 @@ jaeger_tag_copy(jaeger_tag* dst, const jaeger_tag* src, jaeger_logger* logger)
     return true;
 
 cleanup:
-    jaeger_tag_clear(dst);
+    jaeger_tag_destroy(dst);
+    *dst = (jaeger_tag) JAEGERTRACING__PROTOBUF__TAG__INIT;
     return false;
 }
 

@@ -15,16 +15,21 @@
  */
 
 #include "jaegertracingc/random.h"
+#include "jaegertracingc/init.h"
 #include "jaegertracingc/internal/random.h"
 
 jaeger_thread_local rng_storage = {.initialized = false};
 
+static jaeger_once once = JAEGERTRACINGC_ONCE_INIT;
+
+void init_rng()
+{
+    jaeger_thread_local_init(&rng_storage, jaeger_default_logger());
+}
+
 int64_t random64(jaeger_logger* logger)
 {
-    if (!rng_storage.initialized &&
-        !jaeger_thread_local_init(&rng_storage, logger)) {
-        return 0;
-    }
+    jaeger_do_once(&once, init_rng);
     assert(rng_storage.initialized);
     jaeger_rng* rng =
         (jaeger_rng*) jaeger_thread_local_get_value(&rng_storage, logger);
