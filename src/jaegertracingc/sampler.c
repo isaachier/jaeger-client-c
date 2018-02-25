@@ -404,7 +404,8 @@ static void jaeger_adaptive_sampler_destroy(jaeger_destructible* sampler)
     assert(sampler != NULL);
     jaeger_adaptive_sampler* s = (jaeger_adaptive_sampler*) sampler;
     JAEGERTRACINGC_VECTOR_FOR_EACH(&s->op_samplers,
-                                   jaeger_operation_sampler_destroy);
+                                   jaeger_operation_sampler_destroy,
+                                   jaeger_operation_sampler);
     jaeger_vector_destroy(&s->op_samplers);
     jaeger_mutex_destroy(&s->mutex);
 }

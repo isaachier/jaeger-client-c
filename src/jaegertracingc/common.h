@@ -57,7 +57,7 @@ static inline void jaeger_destructible_destroy(jaeger_destructible* d)
 
 static inline void jaeger_destructible_destroy_wrapper(void* d)
 {
-    jaeger_destructible_destroy(d);
+    jaeger_destructible_destroy((jaeger_destructible*) d);
 }
 
 #ifdef __cplusplus

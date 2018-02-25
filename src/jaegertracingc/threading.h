@@ -90,7 +90,8 @@ static inline void jaeger_thread_local_destroy(jaeger_thread_local* d)
     if (!local->initialized) {
         return;
     }
-    jaeger_destructible_destroy(pthread_getspecific(local->key));
+    jaeger_destructible_destroy(
+        (jaeger_destructible*) pthread_getspecific(local->key));
     pthread_key_delete(local->key);
     local->initialized = false;
 }
@@ -134,7 +135,7 @@ jaeger_thread_local_get_value(jaeger_thread_local* local, jaeger_logger* logger)
     if (!jaeger_thread_local_check_initialized(local, logger)) {
         return NULL;
     }
-    return pthread_getspecific(local->key);
+    return (jaeger_destructible*) pthread_getspecific(local->key);
 }
 
 static inline bool jaeger_thread_local_set_value(jaeger_thread_local* local,
@@ -147,8 +148,9 @@ static inline bool jaeger_thread_local_set_value(jaeger_thread_local* local,
     }
     /* Destroy the current value. jaeger_destructible_destroy handles NULL, so
      * not checking here. */
-    jaeger_destructible_destroy(pthread_getspecific(local->key));
-    const int return_code = pthread_setspecific(local->key, value);
+    jaeger_destructible_destroy(
+        (jaeger_destructible*) pthread_getspecific(local->key));
+    const int return_code = pthread_setspecific(local->key, (void*) value);
     if (return_code != 0 && logger != NULL) {
         logger->error(logger,
                       "Cannot create jaeger_thread_local, return code = "

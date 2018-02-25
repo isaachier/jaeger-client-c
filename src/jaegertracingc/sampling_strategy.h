@@ -17,9 +17,6 @@
 #ifndef JAEGERTRACINGC_SAMPLING_STRATEGY_H
 #define JAEGERTRACINGC_SAMPLING_STRATEGY_H
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
 #include "jaegertracingc/alloc.h"
 #include "jaegertracingc/common.h"
 #include "jaegertracingc/protoc-gen/sampling.pb-c.h"

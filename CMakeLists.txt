@@ -31,17 +31,16 @@ include(GenerateDocumentation)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-unset(extra_flag)
 if(CMAKE_C_COMPILER_ID STREQUAL "GNU" AND
    CMAKE_C_COMPILER_VERSION VERSION_GREATER_EQUAL "5.0")
-  set(extra_flag "-Wextra")
+ set(advanced_flags "-Wextra")
 endif()
 
-foreach(flag "-Wall" "-Werror" ${extra_flag})
+foreach(flag "-Wall" "-Werror" ${advanced_flags})
   string(MAKE_C_IDENTIFIER "HAVE${flag}" flag_var)
   check_c_compiler_flag(${flag} ${flag_var})
   if(${flag_var})
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${flag}")
+    list(APPEND jaegertracingc_flags ${flag})
   endif()
 endforeach()
 
@@ -72,7 +71,7 @@ find_package(http-parser REQUIRED)
 find_package(Jansson REQUIRED)
 find_package(ProtobufC REQUIRED)
 
-add_library(pcg-c
+add_library(pcg
 	"third_party/pcg-c/src/pcg-advance-128.c"
 	"third_party/pcg-c/src/pcg-advance-16.c"
 	"third_party/pcg-c/src/pcg-advance-32.c"
@@ -91,8 +90,8 @@ add_library(pcg-c
 	"third_party/pcg-c/src/pcg-rngs-64.c"
 	"third_party/pcg-c/src/pcg-rngs-8.c")
 
-target_include_directories(pcg-c PUBLIC "third_party/pcg-c/include")
-target_compile_definitions(pcg-c PUBLIC PCG_USE_INLINE_ASM)
+target_include_directories(pcg PUBLIC "third_party/pcg-c/include")
+target_compile_definitions(pcg PUBLIC PCG_USE_INLINE_ASM)
 
 option(JAEGERTRACINGC_MT "Enable multithreading support" ON)
 if(JAEGERTRACINGC_MT)
@@ -177,7 +176,9 @@ generate_protobuf_c(
   "${CMAKE_CURRENT_SOURCE_DIR}/idl/protobuf/baggage.proto"
   "${CMAKE_CURRENT_SOURCE_DIR}/idl/protobuf/jaeger.proto"
   "${CMAKE_CURRENT_SOURCE_DIR}/idl/protobuf/sampling.proto")
+
 add_library(jaegertracingc ${core_src} ${protoc_gen_src})
+target_compile_options(jaegertracingc PRIVATE ${jaegertracingc_flags})
 
 if(NOT DEFINED protobuf_has_optional_field)
   try_compile(protobuf_has_optional_field
@@ -195,10 +196,14 @@ configure_file(
   "${generated_src_dir}/constants.h"
   @ONLY)
 target_include_directories(jaegertracingc PUBLIC
-  "src" "${CMAKE_CURRENT_BINARY_DIR}/src")
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/src>
+  $<INSTALL_INTERFACE:include>)
 
+target_include_directories(jaegertracingc PUBLIC
+  $<TARGET_PROPERTY:pcg,INTERFACE_INCLUDE_DIRECTORIES>)
 target_link_libraries(jaegertracingc PUBLIC
-	pcg-c
+	pcg
   http-parser::http-parser
   Jansson::Jansson
   ProtobufC::ProtobufC)

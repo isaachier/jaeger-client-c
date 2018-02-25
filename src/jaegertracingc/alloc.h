@@ -60,7 +60,7 @@ static inline char* jaeger_strdup_alloc(const char* str,
         alloc = jaeger_built_in_allocator();
     }
     const int size = strlen(str) + 1;
-    char* copy = alloc->malloc(alloc, size);
+    char* copy = (char*) alloc->malloc(alloc, size);
     if (copy == NULL) {
         logger->error(logger, "Cannot allocate string copy, size = %d", size);
         return NULL;

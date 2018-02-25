@@ -62,7 +62,7 @@ static inline void jaeger_tag_destroy(jaeger_tag* tag)
     }
 }
 
-JAEGERTRACINGC_WRAP_DESTROY(jaeger_tag_destroy)
+JAEGERTRACINGC_WRAP_DESTROY(jaeger_tag_destroy, jaeger_tag)
 
 static inline bool
 jaeger_tag_copy(jaeger_tag* dst, const jaeger_tag* src, jaeger_logger* logger)
@@ -89,7 +89,8 @@ jaeger_tag_copy(jaeger_tag* dst, const jaeger_tag* src, jaeger_logger* logger)
     } break;
     case JAEGERTRACINGC_TAG_TYPE(BINARY): {
         if (src->binary_value.len > 0 && src->binary_value.data != NULL) {
-            dst->binary_value.data = jaeger_malloc(src->binary_value.len);
+            dst->binary_value.data =
+                (uint8_t*) jaeger_malloc(src->binary_value.len);
             if (dst->binary_value.data == NULL) {
                 goto cleanup;
             }
@@ -118,13 +119,13 @@ cleanup:
     return false;
 }
 
-JAEGERTRACINGC_WRAP_COPY(jaeger_tag_copy)
+JAEGERTRACINGC_WRAP_COPY(jaeger_tag_copy, jaeger_tag, jaeger_tag)
 
 static inline bool jaeger_tag_vector_append(jaeger_vector* vec,
                                             const jaeger_tag* tag,
                                             jaeger_logger* logger)
 {
-    jaeger_tag* tag_copy = jaeger_vector_append(vec, logger);
+    jaeger_tag* tag_copy = (jaeger_tag*) jaeger_vector_append(vec, logger);
     if (tag_copy == NULL) {
         return false;
     }

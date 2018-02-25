@@ -38,4 +38,9 @@ void test_span()
         const bool success = jaeger_span_context_scan(&span, test.input);
         TEST_ASSERT_EQUAL_MESSAGE(test.success, success, test.input);
     }
+
+    jaeger_log_record_destroy(NULL);
+    jaeger_span_ref_destroy(NULL);
+    jaeger_span_context_destroy(NULL);
+    jaeger_span_destroy(NULL);
 }

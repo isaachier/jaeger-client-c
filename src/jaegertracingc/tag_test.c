@@ -74,6 +74,8 @@ void test_tag()
                 ->binary_value.data);
     }
 
-    JAEGERTRACINGC_VECTOR_FOR_EACH(&list, jaeger_tag_destroy);
+    JAEGERTRACINGC_VECTOR_FOR_EACH(&list, jaeger_tag_destroy, jaeger_tag);
     jaeger_vector_destroy(&list);
+
+    jaeger_tag_destroy(NULL);
 }

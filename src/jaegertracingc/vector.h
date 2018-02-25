@@ -212,10 +212,10 @@ static inline void jaeger_vector_destroy(jaeger_vector* vec)
     }
 }
 
-#define JAEGERTRACINGC_VECTOR_FOR_EACH(vec, op)                          \
+#define JAEGERTRACINGC_VECTOR_FOR_EACH(vec, op, type)                    \
     do {                                                                 \
         for (int i = 0, len = jaeger_vector_length(vec); i < len; i++) { \
-            void* elem = jaeger_vector_offset((vec), i);                 \
+            type* elem = (type*) jaeger_vector_offset((vec), i);         \
             op(elem);                                                    \
         }                                                                \
     } while (0)
@@ -255,20 +255,20 @@ static inline int jaeger_vector_lower_bound(jaeger_vector* vec,
     return pos;
 }
 
-#define JAEGERTRACINGC_WRAP_COPY(copy)                          \
+#define JAEGERTRACINGC_WRAP_COPY(copy, dst_type, src_type)      \
     static inline bool copy##_wrapper(void* arg,                \
                                       void* restrict dst,       \
                                       const void* restrict src, \
                                       jaeger_logger* logger)    \
     {                                                           \
         (void) arg;                                             \
-        return copy(dst, src, logger);                          \
+        return copy((dst_type*) dst, (src_type*) src, logger);  \
     }
 
-#define JAEGERTRACINGC_WRAP_DESTROY(destroy)      \
-    static inline void destroy##_wrapper(void* x) \
-    {                                             \
-        destroy(x);                               \
+#define JAEGERTRACINGC_WRAP_DESTROY(destroy, type) \
+    static inline void destroy##_wrapper(void* x)  \
+    {                                              \
+        destroy((type*) x);                        \
     }
 
 static inline bool jaeger_vector_copy(
@@ -313,9 +313,9 @@ static inline bool jaeger_vector_ptr_copy_helper(void* arg,
                                                  jaeger_logger* logger)
 {
     assert(arg != NULL);
-    jaeger_vector_ptr_copy_arg* ctx = arg;
-    void** ptr = dst;
-    *ptr = ctx->alloc->malloc(ctx->alloc, ctx->type_size);
+    jaeger_vector_ptr_copy_arg* ctx = (jaeger_vector_ptr_copy_arg*) arg;
+    void** ptr = (void**) dst;
+    *ptr = (void**) ctx->alloc->malloc(ctx->alloc, ctx->type_size);
     if (*ptr == NULL) {
         if (logger != NULL) {
             logger->error(logger,
@@ -355,19 +355,18 @@ jaeger_vector_ptr_copy(jaeger_vector* restrict dst,
     if (!jaeger_vector_copy(
             dst, src, jaeger_vector_ptr_copy_helper, &ctx, logger)) {
 
-#define JAEGERTRACINGC_DST_VECTOR_ALLOC_FREE(x) \
-    do {                                        \
-        void** ptr = x;                         \
-        if (*ptr != NULL) {                     \
-            if (dtor != NULL) {                 \
-                dtor(*ptr);                     \
-            }                                   \
-            dst->alloc->free(dst->alloc, *ptr); \
-        }                                       \
+#define JAEGERTRACINGC_DST_VECTOR_ALLOC_FREE(ptr) \
+    do {                                          \
+        if (*ptr != NULL) {                       \
+            if (dtor != NULL) {                   \
+                dtor(*ptr);                       \
+            }                                     \
+            dst->alloc->free(dst->alloc, *ptr);   \
+        }                                         \
     } while (0)
 
-        JAEGERTRACINGC_VECTOR_FOR_EACH(dst,
-                                       JAEGERTRACINGC_DST_VECTOR_ALLOC_FREE);
+        JAEGERTRACINGC_VECTOR_FOR_EACH(
+            dst, JAEGERTRACINGC_DST_VECTOR_ALLOC_FREE, void**);
 
 #undef JAEGERTRACINGC_DST_VECTOR_ALLOC_FREE
 
@@ -398,7 +397,7 @@ static inline bool jaeger_vector_protobuf_copy(
         jaeger_vector_destroy(&vec);
         return false;
     }
-    *dst = vec.data;
+    *dst = (void**) vec.data;
     *n_dst = jaeger_vector_length(&vec);
     return true;
 }

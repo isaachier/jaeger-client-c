@@ -76,7 +76,7 @@ static void in_memory_reporter_destroy(jaeger_destructible* destructible)
     }
 
     jaeger_in_memory_reporter* r = (jaeger_in_memory_reporter*) destructible;
-    JAEGERTRACINGC_VECTOR_FOR_EACH(&r->spans, jaeger_span_destroy);
+    JAEGERTRACINGC_VECTOR_FOR_EACH(&r->spans, jaeger_span_destroy, jaeger_span);
     jaeger_vector_destroy(&r->spans);
     jaeger_mutex_destroy(&r->mutex);
 }
@@ -134,7 +134,8 @@ static void composite_reporter_destroy(jaeger_destructible* destructible)
         jaeger_free(*d);             \
     } while (0)
 
-    JAEGERTRACINGC_VECTOR_FOR_EACH(&r->reporters, DESTROY);
+    JAEGERTRACINGC_VECTOR_FOR_EACH(
+        &r->reporters, DESTROY, jaeger_destructible*);
 
 #undef DESTROY
 
@@ -161,7 +162,7 @@ static void composite_reporter_report(jaeger_reporter* reporter,
         (*child_reporter)->report(*child_reporter, span, logger); \
     } while (0)
 
-        JAEGERTRACINGC_VECTOR_FOR_EACH(&r->reporters, REPORT);
+        JAEGERTRACINGC_VECTOR_FOR_EACH(&r->reporters, REPORT, jaeger_reporter*);
 
 #undef REPORT
     }

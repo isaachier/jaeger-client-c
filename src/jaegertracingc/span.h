@@ -67,18 +67,21 @@ static inline bool jaeger_log_record_copy(jaeger_log_record* restrict dst,
     return true;
 }
 
-JAEGERTRACINGC_WRAP_COPY(jaeger_log_record_copy)
+JAEGERTRACINGC_WRAP_COPY(jaeger_log_record_copy,
+                         jaeger_log_record,
+                         jaeger_log_record)
 
 static inline void jaeger_log_record_destroy(jaeger_log_record* log_record)
 {
     if (log_record == NULL) {
         return;
     }
-    JAEGERTRACINGC_VECTOR_FOR_EACH(&log_record->tags, jaeger_tag_destroy);
+    JAEGERTRACINGC_VECTOR_FOR_EACH(
+        &log_record->tags, jaeger_tag_destroy, jaeger_tag);
     jaeger_vector_destroy(&log_record->tags);
 }
 
-JAEGERTRACINGC_WRAP_DESTROY(jaeger_log_record_destroy)
+JAEGERTRACINGC_WRAP_DESTROY(jaeger_log_record_destroy, jaeger_log_record)
 
 static inline void
 jaeger_log_record_protobuf_destroy(Jaegertracing__Protobuf__Log* log_record)
@@ -98,7 +101,8 @@ jaeger_log_record_protobuf_destroy(Jaegertracing__Protobuf__Log* log_record)
         (Jaegertracing__Protobuf__Log) JAEGERTRACING__PROTOBUF__LOG__INIT;
 }
 
-JAEGERTRACINGC_WRAP_DESTROY(jaeger_log_record_protobuf_destroy)
+JAEGERTRACINGC_WRAP_DESTROY(jaeger_log_record_protobuf_destroy,
+                            Jaegertracing__Protobuf__Log)
 
 static inline bool
 jaeger_log_record_to_protobuf(Jaegertracing__Protobuf__Log* restrict dst,
@@ -128,7 +132,9 @@ jaeger_log_record_to_protobuf(Jaegertracing__Protobuf__Log* restrict dst,
     return true;
 }
 
-JAEGERTRACINGC_WRAP_COPY(jaeger_log_record_to_protobuf)
+JAEGERTRACINGC_WRAP_COPY(jaeger_log_record_to_protobuf,
+                         Jaegertracing__Protobuf__Log,
+                         jaeger_log_record)
 
 typedef struct jaeger_key_value {
     char* key;
@@ -194,7 +200,9 @@ static inline bool jaeger_key_value_copy(jaeger_key_value* restrict dst,
     return true;
 }
 
-JAEGERTRACINGC_WRAP_COPY(jaeger_key_value_copy)
+JAEGERTRACINGC_WRAP_COPY(jaeger_key_value_copy,
+                         jaeger_key_value,
+                         jaeger_key_value)
 
 typedef struct jaeger_span_context {
     jaeger_trace_id trace_id;
@@ -215,7 +223,8 @@ static inline void jaeger_span_context_clear(jaeger_span_context* ctx)
     if (ctx == NULL) {
         return;
     }
-    JAEGERTRACINGC_VECTOR_FOR_EACH(&ctx->baggage, jaeger_key_value_destroy);
+    JAEGERTRACINGC_VECTOR_FOR_EACH(
+        &ctx->baggage, jaeger_key_value_destroy, jaeger_key_value);
     jaeger_vector_clear(&ctx->baggage);
 }
 
@@ -266,9 +275,10 @@ typedef struct jaeger_span_ref {
     jaeger_span_ref_type type;
 } jaeger_span_ref;
 
-#define JAEGERTRACINGC_SPAN_REF_INIT                            \
-    {                                                           \
-        .context = JAEGERTRACINGC_SPAN_CONTEXT_INIT, .type = -1 \
+#define JAEGERTRACINGC_SPAN_REF_INIT                 \
+    {                                                \
+        .context = JAEGERTRACINGC_SPAN_CONTEXT_INIT, \
+        .type = (jaeger_span_ref_type) -1            \
     }
 
 static inline bool jaeger_span_ref_init(jaeger_span_ref* span_ref,
@@ -296,8 +306,8 @@ static inline bool jaeger_span_ref_copy(void* arg,
     (void) arg;
     assert(dst != NULL);
     assert(src != NULL);
-    jaeger_span_ref* dst_span_ref = dst;
-    const jaeger_span_ref* src_span_ref = src;
+    jaeger_span_ref* dst_span_ref = (jaeger_span_ref*) dst;
+    const jaeger_span_ref* src_span_ref = (const jaeger_span_ref*) src;
     if (!jaeger_span_context_copy(
             &dst_span_ref->context, &src_span_ref->context, logger)) {
         return false;
@@ -317,7 +327,8 @@ jaeger_span_ref_protobuf_destroy(Jaegertracing__Protobuf__SpanRef* span_ref)
     span_ref->trace_id = NULL;
 }
 
-JAEGERTRACINGC_WRAP_DESTROY(jaeger_span_ref_protobuf_destroy)
+JAEGERTRACINGC_WRAP_DESTROY(jaeger_span_ref_protobuf_destroy,
+                            Jaegertracing__Protobuf__SpanRef)
 
 static inline bool
 jaeger_span_ref_to_protobuf(Jaegertracing__Protobuf__SpanRef* restrict dst,
@@ -328,7 +339,8 @@ jaeger_span_ref_to_protobuf(Jaegertracing__Protobuf__SpanRef* restrict dst,
     assert(src != NULL);
     *dst = (Jaegertracing__Protobuf__SpanRef)
         JAEGERTRACING__PROTOBUF__SPAN_REF__INIT;
-    dst->trace_id = jaeger_malloc(sizeof(Jaegertracing__Protobuf__TraceID));
+    dst->trace_id = (Jaegertracing__Protobuf__TraceID*) jaeger_malloc(
+        sizeof(Jaegertracing__Protobuf__TraceID));
     if (dst->trace_id == NULL) {
         if (logger != NULL) {
             logger->error(logger,
@@ -347,7 +359,9 @@ jaeger_span_ref_to_protobuf(Jaegertracing__Protobuf__SpanRef* restrict dst,
     return true;
 }
 
-JAEGERTRACINGC_WRAP_COPY(jaeger_span_ref_to_protobuf)
+JAEGERTRACINGC_WRAP_COPY(jaeger_span_ref_to_protobuf,
+                         Jaegertracing__Protobuf__SpanRef,
+                         jaeger_span_ref)
 
 struct jaeger_tracer;
 
@@ -388,11 +402,13 @@ static inline void jaeger_span_clear(jaeger_span* span)
         jaeger_free(span->operation_name);
         span->operation_name = NULL;
     }
-    JAEGERTRACINGC_VECTOR_FOR_EACH(&span->tags, jaeger_tag_destroy);
+    JAEGERTRACINGC_VECTOR_FOR_EACH(&span->tags, jaeger_tag_destroy, jaeger_tag);
     jaeger_vector_clear(&span->tags);
-    JAEGERTRACINGC_VECTOR_FOR_EACH(&span->logs, jaeger_log_record_destroy);
+    JAEGERTRACINGC_VECTOR_FOR_EACH(
+        &span->logs, jaeger_log_record_destroy, jaeger_log_record);
     jaeger_vector_clear(&span->logs);
-    JAEGERTRACINGC_VECTOR_FOR_EACH(&span->refs, jaeger_span_ref_destroy);
+    JAEGERTRACINGC_VECTOR_FOR_EACH(
+        &span->refs, jaeger_span_ref_destroy, jaeger_span_ref);
     jaeger_vector_clear(&span->refs);
     jaeger_span_context_clear(&span->context);
 }

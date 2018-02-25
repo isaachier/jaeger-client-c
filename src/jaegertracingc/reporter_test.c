@@ -161,6 +161,7 @@ void test_reporter()
     jaeger_span_destroy(&span);
 
     /* TODO: Update once tracer is implemented */
-    JAEGERTRACINGC_VECTOR_FOR_EACH(&tracer.tags, jaeger_tag_destroy);
+    JAEGERTRACINGC_VECTOR_FOR_EACH(
+        &tracer.tags, jaeger_tag_destroy, jaeger_tag);
     jaeger_vector_destroy(&tracer.tags);
 }

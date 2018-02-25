@@ -107,7 +107,7 @@ static inline void jaeger_rng_init(jaeger_rng* rng, jaeger_logger* logger)
 
 static inline jaeger_rng* jaeger_rng_alloc(jaeger_logger* logger)
 {
-    jaeger_rng* rng = jaeger_malloc(sizeof(jaeger_rng));
+    jaeger_rng* rng = (jaeger_rng*) jaeger_malloc(sizeof(jaeger_rng));
     if (rng == NULL && logger != NULL) {
         logger->error(logger, "Cannot allocate random number generator");
     }
