@@ -15,9 +15,6 @@ addons:
       - unzip
       - lcov
       - valgrind
-      - python
-      - pip
-      - doxygen
 matrix:
   include:
     - os: linux
@@ -143,6 +140,7 @@ script:
   - ./scripts/build.sh "$HOME/install"
 after_success:
   - ./scripts/upload-coverage.sh
+  - ./scripts/upload-doc.sh
 env:
   global:
     - LANG="en_US.UTF-8"
