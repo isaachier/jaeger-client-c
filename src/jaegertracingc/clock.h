@@ -29,6 +29,11 @@ extern "C" {
 
 typedef struct timespec jaeger_timestamp;
 
+#define JAEGERTRACINGC_TIMESTAMP_INIT \
+    {                                 \
+        .tv_sec = 0, .tv_nsec = 0     \
+    }
+
 static inline void jaeger_timestamp_now(jaeger_timestamp* timestamp)
 {
     assert(timestamp != NULL);
@@ -44,6 +49,8 @@ jaeger_timestamp_microseconds(const jaeger_timestamp* const timestamp)
 }
 
 typedef struct timespec jaeger_duration;
+
+#define JAEGERTRACINGC_DURATION_INIT JAEGERTRACINGC_TIMESTAMP_INIT
 
 static inline void jaeger_duration_now(jaeger_duration* duration)
 {

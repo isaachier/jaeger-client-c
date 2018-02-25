@@ -55,6 +55,7 @@ static inline char* jaeger_strdup_alloc(const char* str,
                                         jaeger_allocator* alloc,
                                         jaeger_logger* logger)
 {
+    assert(str != NULL);
     if (alloc == NULL) {
         alloc = jaeger_built_in_allocator();
     }

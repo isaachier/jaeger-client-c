@@ -92,16 +92,13 @@ static void in_memory_reporter_report(jaeger_reporter* reporter,
     }
     jaeger_mutex_lock(&r->mutex);
     jaeger_span* span_copy = jaeger_vector_append(&r->spans, logger);
-    if (span_copy != NULL) {
-        if (jaeger_span_init(span_copy, logger)) {
-            if (!jaeger_span_copy(span_copy, span, logger)) {
-                r->spans.len--;
-            }
-        }
-        else {
-            jaeger_free(span_copy);
+    if (span_copy != NULL && jaeger_span_alloc(span_copy, logger)) {
+        if (!jaeger_span_copy(span_copy, span, logger)) {
+            jaeger_span_destroy(span_copy);
+            r->spans.len--;
         }
     }
+
     jaeger_mutex_unlock(&r->mutex);
 }
 
@@ -476,9 +473,9 @@ bool jaeger_remote_reporter_init(jaeger_remote_reporter* reporter,
                                     ? max_packet_size
                                     : JAEGERTRACINGC_DEFAULT_UDP_BUFFER_SIZE;
     if (!jaeger_vector_alloc(&reporter->spans,
-                            sizeof(Jaegertracing__Protobuf__Span*),
-                            NULL,
-                            logger)) {
+                             sizeof(Jaegertracing__Protobuf__Span*),
+                             NULL,
+                             logger)) {
         goto cleanup;
     }
 

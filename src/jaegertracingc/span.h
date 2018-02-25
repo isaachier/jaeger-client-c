@@ -38,8 +38,14 @@ typedef struct jaeger_log_record {
     jaeger_vector tags;
 } jaeger_log_record;
 
-static inline bool jaeger_log_record_init(jaeger_log_record* log_record,
-                                          jaeger_logger* logger)
+#define JAEGERTRACINGC_LOG_RECORD_INIT              \
+    {                                               \
+        .timestamp = JAEGERTRACINGC_TIMESTAMP_INIT, \
+        .tags = JAEGERTRACINGC_VECTOR_INIT          \
+    }
+
+static inline bool jaeger_log_record_alloc(jaeger_log_record* log_record,
+                                           jaeger_logger* logger)
 {
     assert(log_record != NULL);
     jaeger_timestamp_now(&log_record->timestamp);
@@ -149,6 +155,27 @@ static inline void jaeger_key_value_destroy(jaeger_key_value* kv)
     }
 }
 
+static inline bool jaeger_key_value_alloc(jaeger_key_value* kv,
+                                          const char* key,
+                                          const char* value,
+                                          jaeger_logger* logger)
+{
+    assert(kv != NULL);
+    assert(key != NULL);
+    assert(value != NULL);
+    *kv = (jaeger_key_value) JAEGERTRACINGC_KEY_VALUE_INIT;
+    kv->key = jaeger_strdup(key, logger);
+    if (kv->key == NULL) {
+        return false;
+    }
+    kv->value = jaeger_strdup(value, logger);
+    if (kv->value == NULL) {
+        jaeger_key_value_destroy(kv);
+        return false;
+    }
+    return true;
+}
+
 static inline bool jaeger_key_value_copy(jaeger_key_value* restrict dst,
                                          const jaeger_key_value* restrict src,
                                          jaeger_logger* logger)
@@ -177,6 +204,12 @@ typedef struct jaeger_span_context {
     jaeger_vector baggage;
 } jaeger_span_context;
 
+#define JAEGERTRACINGC_SPAN_CONTEXT_INIT                                  \
+    {                                                                     \
+        .trace_id = JAEGERTRACINGC_TRACE_ID_INIT, .span_id = 0,           \
+        .parent_id = 0, .flags = 0, .baggage = JAEGERTRACINGC_VECTOR_INIT \
+    }
+
 static inline void jaeger_span_context_clear(jaeger_span_context* ctx)
 {
     if (ctx == NULL) {
@@ -195,14 +228,11 @@ static inline void jaeger_span_context_destroy(jaeger_span_context* ctx)
     jaeger_vector_destroy(&ctx->baggage);
 }
 
-static inline bool jaeger_span_context_init(jaeger_span_context* ctx,
-                                            jaeger_logger* logger)
+static inline bool jaeger_span_context_alloc(jaeger_span_context* ctx,
+                                             jaeger_logger* logger)
 {
     assert(ctx != NULL);
-    *ctx = (jaeger_span_context){.trace_id = JAEGERTRACINGC_TRACE_ID_INIT,
-                                 .span_id = 0,
-                                 .parent_id = 0,
-                                 .flags = 0};
+    *ctx = (jaeger_span_context) JAEGERTRACINGC_SPAN_CONTEXT_INIT;
     return jaeger_vector_alloc(
         &ctx->baggage, sizeof(jaeger_key_value), NULL, logger);
 }
@@ -235,6 +265,19 @@ typedef struct jaeger_span_ref {
     jaeger_span_context context;
     jaeger_span_ref_type type;
 } jaeger_span_ref;
+
+#define JAEGERTRACINGC_SPAN_REF_INIT                            \
+    {                                                           \
+        .context = JAEGERTRACINGC_SPAN_CONTEXT_INIT, .type = -1 \
+    }
+
+static inline bool jaeger_span_ref_alloc(jaeger_span_ref* span_ref,
+                                         jaeger_logger* logger)
+{
+    assert(span_ref != NULL);
+    *span_ref = (jaeger_span_ref) JAEGERTRACINGC_SPAN_REF_INIT;
+    return jaeger_span_context_alloc(&span_ref->context, logger);
+}
 
 static inline void jaeger_span_ref_destroy(jaeger_span_ref* span_ref)
 {
@@ -313,13 +356,24 @@ typedef struct jaeger_span {
     jaeger_span_context context;
     char* operation_name;
     time_t start_time_system;
-    jaeger_duration start_time_steady;
+    jaeger_timestamp start_time_steady;
     jaeger_duration duration;
     jaeger_vector tags;
     jaeger_vector logs;
     jaeger_vector refs;
     jaeger_mutex mutex;
 } jaeger_span;
+
+#define JAEGERTRACINGC_SPAN_INIT                                               \
+    {                                                                          \
+        .tracer = NULL, .context = JAEGERTRACINGC_SPAN_CONTEXT_INIT,           \
+        .operation_name = NULL, .start_time_system = 0,                        \
+        .start_time_steady = JAEGERTRACINGC_TIMESTAMP_INIT,                    \
+        .duration = JAEGERTRACINGC_DURATION_INIT,                              \
+        .tags = JAEGERTRACINGC_VECTOR_INIT,                                    \
+        .logs = JAEGERTRACINGC_VECTOR_INIT,                                    \
+        .refs = JAEGERTRACINGC_VECTOR_INIT, .mutex = JAEGERTRACINGC_MUTEX_INIT \
+    }
 
 /* N.B. Caller must be holding span->mutex if span is not null. */
 static inline void jaeger_span_clear(jaeger_span* span)
@@ -340,6 +394,7 @@ static inline void jaeger_span_clear(jaeger_span* span)
     jaeger_vector_clear(&span->logs);
     JAEGERTRACINGC_VECTOR_FOR_EACH(&span->refs, jaeger_span_ref_destroy);
     jaeger_vector_clear(&span->refs);
+    jaeger_span_context_clear(&span->context);
 }
 
 static inline void jaeger_span_destroy(jaeger_span* span)
@@ -350,6 +405,7 @@ static inline void jaeger_span_destroy(jaeger_span* span)
 
     jaeger_mutex_lock(&span->mutex);
     jaeger_span_clear(span);
+    jaeger_span_context_destroy(&span->context);
     jaeger_vector_destroy(&span->tags);
     jaeger_vector_destroy(&span->logs);
     jaeger_vector_destroy(&span->refs);
@@ -357,12 +413,15 @@ static inline void jaeger_span_destroy(jaeger_span* span)
     jaeger_mutex_destroy(&span->mutex);
 }
 
-static inline bool jaeger_span_init(jaeger_span* span, jaeger_logger* logger)
+static inline bool jaeger_span_alloc(jaeger_span* span, jaeger_logger* logger)
 {
     assert(span != NULL);
-    memset(span, 0, sizeof(*span));
-    if (!jaeger_vector_alloc(&span->tags, sizeof(jaeger_tag), NULL, logger)) {
+    *span = (jaeger_span) JAEGERTRACINGC_SPAN_INIT;
+    if (!jaeger_span_context_alloc(&span->context, logger)) {
         return false;
+    }
+    if (!jaeger_vector_alloc(&span->tags, sizeof(jaeger_tag), NULL, logger)) {
+        goto cleanup;
     }
     if (!jaeger_vector_alloc(
             &span->logs, sizeof(jaeger_log_record), NULL, logger)) {
@@ -372,7 +431,6 @@ static inline bool jaeger_span_init(jaeger_span* span, jaeger_logger* logger)
             &span->refs, sizeof(jaeger_span_ref), NULL, logger)) {
         goto cleanup;
     }
-    span->mutex = (jaeger_mutex) JAEGERTRACINGC_MUTEX_INIT;
     return true;
 
 cleanup:
@@ -387,11 +445,13 @@ static inline bool jaeger_span_copy(jaeger_span* restrict dst,
     assert(dst != NULL);
     assert(src != NULL);
     jaeger_lock(&dst->mutex, (jaeger_mutex*) &src->mutex);
-    dst->context = src->context;
     dst->start_time_system = src->start_time_system;
     dst->start_time_steady = src->start_time_steady;
     dst->duration = src->duration;
     dst->operation_name = jaeger_strdup(src->operation_name, logger);
+    if (!jaeger_span_context_copy(&dst->context, &src->context, logger)) {
+        goto cleanup;
+    }
     if (dst->operation_name == NULL) {
         goto cleanup;
     }
