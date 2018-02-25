@@ -183,5 +183,9 @@ breathe_doxygen_config_options = {
     'FULL_PATH_NAMES': 'NO',
     'PREDEFINED': ' '.join('@defs@'.split(';')),
     'SEARCH_INCLUDES': 'YES',
-    'INCLUDE_PATH': ' '.join('@inc@'.split(';'))
+    'INCLUDE_PATH': ' '.join([
+        '@CMAKE_CURRENT_SOURCE_DIR@/src',
+        '@CMAKE_CURRENT_BINARY_DIR@/src',
+        '@CMAKE_CURRENT_SOURCE_DIR@/third_party/unity/src',
+        '@CMAKE_CURRENT_SOURCE_DIR@/third_party/pcg-c/include'])
 }

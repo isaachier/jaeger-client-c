@@ -39,7 +39,6 @@ function(generate_documentation)
     DIRECTORY)
 
   get_target_property(defs jaegertracingc COMPILE_DEFINITIONS)
-  get_target_property(inc jaegertracingc INCLUDE_DIRECTORIES)
 
   configure_file("${sphinx_src_path}/conf.py.in"
                  "${sphinx_out_path}/conf.py" @ONLY)
