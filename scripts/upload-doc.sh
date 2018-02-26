@@ -15,7 +15,6 @@
 # limitations under the License.
 
 set -e
-set -x
 
 function main() {
     local project_dir
@@ -24,8 +23,8 @@ function main() {
 
     make doc
     git fetch origin
-    git checkout -b gh-pages
-    GIT_TRACE=true git pull --allow-unrelated-histories origin gh-pages
+    git checkout --orphan gh-pages
+    git pull origin gh-pages
     rm -rf _static _styles
     mv build/doc/html/* .
     git add .
