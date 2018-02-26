@@ -181,6 +181,7 @@ breathe_projects_source = {
 breathe_doxygen_config_options = {
     'ENABLE_PREPROCESSING': 'YES',
     'FULL_PATH_NAMES': 'NO',
+    'JAVADOC_AUTOBRIEF': 'YES',
     'PREDEFINED': ' '.join('@defs@'.split(';')),
     'SEARCH_INCLUDES': 'YES',
     'INCLUDE_PATH': ' '.join([

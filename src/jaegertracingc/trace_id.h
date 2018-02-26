@@ -24,8 +24,11 @@
 extern "C" {
 #endif /* __cplusplus */
 
+/** 128 bit unique ID for a given trace. */
 typedef struct jaeger_trace_id {
+    /** Upper 64 bits of the trace ID. */
     uint64_t high;
+    /** Lower 64 bits of the trace ID. */
     uint64_t low;
 } jaeger_trace_id;
 
@@ -38,6 +41,11 @@ typedef struct jaeger_trace_id {
 #define JAEGERTRACINGC_UINT64_MAX_STR_LEN 16
 #define JAEGERTRACINGC_HEX_BASE 16
 
+/**
+ * Convert a trace ID to its Protobuf-C representation.
+ * @param dst Protobuf-C output argument.
+ * @param src jaeger_trace_id source argument.
+ */
 static inline void
 jaeger_trace_id_to_protobuf(Jaegertracing__Protobuf__TraceID* dst,
                             const jaeger_trace_id* src)
@@ -52,6 +60,16 @@ jaeger_trace_id_to_protobuf(Jaegertracing__Protobuf__TraceID* dst,
     dst->low = src->low;
 }
 
+/**
+ * Format a trace ID into a string representation. The string representation can
+ * be used to represent a trace ID in network protocols where ASCII characters
+ * are required/preferred.
+ * @param trace_id The trace ID to format.
+ * @param buffer The output character buffer.
+ * @param buffer_len The length of the output character buffer.
+ * @return The number of characters needed to represent the entire trace ID,
+ *         similar to the behavior of snprintf.
+ */
 static inline int jaeger_trace_id_format(const jaeger_trace_id* trace_id,
                                          char* buffer,
                                          int buffer_len)
@@ -69,6 +87,13 @@ static inline int jaeger_trace_id_format(const jaeger_trace_id* trace_id,
                     trace_id->low);
 }
 
+/**
+ * Scan a string representation of a trace ID into a trace ID instance.
+ * @param trace_id The output trace ID.
+ * @param str The input string representation.
+ * @return True on success, false otherwise.
+ * @see jaeger_trace_id_format()
+ */
 static inline bool jaeger_trace_id_scan(jaeger_trace_id* trace_id,
                                         const char* str)
 {
