@@ -30,10 +30,21 @@
 extern "C" {
 #endif /* __cplusplus */
 
-/* 3 delimiters, 2 uint64_t hex (8 characters each), 1 short hex (2 characters).
- * 3 + 16 + 2 = 21 */
+/**
+ * Max number of characters needed for string representation of
+ * jaeger_span_context (excluding null byte).
+ * 3 delimiters, 2 uint64_t hex (8 characters each), 1 short hex (2 characters).
+ * 3 + 16 + 2 = 21
+ */
 #define JAEGERTRACINGC_SPAN_CONTEXT_MAX_STR_LEN \
     JAEGERTRACINGC_TRACE_ID_MAX_STR_LEN + 21
+
+#define JAEGERTRACINGC_SAMPLING_PRIORITY "sampling.priority"
+
+enum {
+    jaeger_sampling_flag_sampled = 1,
+    jaeger_sampling_flag_debug = (1 << 1)
+};
 
 typedef struct jaeger_span_context {
     jaeger_trace_id trace_id;
@@ -329,6 +340,218 @@ cleanup:
     jaeger_span_clear(dst);
     jaeger_mutex_unlock(&dst->mutex);
     return false;
+}
+
+/**
+ * Set operation name of span.
+ * @param span The span instance.
+ * @param operation_name The new operation name.
+ * @param logger The logger to log to in case of error.
+ * @return True on success, false otherwise.
+ */
+static inline bool jaeger_span_set_operation_name(jaeger_span* span,
+                                                  const char* operation_name,
+                                                  jaeger_logger* logger)
+{
+    assert(span != NULL);
+    assert(operation_name != NULL);
+    char* operation_name_copy = jaeger_strdup(operation_name, logger);
+    if (operation_name_copy == NULL) {
+        return false;
+    }
+    jaeger_mutex_lock(&span->mutex);
+    if (span->operation_name != NULL) {
+        jaeger_free(span->operation_name);
+    }
+    span->operation_name = operation_name_copy;
+    jaeger_mutex_unlock(&span->mutex);
+    return true;
+}
+
+/**
+ * Add tag to span without locking.
+ * @param span The span instance.
+ * @param tag The tag to append.
+ * @param logger The logger to log to in case of error.
+ * @return True on success, false, otherwise.
+ * @see jaeger_span_set_tag()
+ */
+static inline bool jaeger_span_set_tag_no_locking(jaeger_span* span,
+                                                  const jaeger_tag* tag,
+                                                  jaeger_logger* logger)
+{
+    jaeger_tag* tag_copy =
+        (jaeger_tag*) jaeger_vector_append(&span->tags, logger);
+    if (tag_copy == NULL) {
+        return false;
+    }
+    if (!jaeger_tag_copy(tag_copy, tag, logger)) {
+        span->tags.len--;
+        return false;
+    }
+    return true;
+}
+
+/**
+ * Set sampling flag on span.
+ * @param span The span instance.
+ * @param tag The tag value to consider for sampling.
+ * @return True on success, false otherwise.
+ */
+static inline bool jaeger_span_set_sampling_priority(jaeger_span* span,
+                                                     const jaeger_tag* tag)
+{
+    assert(span != NULL);
+    assert(tag != NULL);
+    if (tag->value_case != JAEGERTRACINGC_TAG_TYPE(LONG)) {
+        return false;
+    }
+    jaeger_mutex_lock(&span->mutex);
+    const bool success = (tag->long_value == 0);
+    if (success) {
+        span->context.flags = span->context.flags | jaeger_sampling_flag_debug |
+                              jaeger_sampling_flag_sampled;
+    }
+    else {
+        span->context.flags =
+            span->context.flags & (~jaeger_sampling_flag_sampled);
+    }
+    jaeger_mutex_unlock(&span->mutex);
+    return success;
+}
+
+/**
+ * Get the sampling status of the span without locking.
+ * @param span The span instance.
+ * @return True if sampled, false otherwise.
+ */
+static inline bool jaeger_span_is_sampled_no_lock(const jaeger_span* span)
+{
+    assert(span != NULL);
+    return (span->context.flags & jaeger_sampling_flag_sampled) != 0;
+}
+
+/**
+ * Add tag to span.
+ * @param span The span instance.
+ * @param tag The tag to append.
+ * @param logger The logger to log to in case of error.
+ * @return True on success, false otherwise.
+ */
+static inline bool jaeger_span_set_tag(jaeger_span* span,
+                                       const jaeger_tag* tag,
+                                       jaeger_logger* logger)
+{
+    assert(span != NULL);
+    assert(tag != NULL);
+    if (strcmp(tag->key, JAEGERTRACINGC_SAMPLING_PRIORITY) == 0 &&
+        !jaeger_span_set_sampling_priority(span, tag)) {
+        return false;
+    }
+    bool success = true;
+    jaeger_mutex_lock(&span->mutex);
+    if (jaeger_span_is_sampled_no_lock(span)) {
+        success = jaeger_span_set_tag_no_locking(span, tag, logger);
+    }
+    jaeger_mutex_unlock(&span->mutex);
+    return success;
+}
+
+/**
+ * Append to span logs without locking.
+ * @param span The span instance.
+ * @param log_record The log record to append.
+ * @param logger Logger to log to in case of error.
+ * @return True on success, false otherwise.
+ * @see jaeger_span_log()
+ */
+static inline bool
+jaeger_span_log_no_locking(jaeger_span* span,
+                           const jaeger_log_record* log_record,
+                           jaeger_logger* logger)
+{
+    jaeger_log_record* log_record_copy =
+        (jaeger_log_record*) jaeger_vector_append(&span->logs, logger);
+    if (log_record_copy == NULL) {
+        return false;
+    }
+    if (!jaeger_log_record_copy(log_record_copy, log_record, logger)) {
+        span->logs.len--;
+        return false;
+    }
+    return true;
+}
+
+/**
+ * Append to span logs.
+ * @param span The span instance.
+ * @param log_record The log record to append.
+ * @param logger Logger to log to in case of error.
+ * @return True on success, false otherwise.
+ */
+static inline bool jaeger_span_log(jaeger_span* span,
+                                   const jaeger_log_record* log_record,
+                                   jaeger_logger* logger)
+{
+    assert(span != NULL);
+    assert(log_record != NULL);
+    bool success = true;
+    jaeger_mutex_lock(&span->mutex);
+    if (jaeger_span_is_sampled_no_lock(span)) {
+        success = jaeger_span_log_no_locking(span, log_record, logger);
+    }
+    jaeger_mutex_unlock(&span->mutex);
+    return success;
+}
+
+/** Options caller may set for span finish. */
+typedef struct jaeger_span_finish_options {
+    /** The time the operation was completed. */
+    jaeger_timestamp finish_time;
+    /** Logs to append to the span logs. */
+    const jaeger_log_record** logs;
+    /** Number of logs to append to the span logs. */
+    int num_logs;
+} jaeger_span_finish_options;
+
+/** Static initializer for jaeger_span_finish_with_options. */
+#define JAEGERTRACINGC_SPAN_FINISH_OPTIONS_INIT                     \
+    {                                                               \
+        .finish_time = JAEGERTRACINGC_TIMESTAMP_INIT, .logs = NULL, \
+        .num_logs = 0                                               \
+    }
+
+/** Finish span with options.
+ * @param span The span instance.
+ * @param options Options to determine finish timestamp, etc. May be NULL.
+ */
+static inline void
+jaeger_span_finish_with_options(jaeger_span* span,
+                                const jaeger_span_finish_options* options)
+{
+    assert(span != NULL);
+    if (options == NULL) {
+        jaeger_span_finish_options default_finish_options =
+            JAEGERTRACINGC_SPAN_FINISH_OPTIONS_INIT;
+        jaeger_span_finish_with_options(span, &default_finish_options);
+        return;
+    }
+    jaeger_mutex_lock(&span->mutex);
+    if (jaeger_span_is_sampled_no_lock(span)) {
+        jaeger_duration finish_time = options->finish_time;
+        if (finish_time.tv_sec == 0 && finish_time.tv_nsec == 0) {
+            jaeger_duration_now(&finish_time);
+        }
+        jaeger_duration elapsed_time = JAEGERTRACINGC_DURATION_INIT;
+        jaeger_duration_subtract(
+            &finish_time, &span->start_time_steady, &elapsed_time);
+        span->duration = elapsed_time;
+
+        for (int i = 0; i < options->num_logs; i++) {
+            jaeger_span_log_no_locking(span, options->logs[i], NULL);
+        }
+    }
+    jaeger_mutex_unlock(&span->mutex);
 }
 
 static inline void
