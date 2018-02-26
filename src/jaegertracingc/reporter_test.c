@@ -70,6 +70,7 @@ void test_reporter()
     jaeger_log_record log = JAEGERTRACINGC_LOG_RECORD_INIT;
     TEST_ASSERT_TRUE(jaeger_log_record_init(&log, logger));
     TEST_ASSERT_TRUE(jaeger_span_log(&span, &log, logger));
+    jaeger_log_record_destroy(&log);
 
     jaeger_span_ref* span_ref_ptr = jaeger_vector_append(&span.refs, logger);
     TEST_ASSERT_NOT_NULL(span_ref_ptr);
