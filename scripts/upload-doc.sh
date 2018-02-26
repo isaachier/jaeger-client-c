@@ -22,6 +22,8 @@ function main() {
     cd "$project_dir/build" || exit 1
 
     make doc
+
+    cd "$project_dir"
     git fetch origin
     git checkout --orphan gh-pages
     git pull origin gh-pages
