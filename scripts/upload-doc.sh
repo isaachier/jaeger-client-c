@@ -25,7 +25,7 @@ function main() {
     make doc
     git fetch origin
     git checkout -b gh-pages
-    git pull --allow-unrelated-histories origin gh-pages
+    GIT_TRACE=true git pull --allow-unrelated-histories origin gh-pages
     rm -rf _static _styles
     mv build/doc/html/* .
     git add .
