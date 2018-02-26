@@ -27,14 +27,14 @@ extern "C" {
 
 /** Interface to override default allocator. */
 typedef struct jaeger_allocator {
-    /** malloc function override
+    /** malloc function override.
      * @param alloc The allocator instance.
      * @param sz The size to allocate.
      * @return Pointer to allocated memory on success, NULL otherwise.
      */
     void* (*malloc)(struct jaeger_allocator* alloc, size_t sz);
 
-    /** realloc function override
+    /** realloc function override.
      * @param alloc The allocator instance.
      * @param ptr Pointer to previously allocated memory.
      * @param sz The new size to allocate.
