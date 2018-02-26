@@ -138,11 +138,12 @@ cache:
 before_install:
   - eval "${MATRIX_EVAL}"
   - ./scripts/install-deps.sh "$HOME/install"
+  - pip install --user -r requirements.txt
 script:
   - ./scripts/build.sh "$HOME/install"
 after_success:
   - ./scripts/upload-coverage.sh
-  - pip install --user -r requirements.txt && ./scripts/upload-doc.sh
+  - ./scripts/upload-doc.sh
 env:
   global:
     - LANG="en_US.UTF-8"

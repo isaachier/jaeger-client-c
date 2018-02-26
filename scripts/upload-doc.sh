@@ -19,12 +19,13 @@ set -e
 function main() {
     local project_dir
     project_dir=$(git rev-parse --show-toplevel)
-    cd "$project_dir" || exit 1
+    cd "$project_dir/build" || exit 1
 
     make doc
     git fetch
-    git checkout --force gh-pages
+    git checkout -b gh-pages --track origin/gh-pages
     git pull
+    rm -rf _static _styles
     mv build/doc/html/* .
     git add .
     git commit -m "Update docs"
