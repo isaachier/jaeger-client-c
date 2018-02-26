@@ -205,7 +205,7 @@
 <dl class="variable">
 <dt id="c.jaeger_allocator::malloc">
 <span class="target" id="structjaeger__allocator_1ab89e0bce9f7223d60b7788b51dcceaa6"></span>void*<code class="descname">malloc)</code><span class="sig-paren">(</span>struct <a class="reference internal" href="#c.jaeger_allocator" title="jaeger_allocator">jaeger_allocator</a><em>&nbsp;*alloc</em>, size_t<em>&nbsp;sz</em><span class="sig-paren">)</span><a class="headerlink" href="#c.jaeger_allocator::malloc" title="Permalink to this definition">¶</a></dt>
-<dd><p>malloc function override </p>
+<dd><p>malloc function override. </p>
 <p><dl class="docutils">
 <dt><strong>Return</strong></dt>
 <dd>Pointer to allocated memory on success, NULL otherwise. </dd>
@@ -222,7 +222,7 @@
 <dl class="variable">
 <dt id="c.jaeger_allocator::realloc">
 <span class="target" id="structjaeger__allocator_1a5d839c78b9aa35c89776628b79bb97bb"></span>void*<code class="descname">realloc)</code><span class="sig-paren">(</span>struct <a class="reference internal" href="#c.jaeger_allocator" title="jaeger_allocator">jaeger_allocator</a><em>&nbsp;*alloc</em>, void<em>&nbsp;*ptr</em>, size_t<em>&nbsp;sz</em><span class="sig-paren">)</span><a class="headerlink" href="#c.jaeger_allocator::realloc" title="Permalink to this definition">¶</a></dt>
-<dd><p>realloc function override </p>
+<dd><p>realloc function override. </p>
 <p><dl class="docutils">
 <dt><strong>Return</strong></dt>
 <dd>Pointer to new allocated memory on success, NULL otherwise. </dd>
@@ -473,6 +473,24 @@
 <dl class="variable">
 <dt id="c.jaeger_in_memory_reporter::mutex">
 <span class="target" id="structjaeger__in__memory__reporter_1abf881ed3f4f1f4dba522de60831b8bf9"></span><a class="reference internal" href="#c.jaeger_mutex" title="jaeger_mutex">jaeger_mutex</a> <code class="descname">mutex</code><a class="headerlink" href="#c.jaeger_in_memory_reporter::mutex" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="struct">
+<dt id="c.jaeger_key_value">
+<span class="target" id="structjaeger__key__value"></span><em class="property">struct </em><code class="descname">jaeger_key_value</code><a class="headerlink" href="#c.jaeger_key_value" title="Permalink to this definition">¶</a></dt>
+<dd><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Public Members</p>
+<dl class="variable">
+<dt id="c.jaeger_key_value::key">
+<span class="target" id="structjaeger__key__value_1a0c8d3423ffabd9b686aa0c7abd6889d4"></span>char* <code class="descname">key</code><a class="headerlink" href="#c.jaeger_key_value::key" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="variable">
+<dt id="c.jaeger_key_value::value">
+<span class="target" id="structjaeger__key__value_1ab79cc266eb0080ecb608b57896ad4037"></span>char* <code class="descname">value</code><a class="headerlink" href="#c.jaeger_key_value::value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
@@ -830,6 +848,39 @@
 <dl class="variable">
 <dt id="c.jaeger_span::mutex">
 <span class="target" id="structjaeger__span_1a84d3f190ba0bb7106efdfe9d8e47beeb"></span><a class="reference internal" href="#c.jaeger_mutex" title="jaeger_mutex">jaeger_mutex</a> <code class="descname">mutex</code><a class="headerlink" href="#c.jaeger_span::mutex" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="struct">
+<dt id="c.jaeger_span_context">
+<span class="target" id="structjaeger__span__context"></span><em class="property">struct </em><code class="descname">jaeger_span_context</code><a class="headerlink" href="#c.jaeger_span_context" title="Permalink to this definition">¶</a></dt>
+<dd><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Public Members</p>
+<dl class="variable">
+<dt id="c.jaeger_span_context::trace_id">
+<span class="target" id="structjaeger__span__context_1aecace9cbf8c8432cb8c2f5d5dc65b994"></span><a class="reference internal" href="#c.jaeger_trace_id" title="jaeger_trace_id">jaeger_trace_id</a> <code class="descname">trace_id</code><a class="headerlink" href="#c.jaeger_span_context::trace_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="variable">
+<dt id="c.jaeger_span_context::span_id">
+<span class="target" id="structjaeger__span__context_1ad78982af52840b14a8bee7d3404755d3"></span>uint64_t <code class="descname">span_id</code><a class="headerlink" href="#c.jaeger_span_context::span_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="variable">
+<dt id="c.jaeger_span_context::parent_id">
+<span class="target" id="structjaeger__span__context_1a66ebaca50e8853b5fab9d4ebe82cfb32"></span>uint64_t <code class="descname">parent_id</code><a class="headerlink" href="#c.jaeger_span_context::parent_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="variable">
+<dt id="c.jaeger_span_context::flags">
+<span class="target" id="structjaeger__span__context_1a7b79bf9f7994b640a154665cce75ec68"></span>uint8_t <code class="descname">flags</code><a class="headerlink" href="#c.jaeger_span_context::flags" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="variable">
+<dt id="c.jaeger_span_context::baggage">
+<span class="target" id="structjaeger__span__context_1af30317425d6b678805199dc01f5a29b2"></span><a class="reference internal" href="#c.jaeger_vector" title="jaeger_vector">jaeger_vector</a> <code class="descname">baggage</code><a class="headerlink" href="#c.jaeger_span_context::baggage" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
@@ -1317,6 +1368,133 @@
 
 <dl class="file">
 <dt>
+<span class="target" id="key__value_8h"></span><em>file</em> <code class="descname">key_value.h</code></dt>
+<dd><em>#include “jaegertracingc/alloc.h”</em><em>#include “jaegertracingc/common.h”</em><em>#include “jaegertracingc/logging.h”</em><em>#include “jaegertracingc/vector.h”</em><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Defines</p>
+<dl class="define">
+<dt id="c.JAEGERTRACINGC_KEY_VALUE_INIT">
+<span class="target" id="key__value_8h_1a15203e9c44aa0df66ad8b0a8818efc41"></span><code class="descname">JAEGERTRACINGC_KEY_VALUE_INIT</code><a class="headerlink" href="#c.JAEGERTRACINGC_KEY_VALUE_INIT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Typedefs</p>
+<dl class="typedef">
+<dt>
+<span class="target" id="key__value_8h_1ad45e195925956d55d47f850a97a31b5d"></span><em class="property">typedef </em>struct <a class="reference internal" href="#c.jaeger_key_value" title="jaeger_key_value">jaeger_key_value</a>  <code class="descname">jaeger_key_value</code></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="function">
+<dt id="c.jaeger_key_value_destroy">
+<span class="target" id="key__value_8h_1a5f3e1933fe1406efd25caa455171411c"></span>static void <code class="descname">jaeger_key_value_destroy</code><span class="sig-paren">(</span><a class="reference internal" href="#c.jaeger_key_value" title="jaeger_key_value">jaeger_key_value</a>  *<em>&nbsp;kv</em><span class="sig-paren">)</span><a class="headerlink" href="#c.jaeger_key_value_destroy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.jaeger_key_value_init">
+<span class="target" id="key__value_8h_1a86a273a1cd3cd0c15a5dffbb60eb22cb"></span>static bool <code class="descname">jaeger_key_value_init</code><span class="sig-paren">(</span><a class="reference internal" href="#c.jaeger_key_value" title="jaeger_key_value">jaeger_key_value</a>  *<em>&nbsp;kv</em>, const char *<em>&nbsp;key</em>, const char *<em>&nbsp;value</em>, <a class="reference internal" href="#c.jaeger_logger" title="jaeger_logger">jaeger_logger</a>  *<em>&nbsp;logger</em><span class="sig-paren">)</span><a class="headerlink" href="#c.jaeger_key_value_init" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.jaeger_key_value_copy">
+<span class="target" id="key__value_8h_1aa44a3679752bac7f765c503d1bbe0fd1"></span>static bool <code class="descname">jaeger_key_value_copy</code><span class="sig-paren">(</span><a class="reference internal" href="#c.jaeger_key_value" title="jaeger_key_value">jaeger_key_value</a>  *restrict<em>&nbsp;dst</em>, const  <a class="reference internal" href="#c.jaeger_key_value" title="jaeger_key_value">jaeger_key_value</a>  *restrict<em>&nbsp;src</em>, <a class="reference internal" href="#c.jaeger_logger" title="jaeger_logger">jaeger_logger</a>  *<em>&nbsp;logger</em><span class="sig-paren">)</span><a class="headerlink" href="#c.jaeger_key_value_copy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="file">
+<dt>
+<span class="target" id="log__record_8h"></span><em>file</em> <code class="descname">log_record.h</code></dt>
+<dd><em>#include “jaegertracingc/clock.h”</em><em>#include “jaegertracingc/common.h”</em><em>#include “jaegertracingc/tag.h”</em><em>#include &lt;/home/travis/install/include/protobuf-c/protobuf-c.h&gt;</em><em>#include &lt;/usr/include/assert.h&gt;</em><em>#include &lt;/usr/include/limits.h&gt;</em><em>#include &lt;stddef.h&gt;</em><em>#include &lt;/usr/include/stdint.h&gt;</em><em>#include “jaegertracingc/vector.h”</em><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Defines</p>
+<dl class="define">
+<dt id="c.JAEGERTRACINGC_LOG_RECORD_INIT">
+<span class="target" id="log__record_8h_1ab17e445e9cd5ab4a880c74669174ec9e"></span><code class="descname">JAEGERTRACINGC_LOG_RECORD_INIT</code><a class="headerlink" href="#c.JAEGERTRACINGC_LOG_RECORD_INIT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Typedefs</p>
+<dl class="typedef">
+<dt>
+<span class="target" id="log__record_8h_1a2775b56d909b0eb7469859f2fe9038dd"></span><em class="property">typedef </em>struct <a class="reference internal" href="#c.jaeger_log_record" title="jaeger_log_record">jaeger_log_record</a>  <code class="descname">jaeger_log_record</code></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="function">
+<dt id="c.jaeger_log_record_init">
+<span class="target" id="log__record_8h_1a3715edb8a5e846eac0515350171c7630"></span>static bool <code class="descname">jaeger_log_record_init</code><span class="sig-paren">(</span><a class="reference internal" href="#c.jaeger_log_record" title="jaeger_log_record">jaeger_log_record</a>  *<em>&nbsp;log_record</em>, <a class="reference internal" href="#c.jaeger_logger" title="jaeger_logger">jaeger_logger</a>  *<em>&nbsp;logger</em><span class="sig-paren">)</span><a class="headerlink" href="#c.jaeger_log_record_init" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.jaeger_log_record_copy">
+<span class="target" id="log__record_8h_1aaf60d10b3ea4369761921bce442fb580"></span>static bool <code class="descname">jaeger_log_record_copy</code><span class="sig-paren">(</span><a class="reference internal" href="#c.jaeger_log_record" title="jaeger_log_record">jaeger_log_record</a>  *restrict<em>&nbsp;dst</em>, const  <a class="reference internal" href="#c.jaeger_log_record" title="jaeger_log_record">jaeger_log_record</a>  *restrict<em>&nbsp;src</em>, <a class="reference internal" href="#c.jaeger_logger" title="jaeger_logger">jaeger_logger</a>  *<em>&nbsp;logger</em><span class="sig-paren">)</span><a class="headerlink" href="#c.jaeger_log_record_copy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.JAEGERTRACINGC_WRAP_COPY">
+<span class="target" id="log__record_8h_1a69b5fcdb8040109a4127902a188e53a7"></span><code class="descname">JAEGERTRACINGC_WRAP_COPY</code><span class="sig-paren">(</span><a class="reference internal" href="#c.jaeger_log_record_copy" title="jaeger_log_record_copy">jaeger_log_record_copy</a>, <a class="reference internal" href="#c.jaeger_log_record" title="jaeger_log_record">jaeger_log_record</a>, <a class="reference internal" href="#c.jaeger_log_record" title="jaeger_log_record">jaeger_log_record</a><span class="sig-paren">)</span><a class="headerlink" href="#c.JAEGERTRACINGC_WRAP_COPY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.jaeger_log_record_protobuf_destroy">
+<span class="target" id="log__record_8h_1a2cddd095d13fc5fe1ba798a89bbabe79"></span>static void <code class="descname">jaeger_log_record_protobuf_destroy</code><span class="sig-paren">(</span>Jaegertracing__Protobuf__Log *<em>&nbsp;log_record</em><span class="sig-paren">)</span><a class="headerlink" href="#c.jaeger_log_record_protobuf_destroy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.JAEGERTRACINGC_WRAP_DESTROY">
+<span class="target" id="log__record_8h_1a66639fb08190076d0418a7920cf215b4"></span><code class="descname">JAEGERTRACINGC_WRAP_DESTROY</code><span class="sig-paren">(</span><a class="reference internal" href="#c.jaeger_log_record_protobuf_destroy" title="jaeger_log_record_protobuf_destroy">jaeger_log_record_protobuf_destroy</a>, Jaegertracing__Protobuf__Log<span class="sig-paren">)</span><a class="headerlink" href="#c.JAEGERTRACINGC_WRAP_DESTROY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.assert">
+<span class="target" id="log__record_8h_1af80c22aed8c299798394a947ad71c6a4"></span><code class="descname">assert</code><span class="sig-paren">(</span><a class="reference internal" href="#c.src" title="src">src</a>! =<em>&nbsp;NULL</em><span class="sig-paren">)</span><a class="headerlink" href="#c.assert" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.if">
+<span class="target" id="log__record_8h_1a5b4d5f6217e95bbd4b29213ee556a02b"></span><code class="descname">if</code><span class="sig-paren">(</span>! <a class="reference internal" href="#c.jaeger_vector_protobuf_copy" title="jaeger_vector_protobuf_copy">jaeger_vector_protobuf_copy</a>(void<em>&nbsp;***)&amp;dst-&gt;fields</em>, &amp;<a class="reference internal" href="#c.dst" title="dst">dst</a>-&gt;n_fields, &amp;<a class="reference internal" href="#c.src" title="src">src</a>-&gt;tags, sizeof(<a class="reference internal" href="#c.jaeger_tag" title="jaeger_tag">jaeger_tag</a>), &amp;jaeger_tag_copy_wrapper, &amp;jaeger_tag_destroy_wrapper, NULL, <a class="reference internal" href="#c.logger" title="logger">logger</a><span class="sig-paren">)</span><a class="headerlink" href="#c.if" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Variables</p>
+<dl class="variable">
+<dt id="c.src">
+<span class="target" id="log__record_8h_1af3f762b50ae1a8700edd19d8d590fab8"></span>const <a class="reference internal" href="#c.jaeger_log_record" title="jaeger_log_record">jaeger_log_record</a>* restrict <code class="descname">src</code><a class="headerlink" href="#c.src" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="variable">
+<dt id="c.logger">
+<span class="target" id="log__record_8h_1adfdea7293fc22678f41613746de0d450"></span>const <a class="reference internal" href="#c.jaeger_log_record" title="jaeger_log_record">jaeger_log_record</a>* restrict <a class="reference internal" href="#c.jaeger_logger" title="jaeger_logger">jaeger_logger</a>* <code class="descname">logger</code> = {
+    assert(dst != NULL)<a class="headerlink" href="#c.logger" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="variable">
+<dt id="c.dst">
+<span class="target" id="log__record_8h_1ab30ce5929cacc46873c25a334765b9b3"></span>* <code class="descname">dst</code> = (Jaegertracing__Protobuf__Log) JAEGERTRACING__PROTOBUF__LOG__INIT<a class="headerlink" href="#c.dst" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="variable">
+<dt id="c.timestamp">
+<span class="target" id="log__record_8h_1a4d53016efc132c670a9487cbe21e99c6"></span><a class="reference internal" href="#c.dst" title="dst">dst</a> <code class="descname">timestamp</code> = jaeger_timestamp_microseconds(&amp;src-&gt;timestamp)<a class="headerlink" href="#c.timestamp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="variable">
+<dt id="c.true">
+<span class="target" id="log__record_8h_1a930920b2bc42824a5c03be681830f4b2"></span>return <code class="descname">true</code><a class="headerlink" href="#c.true" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="file">
+<dt>
 <span class="target" id="logging_8h"></span><em>file</em> <code class="descname">logging.h</code></dt>
 <dd><em>#include “jaegertracingc/common.h”</em><div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric">Typedefs</p>
@@ -1619,7 +1797,7 @@
 <dl class="file">
 <dt>
 <span class="target" id="reporter_8h"></span><em>file</em> <code class="descname">reporter.h</code></dt>
-<dd><em>#include “jaegertracingc/common.h”</em><em>#include “jaegertracingc/logging.h”</em><em>#include “jaegertracingc/metrics.h”</em><em>#include “jaegertracingc/net.h”</em><em>#include “jaegertracingc/span.h”</em><em>#include &lt;/home/travis/install/include/protobuf-c/protobuf-c.h&gt;</em><em>#include &lt;/usr/include/assert.h&gt;</em><em>#include &lt;/usr/include/limits.h&gt;</em><em>#include &lt;stddef.h&gt;</em><em>#include &lt;/usr/include/stdint.h&gt;</em><em>#include “jaegertracingc/threading.h”</em><em>#include “jaegertracingc/vector.h”</em><div class="breathe-sectiondef docutils container">
+<dd><em>#include “jaegertracingc/common.h”</em><em>#include “jaegertracingc/logging.h”</em><em>#include “jaegertracingc/metrics.h”</em><em>#include “jaegertracingc/net.h”</em><em>#include “jaegertracingc/span.h”</em><em>#include “jaegertracingc/threading.h”</em><em>#include “jaegertracingc/vector.h”</em><div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric">Defines</p>
 <dl class="define">
 <dt id="c.JAEGERTRACINGC_DEFAULT_UDP_SPAN_SERVER_HOST_PORT">
@@ -1980,21 +2158,11 @@
 <dl class="file">
 <dt>
 <span class="target" id="span_8h"></span><em>file</em> <code class="descname">span.h</code></dt>
-<dd><em>#include “jaegertracingc/clock.h”</em><em>#include “jaegertracingc/common.h”</em><em>#include “jaegertracingc/tag.h”</em><em>#include “jaegertracingc/threading.h”</em><em>#include “jaegertracingc/trace_id.h”</em><em>#include “jaegertracingc/vector.h”</em><div class="breathe-sectiondef docutils container">
+<dd><em>#include “jaegertracingc/clock.h”</em><em>#include “jaegertracingc/common.h”</em><em>#include “jaegertracingc/key_value.h”</em><em>#include “jaegertracingc/log_record.h”</em><em>#include “jaegertracingc/tag.h”</em><em>#include “jaegertracingc/threading.h”</em><em>#include “jaegertracingc/trace_id.h”</em><em>#include “jaegertracingc/vector.h”</em><div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric">Defines</p>
 <dl class="define">
 <dt id="c.JAEGERTRACINGC_SPAN_CONTEXT_MAX_STR_LEN">
 <span class="target" id="span_8h_1aeb8749527eb268509c1e6e09c54299c3"></span><code class="descname">JAEGERTRACINGC_SPAN_CONTEXT_MAX_STR_LEN</code><a class="headerlink" href="#c.JAEGERTRACINGC_SPAN_CONTEXT_MAX_STR_LEN" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="define">
-<dt id="c.JAEGERTRACINGC_LOG_RECORD_INIT">
-<span class="target" id="span_8h_1ab17e445e9cd5ab4a880c74669174ec9e"></span><code class="descname">JAEGERTRACINGC_LOG_RECORD_INIT</code><a class="headerlink" href="#c.JAEGERTRACINGC_LOG_RECORD_INIT" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="define">
-<dt id="c.JAEGERTRACINGC_KEY_VALUE_INIT">
-<span class="target" id="span_8h_1a15203e9c44aa0df66ad8b0a8818efc41"></span><code class="descname">JAEGERTRACINGC_KEY_VALUE_INIT</code><a class="headerlink" href="#c.JAEGERTRACINGC_KEY_VALUE_INIT" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="define">
@@ -2017,7 +2185,7 @@
 <p class="breathe-sectiondef-title rubric">Typedefs</p>
 <dl class="typedef">
 <dt>
-<span class="target" id="span_8h_1a2775b56d909b0eb7469859f2fe9038dd"></span><em class="property">typedef </em>struct <a class="reference internal" href="#c.jaeger_log_record" title="jaeger_log_record">jaeger_log_record</a>  <code class="descname">jaeger_log_record</code></dt>
+<span class="target" id="span_8h_1ae413911b9fc5d9af9e9895c90d3a34d7"></span><em class="property">typedef </em>struct <a class="reference internal" href="#c.jaeger_span_context" title="jaeger_span_context">jaeger_span_context</a>  <code class="descname">jaeger_span_context</code></dt>
 <dd></dd></dl>
 
 <dl class="typedef">
@@ -2039,83 +2207,23 @@
 <div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric">Functions</p>
 <dl class="function">
-<dt id="c.jaeger_log_record_init">
-<span class="target" id="span_8h_1a3715edb8a5e846eac0515350171c7630"></span>static bool <code class="descname">jaeger_log_record_init</code><span class="sig-paren">(</span><a class="reference internal" href="#c.jaeger_log_record" title="jaeger_log_record">jaeger_log_record</a>  *<em>&nbsp;log_record</em>, <a class="reference internal" href="#c.jaeger_logger" title="jaeger_logger">jaeger_logger</a>  *<em>&nbsp;logger</em><span class="sig-paren">)</span><a class="headerlink" href="#c.jaeger_log_record_init" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="c.jaeger_log_record_copy">
-<span class="target" id="span_8h_1aaf60d10b3ea4369761921bce442fb580"></span>static bool <code class="descname">jaeger_log_record_copy</code><span class="sig-paren">(</span><a class="reference internal" href="#c.jaeger_log_record" title="jaeger_log_record">jaeger_log_record</a>  *restrict<em>&nbsp;dst</em>, const  <a class="reference internal" href="#c.jaeger_log_record" title="jaeger_log_record">jaeger_log_record</a>  *restrict<em>&nbsp;src</em>, <a class="reference internal" href="#c.jaeger_logger" title="jaeger_logger">jaeger_logger</a>  *<em>&nbsp;logger</em><span class="sig-paren">)</span><a class="headerlink" href="#c.jaeger_log_record_copy" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="c.JAEGERTRACINGC_WRAP_COPY">
-<span class="target" id="span_8h_1a69b5fcdb8040109a4127902a188e53a7"></span><code class="descname">JAEGERTRACINGC_WRAP_COPY</code><span class="sig-paren">(</span><a class="reference internal" href="#c.jaeger_log_record_copy" title="jaeger_log_record_copy">jaeger_log_record_copy</a>, <a class="reference internal" href="#c.jaeger_log_record" title="jaeger_log_record">jaeger_log_record</a>, <a class="reference internal" href="#c.jaeger_log_record" title="jaeger_log_record">jaeger_log_record</a><span class="sig-paren">)</span><a class="headerlink" href="#c.JAEGERTRACINGC_WRAP_COPY" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="c.jaeger_log_record_protobuf_destroy">
-<span class="target" id="span_8h_1a2cddd095d13fc5fe1ba798a89bbabe79"></span>static void <code class="descname">jaeger_log_record_protobuf_destroy</code><span class="sig-paren">(</span>Jaegertracing__Protobuf__Log *<em>&nbsp;log_record</em><span class="sig-paren">)</span><a class="headerlink" href="#c.jaeger_log_record_protobuf_destroy" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="c.JAEGERTRACINGC_WRAP_DESTROY">
-<span class="target" id="span_8h_1a66639fb08190076d0418a7920cf215b4"></span><code class="descname">JAEGERTRACINGC_WRAP_DESTROY</code><span class="sig-paren">(</span><a class="reference internal" href="#c.jaeger_log_record_protobuf_destroy" title="jaeger_log_record_protobuf_destroy">jaeger_log_record_protobuf_destroy</a>, Jaegertracing__Protobuf__Log<span class="sig-paren">)</span><a class="headerlink" href="#c.JAEGERTRACINGC_WRAP_DESTROY" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="c.assert">
-<span class="target" id="span_8h_1af80c22aed8c299798394a947ad71c6a4"></span><code class="descname">assert</code><span class="sig-paren">(</span><a class="reference internal" href="#c.src" title="src">src</a>! =<em>&nbsp;NULL</em><span class="sig-paren">)</span><a class="headerlink" href="#c.assert" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="c.if">
-<span class="target" id="span_8h_1a5b4d5f6217e95bbd4b29213ee556a02b"></span><code class="descname">if</code><span class="sig-paren">(</span>! <a class="reference internal" href="#c.jaeger_vector_protobuf_copy" title="jaeger_vector_protobuf_copy">jaeger_vector_protobuf_copy</a>(void<em>&nbsp;***)&amp;dst-&gt;fields</em>, &amp;<a class="reference internal" href="#c.dst" title="dst">dst</a>-&gt;n_fields, &amp;<a class="reference internal" href="#c.src" title="src">src</a>-&gt;tags, sizeof(<a class="reference internal" href="#c.jaeger_tag" title="jaeger_tag">jaeger_tag</a>), &amp;jaeger_tag_copy_wrapper, &amp;jaeger_tag_destroy_wrapper, NULL, <a class="reference internal" href="#c.logger" title="logger">logger</a><span class="sig-paren">)</span><a class="headerlink" href="#c.if" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt>
-<span class="target" id="span_8h_1a89fa50b07b1202263e2c985fc6078955"></span><code class="descname">JAEGERTRACINGC_WRAP_COPY</code><span class="sig-paren">(</span>jaeger_log_record_to_protobuf, Jaegertracing__Protobuf__Log, <a class="reference internal" href="#c.jaeger_log_record" title="jaeger_log_record">jaeger_log_record</a><span class="sig-paren">)</span></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="c.jaeger_key_value_destroy">
-<span class="target" id="span_8h_1a5f3e1933fe1406efd25caa455171411c"></span>static void <code class="descname">jaeger_key_value_destroy</code><span class="sig-paren">(</span><a class="reference internal" href="#c.jaeger_key_value" title="jaeger_key_value">jaeger_key_value</a> *<em>&nbsp;kv</em><span class="sig-paren">)</span><a class="headerlink" href="#c.jaeger_key_value_destroy" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="c.jaeger_key_value_init">
-<span class="target" id="span_8h_1a86a273a1cd3cd0c15a5dffbb60eb22cb"></span>static bool <code class="descname">jaeger_key_value_init</code><span class="sig-paren">(</span><a class="reference internal" href="#c.jaeger_key_value" title="jaeger_key_value">jaeger_key_value</a> *<em>&nbsp;kv</em>, const char *<em>&nbsp;key</em>, const char *<em>&nbsp;value</em>, <a class="reference internal" href="#c.jaeger_logger" title="jaeger_logger">jaeger_logger</a>  *<em>&nbsp;logger</em><span class="sig-paren">)</span><a class="headerlink" href="#c.jaeger_key_value_init" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="c.jaeger_key_value_copy">
-<span class="target" id="span_8h_1aa44a3679752bac7f765c503d1bbe0fd1"></span>static bool <code class="descname">jaeger_key_value_copy</code><span class="sig-paren">(</span><a class="reference internal" href="#c.jaeger_key_value" title="jaeger_key_value">jaeger_key_value</a> *restrict<em>&nbsp;dst</em>, const <a class="reference internal" href="#c.jaeger_key_value" title="jaeger_key_value">jaeger_key_value</a> *restrict<em>&nbsp;src</em>, <a class="reference internal" href="#c.jaeger_logger" title="jaeger_logger">jaeger_logger</a>  *<em>&nbsp;logger</em><span class="sig-paren">)</span><a class="headerlink" href="#c.jaeger_key_value_copy" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt>
-<span class="target" id="span_8h_1ae224726356faea5ef011d1198a64c07b"></span><code class="descname">JAEGERTRACINGC_WRAP_COPY</code><span class="sig-paren">(</span><a class="reference internal" href="#c.jaeger_key_value_copy" title="jaeger_key_value_copy">jaeger_key_value_copy</a>, <a class="reference internal" href="#c.jaeger_key_value" title="jaeger_key_value">jaeger_key_value</a>, <a class="reference internal" href="#c.jaeger_key_value" title="jaeger_key_value">jaeger_key_value</a><span class="sig-paren">)</span></dt>
-<dd></dd></dl>
-
-<dl class="function">
 <dt id="c.jaeger_span_context_clear">
-<span class="target" id="span_8h_1a1c89397e7c108409867883dc0899bc92"></span>static void <code class="descname">jaeger_span_context_clear</code><span class="sig-paren">(</span><a class="reference internal" href="#c.jaeger_span_context" title="jaeger_span_context">jaeger_span_context</a> *<em>&nbsp;ctx</em><span class="sig-paren">)</span><a class="headerlink" href="#c.jaeger_span_context_clear" title="Permalink to this definition">¶</a></dt>
+<span class="target" id="span_8h_1a1c89397e7c108409867883dc0899bc92"></span>static void <code class="descname">jaeger_span_context_clear</code><span class="sig-paren">(</span><a class="reference internal" href="#c.jaeger_span_context" title="jaeger_span_context">jaeger_span_context</a>  *<em>&nbsp;ctx</em><span class="sig-paren">)</span><a class="headerlink" href="#c.jaeger_span_context_clear" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
 <dt id="c.jaeger_span_context_destroy">
-<span class="target" id="span_8h_1aa3be47f156685bd4691bd4381c7f85fd"></span>static void <code class="descname">jaeger_span_context_destroy</code><span class="sig-paren">(</span><a class="reference internal" href="#c.jaeger_span_context" title="jaeger_span_context">jaeger_span_context</a> *<em>&nbsp;ctx</em><span class="sig-paren">)</span><a class="headerlink" href="#c.jaeger_span_context_destroy" title="Permalink to this definition">¶</a></dt>
+<span class="target" id="span_8h_1aa3be47f156685bd4691bd4381c7f85fd"></span>static void <code class="descname">jaeger_span_context_destroy</code><span class="sig-paren">(</span><a class="reference internal" href="#c.jaeger_span_context" title="jaeger_span_context">jaeger_span_context</a>  *<em>&nbsp;ctx</em><span class="sig-paren">)</span><a class="headerlink" href="#c.jaeger_span_context_destroy" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
 <dt id="c.jaeger_span_context_init">
-<span class="target" id="span_8h_1aecf52f7fe8c588cd23625b79b9464208"></span>static bool <code class="descname">jaeger_span_context_init</code><span class="sig-paren">(</span><a class="reference internal" href="#c.jaeger_span_context" title="jaeger_span_context">jaeger_span_context</a> *<em>&nbsp;ctx</em>, <a class="reference internal" href="#c.jaeger_logger" title="jaeger_logger">jaeger_logger</a>  *<em>&nbsp;logger</em><span class="sig-paren">)</span><a class="headerlink" href="#c.jaeger_span_context_init" title="Permalink to this definition">¶</a></dt>
+<span class="target" id="span_8h_1aecf52f7fe8c588cd23625b79b9464208"></span>static bool <code class="descname">jaeger_span_context_init</code><span class="sig-paren">(</span><a class="reference internal" href="#c.jaeger_span_context" title="jaeger_span_context">jaeger_span_context</a>  *<em>&nbsp;ctx</em>, <a class="reference internal" href="#c.jaeger_logger" title="jaeger_logger">jaeger_logger</a>  *<em>&nbsp;logger</em><span class="sig-paren">)</span><a class="headerlink" href="#c.jaeger_span_context_init" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
 <dt id="c.jaeger_span_context_copy">
-<span class="target" id="span_8h_1a34f86ce91ffb8a841db589241642e42e"></span>static bool <code class="descname">jaeger_span_context_copy</code><span class="sig-paren">(</span><a class="reference internal" href="#c.jaeger_span_context" title="jaeger_span_context">jaeger_span_context</a> *restrict<em>&nbsp;dst</em>, const <a class="reference internal" href="#c.jaeger_span_context" title="jaeger_span_context">jaeger_span_context</a> *restrict<em>&nbsp;src</em>, <a class="reference internal" href="#c.jaeger_logger" title="jaeger_logger">jaeger_logger</a>  *<em>&nbsp;logger</em><span class="sig-paren">)</span><a class="headerlink" href="#c.jaeger_span_context_copy" title="Permalink to this definition">¶</a></dt>
+<span class="target" id="span_8h_1a34f86ce91ffb8a841db589241642e42e"></span>static bool <code class="descname">jaeger_span_context_copy</code><span class="sig-paren">(</span><a class="reference internal" href="#c.jaeger_span_context" title="jaeger_span_context">jaeger_span_context</a>  *restrict<em>&nbsp;dst</em>, const  <a class="reference internal" href="#c.jaeger_span_context" title="jaeger_span_context">jaeger_span_context</a>  *restrict<em>&nbsp;src</em>, <a class="reference internal" href="#c.jaeger_logger" title="jaeger_logger">jaeger_logger</a>  *<em>&nbsp;logger</em><span class="sig-paren">)</span><a class="headerlink" href="#c.jaeger_span_context_copy" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
@@ -2141,6 +2249,11 @@
 <dl class="function">
 <dt>
 <span class="target" id="span_8h_1a602ec5f6c779a6f8ad23848c9116dd3f"></span><code class="descname">JAEGERTRACINGC_WRAP_DESTROY</code><span class="sig-paren">(</span><a class="reference internal" href="#c.jaeger_span_ref_protobuf_destroy" title="jaeger_span_ref_protobuf_destroy">jaeger_span_ref_protobuf_destroy</a>, Jaegertracing__Protobuf__SpanRef<span class="sig-paren">)</span></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt>
+<span class="target" id="span_8h_1af80c22aed8c299798394a947ad71c6a4"></span><code class="descname">assert</code><span class="sig-paren">(</span><a class="reference internal" href="#c.src" title="src">src</a>! =<em>&nbsp;NULL</em><span class="sig-paren">)</span></dt>
 <dd></dd></dl>
 
 <dl class="function">
@@ -2190,51 +2303,32 @@
 
 <dl class="function">
 <dt id="c.jaeger_span_context_format">
-<span class="target" id="span_8h_1aa20c5ba5b618406bfba096d69e5e53da"></span>static int <code class="descname">jaeger_span_context_format</code><span class="sig-paren">(</span>const <a class="reference internal" href="#c.jaeger_span_context" title="jaeger_span_context">jaeger_span_context</a> *<em>&nbsp;ctx</em>, char *<em>&nbsp;buffer</em>, int<em>&nbsp;buffer_len</em><span class="sig-paren">)</span><a class="headerlink" href="#c.jaeger_span_context_format" title="Permalink to this definition">¶</a></dt>
+<span class="target" id="span_8h_1aa20c5ba5b618406bfba096d69e5e53da"></span>static int <code class="descname">jaeger_span_context_format</code><span class="sig-paren">(</span>const  <a class="reference internal" href="#c.jaeger_span_context" title="jaeger_span_context">jaeger_span_context</a>  *<em>&nbsp;ctx</em>, char *<em>&nbsp;buffer</em>, int<em>&nbsp;buffer_len</em><span class="sig-paren">)</span><a class="headerlink" href="#c.jaeger_span_context_format" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
 <dt id="c.jaeger_span_context_scan">
-<span class="target" id="span_8h_1a5874e98e45aa2d38fae865c7ebb07930"></span>static bool <code class="descname">jaeger_span_context_scan</code><span class="sig-paren">(</span><a class="reference internal" href="#c.jaeger_span_context" title="jaeger_span_context">jaeger_span_context</a> *<em>&nbsp;ctx</em>, const char *<em>&nbsp;str</em><span class="sig-paren">)</span><a class="headerlink" href="#c.jaeger_span_context_scan" title="Permalink to this definition">¶</a></dt>
+<span class="target" id="span_8h_1a5874e98e45aa2d38fae865c7ebb07930"></span>static bool <code class="descname">jaeger_span_context_scan</code><span class="sig-paren">(</span><a class="reference internal" href="#c.jaeger_span_context" title="jaeger_span_context">jaeger_span_context</a>  *<em>&nbsp;ctx</em>, const char *<em>&nbsp;str</em><span class="sig-paren">)</span><a class="headerlink" href="#c.jaeger_span_context_scan" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
 <div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric">Variables</p>
 <dl class="variable">
-<dt id="c.src">
-<span class="target" id="span_8h_1a9928fd05f7191e9bb7fa08548c33f77f"></span>const <a class="reference internal" href="#c.jaeger_span_ref" title="jaeger_span_ref">jaeger_span_ref</a> *restrict <code class="descname">src</code><a class="headerlink" href="#c.src" title="Permalink to this definition">¶</a></dt>
+<dt>
+<span class="target" id="span_8h_1aa8775521832334bc0f7d639558cdd329"></span>const <a class="reference internal" href="#c.jaeger_span_ref" title="jaeger_span_ref">jaeger_span_ref</a>* restrict <code class="descname">src</code></dt>
 <dd></dd></dl>
 
 <dl class="variable">
-<dt id="c.logger">
-<span class="target" id="span_8h_1a2ec1a3a8934eb79df33db7bc03b97639"></span>const <a class="reference internal" href="#c.jaeger_span_ref" title="jaeger_span_ref">jaeger_span_ref</a> *restrict <a class="reference internal" href="#c.jaeger_logger" title="jaeger_logger">jaeger_logger</a> * <code class="descname">logger</code> = {
-    assert(dst != NULL)<a class="headerlink" href="#c.logger" title="Permalink to this definition">¶</a></dt>
+<dt>
+<span class="target" id="span_8h_1ab12f6e7b3cc491c878be02cd8244240e"></span>const <a class="reference internal" href="#c.jaeger_span_ref" title="jaeger_span_ref">jaeger_span_ref</a>* restrict <a class="reference internal" href="#c.jaeger_logger" title="jaeger_logger">jaeger_logger</a>* <code class="descname">logger</code> = {
+    assert(dst != NULL)</dt>
 <dd></dd></dl>
 
 <dl class="variable">
-<dt id="c.dst">
-<span class="target" id="span_8h_1ab30ce5929cacc46873c25a334765b9b3"></span>* <code class="descname">dst</code> = (Jaegertracing__Protobuf__Log) JAEGERTRACING__PROTOBUF__LOG__INIT<a class="headerlink" href="#c.dst" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="variable">
-<dt id="c.timestamp">
-<span class="target" id="span_8h_1a4d53016efc132c670a9487cbe21e99c6"></span><a class="reference internal" href="#c.dst" title="dst">dst</a> <code class="descname">timestamp</code> = jaeger_timestamp_microseconds(&amp;src-&gt;timestamp)<a class="headerlink" href="#c.timestamp" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="variable">
-<dt id="c.true">
-<span class="target" id="span_8h_1a930920b2bc42824a5c03be681830f4b2"></span>return <code class="descname">true</code><a class="headerlink" href="#c.true" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="variable">
-<dt id="c.jaeger_key_value">
-<span class="target" id="span_8h_1a68a8b440772d1e03f28ca2f01744bd85"></span><code class="descname">jaeger_key_value</code><a class="headerlink" href="#c.jaeger_key_value" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="variable">
-<dt id="c.jaeger_span_context">
-<span class="target" id="span_8h_1a27dc24b78e0d3f9b6b67bbcd2f738061"></span><code class="descname">jaeger_span_context</code><a class="headerlink" href="#c.jaeger_span_context" title="Permalink to this definition">¶</a></dt>
+<dt>
+<span class="target" id="span_8h_1ab30ce5929cacc46873c25a334765b9b3"></span>* <code class="descname">dst</code> = (Jaegertracing__Protobuf__SpanRef)
+        JAEGERTRACING__PROTOBUF__SPAN_REF__INIT</dt>
 <dd></dd></dl>
 
 <dl class="variable">
@@ -2251,6 +2345,11 @@
 <dl class="variable">
 <dt id="c.span_id">
 <span class="target" id="span_8h_1af87d22acd4bc66953aa36c4e0e0d0e04"></span><a class="reference internal" href="#c.dst" title="dst">dst</a> <code class="descname">span_id</code> = src-&gt;context.span_id<a class="headerlink" href="#c.span_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="variable">
+<dt>
+<span class="target" id="span_8h_1a930920b2bc42824a5c03be681830f4b2"></span>return <code class="descname">true</code></dt>
 <dd></dd></dl>
 
 </div>
