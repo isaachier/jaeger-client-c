@@ -21,6 +21,7 @@ function main() {
     project_dir=$(git rev-parse --show-toplevel)
     cd "$project_dir" || exit 1
 
+    git fetch
     git checkout rtd
     mv build/doc doc
     git add doc
