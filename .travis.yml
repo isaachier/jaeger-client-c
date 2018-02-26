@@ -3,149 +3,147 @@ sudo: false
 dist: trusty
 addons:
   apt:
-    packages: &common_deps
-      - libhttp-parser-dev
-      - libjansson-dev
-      - pkg-config
-      - autoconf
-      - automake
-      - libtool
-      - curl
-      - make
-      - unzip
-      - lcov
-      - valgrind
-      - doxygen
-      - python-pip
+    packages: &1
+    - libhttp-parser-dev
+    - libjansson-dev
+    - pkg-config
+    - autoconf
+    - automake
+    - libtool
+    - curl
+    - make
+    - unzip
+    - lcov
+    - valgrind
+    - doxygen
+    - python-pip
 matrix:
   include:
-    - os: linux
-      addons:
-        apt:
-          packages:
-            - *common_deps
-            - g++-4.8
-      env:
-         - MATRIX_EVAL="CC=gcc-4.8 && CXX=g++-4.8"
-
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - *common_deps
-            - g++-4.9
-      env:
-         - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
-
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - *common_deps
-            - g++-5
-      env:
-         - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
-
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - *common_deps
-            - g++-6
-      env:
-        - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
-
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - *common_deps
-            - g++-7
-      env:
-        - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
-
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-precise-3.6
-          packages:
-            - *common_deps
-            - clang-3.6
-      env:
-        - MATRIX_EVAL="CC=clang-3.6 && CXX=clang++-3.6"
-
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-precise-3.7
-          packages:
-            - *common_deps
-            - clang-3.7
-      env:
-        - MATRIX_EVAL="CC=clang-3.7 && CXX=clang++-3.7"
-
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-precise-3.8
-          packages:
-            - *common_deps
-            - clang-3.8
-      env:
-        - MATRIX_EVAL="CC=clang-3.8 && CXX=clang++-3.8"
-
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - llvm-toolchain-trusty-4.0
-          packages:
-            - *common_deps
-            - clang-4.0
-      env:
-        - MATRIX_EVAL="CC=clang-4.0 && CXX=clang++-4.0"
-
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - llvm-toolchain-trusty-5.0
-          packages:
-            - *common_deps
-            - clang-5.0
-      env:
-        - MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0"
+  - os: linux
+    addons:
+      apt:
+        packages:
+        - *1
+        - g++-4.8
+    env:
+    - MATRIX_EVAL="CC=gcc-4.8 && CXX=g++-4.8"
+  - os: linux
+    addons:
+      apt:
+        sources:
+        - ubuntu-toolchain-r-test
+        packages:
+        - *1
+        - g++-4.9
+    env:
+    - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
+  - os: linux
+    addons:
+      apt:
+        sources:
+        - ubuntu-toolchain-r-test
+        packages:
+        - *1
+        - g++-5
+    env:
+    - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
+  - os: linux
+    addons:
+      apt:
+        sources:
+        - ubuntu-toolchain-r-test
+        packages:
+        - *1
+        - g++-6
+    env:
+    - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
+  - os: linux
+    addons:
+      apt:
+        sources:
+        - ubuntu-toolchain-r-test
+        packages:
+        - *1
+        - g++-7
+    env:
+    - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+  - os: linux
+    addons:
+      apt:
+        sources:
+        - ubuntu-toolchain-r-test
+        - llvm-toolchain-precise-3.6
+        packages:
+        - *1
+        - clang-3.6
+    env:
+    - MATRIX_EVAL="CC=clang-3.6 && CXX=clang++-3.6"
+  - os: linux
+    addons:
+      apt:
+        sources:
+        - ubuntu-toolchain-r-test
+        - llvm-toolchain-precise-3.7
+        packages:
+        - *1
+        - clang-3.7
+    env:
+    - MATRIX_EVAL="CC=clang-3.7 && CXX=clang++-3.7"
+  - os: linux
+    addons:
+      apt:
+        sources:
+        - ubuntu-toolchain-r-test
+        - llvm-toolchain-precise-3.8
+        packages:
+        - *1
+        - clang-3.8
+    env:
+    - MATRIX_EVAL="CC=clang-3.8 && CXX=clang++-3.8"
+  - os: linux
+    addons:
+      apt:
+        sources:
+        - llvm-toolchain-trusty-4.0
+        packages:
+        - *1
+        - clang-4.0
+    env:
+    - MATRIX_EVAL="CC=clang-4.0 && CXX=clang++-4.0"
+  - os: linux
+    addons:
+      apt:
+        sources:
+        - llvm-toolchain-trusty-5.0
+        packages:
+        - *1
+        - clang-5.0
+    env:
+    - MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0"
 branches:
   only:
   - master
 cache:
   directories:
-    - $HOME/install
+  - $HOME/install
 before_install:
-  - eval "${MATRIX_EVAL}"
-  - ./scripts/install-deps.sh "$HOME/install"
-  - pip install --user -r requirements.txt
+- eval "${MATRIX_EVAL}"
+- ./scripts/install-deps.sh "$HOME/install"
+- pip install --user -r requirements.txt
 script:
-  - ./scripts/build.sh "$HOME/install"
+- ./scripts/build.sh "$HOME/install"
 after_success:
-  - ./scripts/upload-coverage.sh
-  - ./scripts/upload-doc.sh
+- ./scripts/upload-coverage.sh
+- ./scripts/generate-doc.sh
+deploy:
+  provider: pages
+  skip-cleanup: true
+  github-token: $GITHUB_TOKEN
+  keep-history: true
+  local-dir: build/doc/Debug/html
 env:
   global:
-    - LANG="en_US.UTF-8"
-    - PATH="$HOME/install/bin:$PATH"
-    - COVERAGE="ON"
+  - LANG="en_US.UTF-8"
+  - PATH="$HOME/install/bin:$PATH"
+  - COVERAGE="ON"
+  - secure: MVwjLxLWeyuHi5aNiQPOAnXV+jPlOwg8GWKQIRrk04pMmvOsIbBOvlYjFUFToPHHnNTQZInhGecagYd4TU9xTbq/5yxbXiUFqAbM49Rgat1sa4v9NrEPF1itH5N7ZgIJyM4rez634DBHbWfZWQ1QMyXRShG6wgRFribIfxxZ4/hlgOkV7/MspzrgcNo41ddgTdJyPXlPp6g7OnvtNMVl/v1a+W44PRoZZJpNXNfp/BHiOjohg9X57Fsm2sOqVpgPB4mq+/Iuj5kLJDDDXOpoLOxFHjbcOZONrRqI7n8MJKphd2nd6UIWJw6FkFC6xalihRiPv39g89jTbAFgxfiIHMDoD2Ra2Cdv5xbvrzq095jQcooumJzitprNDs1b78d2Rnw0VKeJ7FRxdvlzSI0sgSElS18U4fQ7+GusdTH0D397tk42IElugYP3Nfjw1SJwhf8SyxIzqWaAFaYwBR+54vWnvj8WnnHqHFkmU6qEzgAyA2pyWky8XqVilVBGaewjeugaracplujc3YJ4BiPv+1356bklX2BwoF/RtHTRPV5iHwlUQaw+T+inYFNdOOQgRQUdWLktQCuqwuXc2voeSsgVpT4DMma92TQNIZfLsk6mXK12Q2ytIpOyJmyJkemzeqn5H0eogXgpvN+ICI/YjWGxCH1FueOjWqOWxpjPPWU=

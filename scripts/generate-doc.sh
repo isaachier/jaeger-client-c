@@ -19,23 +19,8 @@ set -e
 function main() {
     local project_dir
     project_dir=$(git rev-parse --show-toplevel)
-    cd "$project_dir" || exit 1
-
-    rm -rf build
-    mkdir build
-    cd build || exit 1
-    cmake -DCMAKE_BUILD_TYPE=Debug -DJAEGERTRACINGC_BUILD_DOC=ON ..
+    cd "$project_dir/build" || exit 1
     make doc
-
-    cd "$project_dir"
-    git fetch origin
-    git checkout --orphan gh-pages
-    git pull origin gh-pages
-    rm -rf _static _styles
-    mv build/doc/Debug/html/* .
-    git add .
-    git commit -m "Update docs"
-    git push --set-upstream origin gh-pages
 }
 
 main
