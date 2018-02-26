@@ -134,7 +134,7 @@ script:
 - ./scripts/build.sh "$HOME/install"
 after_success:
 - ./scripts/upload-coverage.sh
-- ./scripts/generate-doc.sh
+- ./scripts/generate-doc.sh && touch build/doc/Debug/html/.nojekyll
 deploy:
   provider: pages
   skip-cleanup: true
