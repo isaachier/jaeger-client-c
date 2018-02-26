@@ -15,6 +15,7 @@
 # limitations under the License.
 
 set -e
+set -x
 
 function main() {
     local project_dir
