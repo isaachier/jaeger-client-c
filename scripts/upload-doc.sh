@@ -31,7 +31,7 @@ function main() {
     mv build/doc/html/* .
     git add .
     git commit -m "Update docs"
-    git push
+    git push --set-upstream origin gh-pages
 }
 
 main
