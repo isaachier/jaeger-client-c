@@ -22,7 +22,8 @@ function main() {
     cd "$project_dir" || exit 1
 
     git fetch
-    git checkout rtd
+    git checkout -b rtd
+    git pull origin rtd
     mv build/doc doc
     git add doc
     git commit -m "Update docs ($(date --iso-8601))"
