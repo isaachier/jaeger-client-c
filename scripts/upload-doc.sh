@@ -22,9 +22,9 @@ function main() {
     cd "$project_dir/build" || exit 1
 
     make doc
-    git fetch
-    git checkout -b gh-pages --track origin/gh-pages
-    git pull
+    git fetch origin
+    git checkout -b gh-pages
+    git pull origin gh-pages
     rm -rf _static _styles
     mv build/doc/html/* .
     git add .
