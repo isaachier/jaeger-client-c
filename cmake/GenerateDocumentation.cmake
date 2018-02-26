@@ -22,7 +22,8 @@ function(generate_documentation)
   string(TIMESTAMP copyright_year "%Y")
   set(sphinx_relative_path "doc")
   set(sphinx_src_path "${CMAKE_CURRENT_SOURCE_DIR}/${sphinx_relative_path}")
-  set(sphinx_out_path "${CMAKE_CURRENT_BINARY_DIR}/${sphinx_relative_path}")
+  set(sphinx_out_path
+    "${CMAKE_CURRENT_BINARY_DIR}/${sphinx_relative_path}/$<CONFIG>")
   set(static_path "${sphinx_src_path}/_static")
   set(templates_path "${sphinx_src_path}/_templates")
   file(RELATIVE_PATH constants_in_h_rel_path
@@ -39,13 +40,21 @@ function(generate_documentation)
     DIRECTORY)
 
   get_target_property(defs jaegertracingc COMPILE_DEFINITIONS)
+  get_target_property(inc jaegertracingc INCLUDE_DIRECTORIES)
 
-  configure_file("${sphinx_src_path}/conf.py.in"
-                 "${sphinx_out_path}/conf.py" @ONLY)
-  configure_file("${sphinx_src_path}/index.rst.in"
-                 "${sphinx_out_path}/index.rst" @ONLY)
+  file(READ "${sphinx_src_path}/conf.py.in" conf_content)
+  string(CONFIGURE "${conf_content}" conf_content @ONLY)
+  file(GENERATE OUTPUT "${sphinx_out_path}/conf.py"
+       CONTENT "${conf_content}")
+
+  file(READ "${sphinx_src_path}/index.rst.in" index_content)
+  string(CONFIGURE "${index_content}" index_content @ONLY)
+  file(GENERATE OUTPUT "${sphinx_out_path}/index.rst"
+       CONTENT "${index_content}")
+
   add_custom_target(doc
     COMMAND ${sphinx_build} -M html ${sphinx_out_path} ${sphinx_out_path}
+    DEPENDS "${sphinx_out_path}/conf.py" "${sphinx_out_path}/index.rst"
     VERBATIM
     USES_TERMINAL)
 endfunction()
