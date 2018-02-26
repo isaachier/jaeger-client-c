@@ -887,6 +887,33 @@
 </dd></dl>
 
 <dl class="struct">
+<dt id="c.jaeger_span_finish_options">
+<span class="target" id="structjaeger__span__finish__options"></span><em class="property">struct </em><code class="descname">jaeger_span_finish_options</code><a class="headerlink" href="#c.jaeger_span_finish_options" title="Permalink to this definition">¶</a></dt>
+<dd><em>#include &lt;span.h&gt;</em><p>Options caller may set for span finish. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Public Members</p>
+<dl class="variable">
+<dt id="c.jaeger_span_finish_options::finish_time">
+<span class="target" id="structjaeger__span__finish__options_1a9c18ce18a4885d1909194c9e3af849d2"></span><a class="reference internal" href="#c.jaeger_timestamp" title="jaeger_timestamp">jaeger_timestamp</a> <code class="descname">finish_time</code><a class="headerlink" href="#c.jaeger_span_finish_options::finish_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>The time the operation was completed. </p>
+</dd></dl>
+
+<dl class="variable">
+<dt id="c.jaeger_span_finish_options::logs">
+<span class="target" id="structjaeger__span__finish__options_1a36fd7e86cf951be84013780b29c5c2d3"></span>const <a class="reference internal" href="#c.jaeger_log_record" title="jaeger_log_record">jaeger_log_record</a>** <code class="descname">logs</code><a class="headerlink" href="#c.jaeger_span_finish_options::logs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Logs to append to the span logs. </p>
+</dd></dl>
+
+<dl class="variable">
+<dt id="c.jaeger_span_finish_options::num_logs">
+<span class="target" id="structjaeger__span__finish__options_1a0408ac13b435f76eea057d2e4a63dfed"></span>int <code class="descname">num_logs</code><a class="headerlink" href="#c.jaeger_span_finish_options::num_logs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of logs to append to the span logs. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="struct">
 <dt id="c.jaeger_span_ref">
 <span class="target" id="structjaeger__span__ref"></span><em class="property">struct </em><code class="descname">jaeger_span_ref</code><a class="headerlink" href="#c.jaeger_span_ref" title="Permalink to this definition">¶</a></dt>
 <dd><div class="breathe-sectiondef docutils container">
@@ -2163,6 +2190,13 @@
 <dl class="define">
 <dt id="c.JAEGERTRACINGC_SPAN_CONTEXT_MAX_STR_LEN">
 <span class="target" id="span_8h_1aeb8749527eb268509c1e6e09c54299c3"></span><code class="descname">JAEGERTRACINGC_SPAN_CONTEXT_MAX_STR_LEN</code><a class="headerlink" href="#c.JAEGERTRACINGC_SPAN_CONTEXT_MAX_STR_LEN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Max number of characters needed for string representation of <a class="reference internal" href="#structjaeger__span__context"><span class="std std-ref">jaeger_span_context</span></a> (excluding null byte). </p>
+<p>3 delimiters, 2 uint64_t hex (8 characters each), 1 short hex (2 characters). 3 + 16 + 2 = 21 </p>
+</dd></dl>
+
+<dl class="define">
+<dt id="c.JAEGERTRACINGC_SAMPLING_PRIORITY">
+<span class="target" id="span_8h_1a506ab74e10564fec528c0b9aca717928"></span><code class="descname">JAEGERTRACINGC_SAMPLING_PRIORITY</code><a class="headerlink" href="#c.JAEGERTRACINGC_SAMPLING_PRIORITY" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="define">
@@ -2179,6 +2213,12 @@
 <dt id="c.JAEGERTRACINGC_SPAN_INIT">
 <span class="target" id="span_8h_1aa85edf4f8ec8167968b6b7c9d6426059"></span><code class="descname">JAEGERTRACINGC_SPAN_INIT</code><a class="headerlink" href="#c.JAEGERTRACINGC_SPAN_INIT" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="define">
+<dt id="c.JAEGERTRACINGC_SPAN_FINISH_OPTIONS_INIT">
+<span class="target" id="span_8h_1a5dfa867871567eb8938ac19e636d92ed"></span><code class="descname">JAEGERTRACINGC_SPAN_FINISH_OPTIONS_INIT</code><a class="headerlink" href="#c.JAEGERTRACINGC_SPAN_FINISH_OPTIONS_INIT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Static initializer for jaeger_span_finish_with_options. </p>
+</dd></dl>
 
 </div>
 <div class="breathe-sectiondef docutils container">
@@ -2202,6 +2242,31 @@
 <dt>
 <span class="target" id="span_8h_1ad34206836cd70ef2da90aad72bc4402b"></span><em class="property">typedef </em>struct <a class="reference internal" href="#c.jaeger_span" title="jaeger_span">jaeger_span</a>  <code class="descname">jaeger_span</code></dt>
 <dd></dd></dl>
+
+<dl class="typedef">
+<dt>
+<span class="target" id="span_8h_1aac4d326f6443024d956a138a6ecc574f"></span><em class="property">typedef </em>struct <a class="reference internal" href="#c.jaeger_span_finish_options" title="jaeger_span_finish_options">jaeger_span_finish_options</a>  <code class="descname">jaeger_span_finish_options</code></dt>
+<dd><p>Options caller may set for span finish. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Enums</p>
+<dl class="enum">
+<dt id="c.__anonymous2">
+<span class="target" id="span_8h_1a99fb83031ce9923c84392b4e92f956b5"></span><em class="property">enum </em><code class="descname"><strong>[anonymous]</strong></code><a class="headerlink" href="#c.__anonymous2" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Values:</em></p>
+<dl class="enumvalue">
+<dt id="c.jaeger_sampling_flag_sampled">
+<span class="target" id="span_8h_1a99fb83031ce9923c84392b4e92f956b5a6b52cc2d887c92219b0e10ab60d1a66d"></span><code class="descname">jaeger_sampling_flag_sampled</code> = 1<a class="headerlink" href="#c.jaeger_sampling_flag_sampled" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="enumvalue">
+<dt id="c.jaeger_sampling_flag_debug">
+<span class="target" id="span_8h_1a99fb83031ce9923c84392b4e92f956b5a8a44389029ceb2e094748c77662ab97a"></span><code class="descname">jaeger_sampling_flag_debug</code> = (1 &lt;&lt; 1)<a class="headerlink" href="#c.jaeger_sampling_flag_debug" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
 
 </div>
 <div class="breathe-sectiondef docutils container">
@@ -2290,6 +2355,148 @@
 <dt id="c.jaeger_span_copy">
 <span class="target" id="span_8h_1a99d1ac416eaad11a009738571ed894c6"></span>static bool <code class="descname">jaeger_span_copy</code><span class="sig-paren">(</span><a class="reference internal" href="#c.jaeger_span" title="jaeger_span">jaeger_span</a>  *restrict<em>&nbsp;dst</em>, const  <a class="reference internal" href="#c.jaeger_span" title="jaeger_span">jaeger_span</a>  *restrict<em>&nbsp;src</em>, <a class="reference internal" href="#c.jaeger_logger" title="jaeger_logger">jaeger_logger</a>  *<em>&nbsp;logger</em><span class="sig-paren">)</span><a class="headerlink" href="#c.jaeger_span_copy" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="function">
+<dt id="c.jaeger_span_set_operation_name">
+<span class="target" id="span_8h_1a2a01369d84423ab89b2f9ffd49d65727"></span>static bool <code class="descname">jaeger_span_set_operation_name</code><span class="sig-paren">(</span><a class="reference internal" href="#c.jaeger_span" title="jaeger_span">jaeger_span</a>  *<em>&nbsp;span</em>, const char *<em>&nbsp;operation_name</em>, <a class="reference internal" href="#c.jaeger_logger" title="jaeger_logger">jaeger_logger</a>  *<em>&nbsp;logger</em><span class="sig-paren">)</span><a class="headerlink" href="#c.jaeger_span_set_operation_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set operation name of span. </p>
+<p><dl class="docutils">
+<dt><strong>Return</strong></dt>
+<dd>True on success, false otherwise. </dd>
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last simple">
+<li><code class="docutils literal notranslate"><span class="pre">span</span></code>: The span instance. </li>
+<li><code class="docutils literal notranslate"><span class="pre">operation_name</span></code>: The new operation name. </li>
+<li><code class="docutils literal notranslate"><span class="pre">logger</span></code>: The logger to log to in case of error. </li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.jaeger_span_set_tag_no_locking">
+<span class="target" id="span_8h_1a52ce864995e2ddffe9c509e228471442"></span>static bool <code class="descname">jaeger_span_set_tag_no_locking</code><span class="sig-paren">(</span><a class="reference internal" href="#c.jaeger_span" title="jaeger_span">jaeger_span</a>  *<em>&nbsp;span</em>, const <a class="reference internal" href="#c.jaeger_tag" title="jaeger_tag">jaeger_tag</a> *<em>&nbsp;tag</em>, <a class="reference internal" href="#c.jaeger_logger" title="jaeger_logger">jaeger_logger</a>  *<em>&nbsp;logger</em><span class="sig-paren">)</span><a class="headerlink" href="#c.jaeger_span_set_tag_no_locking" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add tag to span without locking. </p>
+<p><dl class="docutils">
+<dt><strong>Return</strong></dt>
+<dd>True on success, false, otherwise. </dd>
+<dt><strong>See</strong></dt>
+<dd>jaeger_span_set_tag() </dd>
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last simple">
+<li><code class="docutils literal notranslate"><span class="pre">span</span></code>: The span instance. </li>
+<li><code class="docutils literal notranslate"><span class="pre">tag</span></code>: The tag to append. </li>
+<li><code class="docutils literal notranslate"><span class="pre">logger</span></code>: The logger to log to in case of error. </li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.jaeger_span_set_sampling_priority">
+<span class="target" id="span_8h_1afa979028f2454691225852a4a38e02bf"></span>static bool <code class="descname">jaeger_span_set_sampling_priority</code><span class="sig-paren">(</span><a class="reference internal" href="#c.jaeger_span" title="jaeger_span">jaeger_span</a>  *<em>&nbsp;span</em>, const <a class="reference internal" href="#c.jaeger_tag" title="jaeger_tag">jaeger_tag</a> *<em>&nbsp;tag</em><span class="sig-paren">)</span><a class="headerlink" href="#c.jaeger_span_set_sampling_priority" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set sampling flag on span. </p>
+<p><dl class="docutils">
+<dt><strong>Return</strong></dt>
+<dd>True on success, false otherwise. </dd>
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last simple">
+<li><code class="docutils literal notranslate"><span class="pre">span</span></code>: The span instance. </li>
+<li><code class="docutils literal notranslate"><span class="pre">tag</span></code>: The tag value to consider for sampling. </li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.jaeger_span_is_sampled_no_lock">
+<span class="target" id="span_8h_1a45a677c9e789efc2ec429c18d6c21339"></span>static bool <code class="descname">jaeger_span_is_sampled_no_lock</code><span class="sig-paren">(</span>const  <a class="reference internal" href="#c.jaeger_span" title="jaeger_span">jaeger_span</a>  *<em>&nbsp;span</em><span class="sig-paren">)</span><a class="headerlink" href="#c.jaeger_span_is_sampled_no_lock" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the sampling status of the span without locking. </p>
+<p><dl class="docutils">
+<dt><strong>Return</strong></dt>
+<dd>True if sampled, false otherwise. </dd>
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last simple">
+<li><code class="docutils literal notranslate"><span class="pre">span</span></code>: The span instance. </li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.jaeger_span_set_tag">
+<span class="target" id="span_8h_1ae865b185dbe9d24807f02d08710504fe"></span>static bool <code class="descname">jaeger_span_set_tag</code><span class="sig-paren">(</span><a class="reference internal" href="#c.jaeger_span" title="jaeger_span">jaeger_span</a>  *<em>&nbsp;span</em>, const <a class="reference internal" href="#c.jaeger_tag" title="jaeger_tag">jaeger_tag</a> *<em>&nbsp;tag</em>, <a class="reference internal" href="#c.jaeger_logger" title="jaeger_logger">jaeger_logger</a>  *<em>&nbsp;logger</em><span class="sig-paren">)</span><a class="headerlink" href="#c.jaeger_span_set_tag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add tag to span. </p>
+<p><dl class="docutils">
+<dt><strong>Return</strong></dt>
+<dd>True on success, false otherwise. </dd>
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last simple">
+<li><code class="docutils literal notranslate"><span class="pre">span</span></code>: The span instance. </li>
+<li><code class="docutils literal notranslate"><span class="pre">tag</span></code>: The tag to append. </li>
+<li><code class="docutils literal notranslate"><span class="pre">logger</span></code>: The logger to log to in case of error. </li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.jaeger_span_log_no_locking">
+<span class="target" id="span_8h_1a6cc2caee56613736944a5cb4efba58be"></span>static bool <code class="descname">jaeger_span_log_no_locking</code><span class="sig-paren">(</span><a class="reference internal" href="#c.jaeger_span" title="jaeger_span">jaeger_span</a>  *<em>&nbsp;span</em>, const  <a class="reference internal" href="#c.jaeger_log_record" title="jaeger_log_record">jaeger_log_record</a>  *<em>&nbsp;log_record</em>, <a class="reference internal" href="#c.jaeger_logger" title="jaeger_logger">jaeger_logger</a>  *<em>&nbsp;logger</em><span class="sig-paren">)</span><a class="headerlink" href="#c.jaeger_span_log_no_locking" title="Permalink to this definition">¶</a></dt>
+<dd><p>Append to span logs without locking. </p>
+<p><dl class="docutils">
+<dt><strong>Return</strong></dt>
+<dd>True on success, false otherwise. </dd>
+<dt><strong>See</strong></dt>
+<dd>jaeger_span_log() </dd>
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last simple">
+<li><code class="docutils literal notranslate"><span class="pre">span</span></code>: The span instance. </li>
+<li><code class="docutils literal notranslate"><span class="pre">log_record</span></code>: The log record to append. </li>
+<li><code class="docutils literal notranslate"><span class="pre">logger</span></code>: Logger to log to in case of error. </li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.jaeger_span_log">
+<span class="target" id="span_8h_1ac04885a92df718806165e2a6d162c386"></span>static bool <code class="descname">jaeger_span_log</code><span class="sig-paren">(</span><a class="reference internal" href="#c.jaeger_span" title="jaeger_span">jaeger_span</a>  *<em>&nbsp;span</em>, const  <a class="reference internal" href="#c.jaeger_log_record" title="jaeger_log_record">jaeger_log_record</a>  *<em>&nbsp;log_record</em>, <a class="reference internal" href="#c.jaeger_logger" title="jaeger_logger">jaeger_logger</a>  *<em>&nbsp;logger</em><span class="sig-paren">)</span><a class="headerlink" href="#c.jaeger_span_log" title="Permalink to this definition">¶</a></dt>
+<dd><p>Append to span logs. </p>
+<p><dl class="docutils">
+<dt><strong>Return</strong></dt>
+<dd>True on success, false otherwise. </dd>
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last simple">
+<li><code class="docutils literal notranslate"><span class="pre">span</span></code>: The span instance. </li>
+<li><code class="docutils literal notranslate"><span class="pre">log_record</span></code>: The log record to append. </li>
+<li><code class="docutils literal notranslate"><span class="pre">logger</span></code>: Logger to log to in case of error. </li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.jaeger_span_finish_with_options">
+<span class="target" id="span_8h_1a4a8ecdee84056284d16df96bfb801f68"></span>static void <code class="descname">jaeger_span_finish_with_options</code><span class="sig-paren">(</span><a class="reference internal" href="#c.jaeger_span" title="jaeger_span">jaeger_span</a>  *<em>&nbsp;span</em>, const  <a class="reference internal" href="#c.jaeger_span_finish_options" title="jaeger_span_finish_options">jaeger_span_finish_options</a>  *<em>&nbsp;options</em><span class="sig-paren">)</span><a class="headerlink" href="#c.jaeger_span_finish_with_options" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finish span with options. </p>
+<p><dl class="docutils">
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last simple">
+<li><code class="docutils literal notranslate"><span class="pre">span</span></code>: The span instance. </li>
+<li><code class="docutils literal notranslate"><span class="pre">options</span></code>: Options to determine finish timestamp, etc. May be NULL. </li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="c.jaeger_span_protobuf_destroy">
