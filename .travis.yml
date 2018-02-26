@@ -15,6 +15,7 @@ addons:
       - unzip
       - lcov
       - valgrind
+      - doxygen
 matrix:
   include:
     - os: linux

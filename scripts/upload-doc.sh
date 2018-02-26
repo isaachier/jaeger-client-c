@@ -21,12 +21,13 @@ function main() {
     project_dir=$(git rev-parse --show-toplevel)
     cd "$project_dir" || exit 1
 
+    make doc
     git fetch
-    git checkout -b rtd
-    git pull origin rtd
-    mv build/doc doc
-    git add doc
-    git commit -m "Update docs ($(date --iso-8601))"
+    git checkout --force gh-pages
+    git pull
+    mv build/doc/html/* .
+    git add .
+    git commit -m "Update docs"
     git push
 }
 
