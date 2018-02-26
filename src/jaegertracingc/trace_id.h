@@ -32,13 +32,17 @@ typedef struct jaeger_trace_id {
     uint64_t low;
 } jaeger_trace_id;
 
+/** Static initializer for trace ID struct. */
 #define JAEGERTRACINGC_TRACE_ID_INIT \
     {                                \
         .high = 0, .low = 0          \
     }
 
+/** Max string length to represent trace ID (not including null byte). */
 #define JAEGERTRACINGC_TRACE_ID_MAX_STR_LEN 32
+/** Max string length to represent uint64_t as hex (not including null byte). */
 #define JAEGERTRACINGC_UINT64_MAX_STR_LEN 16
+/** Base number for hexadecimal (16). */
 #define JAEGERTRACINGC_HEX_BASE 16
 
 /**

@@ -23,17 +23,45 @@
 extern "C" {
 #endif /* __cplusplus */
 
+/** Logger interface to customize log output. */
 typedef struct jaeger_logger {
+    /** Error log function.
+     *  @param logger The logger instance.
+     *  @param format The format string of the message.
+     *  @param[in] ... Arguments for format string.
+     */
     void (*error)(struct jaeger_logger* logger, const char* format, ...);
+
+    /** Warn log function.
+     *  @param logger The logger instance.
+     *  @param format The format string of the message.
+     *  @param[in] ... Arguments for format string.
+     */
     void (*warn)(struct jaeger_logger* logger, const char* format, ...);
+
+    /** Info log function.
+     *  @param logger The logger instance.
+     *  @param format The format string of the message.
+     *  @param[in] ... Arguments for format string.
+     */
     void (*info)(struct jaeger_logger* logger, const char* format, ...);
 } jaeger_logger;
 
+/**
+ * Initialize an uninitialized logger to print stdout/stderr. error and warn
+ * print to stderr. info prints to stdout.
+ * @param logger The uninitialized logger.
+ */
 void jaeger_std_logger_init(jaeger_logger* logger);
 
-/* Shared instance of null logger. DO NOT MODIFY MEMBERS! */
+/** Shared instance of null logger. All methods are no-ops.
+ *  DO NOT MODIFY MEMBERS!
+ */
 jaeger_logger* jaeger_null_logger();
 
+/** Shared instance of installed logger. DO NOT MODIFY MEMBERS!
+ *  @see jaeger_init_lib()
+ */
 jaeger_logger* jaeger_default_logger();
 
 #ifdef __cplusplus
