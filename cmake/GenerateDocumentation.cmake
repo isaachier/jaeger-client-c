@@ -34,7 +34,7 @@ function(generate_documentation)
     DIRECTORY)
   file(RELATIVE_PATH constants_gen_h_rel_path
     ${sphinx_out_path}
-    "${CMAKE_CURRENT_BINARY_DIR}/include/jaegertracingc/constants.h")
+    "${CMAKE_CURRENT_BINARY_DIR}/src/jaegertracingc/constants.h")
   get_filename_component(gen_inc_rel_path
     ${constants_gen_h_rel_path}
     DIRECTORY)
