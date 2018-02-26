@@ -34,7 +34,7 @@ void test_span()
     const int num_cases = sizeof(cases) / sizeof(cases[0]);
     for (int i = 0; i < num_cases; i++) {
         const test_case test = cases[i];
-        jaeger_span_context span;
+        jaeger_span_context span = JAEGERTRACINGC_SPAN_CONTEXT_INIT;
         const bool success = jaeger_span_context_scan(&span, test.input);
         TEST_ASSERT_EQUAL_MESSAGE(test.success, success, test.input);
     }

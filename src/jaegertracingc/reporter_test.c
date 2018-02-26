@@ -54,6 +54,7 @@ void test_reporter()
     jaeger_logger* logger = jaeger_null_logger();
     jaeger_span span = JAEGERTRACINGC_SPAN_INIT;
     TEST_ASSERT_TRUE(jaeger_span_init(&span, logger));
+    span.context.flags = jaeger_sampling_flag_sampled;
 
     /* TODO: Update once tracer is implemented */
     jaeger_tracer tracer;
@@ -61,12 +62,14 @@ void test_reporter()
     TEST_ASSERT_TRUE(
         jaeger_vector_init(&tracer.tags, sizeof(jaeger_tag), NULL, logger));
     span.tracer = &tracer;
-    span.operation_name = jaeger_strdup("test-operation", logger);
+    TEST_ASSERT_NULL(span.operation_name);
+    TEST_ASSERT_TRUE(
+        jaeger_span_set_operation_name(&span, "test-operation", logger));
     TEST_ASSERT_NOT_NULL(span.operation_name);
 
-    jaeger_log_record* log_ptr = jaeger_vector_append(&span.logs, logger);
-    TEST_ASSERT_NOT_NULL(log_ptr);
-    TEST_ASSERT_TRUE(jaeger_log_record_init(log_ptr, logger));
+    jaeger_log_record log = JAEGERTRACINGC_LOG_RECORD_INIT;
+    TEST_ASSERT_TRUE(jaeger_log_record_init(&log, logger));
+    TEST_ASSERT_TRUE(jaeger_span_log(&span, &log, logger));
 
     jaeger_span_ref* span_ref_ptr = jaeger_vector_append(&span.refs, logger);
     TEST_ASSERT_NOT_NULL(span_ref_ptr);
@@ -81,6 +84,8 @@ void test_reporter()
     TEST_ASSERT_NOT_NULL(kv);
     *kv = (jaeger_key_value) JAEGERTRACINGC_KEY_VALUE_INIT;
     TEST_ASSERT_TRUE(jaeger_key_value_init(kv, "key", "value", logger));
+
+    jaeger_span_finish_with_options(&span, NULL);
 
     jaeger_reporter* r = jaeger_null_reporter();
     r->report(r, &span, logger);
