@@ -507,8 +507,8 @@
 <dd></dd></dl>
 
 <dl class="variable">
-<dt id="c.jaeger_log_record::tags">
-<span class="target" id="structjaeger__log__record_1a9d3bfb98cca6fbae3c1d44a2f448a03f"></span><a class="reference internal" href="#c.jaeger_vector" title="jaeger_vector">jaeger_vector</a> <code class="descname">tags</code><a class="headerlink" href="#c.jaeger_log_record::tags" title="Permalink to this definition">¶</a></dt>
+<dt id="c.jaeger_log_record::fields">
+<span class="target" id="structjaeger__log__record_1a7e92d49bbf95a25adf10d22d0c87c70f"></span><a class="reference internal" href="#c.jaeger_vector" title="jaeger_vector">jaeger_vector</a> <code class="descname">fields</code><a class="headerlink" href="#c.jaeger_log_record::fields" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
@@ -1485,7 +1485,7 @@
 
 <dl class="function">
 <dt id="c.if">
-<span class="target" id="log__record_8h_1a5b4d5f6217e95bbd4b29213ee556a02b"></span><code class="descname">if</code><span class="sig-paren">(</span>! <a class="reference internal" href="#c.jaeger_vector_protobuf_copy" title="jaeger_vector_protobuf_copy">jaeger_vector_protobuf_copy</a>(void<em>&nbsp;***)&amp;dst-&gt;fields</em>, &amp;<a class="reference internal" href="#c.dst" title="dst">dst</a>-&gt;n_fields, &amp;<a class="reference internal" href="#c.src" title="src">src</a>-&gt;tags, sizeof(<a class="reference internal" href="#c.jaeger_tag" title="jaeger_tag">jaeger_tag</a>), &amp;jaeger_tag_copy_wrapper, &amp;jaeger_tag_destroy_wrapper, NULL, <a class="reference internal" href="#c.logger" title="logger">logger</a><span class="sig-paren">)</span><a class="headerlink" href="#c.if" title="Permalink to this definition">¶</a></dt>
+<span class="target" id="log__record_8h_1ae87dac56e4b7b9c20c1f1838a6d07375"></span><code class="descname">if</code><span class="sig-paren">(</span>! <a class="reference internal" href="#c.jaeger_vector_protobuf_copy" title="jaeger_vector_protobuf_copy">jaeger_vector_protobuf_copy</a>(void<em>&nbsp;***)&amp;dst-&gt;fields</em>, &amp;<a class="reference internal" href="#c.dst" title="dst">dst</a>-&gt;n_fields, &amp;<a class="reference internal" href="#c.src" title="src">src</a>-&gt;fields, sizeof(<a class="reference internal" href="#c.jaeger_tag" title="jaeger_tag">jaeger_tag</a>), &amp;jaeger_tag_copy_wrapper, &amp;jaeger_tag_destroy_wrapper, NULL, <a class="reference internal" href="#c.logger" title="logger">logger</a><span class="sig-paren">)</span><a class="headerlink" href="#c.if" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
@@ -2347,6 +2347,11 @@
 <dd></dd></dl>
 
 <dl class="function">
+<dt id="c.jaeger_span_init_vectors">
+<span class="target" id="span_8h_1a304ddd370c81297a160d38d5a06da295"></span>static bool <code class="descname">jaeger_span_init_vectors</code><span class="sig-paren">(</span><a class="reference internal" href="#c.jaeger_span" title="jaeger_span">jaeger_span</a>  *<em>&nbsp;span</em>, <a class="reference internal" href="#c.jaeger_logger" title="jaeger_logger">jaeger_logger</a>  *<em>&nbsp;logger</em><span class="sig-paren">)</span><a class="headerlink" href="#c.jaeger_span_init_vectors" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
 <dt id="c.jaeger_span_init">
 <span class="target" id="span_8h_1ae9a634ff3b848d3335c0930442c4181c"></span>static bool <code class="descname">jaeger_span_init</code><span class="sig-paren">(</span><a class="reference internal" href="#c.jaeger_span" title="jaeger_span">jaeger_span</a>  *<em>&nbsp;span</em>, <a class="reference internal" href="#c.jaeger_logger" title="jaeger_logger">jaeger_logger</a>  *<em>&nbsp;logger</em><span class="sig-paren">)</span><a class="headerlink" href="#c.jaeger_span_init" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -2592,6 +2597,24 @@
 <dt id="c.jaeger_tag_destroy">
 <span class="target" id="tag_8h_1a9b48ed8520423de9ea0f9f6af66f8f79"></span>static void <code class="descname">jaeger_tag_destroy</code><span class="sig-paren">(</span><a class="reference internal" href="#c.jaeger_tag" title="jaeger_tag">jaeger_tag</a> *<em>&nbsp;tag</em><span class="sig-paren">)</span><a class="headerlink" href="#c.jaeger_tag_destroy" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="function">
+<dt id="c.jaeger_tag_init">
+<span class="target" id="tag_8h_1a90c0ec55f9a777f712d7ae9bd41fed47"></span>static bool <code class="descname">jaeger_tag_init</code><span class="sig-paren">(</span><a class="reference internal" href="#c.jaeger_tag" title="jaeger_tag">jaeger_tag</a> *<em>&nbsp;tag</em>, const char *<em>&nbsp;key</em>, <a class="reference internal" href="#c.jaeger_logger" title="jaeger_logger">jaeger_logger</a>  *<em>&nbsp;logger</em><span class="sig-paren">)</span><a class="headerlink" href="#c.jaeger_tag_init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize a tag with no value. </p>
+<p><dl class="docutils">
+<dt><strong>Return</strong></dt>
+<dd>True on success, false otherwise. </dd>
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last simple">
+<li><code class="docutils literal notranslate"><span class="pre">tag</span></code>: The tag instance. </li>
+<li><code class="docutils literal notranslate"><span class="pre">key</span></code>: The tag key. </li>
+<li><code class="docutils literal notranslate"><span class="pre">logger</span></code>: Logger to log to in case of error. </li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="c.jaeger_tag_copy">
