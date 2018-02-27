@@ -118,6 +118,44 @@ void test_reporter()
     r->report(r, &span, logger);
     r->destroy((jaeger_destructible*) r);
 
+    /* Test connecting to a server address, closing the server socket, then
+     * attempting a flush.
+     */
+    int fake_socket_fd = socket(AF_INET, SOCK_DGRAM, 0);
+    struct sockaddr_in fake_server_addr;
+    memset(&fake_server_addr, 0, sizeof(fake_server_addr));
+    TEST_ASSERT_EQUAL(0,
+                      bind(fake_socket_fd,
+                           (struct sockaddr*) &fake_server_addr,
+                           sizeof(fake_server_addr)));
+    socklen_t fake_server_addr_len = sizeof(fake_server_addr);
+    TEST_ASSERT_EQUAL(0,
+                      getsockname(fake_socket_fd,
+                                  (struct sockaddr*) &fake_server_addr,
+                                  &fake_server_addr_len));
+    TEST_ASSERT_EQUAL(sizeof(fake_server_addr), fake_server_addr_len);
+    char fake_host_port[INET_ADDRSTRLEN + 1 + MAX_PORT_LEN];
+    TEST_ASSERT_NOT_NULL(inet_ntop(AF_INET,
+                                   &fake_server_addr.sin_addr,
+                                   fake_host_port,
+                                   sizeof(fake_host_port)));
+    const int fake_host_end = strlen(fake_host_port);
+    TEST_ASSERT_LESS_THAN(sizeof(fake_host_port) - fake_host_end,
+                          snprintf(&fake_host_port[fake_host_end],
+                                   sizeof(fake_host_port) - fake_host_end,
+                                   ":%d",
+                                   ntohs(fake_server_addr.sin_port)));
+    jaeger_remote_reporter remote_reporter;
+    char buffer[1024];
+    jaeger_metrics* metrics = jaeger_null_metrics();
+    TEST_ASSERT_TRUE(jaeger_remote_reporter_init(
+        &remote_reporter, fake_host_port, sizeof(buffer), metrics, logger));
+    r->report(r, &span, logger);
+    close(fake_socket_fd);
+    TEST_ASSERT_FALSE(jaeger_remote_reporter_flush(&remote_reporter, logger));
+    remote_reporter.destroy((jaeger_destructible*) &remote_reporter);
+
+    /* Test connection to real server works as expected. */
     const int server_fd = start_udp_server();
     struct sockaddr_in addr;
     memset(&addr, 0, sizeof(addr));
@@ -135,9 +173,6 @@ void test_reporter()
                                    ":%d",
                                    ntohs(addr.sin_port)));
 
-    jaeger_remote_reporter remote_reporter;
-    jaeger_metrics* metrics = jaeger_null_metrics();
-    char buffer[1024];
     TEST_ASSERT_TRUE(jaeger_remote_reporter_init(
         &remote_reporter, host_port, sizeof(buffer), metrics, logger));
     r = (jaeger_reporter*) &remote_reporter;
