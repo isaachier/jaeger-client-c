@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+/**
+ * @file
+ * Span, span context, and span ref representations and functions.
+ */
+
 #ifndef JAEGERTRACINGC_SPAN_H
 #define JAEGERTRACINGC_SPAN_H
 

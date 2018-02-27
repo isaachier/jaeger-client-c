@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+/**
+ * @file
+ * Span reporter interface.
+ */
+
 #ifndef JAEGERTRACINGC_REPORTER_H
 #define JAEGERTRACINGC_REPORTER_H
 

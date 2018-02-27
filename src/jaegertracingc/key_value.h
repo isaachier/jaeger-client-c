@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+/**
+ * @file
+ * Key value pair representation.
+ */
+
 #ifndef JAEGERTRACINGC_KEY_VALUE_H
 #define JAEGERTRACINGC_KEY_VALUE_H
 

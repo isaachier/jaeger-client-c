@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+/**
+ * @file
+ * Trace ID representation.
+ */
+
 #ifndef JAEGERTRACINGC_TRACE_ID_H
 #define JAEGERTRACINGC_TRACE_ID_H
 

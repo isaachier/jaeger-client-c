@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+/**
+ * @file
+ * Network utilities.
+ */
+
 #ifndef JAEGERTRACINGC_NET_H
 #define JAEGERTRACINGC_NET_H
 

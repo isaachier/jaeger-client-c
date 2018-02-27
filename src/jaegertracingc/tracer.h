@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+/**
+ * @file
+ * Tracer implementation.
+ */
+
 #ifndef JAEGERTRACINGC_TRACER_H
 #define JAEGERTRACINGC_TRACER_H
 

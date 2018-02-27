@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+/**
+ * @file
+ * Allocator struct and functions.
+ */
+
 #ifndef JAEGERTRACINGC_ALLOC_H
 #define JAEGERTRACINGC_ALLOC_H
 

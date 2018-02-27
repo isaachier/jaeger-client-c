@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+/**
+ * @file
+ * Metrics interfaces to track various numbers while tracing.
+ */
+
 #ifndef JAEGERTRACINGC_METRICS_H
 #define JAEGERTRACINGC_METRICS_H
 

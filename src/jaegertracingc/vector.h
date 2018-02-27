@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+/**
+ * @file
+ * C generic vector implementation.
+ */
+
 #ifndef JAEGERTRACINGC_VECTOR_H
 #define JAEGERTRACINGC_VECTOR_H
 

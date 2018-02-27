@@ -14,6 +14,13 @@
  * limitations under the License.
  */
 
+/**
+ * @file
+ * Log record representation for use in span.
+ * @see jaeger_span
+ * @see jaeger_span_log
+ */
+
 #ifndef JAEGERTRACINGC_LOG_RECORD_H
 #define JAEGERTRACINGC_LOG_RECORD_H
 

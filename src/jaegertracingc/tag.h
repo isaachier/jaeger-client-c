@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+/**
+ * @file
+ * Tag representation and functions.
+ */
+
 #ifndef JAEGERTRACINGC_TAG_H
 #define JAEGERTRACINGC_TAG_H
 

@@ -14,6 +14,12 @@
  * limitations under the License.
  */
 
+/**
+ * @file
+ * Threading utilities. Should work on single-threaded builds if
+ * JAEGERTRACINGC_MT is not defined.
+ */
+
 #ifndef JAEGERTRACINGC_THREADING_H
 #define JAEGERTRACINGC_THREADING_H
 

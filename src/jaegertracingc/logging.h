@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+/**
+ * @file
+ * Logging interface and initialization functions.
+ */
+
 #ifndef JAEGERTRACINGC_LOGGING_H
 #define JAEGERTRACINGC_LOGGING_H
 

@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+/**
+ * @file
+ * Timestamp and duration representations.
+ */
+
 #ifndef JAEGERTRACINGC_CLOCK_H
 #define JAEGERTRACINGC_CLOCK_H
 

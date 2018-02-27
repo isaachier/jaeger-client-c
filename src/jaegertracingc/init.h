@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+/**
+ * @file
+ * Library initialization functions. Installs default allocator and logger.
+ */
+
 #ifndef JAEGERTRACINGC_INIT_H
 #define JAEGERTRACINGC_INIT_H
 

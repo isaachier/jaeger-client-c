@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+/**
+ * @file
+ * Span sampler interface.
+ */
+
 #ifndef JAEGERTRACINGC_SAMPLER_H
 #define JAEGERTRACINGC_SAMPLER_H
 

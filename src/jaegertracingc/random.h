@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+/**
+ * @file
+ * Random number generation.
+ */
+
 #ifndef JAEGERTRACINGC_RANDOM_H
 #define JAEGERTRACINGC_RANDOM_H
 

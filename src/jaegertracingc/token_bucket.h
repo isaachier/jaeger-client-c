@@ -17,6 +17,12 @@
 #ifndef JAEGERTRACINGC_TOKEN_BUCKET_H
 #define JAEGERTRACINGC_TOKEN_BUCKET_H
 
+/**
+ * @file
+ * Token bucket implementation.
+ * @see jaeger_rate_limiting_sampler
+ */
+
 #include "jaegertracingc/clock.h"
 #include "jaegertracingc/common.h"
 

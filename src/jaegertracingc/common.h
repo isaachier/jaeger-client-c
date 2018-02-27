@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+/**
+ * @file
+ * Common headers, struct definitions, and macros.
+ */
+
 #ifndef JAEGERTRACINGC_COMMON_H
 #define JAEGERTRACINGC_COMMON_H
 

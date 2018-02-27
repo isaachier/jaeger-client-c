@@ -14,6 +14,12 @@
  * limitations under the License.
  */
 
+/**
+ * @file
+ * Sampling strategy type definitions. Mostly aliases protobuf-c generated
+ * types.
+ */
+
 #ifndef JAEGERTRACINGC_SAMPLING_STRATEGY_H
 #define JAEGERTRACINGC_SAMPLING_STRATEGY_H
 

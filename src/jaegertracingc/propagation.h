@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+/**
+ * @file
+ * Interfaces used in propagation of span context across RPC calls.
+ */
+
 #ifndef JAEGERTRACINGC_PROPAGATION_H
 #define JAEGERTRACINGC_PROPAGATION_H
 
