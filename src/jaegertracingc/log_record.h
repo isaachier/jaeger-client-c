@@ -31,6 +31,18 @@ typedef struct jaeger_log_record {
     jaeger_vector fields;
 } jaeger_log_record;
 
+static inline void jaeger_log_record_destroy(jaeger_log_record* log_record)
+{
+    if (log_record == NULL) {
+        return;
+    }
+    JAEGERTRACINGC_VECTOR_FOR_EACH(
+        &log_record->fields, jaeger_tag_destroy, jaeger_tag);
+    jaeger_vector_destroy(&log_record->fields);
+}
+
+JAEGERTRACINGC_WRAP_DESTROY(jaeger_log_record_destroy, jaeger_log_record)
+
 #define JAEGERTRACINGC_LOG_RECORD_INIT              \
     {                                               \
         .timestamp = JAEGERTRACINGC_TIMESTAMP_INIT, \
@@ -60,6 +72,7 @@ static inline bool jaeger_log_record_copy(jaeger_log_record* restrict dst,
                             &jaeger_tag_copy_wrapper,
                             NULL,
                             logger)) {
+        jaeger_log_record_destroy(dst);
         return false;
     }
     dst->timestamp = src->timestamp;
@@ -69,18 +82,6 @@ static inline bool jaeger_log_record_copy(jaeger_log_record* restrict dst,
 JAEGERTRACINGC_WRAP_COPY(jaeger_log_record_copy,
                          jaeger_log_record,
                          jaeger_log_record)
-
-static inline void jaeger_log_record_destroy(jaeger_log_record* log_record)
-{
-    if (log_record == NULL) {
-        return;
-    }
-    JAEGERTRACINGC_VECTOR_FOR_EACH(
-        &log_record->fields, jaeger_tag_destroy, jaeger_tag);
-    jaeger_vector_destroy(&log_record->fields);
-}
-
-JAEGERTRACINGC_WRAP_DESTROY(jaeger_log_record_destroy, jaeger_log_record)
 
 static inline void
 jaeger_log_record_protobuf_destroy(Jaegertracing__Protobuf__Log* log_record)

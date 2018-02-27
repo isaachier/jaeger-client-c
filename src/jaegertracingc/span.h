@@ -103,7 +103,7 @@ jaeger_span_context_copy(jaeger_span_context* restrict dst,
                             &jaeger_key_value_copy_wrapper,
                             NULL,
                             logger)) {
-        jaeger_span_context_clear(dst);
+        jaeger_span_context_destroy(dst);
         return false;
     }
     dst->trace_id = src->trace_id;
@@ -301,7 +301,7 @@ static inline bool jaeger_span_init(jaeger_span* span, jaeger_logger* logger)
     if (!jaeger_span_context_init(&span->context, logger)) {
         return false;
     }
-    if (jaeger_span_init_vectors(span, logger)) {
+    if (!jaeger_span_init_vectors(span, logger)) {
         goto cleanup;
     }
     return true;
@@ -318,7 +318,7 @@ static inline bool jaeger_span_copy(jaeger_span* restrict dst,
     assert(dst != NULL);
     assert(src != NULL);
     *dst = (jaeger_span) JAEGERTRACINGC_SPAN_INIT;
-    if (jaeger_span_init_vectors(dst, logger)) {
+    if (!jaeger_span_init_vectors(dst, logger)) {
         return false;
     }
     jaeger_lock(&dst->mutex, (jaeger_mutex*) &src->mutex);
@@ -356,7 +356,7 @@ static inline bool jaeger_span_copy(jaeger_span* restrict dst,
 
 cleanup:
     jaeger_mutex_unlock((jaeger_mutex*) &src->mutex);
-    jaeger_span_clear(dst);
+    jaeger_span_destroy(dst);
     jaeger_mutex_unlock(&dst->mutex);
     return false;
 }
@@ -495,16 +495,12 @@ jaeger_span_log_no_locking(jaeger_span* span,
         return false;
     }
     *log_record_copy = (jaeger_log_record) JAEGERTRACINGC_LOG_RECORD_INIT;
-    if (!jaeger_log_record_init(log_record_copy, logger)) {
-        goto cleanup;
-    }
     if (!jaeger_log_record_copy(log_record_copy, log_record, logger)) {
         goto cleanup;
     }
     return true;
 
 cleanup:
-    jaeger_log_record_destroy(log_record_copy);
     span->logs.len--;
     return false;
 }
