@@ -388,6 +388,11 @@ static inline bool jaeger_vector_protobuf_copy(
 {
     assert(dst != NULL);
     assert(n_dst != NULL);
+    if (jaeger_vector_length(src) == 0) {
+        *dst = NULL;
+        *n_dst = 0;
+        return true;
+    }
     jaeger_vector vec;
     if (!jaeger_vector_init(&vec, sizeof(void*), NULL, logger)) {
         return false;

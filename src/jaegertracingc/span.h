@@ -521,7 +521,7 @@ typedef struct jaeger_span_finish_options {
     /** The time the operation was completed. */
     jaeger_timestamp finish_time;
     /** Logs to append to the span logs. */
-    const jaeger_log_record** logs;
+    const jaeger_log_record* logs;
     /** Number of logs to append to the span logs. */
     int num_logs;
 } jaeger_span_finish_options;
@@ -559,11 +559,31 @@ jaeger_span_finish_with_options(jaeger_span* span,
             &finish_time, &span->start_time_steady, &elapsed_time);
         span->duration = elapsed_time;
 
+        assert(options->num_logs == 0 || options->logs != NULL);
         for (int i = 0; i < options->num_logs; i++) {
-            jaeger_span_log_no_locking(span, options->logs[i], NULL);
+            jaeger_span_log_no_locking(span, &options->logs[i], NULL);
         }
     }
     jaeger_mutex_unlock(&span->mutex);
+}
+
+static inline void
+jaeger_protobuf_list_destroy(void** data, int num, void (*dtor)(void*))
+{
+    if (num == 0) {
+        return;
+    }
+    assert(num > 0);
+    assert(data != NULL);
+    assert(dtor != NULL);
+    for (int i = 0; i < (int) num; i++) {
+        if (data[i] == NULL) {
+            continue;
+        }
+        dtor(data[i]);
+        jaeger_free(data[i]);
+    }
+    jaeger_free(data);
 }
 
 static inline void
@@ -581,40 +601,22 @@ jaeger_span_protobuf_destroy(Jaegertracing__Protobuf__Span* span)
         span->operation_name = NULL;
     }
     if (span->references != NULL) {
-        for (int i = 0; i < (int) span->n_references; i++) {
-            if (span->references[i] == NULL) {
-                continue;
-            }
-            jaeger_span_ref_protobuf_destroy(span->references[i]);
-            jaeger_free(span->references[i]);
-        }
-        jaeger_free(span->references);
+        jaeger_protobuf_list_destroy((void**) span->references,
+                                     span->n_references,
+                                     &jaeger_span_ref_protobuf_destroy_wrapper);
         span->references = NULL;
-        span->n_references = 0;
     }
     if (span->logs != NULL) {
-        for (int i = 0; i < (int) span->n_logs; i++) {
-            if (span->logs[i] == NULL) {
-                continue;
-            }
-            jaeger_log_record_protobuf_destroy(span->logs[i]);
-            jaeger_free(span->logs[i]);
-        }
-        jaeger_free(span->logs);
+        jaeger_protobuf_list_destroy(
+            (void**) span->logs,
+            span->n_logs,
+            &jaeger_log_record_protobuf_destroy_wrapper);
         span->logs = NULL;
-        span->n_logs = 0;
     }
     if (span->tags != NULL) {
-        for (int i = 0; i < (int) span->n_tags; i++) {
-            if (span->tags[i] == NULL) {
-                continue;
-            }
-            jaeger_tag_destroy(span->tags[i]);
-            jaeger_free(span->tags[i]);
-        }
-        jaeger_free(span->tags);
+        jaeger_protobuf_list_destroy(
+            (void**) span->tags, span->n_tags, &jaeger_tag_destroy_wrapper);
         span->tags = NULL;
-        span->n_tags = 0;
     }
 }
 
