@@ -2272,11 +2272,6 @@
 <div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric">Functions</p>
 <dl class="function">
-<dt id="c.jaeger_span_context_clear">
-<span class="target" id="span_8h_1a1c89397e7c108409867883dc0899bc92"></span>static void <code class="descname">jaeger_span_context_clear</code><span class="sig-paren">(</span><a class="reference internal" href="#c.jaeger_span_context" title="jaeger_span_context">jaeger_span_context</a>  *<em>&nbsp;ctx</em><span class="sig-paren">)</span><a class="headerlink" href="#c.jaeger_span_context_clear" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
 <dt id="c.jaeger_span_context_destroy">
 <span class="target" id="span_8h_1aa3be47f156685bd4691bd4381c7f85fd"></span>static void <code class="descname">jaeger_span_context_destroy</code><span class="sig-paren">(</span><a class="reference internal" href="#c.jaeger_span_context" title="jaeger_span_context">jaeger_span_context</a>  *<em>&nbsp;ctx</em><span class="sig-paren">)</span><a class="headerlink" href="#c.jaeger_span_context_destroy" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -2337,11 +2332,6 @@
 <dd></dd></dl>
 
 <dl class="function">
-<dt id="c.jaeger_span_clear">
-<span class="target" id="span_8h_1ad45ac1b77b804469457c17d04a123d14"></span>static void <code class="descname">jaeger_span_clear</code><span class="sig-paren">(</span><a class="reference internal" href="#c.jaeger_span" title="jaeger_span">jaeger_span</a>  *<em>&nbsp;span</em><span class="sig-paren">)</span><a class="headerlink" href="#c.jaeger_span_clear" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
 <dt id="c.jaeger_span_destroy">
 <span class="target" id="span_8h_1ac88958e24714006d54734961996ec2fa"></span>static void <code class="descname">jaeger_span_destroy</code><span class="sig-paren">(</span><a class="reference internal" href="#c.jaeger_span" title="jaeger_span">jaeger_span</a>  *<em>&nbsp;span</em><span class="sig-paren">)</span><a class="headerlink" href="#c.jaeger_span_destroy" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -2360,6 +2350,22 @@
 <dt id="c.jaeger_span_copy">
 <span class="target" id="span_8h_1a99d1ac416eaad11a009738571ed894c6"></span>static bool <code class="descname">jaeger_span_copy</code><span class="sig-paren">(</span><a class="reference internal" href="#c.jaeger_span" title="jaeger_span">jaeger_span</a>  *restrict<em>&nbsp;dst</em>, const  <a class="reference internal" href="#c.jaeger_span" title="jaeger_span">jaeger_span</a>  *restrict<em>&nbsp;src</em>, <a class="reference internal" href="#c.jaeger_logger" title="jaeger_logger">jaeger_logger</a>  *<em>&nbsp;logger</em><span class="sig-paren">)</span><a class="headerlink" href="#c.jaeger_span_copy" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="function">
+<dt id="c.jaeger_span_is_sampled_no_lock">
+<span class="target" id="span_8h_1a45a677c9e789efc2ec429c18d6c21339"></span>static bool <code class="descname">jaeger_span_is_sampled_no_lock</code><span class="sig-paren">(</span>const  <a class="reference internal" href="#c.jaeger_span" title="jaeger_span">jaeger_span</a>  *<em>&nbsp;span</em><span class="sig-paren">)</span><a class="headerlink" href="#c.jaeger_span_is_sampled_no_lock" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the sampling status of the span without locking. </p>
+<p><dl class="docutils">
+<dt><strong>Return</strong></dt>
+<dd>True if sampled, false otherwise. </dd>
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last simple">
+<li><code class="docutils literal notranslate"><span class="pre">span</span></code>: The span instance. </li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="c.jaeger_span_set_operation_name">
@@ -2410,22 +2416,6 @@
 <dd><ul class="breatheparameterlist first last simple">
 <li><code class="docutils literal notranslate"><span class="pre">span</span></code>: The span instance. </li>
 <li><code class="docutils literal notranslate"><span class="pre">tag</span></code>: The tag value to consider for sampling. </li>
-</ul>
-</dd>
-</dl>
-</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="c.jaeger_span_is_sampled_no_lock">
-<span class="target" id="span_8h_1a45a677c9e789efc2ec429c18d6c21339"></span>static bool <code class="descname">jaeger_span_is_sampled_no_lock</code><span class="sig-paren">(</span>const  <a class="reference internal" href="#c.jaeger_span" title="jaeger_span">jaeger_span</a>  *<em>&nbsp;span</em><span class="sig-paren">)</span><a class="headerlink" href="#c.jaeger_span_is_sampled_no_lock" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the sampling status of the span without locking. </p>
-<p><dl class="docutils">
-<dt><strong>Return</strong></dt>
-<dd>True if sampled, false otherwise. </dd>
-<dt><strong>Parameters</strong></dt>
-<dd><ul class="breatheparameterlist first last simple">
-<li><code class="docutils literal notranslate"><span class="pre">span</span></code>: The span instance. </li>
 </ul>
 </dd>
 </dl>
