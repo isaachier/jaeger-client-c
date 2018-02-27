@@ -60,22 +60,13 @@ typedef struct jaeger_span_context {
         .parent_id = 0, .flags = 0, .baggage = JAEGERTRACINGC_VECTOR_INIT \
     }
 
-static inline void jaeger_span_context_clear(jaeger_span_context* ctx)
+static inline void jaeger_span_context_destroy(jaeger_span_context* ctx)
 {
     if (ctx == NULL) {
         return;
     }
     JAEGERTRACINGC_VECTOR_FOR_EACH(
         &ctx->baggage, jaeger_key_value_destroy, jaeger_key_value);
-    jaeger_vector_clear(&ctx->baggage);
-}
-
-static inline void jaeger_span_context_destroy(jaeger_span_context* ctx)
-{
-    if (ctx == NULL) {
-        return;
-    }
-    jaeger_span_context_clear(ctx);
     jaeger_vector_destroy(&ctx->baggage);
 }
 
@@ -238,11 +229,13 @@ typedef struct jaeger_span {
     }
 
 /* N.B. Caller must be holding span->mutex if span is not null. */
-static inline void jaeger_span_clear(jaeger_span* span)
+static inline void jaeger_span_destroy(jaeger_span* span)
 {
     if (span == NULL) {
         return;
     }
+
+    jaeger_mutex_lock(&span->mutex);
     if (span->tracer != NULL) {
         span->tracer = NULL;
     }
@@ -251,24 +244,10 @@ static inline void jaeger_span_clear(jaeger_span* span)
         span->operation_name = NULL;
     }
     JAEGERTRACINGC_VECTOR_FOR_EACH(&span->tags, jaeger_tag_destroy, jaeger_tag);
-    jaeger_vector_clear(&span->tags);
     JAEGERTRACINGC_VECTOR_FOR_EACH(
         &span->logs, jaeger_log_record_destroy, jaeger_log_record);
-    jaeger_vector_clear(&span->logs);
     JAEGERTRACINGC_VECTOR_FOR_EACH(
         &span->refs, jaeger_span_ref_destroy, jaeger_span_ref);
-    jaeger_vector_clear(&span->refs);
-    jaeger_span_context_clear(&span->context);
-}
-
-static inline void jaeger_span_destroy(jaeger_span* span)
-{
-    if (span == NULL) {
-        return;
-    }
-
-    jaeger_mutex_lock(&span->mutex);
-    jaeger_span_clear(span);
     jaeger_span_context_destroy(&span->context);
     jaeger_vector_destroy(&span->tags);
     jaeger_vector_destroy(&span->logs);
@@ -362,6 +341,17 @@ cleanup:
 }
 
 /**
+ * Get the sampling status of the span without locking.
+ * @param span The span instance.
+ * @return True if sampled, false otherwise.
+ */
+static inline bool jaeger_span_is_sampled_no_lock(const jaeger_span* span)
+{
+    assert(span != NULL);
+    return (span->context.flags & jaeger_sampling_flag_sampled) != 0;
+}
+
+/**
  * Set operation name of span.
  * @param span The span instance.
  * @param operation_name The new operation name.
@@ -374,17 +364,27 @@ static inline bool jaeger_span_set_operation_name(jaeger_span* span,
 {
     assert(span != NULL);
     assert(operation_name != NULL);
+    bool success = true;
+    jaeger_mutex_lock(&span->mutex);
+    if (!jaeger_span_is_sampled_no_lock(span)) {
+        goto cleanup;
+    }
+
     char* operation_name_copy = jaeger_strdup(operation_name, logger);
     if (operation_name_copy == NULL) {
-        return false;
+        success = false;
+        goto cleanup;
     }
-    jaeger_mutex_lock(&span->mutex);
+
     if (span->operation_name != NULL) {
         jaeger_free(span->operation_name);
     }
     span->operation_name = operation_name_copy;
+    goto cleanup;
+
+cleanup:
     jaeger_mutex_unlock(&span->mutex);
-    return true;
+    return success;
 }
 
 /**
@@ -437,17 +437,6 @@ static inline bool jaeger_span_set_sampling_priority(jaeger_span* span,
     }
     jaeger_mutex_unlock(&span->mutex);
     return success;
-}
-
-/**
- * Get the sampling status of the span without locking.
- * @param span The span instance.
- * @return True if sampled, false otherwise.
- */
-static inline bool jaeger_span_is_sampled_no_lock(const jaeger_span* span)
-{
-    assert(span != NULL);
-    return (span->context.flags & jaeger_sampling_flag_sampled) != 0;
 }
 
 /**
