@@ -95,6 +95,9 @@ jaeger_span_context_copy(jaeger_span_context* restrict dst,
 {
     assert(dst != NULL);
     assert(src != NULL);
+    if (!jaeger_span_context_init(dst, logger)) {
+        return false;
+    }
     if (!jaeger_vector_copy(&dst->baggage,
                             &src->baggage,
                             &jaeger_key_value_copy_wrapper,
@@ -149,6 +152,9 @@ static inline bool jaeger_span_ref_copy(void* arg,
     assert(dst != NULL);
     assert(src != NULL);
     jaeger_span_ref* dst_span_ref = (jaeger_span_ref*) dst;
+    /* Do not call jaeger_span_ref_init so we avoid memory leak in
+     * jaeger_span_context_copy due to double initialization of span context.
+     */
     const jaeger_span_ref* src_span_ref = (const jaeger_span_ref*) src;
     if (!jaeger_span_context_copy(
             &dst_span_ref->context, &src_span_ref->context, logger)) {
@@ -271,6 +277,23 @@ static inline void jaeger_span_destroy(jaeger_span* span)
     jaeger_mutex_destroy(&span->mutex);
 }
 
+static inline bool jaeger_span_init_vectors(jaeger_span* span,
+                                            jaeger_logger* logger)
+{
+    if (!jaeger_vector_init(&span->tags, sizeof(jaeger_tag), NULL, logger)) {
+        return false;
+    }
+    if (!jaeger_vector_init(
+            &span->logs, sizeof(jaeger_log_record), NULL, logger)) {
+        return false;
+    }
+    if (!jaeger_vector_init(
+            &span->refs, sizeof(jaeger_span_ref), NULL, logger)) {
+        return false;
+    }
+    return true;
+}
+
 static inline bool jaeger_span_init(jaeger_span* span, jaeger_logger* logger)
 {
     assert(span != NULL);
@@ -278,15 +301,7 @@ static inline bool jaeger_span_init(jaeger_span* span, jaeger_logger* logger)
     if (!jaeger_span_context_init(&span->context, logger)) {
         return false;
     }
-    if (!jaeger_vector_init(&span->tags, sizeof(jaeger_tag), NULL, logger)) {
-        goto cleanup;
-    }
-    if (!jaeger_vector_init(
-            &span->logs, sizeof(jaeger_log_record), NULL, logger)) {
-        goto cleanup;
-    }
-    if (!jaeger_vector_init(
-            &span->refs, sizeof(jaeger_span_ref), NULL, logger)) {
+    if (jaeger_span_init_vectors(span, logger)) {
         goto cleanup;
     }
     return true;
@@ -302,6 +317,10 @@ static inline bool jaeger_span_copy(jaeger_span* restrict dst,
 {
     assert(dst != NULL);
     assert(src != NULL);
+    *dst = (jaeger_span) JAEGERTRACINGC_SPAN_INIT;
+    if (jaeger_span_init_vectors(dst, logger)) {
+        return false;
+    }
     jaeger_lock(&dst->mutex, (jaeger_mutex*) &src->mutex);
     dst->start_time_system = src->start_time_system;
     dst->start_time_steady = src->start_time_steady;
@@ -475,11 +494,19 @@ jaeger_span_log_no_locking(jaeger_span* span,
     if (log_record_copy == NULL) {
         return false;
     }
+    *log_record_copy = (jaeger_log_record) JAEGERTRACINGC_LOG_RECORD_INIT;
+    if (!jaeger_log_record_init(log_record_copy, logger)) {
+        goto cleanup;
+    }
     if (!jaeger_log_record_copy(log_record_copy, log_record, logger)) {
-        span->logs.len--;
-        return false;
+        goto cleanup;
     }
     return true;
+
+cleanup:
+    jaeger_log_record_destroy(log_record_copy);
+    span->logs.len--;
+    return false;
 }
 
 /**

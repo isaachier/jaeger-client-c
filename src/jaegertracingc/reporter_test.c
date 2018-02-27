@@ -69,6 +69,14 @@ void test_reporter()
 
     jaeger_log_record log = JAEGERTRACINGC_LOG_RECORD_INIT;
     TEST_ASSERT_TRUE(jaeger_log_record_init(&log, logger));
+    jaeger_tag* field = jaeger_vector_append(&log.fields, logger);
+    TEST_ASSERT_NOT_NULL(field);
+    *field = (jaeger_tag) JAEGERTRACINGC_TAG_INIT;
+    TEST_ASSERT_TRUE(jaeger_tag_init(field, "key", logger));
+    field->value_case = JAEGERTRACINGC_TAG_TYPE(STR);
+    field->str_value = jaeger_strdup("value", logger);
+    TEST_ASSERT_NOT_NULL(field->str_value);
+
     TEST_ASSERT_TRUE(jaeger_span_log(&span, &log, logger));
     jaeger_log_record_destroy(&log);
 

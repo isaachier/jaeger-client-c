@@ -28,13 +28,13 @@ extern "C" {
 
 typedef struct jaeger_log_record {
     jaeger_timestamp timestamp;
-    jaeger_vector tags;
+    jaeger_vector fields;
 } jaeger_log_record;
 
 #define JAEGERTRACINGC_LOG_RECORD_INIT              \
     {                                               \
         .timestamp = JAEGERTRACINGC_TIMESTAMP_INIT, \
-        .tags = JAEGERTRACINGC_VECTOR_INIT          \
+        .fields = JAEGERTRACINGC_VECTOR_INIT        \
     }
 
 static inline bool jaeger_log_record_init(jaeger_log_record* log_record,
@@ -43,7 +43,7 @@ static inline bool jaeger_log_record_init(jaeger_log_record* log_record,
     assert(log_record != NULL);
     jaeger_timestamp_now(&log_record->timestamp);
     return jaeger_vector_init(
-        &log_record->tags, sizeof(jaeger_tag), NULL, logger);
+        &log_record->fields, sizeof(jaeger_tag), NULL, logger);
 }
 
 static inline bool jaeger_log_record_copy(jaeger_log_record* restrict dst,
@@ -52,8 +52,14 @@ static inline bool jaeger_log_record_copy(jaeger_log_record* restrict dst,
 {
     assert(dst != NULL);
     assert(src != NULL);
-    if (!jaeger_vector_copy(
-            &dst->tags, &src->tags, &jaeger_tag_copy_wrapper, NULL, logger)) {
+    if (!jaeger_log_record_init(dst, logger)) {
+        return false;
+    }
+    if (!jaeger_vector_copy(&dst->fields,
+                            &src->fields,
+                            &jaeger_tag_copy_wrapper,
+                            NULL,
+                            logger)) {
         return false;
     }
     dst->timestamp = src->timestamp;
@@ -70,8 +76,8 @@ static inline void jaeger_log_record_destroy(jaeger_log_record* log_record)
         return;
     }
     JAEGERTRACINGC_VECTOR_FOR_EACH(
-        &log_record->tags, jaeger_tag_destroy, jaeger_tag);
-    jaeger_vector_destroy(&log_record->tags);
+        &log_record->fields, jaeger_tag_destroy, jaeger_tag);
+    jaeger_vector_destroy(&log_record->fields);
 }
 
 JAEGERTRACINGC_WRAP_DESTROY(jaeger_log_record_destroy, jaeger_log_record)
@@ -111,7 +117,7 @@ jaeger_log_record_to_protobuf(Jaegertracing__Protobuf__Log* restrict dst,
     dst->timestamp = jaeger_timestamp_microseconds(&src->timestamp);
     if (!jaeger_vector_protobuf_copy((void***) &dst->fields,
                                      &dst->n_fields,
-                                     &src->tags,
+                                     &src->fields,
                                      sizeof(jaeger_tag),
                                      &jaeger_tag_copy_wrapper,
                                      &jaeger_tag_destroy_wrapper,

@@ -78,16 +78,7 @@ static inline bool jaeger_key_value_copy(jaeger_key_value* restrict dst,
 {
     assert(dst != NULL);
     assert(src != NULL);
-    dst->key = jaeger_strdup(src->key, logger);
-    if (dst->key == NULL) {
-        return false;
-    }
-    dst->value = jaeger_strdup(src->value, logger);
-    if (dst->value == NULL) {
-        jaeger_key_value_destroy(dst);
-        return false;
-    }
-    return true;
+    return jaeger_key_value_init(dst, src->key, src->value, logger);
 }
 
 JAEGERTRACINGC_WRAP_COPY(jaeger_key_value_copy,

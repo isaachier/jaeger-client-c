@@ -64,17 +64,34 @@ static inline void jaeger_tag_destroy(jaeger_tag* tag)
 
 JAEGERTRACINGC_WRAP_DESTROY(jaeger_tag_destroy, jaeger_tag)
 
+/** Initialize a tag with no value.
+ * @param tag The tag instance.
+ * @param key The tag key.
+ * @param logger Logger to log to in case of error.
+ * @return True on success, false otherwise.
+ */
+static inline bool
+jaeger_tag_init(jaeger_tag* tag, const char* key, jaeger_logger* logger)
+{
+    assert(tag != NULL);
+    assert(key != NULL);
+
+    tag->key = jaeger_strdup(key, logger);
+    if (tag->key == NULL) {
+        return false;
+    }
+    tag->value_case = JAEGERTRACING__PROTOBUF__TAG__VALUE__NOT_SET;
+    return true;
+}
+
 static inline bool
 jaeger_tag_copy(jaeger_tag* dst, const jaeger_tag* src, jaeger_logger* logger)
 {
     assert(dst != NULL);
     assert(src != NULL);
     *dst = (jaeger_tag) JAEGERTRACINGC_TAG_INIT;
-    if (src->key != NULL) {
-        dst->key = jaeger_strdup(src->key, logger);
-        if (dst->key == NULL) {
-            return false;
-        }
+    if (!jaeger_tag_init(dst, src->key, logger)) {
+        return false;
     }
 
     dst->value_case = src->value_case;
