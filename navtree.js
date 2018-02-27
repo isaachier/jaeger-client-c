@@ -10,7 +10,13 @@ var NAVTREE =
       ] ]
     ] ],
     [ "Files", null, [
-      [ "File List", "files.html", "files" ]
+      [ "File List", "files.html", "files" ],
+      [ "Globals", "globals.html", [
+        [ "All", "globals.html", null ],
+        [ "Functions", "globals_func.html", null ],
+        [ "Typedefs", "globals_type.html", null ],
+        [ "Macros", "globals_defs.html", null ]
+      ] ]
     ] ]
   ] ]
 ];
@@ -18,7 +24,8 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "agent_8pb-c_8h_source.html",
-"structjaeger__span__context.html#a7b79bf9f7994b640a154665cce75ec68"
+"struct__Jaegertracing____Protobuf____SamplingManager____PerOperationSamplingStrategy____OperationSamplingStrategy.html#ae3e65181bbe7873e7d7bd30083b4eb51",
+"vector_8h_source.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

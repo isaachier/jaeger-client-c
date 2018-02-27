@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['info',['info',['../structjaeger__logger.html#a8225a39d6955e08f48271d70c0e7d221',1,'jaeger_logger']]]
+  ['finish_5ftime',['finish_time',['../structjaeger__span__finish__options.html#a9c18ce18a4885d1909194c9e3af849d2',1,'jaeger_span_finish_options']]],
+  ['free',['free',['../structjaeger__allocator.html#ab78cf40f1aa7faf1001b466bc4f07c33',1,'jaeger_allocator']]]
 ];

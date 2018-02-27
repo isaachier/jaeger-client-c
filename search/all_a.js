@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['realloc',['realloc',['../structjaeger__allocator.html#a5d839c78b9aa35c89776628b79bb97bb',1,'jaeger_allocator']]]
+  ['malloc',['malloc',['../structjaeger__allocator.html#ab89e0bce9f7223d60b7788b51dcceaa6',1,'jaeger_allocator']]],
+  ['metrics_2eh',['metrics.h',['../metrics_8h.html',1,'']]]
 ];
