@@ -18,43 +18,28 @@ endif()
 set(__GENERATE_DOCUMENTATION ON)
 
 function(generate_documentation)
-  set(copyright_holder "Uber Technologies, Inc.")
-  string(TIMESTAMP copyright_year "%Y")
-  set(sphinx_relative_path "doc")
-  set(sphinx_src_path "${CMAKE_CURRENT_SOURCE_DIR}/${sphinx_relative_path}")
-  set(sphinx_out_path
-    "${CMAKE_CURRENT_BINARY_DIR}/${sphinx_relative_path}/$<CONFIG>")
-  set(static_path "${sphinx_src_path}/_static")
-  set(templates_path "${sphinx_src_path}/_templates")
-  file(RELATIVE_PATH constants_in_h_rel_path
-    ${sphinx_out_path}
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/jaegertracingc/constants.h.in")
-  get_filename_component(src_rel_path
-    ${constants_in_h_rel_path}
-    DIRECTORY)
-  file(RELATIVE_PATH constants_gen_h_rel_path
-    ${sphinx_out_path}
-    "${CMAKE_CURRENT_BINARY_DIR}/src/jaegertracingc/constants.h")
-  get_filename_component(gen_inc_rel_path
-    ${constants_gen_h_rel_path}
-    DIRECTORY)
+  find_package(Doxygen)
+  cmake_dependent_option(JAEGERTRACINGC_BUILD_DOC "Build documentation" ON
+                         "DOXYGEN_EXECUTABLE" OFF)
+  if(NOT JAEGERTRACINGC_BUILD_DOC)
+    return()
+  endif()
 
   get_target_property(defs jaegertracingc COMPILE_DEFINITIONS)
   get_target_property(inc jaegertracingc INCLUDE_DIRECTORIES)
 
-  file(READ "${sphinx_src_path}/conf.py.in" conf_content)
-  string(CONFIGURE "${conf_content}" conf_content @ONLY)
-  file(GENERATE OUTPUT "${sphinx_out_path}/conf.py"
-       CONTENT "${conf_content}")
+  set(doxygen_out_path "${CMAKE_CURRENT_BINARY_DIR}/doc/$<CONFIG>")
 
-  file(READ "${sphinx_src_path}/index.rst.in" index_content)
-  string(CONFIGURE "${index_content}" index_content @ONLY)
-  file(GENERATE OUTPUT "${sphinx_out_path}/index.rst"
-       CONTENT "${index_content}")
+  file(READ "${CMAKE_CURRENT_SOURCE_DIR}/doc/Doxyfile.in" doxyfile_content)
+  string(CONFIGURE "${doxyfile_content}" doxyfile_content @ONLY)
+  file(GENERATE OUTPUT "${doxygen_out_path}/Doxyfile"
+       CONTENT "${doxyfile_content}")
 
   add_custom_target(doc
-    COMMAND ${sphinx_build} -M html ${sphinx_out_path} ${sphinx_out_path}
-    DEPENDS "${sphinx_out_path}/conf.py" "${sphinx_out_path}/index.rst"
+    COMMAND ${DOXYGEN_EXECUTABLE} "${doxygen_out_path}/Doxyfile"
+    DEPENDS "${doxygen_out_path}/Doxyfile"
+            "${CMAKE_CURRENT_SOURCE_DIR}/doc/Doxyfile.in"
     VERBATIM
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     USES_TERMINAL)
 endfunction()

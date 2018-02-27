@@ -291,23 +291,4 @@ if(BUILD_TESTING)
   endif()
 endif()
 
-find_program(doxygen "doxygen")
-if(doxygen)
-  message(STATUS "Found doxygen: ${doxygen}")
-else()
-  message(STATUS "Will not build documentation because doxygen was not found")
-endif()
-
-find_program(sphinx_build "sphinx-build")
-if(sphinx_build)
-  message(STATUS "Found sphinx-build: ${sphinx_build}")
-else()
-  message(STATUS
-    "Will not build documentation because sphinx-build was not found")
-endif()
-
-cmake_dependent_option(JAEGERTRACINGC_BUILD_DOC "Build documentation" ON
-                       "doxygen;sphinx_build" OFF)
-if(JAEGERTRACINGC_BUILD_DOC)
-  generate_documentation()
-endif()
+generate_documentation()

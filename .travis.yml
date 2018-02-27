@@ -16,7 +16,6 @@ addons:
     - lcov
     - valgrind
     - doxygen
-    - python-pip
 matrix:
   include:
   - os: linux
@@ -129,7 +128,6 @@ cache:
 before_install:
 - eval "${MATRIX_EVAL}"
 - ./scripts/install-deps.sh "$HOME/install"
-- pip install --user -r requirements.txt
 script:
 - ./scripts/build.sh "$HOME/install"
 after_success:
