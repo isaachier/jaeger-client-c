@@ -103,6 +103,7 @@ $(document).ready(function(){initNavTree('tracer_8h.html','');});
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Data Structures</a> &#124;
+<a href="#define-members">Macros</a> &#124;
 <a href="#typedef-members">Typedefs</a>  </div>
   <div class="headertitle">
 <div class="title">tracer.h File Reference</div>  </div>
@@ -112,6 +113,9 @@ $(document).ready(function(){initNavTree('tracer_8h.html','');});
 <p>Tracer implementation.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;<a class="el" href="common_8h_source.html">jaegertracingc/common.h</a>&quot;</code><br/>
+<code>#include &quot;<a class="el" href="reporter_8h_source.html">jaegertracingc/reporter.h</a>&quot;</code><br/>
+<code>#include &quot;<a class="el" href="sampler_8h_source.html">jaegertracingc/sampler.h</a>&quot;</code><br/>
+<code>#include &quot;<a class="el" href="span_8h_source.html">jaegertracingc/span.h</a>&quot;</code><br/>
 <code>#include &quot;<a class="el" href="tag_8h_source.html">jaegertracingc/tag.h</a>&quot;</code><br/>
 <code>#include &quot;<a class="el" href="vector_8h_source.html">jaegertracingc/vector.h</a>&quot;</code><br/>
 </div>
@@ -119,18 +123,47 @@ $(document).ready(function(){initNavTree('tracer_8h.html','');});
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Data Structures</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structjaeger__tracer__options.html">jaeger_tracer_options</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Options that can be used to customize the tracer.  <a href="structjaeger__tracer__options.html#details">More...</a><br/></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structjaeger__tracer.html">jaeger_tracer</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:a7c0027c81aa5510e7e6ca12a52ad85cd"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><b>JAEGER_TRACER_OPTIONS_INIT</b></td></tr>
+<tr class="separator:a7c0027c81aa5510e7e6ca12a52ad85cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
+<tr class="memitem:abe813aa7689a8224a1545960d0efce71"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abe813aa7689a8224a1545960d0efce71"></a>
+typedef struct <br class="typebreak"/>
+<a class="el" href="structjaeger__tracer__options.html">jaeger_tracer_options</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tracer_8h.html#abe813aa7689a8224a1545960d0efce71">jaeger_tracer_options</a></td></tr>
+<tr class="memdesc:abe813aa7689a8224a1545960d0efce71"><td class="mdescLeft">&#160;</td><td class="mdescRight">Options that can be used to customize the tracer. <br/></td></tr>
+<tr class="separator:abe813aa7689a8224a1545960d0efce71"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aecb3ad27e5f06cfdc881d96ebec29783"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aecb3ad27e5f06cfdc881d96ebec29783"></a>
 typedef struct <a class="el" href="structjaeger__tracer.html">jaeger_tracer</a>&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_tracer</b></td></tr>
 <tr class="separator:aecb3ad27e5f06cfdc881d96ebec29783"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Tracer implementation. </p>
-</div></div><!-- contents -->
+</div><h2 class="groupheader">Macro Definition Documentation</h2>
+<a class="anchor" id="a7c0027c81aa5510e7e6ca12a52ad85cd"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define JAEGER_TRACER_OPTIONS_INIT</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">{                              \</div>
+<div class="line">        .gen_128_bit = <span class="keyword">false</span>       \</div>
+<div class="line">    }</div>
+</div><!-- fragment -->
+</div>
+</div>
+</div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->

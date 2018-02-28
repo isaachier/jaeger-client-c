@@ -11,10 +11,10 @@ var reporter_8h =
     [ "jaeger_in_memory_reporter", "reporter_8h.html#afc4b14f7178f166baca885aea83dff04", null ],
     [ "jaeger_remote_reporter", "reporter_8h.html#a654864cc63645948293a6f26381240b1", null ],
     [ "jaeger_reporter", "reporter_8h.html#a1bd5a6feda92a6a127a8d3aee2cf273a", null ],
-    [ "jaeger_composite_reporter_init", "reporter_8h.html#a1312f422295ab319e5f31fe06f206383", null ],
-    [ "jaeger_in_memory_reporter_init", "reporter_8h.html#a67c358ea76e0c8f7443c6505cd0548e5", null ],
+    [ "jaeger_composite_reporter_init", "reporter_8h.html#a943eedaf7c7dec3d6810d538fc083b4d", null ],
+    [ "jaeger_in_memory_reporter_init", "reporter_8h.html#ab348b89e85a9eb6487b28ac8be08dd38", null ],
     [ "jaeger_logging_reporter_init", "reporter_8h.html#a6b1b2dc017426244f2986867981f6c18", null ],
     [ "jaeger_null_reporter", "reporter_8h.html#ac55084184207b8552438c3142f00b877", null ],
-    [ "jaeger_remote_reporter_flush", "reporter_8h.html#a8ff6487bf2f9507b43c1e630dd19402c", null ],
-    [ "jaeger_remote_reporter_init", "reporter_8h.html#a2bba77a67817cce320a89c21090ebc63", null ]
+    [ "jaeger_remote_reporter_flush", "reporter_8h.html#ab3c0b584d3ab646ef73007375ce83d96", null ],
+    [ "jaeger_remote_reporter_init", "reporter_8h.html#a110fed594e4e9a0d96a3f9f36812a665", null ]
 ];

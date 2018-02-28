@@ -242,15 +242,15 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_guaranteed_thr
 <tr class="memitem:a7bb0d1e70bc76e53e5b4c7b20ce70333"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7bb0d1e70bc76e53e5b4c7b20ce70333"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_guaranteed_throughput_probabilistic_sampler_update</b> (<a class="el" href="structjaeger__guaranteed__throughput__probabilistic__sampler.html">jaeger_guaranteed_throughput_probabilistic_sampler</a> *sampler, double lower_bound, double sampling_rate)</td></tr>
 <tr class="separator:a7bb0d1e70bc76e53e5b4c7b20ce70333"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5c98918ebc40d6fd1c2c76d5e6af2a08"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5c98918ebc40d6fd1c2c76d5e6af2a08"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_adaptive_sampler_init</b> (<a class="el" href="structjaeger__adaptive__sampler.html">jaeger_adaptive_sampler</a> *sampler, const <a class="el" href="struct__Jaegertracing____Protobuf____SamplingManager____PerOperationSamplingStrategy.html">jaeger_per_operation_strategy</a> *strategies, int max_operations, <a class="el" href="structjaeger__logger.html">jaeger_logger</a> *logger)</td></tr>
-<tr class="separator:a5c98918ebc40d6fd1c2c76d5e6af2a08"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af13f80ca7571ffacda212f79a9deed88"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af13f80ca7571ffacda212f79a9deed88"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_remotely_controlled_sampler_init</b> (<a class="el" href="structjaeger__remotely__controlled__sampler.html">jaeger_remotely_controlled_sampler</a> *sampler, const char *service_name, const char *sampling_server_url, const <a class="el" href="structjaeger__sampler__choice.html">jaeger_sampler_choice</a> *initial_sampler, int max_operations, <a class="el" href="structjaeger__metrics.html">jaeger_metrics</a> *metrics, <a class="el" href="structjaeger__logger.html">jaeger_logger</a> *logger)</td></tr>
-<tr class="separator:af13f80ca7571ffacda212f79a9deed88"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab92835c0caf5507bd6cd6a3cda38cd91"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab92835c0caf5507bd6cd6a3cda38cd91"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_remotely_controlled_sampler_update</b> (<a class="el" href="structjaeger__remotely__controlled__sampler.html">jaeger_remotely_controlled_sampler</a> *sampler, <a class="el" href="structjaeger__logger.html">jaeger_logger</a> *logger)</td></tr>
-<tr class="separator:ab92835c0caf5507bd6cd6a3cda38cd91"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a685ed0ff91439171e665fe98fdba8bbd"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a685ed0ff91439171e665fe98fdba8bbd"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_adaptive_sampler_init</b> (<a class="el" href="structjaeger__adaptive__sampler.html">jaeger_adaptive_sampler</a> *sampler, const <a class="el" href="struct__Jaegertracing____Protobuf____SamplingManager____PerOperationSamplingStrategy.html">jaeger_per_operation_strategy</a> *strategies, int max_operations)</td></tr>
+<tr class="separator:a685ed0ff91439171e665fe98fdba8bbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abea4d6e8735ce1927564b56b88c7b438"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abea4d6e8735ce1927564b56b88c7b438"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_remotely_controlled_sampler_init</b> (<a class="el" href="structjaeger__remotely__controlled__sampler.html">jaeger_remotely_controlled_sampler</a> *sampler, const char *service_name, const char *sampling_server_url, const <a class="el" href="structjaeger__sampler__choice.html">jaeger_sampler_choice</a> *initial_sampler, int max_operations, <a class="el" href="structjaeger__metrics.html">jaeger_metrics</a> *metrics)</td></tr>
+<tr class="separator:abea4d6e8735ce1927564b56b88c7b438"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af15672048a099456a17c3e7eb0758867"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af15672048a099456a17c3e7eb0758867"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_remotely_controlled_sampler_update</b> (<a class="el" href="structjaeger__remotely__controlled__sampler.html">jaeger_remotely_controlled_sampler</a> *sampler)</td></tr>
+<tr class="separator:af15672048a099456a17c3e7eb0758867"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Span sampler interface. </p>
@@ -304,11 +304,9 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_remotely_contr
 <div class="line">    bool (*is_sampled)(<span class="keyword">struct </span><a class="code" href="structjaeger__sampler.html">jaeger_sampler</a> * sampler, \</div>
 <div class="line">                       const <a class="code" href="structjaeger__trace__id.html">jaeger_trace_id</a>* trace_id, \</div>
 <div class="line">                       const <span class="keywordtype">char</span>* operation,           \</div>
-<div class="line">                       jaeger_vector* tags,             <a class="code" href="logging_8h.html#ad1d12d8cc063a770d4feea4dfec02785">\</a></div>
-<div class="line"><a class="code" href="logging_8h.html#ad1d12d8cc063a770d4feea4dfec02785">                       jaeger_logger</a>* logger)</div>
+<div class="line">                       jaeger_vector* tags)</div>
 <div class="ttc" id="structjaeger__trace__id_html"><div class="ttname"><a href="structjaeger__trace__id.html">jaeger_trace_id</a></div><div class="ttdoc">128 bit unique ID for a given trace. </div><div class="ttdef"><b>Definition:</b> trace_id.h:33</div></div>
-<div class="ttc" id="logging_8h_html_ad1d12d8cc063a770d4feea4dfec02785"><div class="ttname"><a href="logging_8h.html#ad1d12d8cc063a770d4feea4dfec02785">jaeger_logger</a></div><div class="ttdeci">struct jaeger_logger jaeger_logger</div><div class="ttdoc">Logger interface to customize log output. </div></div>
-<div class="ttc" id="structjaeger__sampler_html"><div class="ttname"><a href="structjaeger__sampler.html">jaeger_sampler</a></div><div class="ttdef"><b>Definition:</b> sampler.h:51</div></div>
+<div class="ttc" id="structjaeger__sampler_html"><div class="ttname"><a href="structjaeger__sampler.html">jaeger_sampler</a></div><div class="ttdef"><b>Definition:</b> sampler.h:50</div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -327,7 +325,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_remotely_contr
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line"><span class="keywordflow">case</span> jaeger_##type##_sampler_type:         \</div>
 <div class="line">        return (<a class="code" href="structjaeger__sampler.html">jaeger_sampler</a>*) &amp;sampler-&gt;type##_sampler;</div>
-<div class="ttc" id="structjaeger__sampler_html"><div class="ttname"><a href="structjaeger__sampler.html">jaeger_sampler</a></div><div class="ttdef"><b>Definition:</b> sampler.h:51</div></div>
+<div class="ttc" id="structjaeger__sampler_html"><div class="ttname"><a href="structjaeger__sampler.html">jaeger_sampler</a></div><div class="ttdef"><b>Definition:</b> sampler.h:50</div></div>
 </div><!-- fragment -->
 </div>
 </div>

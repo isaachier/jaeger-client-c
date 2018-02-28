@@ -112,8 +112,9 @@ $(document).ready(function(){initNavTree('alloc_8h.html','');});
 
 <p>Allocator struct and functions.  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &quot;<a class="el" href="common_8h_source.html">jaegertracingc/common.h</a>&quot;</code><br/>
-<code>#include &quot;<a class="el" href="init_8h_source.html">jaegertracingc/init.h</a>&quot;</code><br/>
+<div class="textblock"><code>#include &lt;assert.h&gt;</code><br/>
+<code>#include &lt;stdint.h&gt;</code><br/>
+<code>#include &lt;string.h&gt;</code><br/>
 <code>#include &quot;<a class="el" href="logging_8h_source.html">jaegertracingc/logging.h</a>&quot;</code><br/>
 </div>
 <p><a href="alloc_8h_source.html">Go to the source code of this file.</a></p>
@@ -132,12 +133,27 @@ Typedefs</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ab6f3920a57cfca8bcc5c01577928bb52"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structjaeger__allocator.html">jaeger_allocator</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="alloc_8h.html#ab6f3920a57cfca8bcc5c01577928bb52">jaeger_built_in_allocator</a> ()</td></tr>
-<tr class="memdesc:ab6f3920a57cfca8bcc5c01577928bb52"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wrapper for built-in allocation functions.  <a href="#ab6f3920a57cfca8bcc5c01577928bb52">More...</a><br/></td></tr>
-<tr class="separator:ab6f3920a57cfca8bcc5c01577928bb52"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3ee76f30aaf69a4afab171e37851d6bc"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structjaeger__allocator.html">jaeger_allocator</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="alloc_8h.html#a3ee76f30aaf69a4afab171e37851d6bc">jaeger_null_allocator</a> ()</td></tr>
-<tr class="memdesc:a3ee76f30aaf69a4afab171e37851d6bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wrapper for null allocation functions.  <a href="#a3ee76f30aaf69a4afab171e37851d6bc">More...</a><br/></td></tr>
-<tr class="separator:a3ee76f30aaf69a4afab171e37851d6bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abba0f94c3fc30d4184dd15706fff3879"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structjaeger__allocator.html">jaeger_allocator</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="alloc_8h.html#abba0f94c3fc30d4184dd15706fff3879">jaeger_built_in_allocator</a> (void)</td></tr>
+<tr class="memdesc:abba0f94c3fc30d4184dd15706fff3879"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wrapper for built-in allocation functions.  <a href="#abba0f94c3fc30d4184dd15706fff3879">More...</a><br/></td></tr>
+<tr class="separator:abba0f94c3fc30d4184dd15706fff3879"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a312e479c128951e44cbfeab715691a82"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structjaeger__allocator.html">jaeger_allocator</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="alloc_8h.html#a312e479c128951e44cbfeab715691a82">jaeger_null_allocator</a> (void)</td></tr>
+<tr class="memdesc:a312e479c128951e44cbfeab715691a82"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wrapper for null allocation functions.  <a href="#a312e479c128951e44cbfeab715691a82">More...</a><br/></td></tr>
+<tr class="separator:a312e479c128951e44cbfeab715691a82"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a028e4a5c56db3be5bd20496b1a64f920"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="alloc_8h.html#a028e4a5c56db3be5bd20496b1a64f920">jaeger_set_allocator</a> (<a class="el" href="structjaeger__allocator.html">jaeger_allocator</a> *alloc)</td></tr>
+<tr class="memdesc:a028e4a5c56db3be5bd20496b1a64f920"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the installed allocator.  <a href="#a028e4a5c56db3be5bd20496b1a64f920">More...</a><br/></td></tr>
+<tr class="separator:a028e4a5c56db3be5bd20496b1a64f920"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abd1b3422f9bfb294c07bcb44ec2c26e7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structjaeger__allocator.html">jaeger_allocator</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="alloc_8h.html#abd1b3422f9bfb294c07bcb44ec2c26e7">jaeger_get_allocator</a> (void)</td></tr>
+<tr class="memdesc:abd1b3422f9bfb294c07bcb44ec2c26e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the installed allocator.  <a href="#abd1b3422f9bfb294c07bcb44ec2c26e7">More...</a><br/></td></tr>
+<tr class="separator:abd1b3422f9bfb294c07bcb44ec2c26e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8bf91f5b7b45e1e602d5a4079420bcd3"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="alloc_8h.html#a8bf91f5b7b45e1e602d5a4079420bcd3">jaeger_malloc</a> (size_t sz)</td></tr>
+<tr class="memdesc:a8bf91f5b7b45e1e602d5a4079420bcd3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns result of call to malloc using installed allocator.  <a href="#a8bf91f5b7b45e1e602d5a4079420bcd3">More...</a><br/></td></tr>
+<tr class="separator:a8bf91f5b7b45e1e602d5a4079420bcd3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f9fd6513d1b13e8be7d42abf89ad140"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="alloc_8h.html#a2f9fd6513d1b13e8be7d42abf89ad140">jaeger_realloc</a> (void *ptr, size_t sz)</td></tr>
+<tr class="memdesc:a2f9fd6513d1b13e8be7d42abf89ad140"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns result of call to realloc using installed allocator.  <a href="#a2f9fd6513d1b13e8be7d42abf89ad140">More...</a><br/></td></tr>
+<tr class="separator:a2f9fd6513d1b13e8be7d42abf89ad140"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad094b3d57aa0ee6af7b5d3d347a578e5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="alloc_8h.html#ad094b3d57aa0ee6af7b5d3d347a578e5">jaeger_free</a> (void *ptr)</td></tr>
+<tr class="memdesc:ad094b3d57aa0ee6af7b5d3d347a578e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calls free using installed allocator.  <a href="#ad094b3d57aa0ee6af7b5d3d347a578e5">More...</a><br/></td></tr>
+<tr class="separator:ad094b3d57aa0ee6af7b5d3d347a578e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Allocator struct and functions. </p>
@@ -157,13 +173,14 @@ Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
-<a class="anchor" id="ab6f3920a57cfca8bcc5c01577928bb52"></a>
+<a class="anchor" id="abba0f94c3fc30d4184dd15706fff3879"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="structjaeger__allocator.html">jaeger_allocator</a>* jaeger_built_in_allocator </td>
           <td>(</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -175,13 +192,82 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a3ee76f30aaf69a4afab171e37851d6bc"></a>
+<a class="anchor" id="ad094b3d57aa0ee6af7b5d3d347a578e5"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void jaeger_free </td>
+          <td>(</td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>ptr</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Calls free using installed allocator. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ptr</td><td>Allocated address. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="abd1b3422f9bfb294c07bcb44ec2c26e7"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structjaeger__allocator.html">jaeger_allocator</a>* jaeger_get_allocator </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the installed allocator. </p>
+<dl class="section return"><dt>Returns</dt><dd>alloc Allocator instance. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a8bf91f5b7b45e1e602d5a4079420bcd3"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void* jaeger_malloc </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>sz</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns result of call to malloc using installed allocator. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">sz</td><td>Size to be allocated. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Address to allocated memory on success, NULL otherwise. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a312e479c128951e44cbfeab715691a82"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="structjaeger__allocator.html">jaeger_allocator</a>* jaeger_null_allocator </td>
           <td>(</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -191,6 +277,66 @@ Functions</h2></td></tr>
 <p>Wrapper for null allocation functions. </p>
 <p>Never allocates memory, all function are no-ops. Used for testing. </p>
 <dl class="section return"><dt>Returns</dt><dd>Shared instance of null allocator. DO NOT MODIFY MEMBERS! </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a2f9fd6513d1b13e8be7d42abf89ad140"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void* jaeger_realloc </td>
+          <td>(</td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>ptr</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>sz</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns result of call to realloc using installed allocator. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ptr</td><td>Pointer to previously allocated memory. </td></tr>
+    <tr><td class="paramname">sz</td><td>New size to allocate. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Address to allocated memory on success, NULL otherwise. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a028e4a5c56db3be5bd20496b1a64f920"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void jaeger_set_allocator </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structjaeger__allocator.html">jaeger_allocator</a> *&#160;</td>
+          <td class="paramname"><em>alloc</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Set the installed allocator. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">alloc</td><td>Allocator instance. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

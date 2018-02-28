@@ -171,18 +171,18 @@ Functions</h2></td></tr>
 <tr class="memitem:a6b1b2dc017426244f2986867981f6c18"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6b1b2dc017426244f2986867981f6c18"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_logging_reporter_init</b> (<a class="el" href="structjaeger__reporter.html">jaeger_reporter</a> *reporter)</td></tr>
 <tr class="separator:a6b1b2dc017426244f2986867981f6c18"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a67c358ea76e0c8f7443c6505cd0548e5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a67c358ea76e0c8f7443c6505cd0548e5"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_in_memory_reporter_init</b> (<a class="el" href="structjaeger__in__memory__reporter.html">jaeger_in_memory_reporter</a> *reporter, <a class="el" href="structjaeger__logger.html">jaeger_logger</a> *logger)</td></tr>
-<tr class="separator:a67c358ea76e0c8f7443c6505cd0548e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1312f422295ab319e5f31fe06f206383"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1312f422295ab319e5f31fe06f206383"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_composite_reporter_init</b> (<a class="el" href="structjaeger__composite__reporter.html">jaeger_composite_reporter</a> *reporter, <a class="el" href="structjaeger__logger.html">jaeger_logger</a> *logger)</td></tr>
-<tr class="separator:a1312f422295ab319e5f31fe06f206383"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2bba77a67817cce320a89c21090ebc63"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2bba77a67817cce320a89c21090ebc63"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_remote_reporter_init</b> (<a class="el" href="structjaeger__remote__reporter.html">jaeger_remote_reporter</a> *reporter, const char *host_port, int max_packet_size, <a class="el" href="structjaeger__metrics.html">jaeger_metrics</a> *metrics, <a class="el" href="structjaeger__logger.html">jaeger_logger</a> *logger)</td></tr>
-<tr class="separator:a2bba77a67817cce320a89c21090ebc63"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8ff6487bf2f9507b43c1e630dd19402c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8ff6487bf2f9507b43c1e630dd19402c"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_remote_reporter_flush</b> (<a class="el" href="structjaeger__remote__reporter.html">jaeger_remote_reporter</a> *reporter, <a class="el" href="structjaeger__logger.html">jaeger_logger</a> *logger)</td></tr>
-<tr class="separator:a8ff6487bf2f9507b43c1e630dd19402c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab348b89e85a9eb6487b28ac8be08dd38"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab348b89e85a9eb6487b28ac8be08dd38"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_in_memory_reporter_init</b> (<a class="el" href="structjaeger__in__memory__reporter.html">jaeger_in_memory_reporter</a> *reporter)</td></tr>
+<tr class="separator:ab348b89e85a9eb6487b28ac8be08dd38"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a943eedaf7c7dec3d6810d538fc083b4d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a943eedaf7c7dec3d6810d538fc083b4d"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_composite_reporter_init</b> (<a class="el" href="structjaeger__composite__reporter.html">jaeger_composite_reporter</a> *reporter)</td></tr>
+<tr class="separator:a943eedaf7c7dec3d6810d538fc083b4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a110fed594e4e9a0d96a3f9f36812a665"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a110fed594e4e9a0d96a3f9f36812a665"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_remote_reporter_init</b> (<a class="el" href="structjaeger__remote__reporter.html">jaeger_remote_reporter</a> *reporter, const char *host_port, int max_packet_size, <a class="el" href="structjaeger__metrics.html">jaeger_metrics</a> *metrics)</td></tr>
+<tr class="separator:a110fed594e4e9a0d96a3f9f36812a665"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab3c0b584d3ab646ef73007375ce83d96"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab3c0b584d3ab646ef73007375ce83d96"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_remote_reporter_flush</b> (<a class="el" href="structjaeger__remote__reporter.html">jaeger_remote_reporter</a> *reporter)</td></tr>
+<tr class="separator:ab3c0b584d3ab646ef73007375ce83d96"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Span reporter interface. </p>
@@ -196,13 +196,10 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_remote_reporter
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">JAEGERTRACINGC_DESTRUCTIBLE_SUBCLASS;             \</div>
-<div class="line">    void (*report)(<span class="keyword">struct </span><a class="code" href="structjaeger__reporter.html">jaeger_reporter</a> * reporter, \</div>
-<div class="line">                   const <a class="code" href="structjaeger__span.html">jaeger_span</a>* span,           <a class="code" href="logging_8h.html#ad1d12d8cc063a770d4feea4dfec02785">\</a></div>
-<div class="line"><a class="code" href="logging_8h.html#ad1d12d8cc063a770d4feea4dfec02785">                   jaeger_logger</a>* logger)</div>
-<div class="ttc" id="structjaeger__reporter_html"><div class="ttname"><a href="structjaeger__reporter.html">jaeger_reporter</a></div><div class="ttdef"><b>Definition:</b> reporter.h:47</div></div>
-<div class="ttc" id="structjaeger__span_html"><div class="ttname"><a href="structjaeger__span.html">jaeger_span</a></div><div class="ttdef"><b>Definition:</b> span.h:212</div></div>
-<div class="ttc" id="logging_8h_html_ad1d12d8cc063a770d4feea4dfec02785"><div class="ttname"><a href="logging_8h.html#ad1d12d8cc063a770d4feea4dfec02785">jaeger_logger</a></div><div class="ttdeci">struct jaeger_logger jaeger_logger</div><div class="ttdoc">Logger interface to customize log output. </div></div>
+<b>Value:</b><div class="fragment"><div class="line">JAEGERTRACINGC_DESTRUCTIBLE_SUBCLASS; \</div>
+<div class="line">    void (*report)(<span class="keyword">struct </span><a class="code" href="structjaeger__reporter.html">jaeger_reporter</a> * reporter, <span class="keyword">const</span> <a class="code" href="structjaeger__span.html">jaeger_span</a>* span)</div>
+<div class="ttc" id="structjaeger__reporter_html"><div class="ttname"><a href="structjaeger__reporter.html">jaeger_reporter</a></div><div class="ttdef"><b>Definition:</b> reporter.h:45</div></div>
+<div class="ttc" id="structjaeger__span_html"><div class="ttname"><a href="structjaeger__span.html">jaeger_span</a></div><div class="ttdef"><b>Definition:</b> span.h:205</div></div>
 </div><!-- fragment -->
 </div>
 </div>

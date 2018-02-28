@@ -113,9 +113,7 @@ $(document).ready(function(){initNavTree('metrics_8h.html','');});
 
 <p>Metrics interfaces to track various numbers while tracing.  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &quot;<a class="el" href="alloc_8h_source.html">jaegertracingc/alloc.h</a>&quot;</code><br/>
-<code>#include &quot;<a class="el" href="common_8h_source.html">jaegertracingc/common.h</a>&quot;</code><br/>
-<code>#include &quot;<a class="el" href="logging_8h_source.html">jaegertracingc/logging.h</a>&quot;</code><br/>
+<div class="textblock"><code>#include &quot;<a class="el" href="common_8h_source.html">jaegertracingc/common.h</a>&quot;</code><br/>
 </div>
 <p><a href="metrics_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -211,7 +209,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_default_gauge_
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line">JAEGERTRACINGC_DESTRUCTIBLE_SUBCLASS; \</div>
 <div class="line">    void (*inc)(<span class="keyword">struct </span><a class="code" href="structjaeger__counter.html">jaeger_counter</a> * counter, int64_t delta);</div>
-<div class="ttc" id="structjaeger__counter_html"><div class="ttname"><a href="structjaeger__counter.html">jaeger_counter</a></div><div class="ttdef"><b>Definition:</b> metrics.h:37</div></div>
+<div class="ttc" id="structjaeger__counter_html"><div class="ttname"><a href="structjaeger__counter.html">jaeger_counter</a></div><div class="ttdef"><b>Definition:</b> metrics.h:35</div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -232,8 +230,8 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_default_gauge_
 <div class="line">                                      <a class="code" href="structjaeger__counter.html">jaeger_counter</a>,         \</div>
 <div class="line">                                      <a class="code" href="structjaeger__default__counter.html">jaeger_default_counter</a>, \</div>
 <div class="line">                                      jaeger_default_counter_init);</div>
-<div class="ttc" id="structjaeger__default__counter_html"><div class="ttname"><a href="structjaeger__default__counter.html">jaeger_default_counter</a></div><div class="ttdef"><b>Definition:</b> metrics.h:41</div></div>
-<div class="ttc" id="structjaeger__counter_html"><div class="ttname"><a href="structjaeger__counter.html">jaeger_counter</a></div><div class="ttdef"><b>Definition:</b> metrics.h:37</div></div>
+<div class="ttc" id="structjaeger__default__counter_html"><div class="ttname"><a href="structjaeger__default__counter.html">jaeger_default_counter</a></div><div class="ttdef"><b>Definition:</b> metrics.h:39</div></div>
+<div class="ttc" id="structjaeger__counter_html"><div class="ttname"><a href="structjaeger__counter.html">jaeger_counter</a></div><div class="ttdef"><b>Definition:</b> metrics.h:35</div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -254,8 +252,8 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_default_gauge_
 <div class="line">                                      <a class="code" href="structjaeger__gauge.html">jaeger_gauge</a>,         \</div>
 <div class="line">                                      <a class="code" href="structjaeger__default__gauge.html">jaeger_default_gauge</a>, \</div>
 <div class="line">                                      jaeger_default_gauge_init);</div>
-<div class="ttc" id="structjaeger__gauge_html"><div class="ttname"><a href="structjaeger__gauge.html">jaeger_gauge</a></div><div class="ttdef"><b>Definition:</b> metrics.h:55</div></div>
-<div class="ttc" id="structjaeger__default__gauge_html"><div class="ttname"><a href="structjaeger__default__gauge.html">jaeger_default_gauge</a></div><div class="ttdef"><b>Definition:</b> metrics.h:59</div></div>
+<div class="ttc" id="structjaeger__gauge_html"><div class="ttname"><a href="structjaeger__gauge.html">jaeger_gauge</a></div><div class="ttdef"><b>Definition:</b> metrics.h:53</div></div>
+<div class="ttc" id="structjaeger__default__gauge_html"><div class="ttname"><a href="structjaeger__default__gauge.html">jaeger_default_gauge</a></div><div class="ttdef"><b>Definition:</b> metrics.h:57</div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -270,7 +268,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_default_gauge_
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line">JAEGERTRACINGC_DESTRUCTIBLE_SUBCLASS; \</div>
 <div class="line">    void (*update)(<span class="keyword">struct </span><a class="code" href="structjaeger__gauge.html">jaeger_gauge</a> * gauge, int64_t amount);</div>
-<div class="ttc" id="structjaeger__gauge_html"><div class="ttname"><a href="structjaeger__gauge.html">jaeger_gauge</a></div><div class="ttdef"><b>Definition:</b> metrics.h:55</div></div>
+<div class="ttc" id="structjaeger__gauge_html"><div class="ttname"><a href="structjaeger__gauge.html">jaeger_gauge</a></div><div class="ttdef"><b>Definition:</b> metrics.h:53</div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -309,19 +307,19 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_default_gauge_
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line"><span class="keywordflow">do</span> {                                                                  \</div>
-<div class="line">        if (success) {                                                    \</div>
-<div class="line">            metrics-&gt;member = (base_type*) jaeger_malloc(<span class="keyword">sizeof</span>(type));   \</div>
-<div class="line">            if (metrics-&gt;member == NULL) {                                \</div>
-<div class="line">                logger-&gt;error(logger,                                     \</div>
-<div class="line">                              <span class="stringliteral">&quot;Cannot allocate metrics member &quot;</span> #member); \</div>
-<div class="line">                success = <span class="keyword">false</span>;                                          \</div>
-<div class="line">            }                                                             \</div>
-<div class="line">            else {                                                        \</div>
-<div class="line">                success = init((type*) metrics-&gt;member);                  \</div>
-<div class="line">            }                                                             \</div>
-<div class="line">        }                                                                 \</div>
+<b>Value:</b><div class="fragment"><div class="line"><span class="keywordflow">do</span> {                                                                     \</div>
+<div class="line">        if (success) {                                                       \</div>
+<div class="line">            metrics-&gt;member = (base_type*) <a class="code" href="alloc_8h.html#a8bf91f5b7b45e1e602d5a4079420bcd3">jaeger_malloc</a>(<span class="keyword">sizeof</span>(type));      \</div>
+<div class="line">            if (metrics-&gt;member == NULL) {                                   \</div>
+<div class="line">                jaeger_log_error(<span class="stringliteral">&quot;Cannot allocate metrics member &quot;</span> #member); \</div>
+<div class="line">                success = <span class="keyword">false</span>;                                             \</div>
+<div class="line">            }                                                                \</div>
+<div class="line">            else {                                                           \</div>
+<div class="line">                success = init((type*) metrics-&gt;member);                     \</div>
+<div class="line">            }                                                                \</div>
+<div class="line">        }                                                                    \</div>
 <div class="line">    } <span class="keywordflow">while</span> (0)</div>
+<div class="ttc" id="alloc_8h_html_a8bf91f5b7b45e1e602d5a4079420bcd3"><div class="ttname"><a href="alloc_8h.html#a8bf91f5b7b45e1e602d5a4079420bcd3">jaeger_malloc</a></div><div class="ttdeci">void * jaeger_malloc(size_t sz)</div><div class="ttdoc">Returns result of call to malloc using installed allocator. </div><div class="ttdef"><b>Definition:</b> alloc.c:108</div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -377,12 +375,13 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_default_gauge_
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line"><span class="keywordflow">do</span> {                                                                      \</div>
 <div class="line">        if (metrics-&gt;member != NULL) {                                        \</div>
-<div class="line">            metrics-&gt;member-&gt;destroy((<a class="code" href="structjaeger__destructible.html">jaeger_destructible</a>*) metrics-&gt;member); \</div>
-<div class="line">            jaeger_free(metrics-&gt;member);                                     \</div>
+<div class="line">            metrics-&gt;member-&gt;destroy((<a class="code" href="structjaeger__destructible.html">jaeger_destructible</a>*) metrics-&gt;member); <a class="code" href="alloc_8h.html#ad094b3d57aa0ee6af7b5d3d347a578e5">\</a></div>
+<div class="line"><a class="code" href="alloc_8h.html#ad094b3d57aa0ee6af7b5d3d347a578e5">            jaeger_free</a>(metrics-&gt;member);                                     \</div>
 <div class="line">            metrics-&gt;member = NULL;                                           \</div>
 <div class="line">        }                                                                     \</div>
 <div class="line">    } <span class="keywordflow">while</span> (0);</div>
-<div class="ttc" id="structjaeger__destructible_html"><div class="ttname"><a href="structjaeger__destructible.html">jaeger_destructible</a></div><div class="ttdef"><b>Definition:</b> common.h:51</div></div>
+<div class="ttc" id="alloc_8h_html_ad094b3d57aa0ee6af7b5d3d347a578e5"><div class="ttname"><a href="alloc_8h.html#ad094b3d57aa0ee6af7b5d3d347a578e5">jaeger_free</a></div><div class="ttdeci">void jaeger_free(void *ptr)</div><div class="ttdoc">Calls free using installed allocator. </div><div class="ttdef"><b>Definition:</b> alloc.c:120</div></div>
+<div class="ttc" id="structjaeger__destructible_html"><div class="ttname"><a href="structjaeger__destructible.html">jaeger_destructible</a></div><div class="ttdef"><b>Definition:</b> common.h:55</div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -411,7 +410,6 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_default_gauge_
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line"><span class="keywordflow">do</span> {                                                           \</div>
 <div class="line">        assert(metrics != NULL);                                   \</div>
-<div class="line">        assert(logger != NULL);                                    \</div>
 <div class="line">        memset(metrics, 0, <span class="keyword">sizeof</span>(*metrics));                      \</div>
 <div class="line">        bool success = <span class="keyword">true</span>;                                       \</div>
 <div class="line">                                                                   \</div>

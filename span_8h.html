@@ -203,12 +203,8 @@ Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:aa8775521832334bc0f7d639558cdd329"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa8775521832334bc0f7d639558cdd329"></a>
-const <a class="el" href="structjaeger__span__ref.html">jaeger_span_ref</a> *restrict&#160;</td><td class="memItemRight" valign="bottom"><b>src</b></td></tr>
+<tr class="memitem:aa8775521832334bc0f7d639558cdd329"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="structjaeger__span__ref.html">jaeger_span_ref</a> *restrict&#160;</td><td class="memItemRight" valign="bottom"><b>src</b></td></tr>
 <tr class="separator:aa8775521832334bc0f7d639558cdd329"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab12f6e7b3cc491c878be02cd8244240e"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="structjaeger__span__ref.html">jaeger_span_ref</a> <br class="typebreak"/>
-*restrict <a class="el" href="structjaeger__logger.html">jaeger_logger</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>logger</b></td></tr>
-<tr class="separator:ab12f6e7b3cc491c878be02cd8244240e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab30ce5929cacc46873c25a334765b9b3"><td class="memItemLeft" align="right" valign="top">*&#160;</td><td class="memItemRight" valign="bottom"><b>dst</b></td></tr>
 <tr class="separator:ab30ce5929cacc46873c25a334765b9b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a530d962454b3b6d0ccec26743f67c7ab"><td class="memItemLeft" align="right" valign="top">dst&#160;</td><td class="memItemRight" valign="bottom"><b>trace_id</b></td></tr>
@@ -344,12 +340,12 @@ return&#160;</td><td class="memItemRight" valign="bottom"><b>true</b></td></tr>
 </div><!-- fragment -->
 </div>
 </div>
-<a class="anchor" id="ab12f6e7b3cc491c878be02cd8244240e"></a>
+<a class="anchor" id="aa8775521832334bc0f7d639558cdd329"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="structjaeger__span__ref.html">jaeger_span_ref</a>* restrict <a class="el" href="structjaeger__logger.html">jaeger_logger</a>* logger</td>
+          <td class="memname">const <a class="el" href="structjaeger__span__ref.html">jaeger_span_ref</a>* restrict src</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -367,8 +363,9 @@ return&#160;</td><td class="memItemRight" valign="bottom"><b>true</b></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">= (<a class="code" href="struct__Jaegertracing____Protobuf____TraceID.html">Jaegertracing__Protobuf__TraceID</a>*) jaeger_malloc(</div>
+<b>Initial value:</b><div class="fragment"><div class="line">= (<a class="code" href="struct__Jaegertracing____Protobuf____TraceID.html">Jaegertracing__Protobuf__TraceID</a>*) <a class="code" href="alloc_8h.html#a8bf91f5b7b45e1e602d5a4079420bcd3">jaeger_malloc</a>(</div>
 <div class="line">        <span class="keyword">sizeof</span>(<a class="code" href="struct__Jaegertracing____Protobuf____TraceID.html">Jaegertracing__Protobuf__TraceID</a>))</div>
+<div class="ttc" id="alloc_8h_html_a8bf91f5b7b45e1e602d5a4079420bcd3"><div class="ttname"><a href="alloc_8h.html#a8bf91f5b7b45e1e602d5a4079420bcd3">jaeger_malloc</a></div><div class="ttdeci">void * jaeger_malloc(size_t sz)</div><div class="ttdoc">Returns result of call to malloc using installed allocator. </div><div class="ttdef"><b>Definition:</b> alloc.c:108</div></div>
 <div class="ttc" id="struct__Jaegertracing____Protobuf____TraceID_html"><div class="ttname"><a href="struct__Jaegertracing____Protobuf____TraceID.html">_Jaegertracing__Protobuf__TraceID</a></div><div class="ttdef"><b>Definition:</b> jaeger.pb-c.h:78</div></div>
 </div><!-- fragment -->
 </div>

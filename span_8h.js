@@ -23,7 +23,6 @@ var span_8h =
     [ "JAEGERTRACINGC_WRAP_COPY", "span_8h.html#ab8cecf89062fb525a9bbb8fe8eb68589", null ],
     [ "JAEGERTRACINGC_WRAP_DESTROY", "span_8h.html#a602ec5f6c779a6f8ad23848c9116dd3f", null ],
     [ "dst", "span_8h.html#ab30ce5929cacc46873c25a334765b9b3", null ],
-    [ "logger", "span_8h.html#ab12f6e7b3cc491c878be02cd8244240e", null ],
     [ "span_id", "span_8h.html#af87d22acd4bc66953aa36c4e0e0d0e04", null ],
     [ "src", "span_8h.html#aa8775521832334bc0f7d639558cdd329", null ],
     [ "trace_id", "span_8h.html#a530d962454b3b6d0ccec26743f67c7ab", null ],

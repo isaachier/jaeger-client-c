@@ -30,12 +30,11 @@ var searchData=
   ['jaeger_5fspan_5fcontext',['jaeger_span_context',['../structjaeger__span__context.html',1,'']]],
   ['jaeger_5fspan_5ffinish_5foptions',['jaeger_span_finish_options',['../structjaeger__span__finish__options.html',1,'']]],
   ['jaeger_5fspan_5fref',['jaeger_span_ref',['../structjaeger__span__ref.html',1,'']]],
-  ['jaeger_5ftext_5fmap_5freader',['jaeger_text_map_reader',['../structjaeger__text__map__reader.html',1,'']]],
-  ['jaeger_5ftext_5fmap_5fwriter',['jaeger_text_map_writer',['../structjaeger__text__map__writer.html',1,'']]],
   ['jaeger_5fthread_5flocal',['jaeger_thread_local',['../structjaeger__thread__local.html',1,'']]],
   ['jaeger_5ftoken_5fbucket',['jaeger_token_bucket',['../structjaeger__token__bucket.html',1,'']]],
   ['jaeger_5ftrace_5fid',['jaeger_trace_id',['../structjaeger__trace__id.html',1,'']]],
   ['jaeger_5ftracer',['jaeger_tracer',['../structjaeger__tracer.html',1,'']]],
+  ['jaeger_5ftracer_5foptions',['jaeger_tracer_options',['../structjaeger__tracer__options.html',1,'']]],
   ['jaeger_5furl',['jaeger_url',['../structjaeger__url.html',1,'']]],
   ['jaeger_5fvector',['jaeger_vector',['../structjaeger__vector.html',1,'']]],
   ['jaeger_5fvector_5fptr_5fcopy_5farg',['jaeger_vector_ptr_copy_arg',['../structjaeger__vector__ptr__copy__arg.html',1,'']]]

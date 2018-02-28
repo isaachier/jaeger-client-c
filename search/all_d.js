@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['random_2eh',['random.h',['../random_8h.html',1,'']]],
-  ['realloc',['realloc',['../structjaeger__allocator.html#a5d839c78b9aa35c89776628b79bb97bb',1,'jaeger_allocator']]],
-  ['reporter_2eh',['reporter.h',['../reporter_8h.html',1,'']]]
+  ['sampler_2eh',['sampler.h',['../sampler_8h.html',1,'']]],
+  ['sampling_5fstrategy_2eh',['sampling_strategy.h',['../sampling__strategy_8h.html',1,'']]],
+  ['span_2eh',['span.h',['../span_8h.html',1,'']]]
 ];

@@ -34,12 +34,12 @@ var sampler_8h =
       [ "jaeger_guaranteed_throughput_probabilistic_sampler_type", "sampler_8h.html#a78cfd4ae63ddd39ee09444287a372900a2fbbbfe2dea77dea347af7d73670d8a4", null ],
       [ "jaeger_adaptive_sampler_type", "sampler_8h.html#a78cfd4ae63ddd39ee09444287a372900afba334bf8e46b6bd78e5be30827b3493", null ]
     ] ],
-    [ "jaeger_adaptive_sampler_init", "sampler_8h.html#a5c98918ebc40d6fd1c2c76d5e6af2a08", null ],
+    [ "jaeger_adaptive_sampler_init", "sampler_8h.html#a685ed0ff91439171e665fe98fdba8bbd", null ],
     [ "jaeger_const_sampler_init", "sampler_8h.html#a29da68875c74253041bffd961c1d803c", null ],
     [ "jaeger_guaranteed_throughput_probabilistic_sampler_init", "sampler_8h.html#a77a14b5dd3fe7d99820a32f19391bd1b", null ],
     [ "jaeger_guaranteed_throughput_probabilistic_sampler_update", "sampler_8h.html#a7bb0d1e70bc76e53e5b4c7b20ce70333", null ],
     [ "jaeger_probabilistic_sampler_init", "sampler_8h.html#a51668db3ea0db0b73634058ba9ac785e", null ],
     [ "jaeger_rate_limiting_sampler_init", "sampler_8h.html#a0b539b92d4c986654640ec39eff8a1f6", null ],
-    [ "jaeger_remotely_controlled_sampler_init", "sampler_8h.html#af13f80ca7571ffacda212f79a9deed88", null ],
-    [ "jaeger_remotely_controlled_sampler_update", "sampler_8h.html#ab92835c0caf5507bd6cd6a3cda38cd91", null ]
+    [ "jaeger_remotely_controlled_sampler_init", "sampler_8h.html#abea4d6e8735ce1927564b56b88c7b438", null ],
+    [ "jaeger_remotely_controlled_sampler_update", "sampler_8h.html#af15672048a099456a17c3e7eb0758867", null ]
 ];

@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.6"/>
-<title>jaegertracingc: jaegertracingc/init.h File Reference</title>
+<title>jaegertracingc: jaeger_tracer_options Struct Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -45,8 +45,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="annotated.html"><span>Data&#160;Structures</span></a></li>
-      <li class="current"><a href="files.html"><span>Files</span></a></li>
+      <li class="current"><a href="annotated.html"><span>Data&#160;Structures</span></a></li>
+      <li><a href="files.html"><span>Files</span></a></li>
       <li>
         <div id="MSearchBox" class="MSearchBoxInactive">
         <span class="left">
@@ -67,8 +67,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   </div>
   <div id="navrow2" class="tabs2">
     <ul class="tablist">
-      <li><a href="files.html"><span>File&#160;List</span></a></li>
-      <li><a href="globals.html"><span>Globals</span></a></li>
+      <li><a href="annotated.html"><span>Data&#160;Structures</span></a></li>
+      <li><a href="classes.html"><span>Data&#160;Structure&#160;Index</span></a></li>
+      <li><a href="functions.html"><span>Data&#160;Fields</span></a></li>
     </ul>
   </div>
 </div><!-- top -->
@@ -83,7 +84,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   </div>
 </div>
 <script type="text/javascript">
-$(document).ready(function(){initNavTree('init_8h.html','');});
+$(document).ready(function(){initNavTree('structjaeger__tracer__options.html','');});
 </script>
 <div id="doc-content">
 <!-- window showing the filter options -->
@@ -102,39 +103,50 @@ $(document).ready(function(){initNavTree('init_8h.html','');});
 
 <div class="header">
   <div class="summary">
-<a href="#func-members">Functions</a>  </div>
+<a href="#pub-attribs">Data Fields</a>  </div>
   <div class="headertitle">
-<div class="title">init.h File Reference</div>  </div>
+<div class="title">jaeger_tracer_options Struct Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p>Library initialization functions.  
-<a href="#details">More...</a></p>
-<div class="textblock"><code>#include &quot;<a class="el" href="common_8h_source.html">jaegertracingc/common.h</a>&quot;</code><br/>
-</div>
-<p><a href="init_8h_source.html">Go to the source code of this file.</a></p>
+<p>Options that can be used to customize the tracer.  
+ <a href="structjaeger__tracer__options.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="tracer_8h_source.html">jaegertracingc/tracer.h</a>&gt;</code></p>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
-Functions</h2></td></tr>
-<tr class="memitem:a578846ab34ae56d048a2924e22a2a9c5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a578846ab34ae56d048a2924e22a2a9c5"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_init_lib</b> (struct <a class="el" href="structjaeger__logger.html">jaeger_logger</a> *logger, struct <a class="el" href="structjaeger__allocator.html">jaeger_allocator</a> *alloc)</td></tr>
-<tr class="separator:a578846ab34ae56d048a2924e22a2a9c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a99bfa53c6393472f97612d4a738dfee1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a99bfa53c6393472f97612d4a738dfee1"></a>
-struct <a class="el" href="structjaeger__allocator.html">jaeger_allocator</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_default_allocator</b> ()</td></tr>
-<tr class="separator:a99bfa53c6393472f97612d4a738dfee1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad18b2569742de8c0dc87fe4ae6a4e712"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad18b2569742de8c0dc87fe4ae6a4e712"></a>
-struct <a class="el" href="structjaeger__logger.html">jaeger_logger</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_default_logger</b> ()</td></tr>
-<tr class="separator:ad18b2569742de8c0dc87fe4ae6a4e712"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
+Data Fields</h2></td></tr>
+<tr class="memitem:a32b273ee8cdf9219ef434cca6038ae9e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structjaeger__tracer__options.html#a32b273ee8cdf9219ef434cca6038ae9e">gen_128_bit</a></td></tr>
+<tr class="memdesc:a32b273ee8cdf9219ef434cca6038ae9e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether to generate a 128 bit trace ID or leave high bits as zero.  <a href="#a32b273ee8cdf9219ef434cca6038ae9e">More...</a><br/></td></tr>
+<tr class="separator:a32b273ee8cdf9219ef434cca6038ae9e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Library initialization functions. </p>
-<p>Installs default allocator and logger. </p>
-</div></div><!-- contents -->
+<div class="textblock"><p>Options that can be used to customize the tracer. </p>
+</div><h2 class="groupheader">Field Documentation</h2>
+<a class="anchor" id="a32b273ee8cdf9219ef434cca6038ae9e"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool jaeger_tracer_options::gen_128_bit</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Whether to generate a 128 bit trace ID or leave high bits as zero. </p>
+<dl class="section see"><dt>See Also</dt><dd><a class="el" href="structjaeger__trace__id.html" title="128 bit unique ID for a given trace. ">jaeger_trace_id</a> </dd></dl>
+
+</div>
+</div>
+<hr/>The documentation for this struct was generated from the following file:<ul>
+<li>jaegertracingc/<a class="el" href="tracer_8h_source.html">tracer.h</a></li>
+</ul>
+</div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_b43f99739bc5c186bc3b41e1a036827d.html">jaegertracingc</a></li><li class="navelem"><a class="el" href="init_8h.html">init.h</a></li>
+    <li class="navelem"><a class="el" href="structjaeger__tracer__options.html">jaeger_tracer_options</a></li>
     <li class="footer">Generated by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>

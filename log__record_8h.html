@@ -148,18 +148,14 @@ Functions</h2></td></tr>
 <tr class="memitem:af80c22aed8c299798394a947ad71c6a4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af80c22aed8c299798394a947ad71c6a4"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>assert</b> (src!=NULL)</td></tr>
 <tr class="separator:af80c22aed8c299798394a947ad71c6a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae87dac56e4b7b9c20c1f1838a6d07375"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae87dac56e4b7b9c20c1f1838a6d07375"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>if</b> (!jaeger_vector_protobuf_copy((void ***)&amp;dst-&gt;fields,&amp;dst-&gt;n_fields,&amp;src-&gt;fields, sizeof(jaeger_tag),&amp;jaeger_tag_copy_wrapper,&amp;jaeger_tag_destroy_wrapper, NULL, logger))</td></tr>
-<tr class="separator:ae87dac56e4b7b9c20c1f1838a6d07375"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a72aac620f8c140d4d8d8436bdf697a33"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a72aac620f8c140d4d8d8436bdf697a33"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>if</b> (!jaeger_vector_protobuf_copy((void ***)&amp;dst-&gt;fields,&amp;dst-&gt;n_fields,&amp;src-&gt;fields, sizeof(jaeger_tag),&amp;jaeger_tag_copy_wrapper,&amp;jaeger_tag_destroy_wrapper, NULL))</td></tr>
+<tr class="separator:a72aac620f8c140d4d8d8436bdf697a33"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:af3f762b50ae1a8700edd19d8d590fab8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af3f762b50ae1a8700edd19d8d590fab8"></a>
-const <a class="el" href="structjaeger__log__record.html">jaeger_log_record</a> *restrict&#160;</td><td class="memItemRight" valign="bottom"><b>src</b></td></tr>
+<tr class="memitem:af3f762b50ae1a8700edd19d8d590fab8"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="structjaeger__log__record.html">jaeger_log_record</a> *restrict&#160;</td><td class="memItemRight" valign="bottom"><b>src</b></td></tr>
 <tr class="separator:af3f762b50ae1a8700edd19d8d590fab8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adfdea7293fc22678f41613746de0d450"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="structjaeger__log__record.html">jaeger_log_record</a> <br class="typebreak"/>
-*restrict <a class="el" href="structjaeger__logger.html">jaeger_logger</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>logger</b></td></tr>
-<tr class="separator:adfdea7293fc22678f41613746de0d450"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab30ce5929cacc46873c25a334765b9b3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab30ce5929cacc46873c25a334765b9b3"></a>
 *&#160;</td><td class="memItemRight" valign="bottom"><b>dst</b> = (<a class="el" href="struct__Jaegertracing____Protobuf____Log.html">Jaegertracing__Protobuf__Log</a>) JAEGERTRACING__PROTOBUF__LOG__INIT</td></tr>
 <tr class="separator:ab30ce5929cacc46873c25a334765b9b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -193,12 +189,12 @@ jaeger_span_log </dd></dl>
 </div>
 </div>
 <h2 class="groupheader">Variable Documentation</h2>
-<a class="anchor" id="adfdea7293fc22678f41613746de0d450"></a>
+<a class="anchor" id="af3f762b50ae1a8700edd19d8d590fab8"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="structjaeger__log__record.html">jaeger_log_record</a>* restrict <a class="el" href="structjaeger__logger.html">jaeger_logger</a>* logger</td>
+          <td class="memname">const <a class="el" href="structjaeger__log__record.html">jaeger_log_record</a>* restrict src</td>
         </tr>
       </table>
 </div><div class="memdoc">

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['num_5flogs',['num_logs',['../structjaeger__span__finish__options.html#a0408ac13b435f76eea057d2e4a63dfed',1,'jaeger_span_finish_options']]]
+  ['realloc',['realloc',['../structjaeger__allocator.html#a5d839c78b9aa35c89776628b79bb97bb',1,'jaeger_allocator']]]
 ];

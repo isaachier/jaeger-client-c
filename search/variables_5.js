@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['malloc',['malloc',['../structjaeger__allocator.html#ab89e0bce9f7223d60b7788b51dcceaa6',1,'jaeger_allocator']]]
+  ['num_5flogs',['num_logs',['../structjaeger__span__finish__options.html#a0408ac13b435f76eea057d2e4a63dfed',1,'jaeger_span_finish_options']]]
 ];

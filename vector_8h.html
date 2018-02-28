@@ -112,9 +112,7 @@ $(document).ready(function(){initNavTree('vector_8h.html','');});
 
 <p>C generic vector implementation.  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &quot;<a class="el" href="alloc_8h_source.html">jaegertracingc/alloc.h</a>&quot;</code><br/>
-<code>#include &quot;<a class="el" href="common_8h_source.html">jaegertracingc/common.h</a>&quot;</code><br/>
-<code>#include &quot;<a class="el" href="logging_8h_source.html">jaegertracingc/logging.h</a>&quot;</code><br/>
+<div class="textblock"><code>#include &quot;<a class="el" href="common_8h_source.html">jaegertracingc/common.h</a>&quot;</code><br/>
 </div>
 <p><a href="vector_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -175,12 +173,13 @@ typedef struct <br class="typebreak"/>
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line"><span class="keywordflow">do</span> {                                          \</div>
 <div class="line">        if (*ptr != NULL) {                       \</div>
-<div class="line">            if (dtor != NULL) {                   \</div>
-<div class="line">                dtor(*ptr);                       \</div>
-<div class="line">            }                                     \</div>
-<div class="line">            dst-&gt;alloc-&gt;free(dst-&gt;alloc, *ptr);   \</div>
+<div class="line">            if (destroy != NULL) {                \</div>
+<div class="line">                destroy(*ptr);                    \</div>
+<div class="line">            }                                     <a class="code" href="alloc_8h.html#ad094b3d57aa0ee6af7b5d3d347a578e5">\</a></div>
+<div class="line"><a class="code" href="alloc_8h.html#ad094b3d57aa0ee6af7b5d3d347a578e5">            jaeger_free</a>(*ptr);                    \</div>
 <div class="line">        }                                         \</div>
 <div class="line">    } <span class="keywordflow">while</span> (0)</div>
+<div class="ttc" id="alloc_8h_html_ad094b3d57aa0ee6af7b5d3d347a578e5"><div class="ttname"><a href="alloc_8h.html#ad094b3d57aa0ee6af7b5d3d347a578e5">jaeger_free</a></div><div class="ttdeci">void jaeger_free(void *ptr)</div><div class="ttdoc">Calls free using installed allocator. </div><div class="ttdef"><b>Definition:</b> alloc.c:120</div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -231,8 +230,8 @@ typedef struct <br class="typebreak"/>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">{                                                                        \</div>
-<div class="line">        .len = 0, .capacity = 0, .data = NULL, .type_size = 0, .alloc = NULL \</div>
+<b>Value:</b><div class="fragment"><div class="line">{                                                         \</div>
+<div class="line">        .len = 0, .capacity = 0, .data = NULL, .type_size = 0 \</div>
 <div class="line">    }</div>
 </div><!-- fragment -->
 </div>
@@ -266,15 +265,12 @@ typedef struct <br class="typebreak"/>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line"><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">bool</span> copy##_wrapper(<span class="keywordtype">void</span>* arg,                \</div>
-<div class="line">                                      <span class="keywordtype">void</span>* restrict dst,       \</div>
-<div class="line">                                      <span class="keyword">const</span> <span class="keywordtype">void</span>* restrict src, \</div>
-<div class="line">                                      <a class="code" href="structjaeger__logger.html">jaeger_logger</a>* logger)    \</div>
-<div class="line">    {                                                           \</div>
-<div class="line">        (void) arg;                                             \</div>
-<div class="line">        return copy((dst_type*) dst, (src_type*) src, logger);  \</div>
+<b>Value:</b><div class="fragment"><div class="line"><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">bool</span> copy##_wrapper(                           \</div>
+<div class="line">        <span class="keywordtype">void</span>* arg, <span class="keywordtype">void</span>* restrict dst, <span class="keyword">const</span> <span class="keywordtype">void</span>* restrict src) \</div>
+<div class="line">    {                                                            \</div>
+<div class="line">        (void) arg;                                              \</div>
+<div class="line">        return copy((dst_type*) dst, (src_type*) src);           \</div>
 <div class="line">    }</div>
-<div class="ttc" id="structjaeger__logger_html"><div class="ttname"><a href="structjaeger__logger.html">jaeger_logger</a></div><div class="ttdoc">Logger interface to customize log output. </div><div class="ttdef"><b>Definition:</b> logging.h:32</div></div>
 </div><!-- fragment -->
 </div>
 </div>
