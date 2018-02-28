@@ -35,21 +35,24 @@ typedef struct jaeger_logger {
      *  @param format The format string of the message.
      *  @param[in] ... Arguments for format string.
      */
-    void (*error)(struct jaeger_logger* logger, const char* format, ...);
+    void (*error)(struct jaeger_logger* logger, const char* format, ...)
+        JAEGERTRACINGC_FORMAT_ATTRIBUTE(printf, 2, 3);
 
     /** Warn log function.
      *  @param logger The logger instance.
      *  @param format The format string of the message.
      *  @param[in] ... Arguments for format string.
      */
-    void (*warn)(struct jaeger_logger* logger, const char* format, ...);
+    void (*warn)(struct jaeger_logger* logger, const char* format, ...)
+        JAEGERTRACINGC_FORMAT_ATTRIBUTE(printf, 2, 3);
 
     /** Info log function.
      *  @param logger The logger instance.
      *  @param format The format string of the message.
      *  @param[in] ... Arguments for format string.
      */
-    void (*info)(struct jaeger_logger* logger, const char* format, ...);
+    void (*info)(struct jaeger_logger* logger, const char* format, ...)
+        JAEGERTRACINGC_FORMAT_ATTRIBUTE(printf, 2, 3);
 } jaeger_logger;
 
 /**

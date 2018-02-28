@@ -27,7 +27,9 @@ include(CheckSymbolExists)
 include(CheckStructHasMember)
 include(CMakeDependentOption)
 include(CTest)
+
 include(GenerateDocumentation)
+include(FormatAttribute)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -225,6 +227,15 @@ else()
   if(have_arc4random_buf)
     target_compile_definitions(jaegertracingc PRIVATE "-DHAVE_ARC4RANDOM_BUF")
   endif()
+endif()
+
+format_attribute(have_format_attribute)
+if(have_format_attribute)
+  message(STATUS "Checking for __attribute__(format) - Success")
+  target_compile_definitions(
+    jaegertracingc PUBLIC "-DJAEGERTRACINGC_HAVE_FORMAT_ATTRIBUTE")
+else()
+  message(STATUS "Checking for __attribute__(format) - Failed")
 endif()
 
 if(JAEGERTRACINGC_VERBOSE_ALLOC)

@@ -248,7 +248,7 @@ static inline void large_batch_error(Jaegertracing__Protobuf__Batch* batch,
         tmp.n_spans = 1;
         logger->error(logger,
                       "Message is too large to send in a single packet, "
-                      "minimum message size = %d, "
+                      "minimum message size = %zu, "
                       "maximum packet size = %d",
                       jaegertracing__protobuf__batch__get_packed_size(&tmp),
                       max_packet_size);

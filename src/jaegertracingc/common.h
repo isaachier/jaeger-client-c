@@ -65,6 +65,14 @@ static inline void jaeger_destructible_destroy_wrapper(void* d)
     jaeger_destructible_destroy((jaeger_destructible*) d);
 }
 
+#ifdef JAEGERTRACINGC_HAVE_FORMAT_ATTRIBUTE
+#define JAEGERTRACINGC_FORMAT_ATTRIBUTE(     \
+    archetype, string_index, first_to_check) \
+    __attribute__((format(archetype, string_index, first_to_check)))
+#else
+#define JAEGERTRACINGC_FORMAT_ATTRIBUTE(archetype, string_index, first_to_check)
+#endif
+
 #ifdef __cplusplus
 } /* extern C */
 #endif /* __cplusplus */

@@ -977,10 +977,10 @@ static inline bool jaeger_http_sampling_manager_parse_response_json(
 
     if (response_json == NULL) {
         if (logger != NULL) {
-            logger->error(
-                logger,
-                "JSON decoding error, " ERR_FMT,
-                ERR_ARGS(jaeger_vector_get(&manager->response, 0, logger)));
+            logger->error(logger,
+                          "JSON decoding error, " ERR_FMT,
+                          ERR_ARGS((char*) jaeger_vector_get(
+                              &manager->response, 0, logger)));
         }
         return false;
     }
@@ -1006,7 +1006,8 @@ static inline bool jaeger_http_sampling_manager_parse_response_json(
                                       &per_operation_json);
     bool success = true;
     if (result != 0) {
-        PRINT_ERR_MSG(jaeger_vector_get(&manager->response, 0, logger), logger);
+        PRINT_ERR_MSG((char*) jaeger_vector_get(&manager->response, 0, logger),
+                      logger);
         success = false;
         goto cleanup;
     }
@@ -1061,7 +1062,7 @@ static inline bool jaeger_http_sampling_manager_parse_response_json(
                 logger->warn(
                     logger,
                     "JSON response contains no strategies, response = \"%s\"",
-                    jaeger_vector_get(&manager->response, 0, logger));
+                    (char*) jaeger_vector_get(&manager->response, 0, logger));
             }
             success = false;
             goto cleanup;

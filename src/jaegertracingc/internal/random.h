@@ -79,7 +79,7 @@ static inline void read_random_seed(uint64_t* seed,
     if (num_read != NUM_UINT64_IN_SEED && logger != NULL) {
         logger->warn(logger,
                      "Could not read entire random block, "
-                     "bytes requested = %d, bytes read = %d, errno = %d",
+                     "bytes requested = %lu, bytes read = %lu, errno = %d",
                      NUM_UINT64_IN_SEED * sizeof(uint64_t),
                      num_read * sizeof(uint64_t),
                      errno);
