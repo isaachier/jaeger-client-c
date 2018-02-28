@@ -16,7 +16,10 @@
 
 #include "jaegertracingc/alloc.h"
 
+#include <stdbool.h>
 #include <stdlib.h>
+
+#include <jansson.h>
 
 static void* built_in_malloc(jaeger_allocator* alloc, size_t sz)
 {
@@ -102,6 +105,15 @@ void jaeger_set_allocator(jaeger_allocator* alloc)
 jaeger_allocator* jaeger_get_allocator(void)
 {
     static jaeger_allocator shared_alloc = BUILT_IN_ALLOCATOR_INIT;
+
+    /* Flag to indicate we have to call json_set_alloc_funcs. Not thread-safe,
+     * but not a huge deal to call json_set_alloc_funcs multiple times.
+     */
+    static bool initialized = false;
+    if (!initialized) {
+        json_set_alloc_funcs(&jaeger_malloc, &jaeger_free);
+        initialized = true;
+    }
     return &shared_alloc;
 }
 
