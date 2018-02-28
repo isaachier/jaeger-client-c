@@ -72,16 +72,14 @@ JAEGERTRACINGC_WRAP_DESTROY(jaeger_tag_destroy, jaeger_tag)
 /** Initialize a tag with no value.
  * @param tag The tag instance.
  * @param key The tag key.
- * @param logger Logger to log to in case of error.
  * @return True on success, false otherwise.
  */
-static inline bool
-jaeger_tag_init(jaeger_tag* tag, const char* key, jaeger_logger* logger)
+static inline bool jaeger_tag_init(jaeger_tag* tag, const char* key)
 {
     assert(tag != NULL);
     assert(key != NULL);
 
-    tag->key = jaeger_strdup(key, logger);
+    tag->key = jaeger_strdup(key);
     if (tag->key == NULL) {
         return false;
     }
@@ -89,13 +87,12 @@ jaeger_tag_init(jaeger_tag* tag, const char* key, jaeger_logger* logger)
     return true;
 }
 
-static inline bool
-jaeger_tag_copy(jaeger_tag* dst, const jaeger_tag* src, jaeger_logger* logger)
+static inline bool jaeger_tag_copy(jaeger_tag* dst, const jaeger_tag* src)
 {
     assert(dst != NULL);
     assert(src != NULL);
     *dst = (jaeger_tag) JAEGERTRACINGC_TAG_INIT;
-    if (!jaeger_tag_init(dst, src->key, logger)) {
+    if (!jaeger_tag_init(dst, src->key)) {
         return false;
     }
 
@@ -103,7 +100,7 @@ jaeger_tag_copy(jaeger_tag* dst, const jaeger_tag* src, jaeger_logger* logger)
     switch (src->value_case) {
     case JAEGERTRACINGC_TAG_TYPE(STR): {
         if (src->str_value != NULL) {
-            dst->str_value = jaeger_strdup(src->str_value, logger);
+            dst->str_value = jaeger_strdup(src->str_value);
             if (dst->str_value == NULL) {
                 goto cleanup;
             }
@@ -144,14 +141,13 @@ cleanup:
 JAEGERTRACINGC_WRAP_COPY(jaeger_tag_copy, jaeger_tag, jaeger_tag)
 
 static inline bool jaeger_tag_vector_append(jaeger_vector* vec,
-                                            const jaeger_tag* tag,
-                                            jaeger_logger* logger)
+                                            const jaeger_tag* tag)
 {
-    jaeger_tag* tag_copy = (jaeger_tag*) jaeger_vector_append(vec, logger);
+    jaeger_tag* tag_copy = (jaeger_tag*) jaeger_vector_append(vec);
     if (tag_copy == NULL) {
         return false;
     }
-    if (!jaeger_tag_copy(tag_copy, tag, logger)) {
+    if (!jaeger_tag_copy(tag_copy, tag)) {
         vec->len--;
         return false;
     }

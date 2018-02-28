@@ -22,15 +22,13 @@
 #ifndef JAEGERTRACINGC_RANDOM_H
 #define JAEGERTRACINGC_RANDOM_H
 
-#include "jaegertracingc/common.h"
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-struct jaeger_logger;
-
-int64_t random64(struct jaeger_logger* logger);
+int64_t random64(void);
 
 #ifdef __cplusplus
 } /* extern C */

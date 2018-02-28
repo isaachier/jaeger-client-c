@@ -19,13 +19,11 @@
 
 void test_net()
 {
-    jaeger_logger* logger = jaeger_null_logger();
     jaeger_host_port host_port;
-    TEST_ASSERT_FALSE(jaeger_host_port_init(&host_port, NULL, 0, logger));
-    TEST_ASSERT_FALSE(jaeger_host_port_init(&host_port, "", 0, logger));
-    TEST_ASSERT_FALSE(
-        jaeger_host_port_init(&host_port, "localhost", -1, logger));
-    TEST_ASSERT_TRUE(jaeger_host_port_init(&host_port, "localhost", 0, logger));
+    TEST_ASSERT_FALSE(jaeger_host_port_init(&host_port, NULL, 0));
+    TEST_ASSERT_FALSE(jaeger_host_port_init(&host_port, "", 0));
+    TEST_ASSERT_FALSE(jaeger_host_port_init(&host_port, "localhost", -1));
+    TEST_ASSERT_TRUE(jaeger_host_port_init(&host_port, "localhost", 0));
 
     char buffer[strlen(host_port.host) + 1];
     TEST_ASSERT_EQUAL(
@@ -36,27 +34,25 @@ void test_net()
     jaeger_host_port_destroy(&host_port);
 
     jaeger_url url = JAEGERTRACINGC_URL_INIT;
-    TEST_ASSERT_FALSE(jaeger_url_init(&url, "test", logger));
+    TEST_ASSERT_FALSE(jaeger_url_init(&url, "test"));
     url.str = "";
     memset(&url.parts, 0, sizeof(url.parts));
-    TEST_ASSERT_TRUE(jaeger_host_port_from_url(&host_port, &url, logger));
+    TEST_ASSERT_TRUE(jaeger_host_port_from_url(&host_port, &url));
     jaeger_host_port_destroy(&host_port);
 
-    TEST_ASSERT_FALSE(jaeger_host_port_scan(&host_port, NULL, logger));
-    TEST_ASSERT_FALSE(jaeger_host_port_scan(&host_port, "", logger));
-    TEST_ASSERT_FALSE(jaeger_host_port_scan(&host_port, ":", logger));
-    TEST_ASSERT_FALSE(jaeger_host_port_scan(&host_port, "test:me", logger));
-    TEST_ASSERT_TRUE(jaeger_host_port_scan(&host_port, ":5678", logger));
+    TEST_ASSERT_FALSE(jaeger_host_port_scan(&host_port, NULL));
+    TEST_ASSERT_FALSE(jaeger_host_port_scan(&host_port, ""));
+    TEST_ASSERT_FALSE(jaeger_host_port_scan(&host_port, ":"));
+    TEST_ASSERT_FALSE(jaeger_host_port_scan(&host_port, "test:me"));
+    TEST_ASSERT_TRUE(jaeger_host_port_scan(&host_port, ":5678"));
     jaeger_host_port_destroy(&host_port);
-    TEST_ASSERT_TRUE(jaeger_host_port_scan(&host_port, "localhost", logger));
+    TEST_ASSERT_TRUE(jaeger_host_port_scan(&host_port, "localhost"));
     jaeger_host_port_destroy(&host_port);
-    TEST_ASSERT_TRUE(
-        jaeger_host_port_scan(&host_port, "localhost:5678", logger));
+    TEST_ASSERT_TRUE(jaeger_host_port_scan(&host_port, "localhost:5678"));
     jaeger_host_port_destroy(&host_port);
 
     host_port.host = "localhost";
     host_port.port = 0;
     struct addrinfo* addrs = NULL;
-    TEST_ASSERT_FALSE(
-        jaeger_host_port_resolve(&host_port, 123, &addrs, logger));
+    TEST_ASSERT_FALSE(jaeger_host_port_resolve(&host_port, 123, &addrs));
 }

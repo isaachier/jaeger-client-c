@@ -111,8 +111,6 @@ set(core_src
   "src/jaegertracingc/common.c"
   "src/jaegertracingc/common.h"
   "src/jaegertracingc/constants.c"
-  "src/jaegertracingc/init.c"
-  "src/jaegertracingc/init.h"
   "src/jaegertracingc/key_value.c"
   "src/jaegertracingc/key_value.h"
   "src/jaegertracingc/log_record.c"
@@ -123,8 +121,6 @@ set(core_src
   "src/jaegertracingc/metrics.h"
   "src/jaegertracingc/net.c"
   "src/jaegertracingc/net.h"
-  "src/jaegertracingc/propagation.c"
-  "src/jaegertracingc/propagation.h"
   "src/jaegertracingc/random.c"
   "src/jaegertracingc/random.h"
   "src/jaegertracingc/reporter.c"
@@ -287,7 +283,7 @@ if(BUILD_TESTING)
   target_compile_definitions(jaegertracingc_test PUBLIC
     UNITY_USE_COMMAND_LINE_ARGS)
 
-	foreach(driver default init)
+	foreach(driver default)
 	  add_executable(${driver}_test "src/jaegertracingc/${driver}_test_driver.c")
 	  target_link_libraries(${driver}_test PUBLIC jaegertracingc_test)
   	add_test(${driver}_test ${driver}_test)
@@ -297,7 +293,6 @@ if(BUILD_TESTING)
     setup_target_for_coverage(
       NAME unit_test_coverage
       EXECUTABLE ${CMAKE_CURRENT_BINARY_DIR}/default_test
-			EXECUTABLE ${CMAKE_CURRENT_BINARY_DIR}/init_test
       DEPENDENCIES default_test)
   endif()
 endif()

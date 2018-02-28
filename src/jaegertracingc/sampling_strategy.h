@@ -23,7 +23,6 @@
 #ifndef JAEGERTRACINGC_SAMPLING_STRATEGY_H
 #define JAEGERTRACINGC_SAMPLING_STRATEGY_H
 
-#include "jaegertracingc/alloc.h"
 #include "jaegertracingc/common.h"
 #include "jaegertracingc/protoc-gen/sampling.pb-c.h"
 

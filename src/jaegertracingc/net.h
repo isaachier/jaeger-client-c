@@ -29,7 +29,6 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include "jaegertracingc/alloc.h"
 #include "jaegertracingc/common.h"
 
 #ifdef __cplusplus
@@ -48,31 +47,23 @@ typedef struct jaeger_host_port {
         .host = NULL, .port = 0       \
     }
 
-static inline bool jaeger_host_port_init(jaeger_host_port* host_port,
-                                         const char* host,
-                                         int port,
-                                         jaeger_logger* logger)
+static inline bool
+jaeger_host_port_init(jaeger_host_port* host_port, const char* host, int port)
 {
     assert(host_port != NULL);
 
     if (host == NULL || strlen(host) == 0) {
-        if (logger != NULL) {
-            logger->error(logger, "Empty host passed to host port constructor");
-        }
+        jaeger_log_error("Empty host passed to host port constructor");
         return false;
     }
 
     if (port < 0 || port > USHRT_MAX) {
-        if (logger != NULL) {
-            logger->error(
-                logger,
-                "Invalid port passed to host port constructor, port = %d",
-                port);
-        }
+        jaeger_log_error(
+            "Invalid port passed to host port constructor, port = %d", port);
         return false;
     }
 
-    host_port->host = jaeger_strdup(host, logger);
+    host_port->host = jaeger_strdup(host);
     if (host_port->host == NULL) {
         return false;
     }
@@ -83,11 +74,13 @@ static inline bool jaeger_host_port_init(jaeger_host_port* host_port,
 
 static inline void jaeger_host_port_destroy(jaeger_host_port* host_port)
 {
-    assert(host_port != NULL);
+    if (host_port == NULL) {
+        return;
+    }
     if (host_port->host != NULL) {
         jaeger_free(host_port->host);
-        host_port->host = NULL;
     }
+    *host_port = (jaeger_host_port) JAEGERTRACINGC_HOST_PORT_INIT;
 }
 
 typedef struct jaeger_url {
@@ -103,28 +96,20 @@ typedef struct jaeger_url {
         }                                         \
     }
 
-static inline bool
-jaeger_url_init(jaeger_url* url, const char* url_str, jaeger_logger* logger)
+static inline bool jaeger_url_init(jaeger_url* url, const char* url_str)
 {
     assert(url != NULL);
     assert(url_str != NULL && strlen(url_str) > 0);
     const int result =
         http_parser_parse_url(url_str, strlen(url_str), 0, &url->parts);
     if (result != 0) {
-        if (logger != NULL) {
-            logger->error(logger,
-                          "Cannot parse URL, URL = \"%s\", error code = %d",
-                          url_str,
-                          result);
-        }
+        jaeger_log_error(
+            "Cannot parse URL, URL = \"%s\", error code = %d", url_str, result);
         return false;
     }
-    url->str = jaeger_strdup(url_str, logger);
+    url->str = jaeger_strdup(url_str);
     if (url->str == NULL) {
-        if (logger != NULL) {
-            logger->error(
-                logger, "Cannot allocate URL string, str = \"%s\"", url_str);
-        }
+        jaeger_log_error("Cannot allocate URL string, str = \"%s\"", url_str);
         return false;
     }
     return true;
@@ -132,16 +117,17 @@ jaeger_url_init(jaeger_url* url, const char* url_str, jaeger_logger* logger)
 
 static inline void jaeger_url_destroy(jaeger_url* url)
 {
-    assert(url != NULL);
+    if (url == NULL) {
+        return;
+    }
     if (url->str != NULL) {
         jaeger_free(url->str);
-        url->str = NULL;
     }
+    *url = (jaeger_url) JAEGERTRACINGC_URL_INIT;
 }
 
 static inline bool jaeger_host_port_from_url(jaeger_host_port* host_port,
-                                             const jaeger_url* url,
-                                             jaeger_logger* logger)
+                                             const jaeger_url* url)
 {
     typedef struct {
         int off;
@@ -151,7 +137,6 @@ static inline bool jaeger_host_port_from_url(jaeger_host_port* host_port,
     assert(host_port != NULL);
     assert(url != NULL);
     assert(url->str != NULL);
-    assert(logger != NULL);
 
     int port = 0;
     if (url->parts.field_set & (1 << UF_PORT)) {
@@ -170,18 +155,17 @@ static inline bool jaeger_host_port_from_url(jaeger_host_port* host_port,
     }
 
     if (host_segment.len == 0) {
-        return jaeger_host_port_init(host_port, "localhost", port, logger);
+        return jaeger_host_port_init(host_port, "localhost", port);
     }
 
     char host_buffer[host_segment.len + 1];
     memcpy(host_buffer, &url->str[host_segment.off], host_segment.len);
     host_buffer[host_segment.len] = '\0';
-    return jaeger_host_port_init(host_port, host_buffer, port, logger);
+    return jaeger_host_port_init(host_port, host_buffer, port);
 }
 
 static inline bool jaeger_host_port_scan(jaeger_host_port* host_port,
-                                         const char* str,
-                                         jaeger_logger* logger)
+                                         const char* str)
 {
     assert(host_port != NULL);
     if (str == NULL) {
@@ -198,12 +182,9 @@ static inline bool jaeger_host_port_scan(jaeger_host_port* host_port,
     char* token_context = NULL;
     const char* token = strtok_r(str_copy, ":", &token_context);
     if (token == NULL) {
-        if (logger != NULL) {
-            logger->error(logger,
-                          "Null token for host in host port string, "
-                          "host port string = \"%s\"",
-                          str);
-        }
+        jaeger_log_error("Null token for host in host port string, "
+                         "host port string = \"%s\"",
+                         str);
         return false;
     }
     /* When host is omitted, first character is ':'. The first consumed token
@@ -213,7 +194,7 @@ static inline bool jaeger_host_port_scan(jaeger_host_port* host_port,
         port_token = token;
         token = "localhost";
     }
-    host_port->host = jaeger_strdup(token, logger);
+    host_port->host = jaeger_strdup(token);
     if (host_port->host == NULL) {
         return false;
     }
@@ -235,13 +216,10 @@ static inline bool jaeger_host_port_scan(jaeger_host_port* host_port,
     const int port = strtol(token, &end, 10);
     assert(end != NULL);
     if (*end != '\0' || port < 0 || port > USHRT_MAX) {
-        if (logger != NULL) {
-            logger->error(logger,
-                          "Invalid port token in host port string, "
-                          "port token = \"%s\", host port string = \"%s\"",
-                          token,
-                          str);
-        }
+        jaeger_log_error("Invalid port token in host port string, "
+                         "port token = \"%s\", host port string = \"%s\"",
+                         token,
+                         str);
         jaeger_free(host_port->host);
         host_port->host = NULL;
         return false;
@@ -264,8 +242,7 @@ static inline int jaeger_host_port_format(const jaeger_host_port* host_port,
 
 static inline bool jaeger_host_port_resolve(const jaeger_host_port* host_port,
                                             int socket_type,
-                                            struct addrinfo** host_addrs,
-                                            jaeger_logger* logger)
+                                            struct addrinfo** host_addrs)
 {
     assert(host_addrs != NULL);
     assert(host_port != NULL);
@@ -281,12 +258,9 @@ static inline bool jaeger_host_port_resolve(const jaeger_host_port* host_port,
     assert(result < JAEGERTRACINGC_MAX_PORT_STR_LEN);
     result = getaddrinfo(host_port->host, &port_buffer[0], &hints, host_addrs);
     if (result != 0) {
-        if (logger != NULL) {
-            logger->error(logger,
-                          "Cannot resolve host = \"%s\", error = \"%s\"",
-                          host_port->host,
-                          gai_strerror(result));
-        }
+        jaeger_log_error("Cannot resolve host = \"%s\", error = \"%s\"",
+                         host_port->host,
+                         gai_strerror(result));
         return false;
     }
     return true;

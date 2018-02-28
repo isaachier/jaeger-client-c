@@ -56,29 +56,23 @@ JAEGERTRACINGC_WRAP_DESTROY(jaeger_log_record_destroy, jaeger_log_record)
         .fields = JAEGERTRACINGC_VECTOR_INIT        \
     }
 
-static inline bool jaeger_log_record_init(jaeger_log_record* log_record,
-                                          jaeger_logger* logger)
+static inline bool jaeger_log_record_init(jaeger_log_record* log_record)
 {
     assert(log_record != NULL);
     jaeger_timestamp_now(&log_record->timestamp);
-    return jaeger_vector_init(
-        &log_record->fields, sizeof(jaeger_tag), NULL, logger);
+    return jaeger_vector_init(&log_record->fields, sizeof(jaeger_tag));
 }
 
 static inline bool jaeger_log_record_copy(jaeger_log_record* restrict dst,
-                                          const jaeger_log_record* restrict src,
-                                          jaeger_logger* logger)
+                                          const jaeger_log_record* restrict src)
 {
     assert(dst != NULL);
     assert(src != NULL);
-    if (!jaeger_log_record_init(dst, logger)) {
+    if (!jaeger_log_record_init(dst)) {
         return false;
     }
-    if (!jaeger_vector_copy(&dst->fields,
-                            &src->fields,
-                            &jaeger_tag_copy_wrapper,
-                            NULL,
-                            logger)) {
+    if (!jaeger_vector_copy(
+            &dst->fields, &src->fields, &jaeger_tag_copy_wrapper, NULL)) {
         jaeger_log_record_destroy(dst);
         return false;
     }
@@ -113,8 +107,7 @@ JAEGERTRACINGC_WRAP_DESTROY(jaeger_log_record_protobuf_destroy,
 
 static inline bool
 jaeger_log_record_to_protobuf(Jaegertracing__Protobuf__Log* restrict dst,
-                              const jaeger_log_record* restrict src,
-                              jaeger_logger* logger)
+                              const jaeger_log_record* restrict src)
 {
     assert(dst != NULL);
     assert(src != NULL);
@@ -129,8 +122,7 @@ jaeger_log_record_to_protobuf(Jaegertracing__Protobuf__Log* restrict dst,
                                      sizeof(jaeger_tag),
                                      &jaeger_tag_copy_wrapper,
                                      &jaeger_tag_destroy_wrapper,
-                                     NULL,
-                                     logger)) {
+                                     NULL)) {
         jaeger_log_record_protobuf_destroy(dst);
         *dst =
             (Jaegertracing__Protobuf__Log) JAEGERTRACING__PROTOBUF__LOG__INIT;

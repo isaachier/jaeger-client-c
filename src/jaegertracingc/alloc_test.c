@@ -27,10 +27,10 @@ void test_alloc()
     mem = jaeger_realloc(mem, 4);
     jaeger_free(mem);
 
-    jaeger_allocator* alloc = jaeger_null_allocator();
-    jaeger_logger* logger = jaeger_null_logger();
-    char* str = jaeger_strdup_alloc("hello world", alloc, logger);
+    jaeger_set_allocator(jaeger_null_allocator());
+    char* str = jaeger_strdup("hello world");
     TEST_ASSERT_NULL(str);
-    alloc->free(alloc, str); /* Calling free even though null to improve
-                                coverage of null allocator */
+    /* Calling free even though null to improve coverage of null allocator. */
+    jaeger_free(str);
+    jaeger_set_allocator(jaeger_built_in_allocator());
 }

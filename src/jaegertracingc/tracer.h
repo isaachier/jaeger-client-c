@@ -23,6 +23,9 @@
 #define JAEGERTRACINGC_TRACER_H
 
 #include "jaegertracingc/common.h"
+#include "jaegertracingc/reporter.h"
+#include "jaegertracingc/sampler.h"
+#include "jaegertracingc/span.h"
 #include "jaegertracingc/tag.h"
 #include "jaegertracingc/vector.h"
 
@@ -30,8 +33,27 @@
 extern "C" {
 #endif /* __cplusplus */
 
+/**
+ * Options that can be used to customize the tracer.
+ */
+typedef struct jaeger_tracer_options {
+    /**
+     * Whether to generate a 128 bit trace ID or leave high bits as zero.
+     * @see jaeger_trace_id
+     */
+    bool gen_128_bit;
+} jaeger_tracer_options;
+
+#define JAEGER_TRACER_OPTIONS_INIT \
+    {                              \
+        .gen_128_bit = false       \
+    }
+
 typedef struct jaeger_tracer {
     char* service_name;
+    jaeger_sampler* sampler;
+    jaeger_reporter* reporter;
+    jaeger_tracer_options options;
     jaeger_vector tags;
 } jaeger_tracer;
 

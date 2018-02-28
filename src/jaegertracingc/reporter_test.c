@@ -41,8 +41,7 @@ static inline int start_udp_server()
 static void* flush_reporter(void* arg)
 {
     assert(arg != NULL);
-    const int num_flushed =
-        jaeger_remote_reporter_flush(arg, jaeger_null_logger());
+    const int num_flushed = jaeger_remote_reporter_flush(arg);
     int* return_value = jaeger_malloc(sizeof(int));
     TEST_ASSERT_NOT_NULL(return_value);
     *return_value = num_flushed;
@@ -51,36 +50,33 @@ static void* flush_reporter(void* arg)
 
 void test_reporter()
 {
-    jaeger_logger* logger = jaeger_null_logger();
     jaeger_span span = JAEGERTRACINGC_SPAN_INIT;
-    TEST_ASSERT_TRUE(jaeger_span_init(&span, logger));
+    TEST_ASSERT_TRUE(jaeger_span_init(&span));
     span.context.flags = jaeger_sampling_flag_sampled;
 
     /* TODO: Update once tracer is implemented */
     jaeger_tracer tracer;
     tracer.service_name = "test service";
-    TEST_ASSERT_TRUE(
-        jaeger_vector_init(&tracer.tags, sizeof(jaeger_tag), NULL, logger));
+    TEST_ASSERT_TRUE(jaeger_vector_init(&tracer.tags, sizeof(jaeger_tag)));
     span.tracer = &tracer;
     TEST_ASSERT_NULL(span.operation_name);
-    TEST_ASSERT_TRUE(
-        jaeger_span_set_operation_name(&span, "test-operation", logger));
+    TEST_ASSERT_TRUE(jaeger_span_set_operation_name(&span, "test-operation"));
     TEST_ASSERT_NOT_NULL(span.operation_name);
 
     jaeger_log_record log = JAEGERTRACINGC_LOG_RECORD_INIT;
-    TEST_ASSERT_TRUE(jaeger_log_record_init(&log, logger));
-    jaeger_tag* field = jaeger_vector_append(&log.fields, logger);
+    TEST_ASSERT_TRUE(jaeger_log_record_init(&log));
+    jaeger_tag* field = jaeger_vector_append(&log.fields);
     TEST_ASSERT_NOT_NULL(field);
     *field = (jaeger_tag) JAEGERTRACINGC_TAG_INIT;
-    TEST_ASSERT_TRUE(jaeger_tag_init(field, "key", logger));
+    TEST_ASSERT_TRUE(jaeger_tag_init(field, "key"));
     field->value_case = JAEGERTRACINGC_TAG_TYPE(STR);
-    field->str_value = jaeger_strdup("value", logger);
+    field->str_value = jaeger_strdup("value");
     TEST_ASSERT_NOT_NULL(field->str_value);
 
-    TEST_ASSERT_TRUE(jaeger_span_log(&span, &log, logger));
+    TEST_ASSERT_TRUE(jaeger_span_log(&span, &log));
     jaeger_log_record_destroy(&log);
 
-    jaeger_span_ref* span_ref_ptr = jaeger_vector_append(&span.refs, logger);
+    jaeger_span_ref* span_ref_ptr = jaeger_vector_append(&span.refs);
     TEST_ASSERT_NOT_NULL(span_ref_ptr);
     span_ref_ptr->context =
         (jaeger_span_context){.trace_id = {.high = 0xDEAD, .low = 0xBEEF},
@@ -89,33 +85,31 @@ void test_reporter()
                               .flags = 0};
     span_ref_ptr->type = JAEGERTRACING__PROTOBUF__SPAN_REF__TYPE__CHILD_OF;
 
-    jaeger_key_value* kv = jaeger_vector_append(&span.context.baggage, logger);
+    jaeger_key_value* kv = jaeger_vector_append(&span.context.baggage);
     TEST_ASSERT_NOT_NULL(kv);
     *kv = (jaeger_key_value) JAEGERTRACINGC_KEY_VALUE_INIT;
-    TEST_ASSERT_TRUE(jaeger_key_value_init(kv, "key", "value", logger));
+    TEST_ASSERT_TRUE(jaeger_key_value_init(kv, "key", "value"));
 
     jaeger_span_finish_with_options(&span, NULL);
 
     jaeger_reporter* r = jaeger_null_reporter();
-    r->report(r, &span, logger);
+    r->report(r, &span);
     r->destroy((jaeger_destructible*) r);
 
     jaeger_logging_reporter_init(r);
-    r->report(r, &span, logger);
+    r->report(r, &span);
     r->destroy((jaeger_destructible*) r);
 
     jaeger_in_memory_reporter in_memory_reporter;
-    TEST_ASSERT_TRUE(
-        jaeger_in_memory_reporter_init(&in_memory_reporter, logger));
+    TEST_ASSERT_TRUE(jaeger_in_memory_reporter_init(&in_memory_reporter));
     r = (jaeger_reporter*) &in_memory_reporter;
-    r->report(r, &span, logger);
+    r->report(r, &span);
     r->destroy((jaeger_destructible*) r);
 
     jaeger_composite_reporter composite_reporter;
-    TEST_ASSERT_TRUE(
-        jaeger_composite_reporter_init(&composite_reporter, logger));
+    TEST_ASSERT_TRUE(jaeger_composite_reporter_init(&composite_reporter));
     r = (jaeger_reporter*) &composite_reporter;
-    r->report(r, &span, logger);
+    r->report(r, &span);
     r->destroy((jaeger_destructible*) r);
 
     /* Test connecting to a server address, closing the server socket, then
@@ -149,10 +143,10 @@ void test_reporter()
     char buffer[1024];
     jaeger_metrics* metrics = jaeger_null_metrics();
     TEST_ASSERT_TRUE(jaeger_remote_reporter_init(
-        &remote_reporter, fake_host_port, sizeof(buffer), metrics, logger));
-    r->report(r, &span, logger);
+        &remote_reporter, fake_host_port, sizeof(buffer), metrics));
+    r->report(r, &span);
     close(fake_socket_fd);
-    TEST_ASSERT_FALSE(jaeger_remote_reporter_flush(&remote_reporter, logger));
+    TEST_ASSERT_FALSE(jaeger_remote_reporter_flush(&remote_reporter));
     remote_reporter.destroy((jaeger_destructible*) &remote_reporter);
 
     /* Test connection to real server works as expected. */
@@ -174,10 +168,10 @@ void test_reporter()
                                    ntohs(addr.sin_port)));
 
     TEST_ASSERT_TRUE(jaeger_remote_reporter_init(
-        &remote_reporter, host_port, sizeof(buffer), metrics, logger));
+        &remote_reporter, host_port, sizeof(buffer), metrics));
     r = (jaeger_reporter*) &remote_reporter;
     for (int i = 0; i < 100; i++) {
-        r->report(r, &span, logger);
+        r->report(r, &span);
     }
     jaeger_thread thread;
     TEST_ASSERT_EQUAL(
@@ -196,8 +190,8 @@ void test_reporter()
 
     const int small_packet_size = 1;
     TEST_ASSERT_TRUE(jaeger_remote_reporter_init(
-        &remote_reporter, host_port, small_packet_size, metrics, logger));
-    r->report(r, &span, logger);
+        &remote_reporter, host_port, small_packet_size, metrics));
+    r->report(r, &span);
     TEST_ASSERT_EQUAL(
         0, jaeger_thread_init(&thread, &flush_reporter, &remote_reporter));
     num_flushed = NULL;

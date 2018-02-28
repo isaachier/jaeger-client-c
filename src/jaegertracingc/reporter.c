@@ -28,13 +28,10 @@ static void null_destroy(jaeger_destructible* destructible)
     (void) destructible;
 }
 
-static void null_report(jaeger_reporter* reporter,
-                        const jaeger_span* span,
-                        jaeger_logger* logger)
+static void null_report(jaeger_reporter* reporter, const jaeger_span* span)
 {
     (void) reporter;
     (void) span;
-    (void) logger;
 }
 
 static void init_null_reporter()
@@ -51,14 +48,13 @@ jaeger_reporter* jaeger_null_reporter()
 }
 
 static void logging_reporter_report(jaeger_reporter* reporter,
-                                    const jaeger_span* span,
-                                    jaeger_logger* logger)
+                                    const jaeger_span* span)
 {
     assert(reporter != NULL);
-    if (logger != NULL && span != NULL) {
+    if (span != NULL) {
         char buffer[JAEGERTRACINGC_SPAN_CONTEXT_MAX_STR_LEN + 1];
         buffer[JAEGERTRACINGC_SPAN_CONTEXT_MAX_STR_LEN] = '\0';
-        logger->info(logger, "%s", buffer);
+        jaeger_log_info("%s", buffer);
     }
 }
 
@@ -76,14 +72,15 @@ static void in_memory_reporter_destroy(jaeger_destructible* destructible)
     }
 
     jaeger_in_memory_reporter* r = (jaeger_in_memory_reporter*) destructible;
+
     JAEGERTRACINGC_VECTOR_FOR_EACH(&r->spans, jaeger_span_destroy, jaeger_span);
+
     jaeger_vector_destroy(&r->spans);
     jaeger_mutex_destroy(&r->mutex);
 }
 
 static void in_memory_reporter_report(jaeger_reporter* reporter,
-                                      const jaeger_span* span,
-                                      jaeger_logger* logger)
+                                      const jaeger_span* span)
 {
     assert(reporter != NULL);
     if (span == NULL) {
@@ -91,19 +88,17 @@ static void in_memory_reporter_report(jaeger_reporter* reporter,
     }
     jaeger_in_memory_reporter* r = (jaeger_in_memory_reporter*) reporter;
     jaeger_mutex_lock(&r->mutex);
-    jaeger_span* span_copy = jaeger_vector_append(&r->spans, logger);
-    if (span_copy != NULL && !jaeger_span_copy(span_copy, span, logger)) {
+    jaeger_span* span_copy = jaeger_vector_append(&r->spans);
+    if (span_copy != NULL && !jaeger_span_copy(span_copy, span)) {
         r->spans.len--;
     }
     jaeger_mutex_unlock(&r->mutex);
 }
 
-bool jaeger_in_memory_reporter_init(jaeger_in_memory_reporter* reporter,
-                                    jaeger_logger* logger)
+bool jaeger_in_memory_reporter_init(jaeger_in_memory_reporter* reporter)
 {
     assert(reporter != NULL);
-    if (!jaeger_vector_init(
-            &reporter->spans, sizeof(jaeger_span), NULL, logger)) {
+    if (!jaeger_vector_init(&reporter->spans, sizeof(jaeger_span))) {
         return false;
     }
     reporter->destroy = &in_memory_reporter_destroy;
@@ -139,23 +134,22 @@ static void composite_reporter_destroy(jaeger_destructible* destructible)
 }
 
 static void composite_reporter_report(jaeger_reporter* reporter,
-                                      const jaeger_span* span,
-                                      jaeger_logger* logger)
+                                      const jaeger_span* span)
 {
     assert(reporter != NULL);
     if (span != NULL) {
         jaeger_composite_reporter* r = (jaeger_composite_reporter*) reporter;
 
-#define REPORT(x)                                                 \
-    do {                                                          \
-        if (x == NULL) {                                          \
-            continue;                                             \
-        }                                                         \
-        jaeger_reporter** child_reporter = x;                     \
-        if (*child_reporter == NULL) {                            \
-            continue;                                             \
-        }                                                         \
-        (*child_reporter)->report(*child_reporter, span, logger); \
+#define REPORT(x)                                         \
+    do {                                                  \
+        if (x == NULL) {                                  \
+            continue;                                     \
+        }                                                 \
+        jaeger_reporter** child_reporter = x;             \
+        if (*child_reporter == NULL) {                    \
+            continue;                                     \
+        }                                                 \
+        (*child_reporter)->report(*child_reporter, span); \
     } while (0)
 
         JAEGERTRACINGC_VECTOR_FOR_EACH(&r->reporters, REPORT, jaeger_reporter*);
@@ -164,12 +158,10 @@ static void composite_reporter_report(jaeger_reporter* reporter,
     }
 }
 
-bool jaeger_composite_reporter_init(jaeger_composite_reporter* reporter,
-                                    jaeger_logger* logger)
+bool jaeger_composite_reporter_init(jaeger_composite_reporter* reporter)
 {
     assert(reporter != NULL);
-    if (!jaeger_vector_init(
-            &reporter->reporters, sizeof(jaeger_reporter*), NULL, logger)) {
+    if (!jaeger_vector_init(&reporter->reporters, sizeof(jaeger_reporter*))) {
         return false;
     }
 
@@ -201,18 +193,15 @@ static inline void process_destroy(Jaegertracing__Protobuf__Process* process)
 }
 
 static inline bool build_process(Jaegertracing__Protobuf__Process* process,
-                                 const jaeger_tracer* tracer,
-                                 jaeger_logger* logger)
+                                 const jaeger_tracer* tracer)
 {
     assert(process != NULL);
     assert(tracer != NULL);
     if (tracer->service_name == NULL || strlen(tracer->service_name) == 0) {
-        if (logger != NULL) {
-            logger->error(logger, "Invalid null or empty service name");
-        }
+        jaeger_log_error("Invalid null or empty service name");
         return false;
     }
-    process->service_name = jaeger_strdup(tracer->service_name, logger);
+    process->service_name = jaeger_strdup(tracer->service_name);
     if (process->service_name == NULL) {
         goto cleanup;
     }
@@ -223,8 +212,7 @@ static inline bool build_process(Jaegertracing__Protobuf__Process* process,
                                      sizeof(jaeger_tag),
                                      &jaeger_tag_copy_wrapper,
                                      &jaeger_tag_destroy_wrapper,
-                                     NULL,
-                                     logger)) {
+                                     NULL)) {
         goto cleanup;
     }
     return true;
@@ -239,45 +227,38 @@ static inline void large_batch_error(Jaegertracing__Protobuf__Batch* batch,
                                      jaeger_vector* spans,
                                      int initial_num_spans,
                                      int max_packet_size,
-                                     jaeger_metrics* metrics,
-                                     jaeger_logger* logger)
+                                     jaeger_metrics* metrics)
 {
-    if (logger != NULL) {
-        Jaegertracing__Protobuf__Batch tmp = *batch;
-        memcpy(&tmp, batch, sizeof(tmp));
-        tmp.n_spans = 1;
-        logger->error(logger,
-                      "Message is too large to send in a single packet, "
-                      "minimum message size = %zu, "
-                      "maximum packet size = %d",
-                      jaegertracing__protobuf__batch__get_packed_size(&tmp),
-                      max_packet_size);
-    }
+    Jaegertracing__Protobuf__Batch tmp = *batch;
+    memcpy(&tmp, batch, sizeof(tmp));
+    tmp.n_spans = 1;
+    jaeger_log_error("Message is too large to send in a single packet, "
+                     "minimum message size = %zu, "
+                     "maximum packet size = %d",
+                     jaegertracing__protobuf__batch__get_packed_size(&tmp),
+                     max_packet_size);
 
     const int batch_packed_size =
         jaegertracing__protobuf__batch__get_packed_size(batch);
-    if (batch_packed_size > max_packet_size && logger != NULL) {
-        logger->error(logger,
-                      "Detected batch with zero spans exceeds maximum "
-                      "packet size, "
-                      "batch size (zero spans) = %d, "
-                      "maximum packet size = %d",
-                      batch_packed_size,
-                      max_packet_size);
+    if (batch_packed_size > max_packet_size) {
+        jaeger_log_error("Detected batch with zero spans exceeds maximum "
+                         "packet size, "
+                         "batch size (zero spans) = %d, "
+                         "maximum packet size = %d",
+                         batch_packed_size,
+                         max_packet_size);
     }
 
-    if (logger != NULL) {
-        logger->error(logger, "Dropping first span to avoid repeated failures");
-    }
+    jaeger_log_error("Dropping first span to avoid repeated failures");
 
     spans->data = batch->spans;
     spans->len = initial_num_spans;
     *batch =
         (Jaegertracing__Protobuf__Batch) JAEGERTRACING__PROTOBUF__BATCH__INIT;
-    Jaegertracing__Protobuf__Span** span = jaeger_vector_get(spans, 0, logger);
+    Jaegertracing__Protobuf__Span** span = jaeger_vector_get(spans, 0);
     jaeger_span_protobuf_destroy(*span);
     jaeger_free(*span);
-    jaeger_vector_remove(spans, 0, logger);
+    jaeger_vector_remove(spans, 0);
 
     if (metrics != NULL) {
         jaeger_counter* dropped = metrics->reporter_dropped;
@@ -290,8 +271,7 @@ static inline bool build_batch(Jaegertracing__Protobuf__Batch* batch,
                                Jaegertracing__Protobuf__Process* process,
                                jaeger_vector* spans,
                                int max_packet_size,
-                               jaeger_metrics* metrics,
-                               jaeger_logger* logger)
+                               jaeger_metrics* metrics)
 {
     assert(batch != NULL);
     assert(process != NULL);
@@ -310,30 +290,24 @@ static inline bool build_batch(Jaegertracing__Protobuf__Batch* batch,
          batch->n_spans--)
         ;
     if (batch->n_spans == 0) {
-        large_batch_error(
-            batch, spans, num_spans, max_packet_size, metrics, logger);
+        large_batch_error(batch, spans, num_spans, max_packet_size, metrics);
         return false;
     }
 
     const int remaining_spans = num_spans - batch->n_spans;
     if (remaining_spans > 0 &&
-        jaeger_vector_init(
-            spans, sizeof(Jaegertracing__Protobuf__Span*), NULL, logger) &&
-        jaeger_vector_reserve(spans, remaining_spans, logger)) {
+        jaeger_vector_init(spans, sizeof(Jaegertracing__Protobuf__Span*)) &&
+        jaeger_vector_reserve(spans, remaining_spans)) {
         for (int i = 0; i < remaining_spans; i++) {
-            Jaegertracing__Protobuf__Span** span =
-                jaeger_vector_append(spans, logger);
+            Jaegertracing__Protobuf__Span** span = jaeger_vector_append(spans);
             assert(span != NULL);
             *span = batch->spans[batch->n_spans + i];
         }
     }
     else if (remaining_spans > 0) {
-        if (logger != NULL) {
-            logger->error(logger,
-                          "Cannot allocate space for span buffer, must "
-                          "drop remaining spans, num dropped spans = %d",
-                          remaining_spans);
-        }
+        jaeger_log_error("Cannot allocate space for span buffer, must "
+                         "drop remaining spans, num dropped spans = %d",
+                         remaining_spans);
         for (int i = 0; i < remaining_spans; i++) {
             jaeger_span_protobuf_destroy(batch->spans[batch->n_spans + i]);
             jaeger_free(batch->spans[batch->n_spans + i]);
@@ -396,8 +370,7 @@ remote_reporter_update_queue_length(jaeger_remote_reporter* reporter)
 }
 
 static void remote_reporter_report(jaeger_reporter* reporter,
-                                   const jaeger_span* span,
-                                   jaeger_logger* logger)
+                                   const jaeger_span* span)
 {
     assert(reporter != NULL);
     if (span == NULL) {
@@ -407,27 +380,24 @@ static void remote_reporter_report(jaeger_reporter* reporter,
     jaeger_remote_reporter* r = (jaeger_remote_reporter*) reporter;
     jaeger_mutex_lock(&r->mutex);
 
-    if (!jaeger_vector_reserve(
-            &r->spans, jaeger_vector_length(&r->spans) + 1, logger)) {
+    if (!jaeger_vector_reserve(&r->spans,
+                               jaeger_vector_length(&r->spans) + 1)) {
         goto unlock;
     }
 
     Jaegertracing__Protobuf__Span* span_copy =
         jaeger_malloc(sizeof(Jaegertracing__Protobuf__Span));
     if (span_copy == NULL) {
-        if (logger != NULL) {
-            logger->error(logger, "Cannot allocate span for reporter batch");
-        }
+        jaeger_log_error("Cannot allocate span for reporter batch");
         goto unlock;
     }
 
     *span_copy =
         (Jaegertracing__Protobuf__Span) JAEGERTRACING__PROTOBUF__SPAN__INIT;
-    if (!jaeger_span_to_protobuf(span_copy, span, logger)) {
+    if (!jaeger_span_to_protobuf(span_copy, span)) {
         goto cleanup;
     }
-    Jaegertracing__Protobuf__Span** span_ptr =
-        jaeger_vector_append(&r->spans, logger);
+    Jaegertracing__Protobuf__Span** span_ptr = jaeger_vector_append(&r->spans);
     assert(span_ptr != NULL);
     *span_ptr = span_copy;
     remote_reporter_update_queue_length(r);
@@ -437,7 +407,7 @@ static void remote_reporter_report(jaeger_reporter* reporter,
         jaeger_mutex_lock((jaeger_mutex*) &span->mutex);
         /* Building process will not affect this span, so ignore return value.
          */
-        build_process(&r->process, span->tracer, logger);
+        build_process(&r->process, span->tracer);
         jaeger_mutex_unlock((jaeger_mutex*) &span->mutex);
     }
 
@@ -453,8 +423,7 @@ unlock:
 bool jaeger_remote_reporter_init(jaeger_remote_reporter* reporter,
                                  const char* host_port_str,
                                  int max_packet_size,
-                                 jaeger_metrics* metrics,
-                                 jaeger_logger* logger)
+                                 jaeger_metrics* metrics)
 {
     assert(reporter != NULL);
 
@@ -470,9 +439,7 @@ bool jaeger_remote_reporter_init(jaeger_remote_reporter* reporter,
                                     ? max_packet_size
                                     : JAEGERTRACINGC_DEFAULT_UDP_BUFFER_SIZE;
     if (!jaeger_vector_init(&reporter->spans,
-                            sizeof(Jaegertracing__Protobuf__Span*),
-                            NULL,
-                            logger)) {
+                            sizeof(Jaegertracing__Protobuf__Span*))) {
         goto cleanup;
     }
 
@@ -481,15 +448,14 @@ bool jaeger_remote_reporter_init(jaeger_remote_reporter* reporter,
     if (host_port_str == NULL || strlen(host_port_str) == 0) {
         host_port_str = JAEGERTRACINGC_DEFAULT_UDP_SPAN_SERVER_HOST_PORT;
     }
-    if (!jaeger_host_port_scan(&host_port, host_port_str, logger)) {
+    if (!jaeger_host_port_scan(&host_port, host_port_str)) {
         goto cleanup_host_port;
     }
 
     reporter->candidates = NULL;
     struct addrinfo* candidates = NULL;
     memset(&reporter->addr, 0, sizeof(reporter->addr));
-    if (!jaeger_host_port_resolve(
-            &host_port, SOCK_DGRAM, &candidates, logger)) {
+    if (!jaeger_host_port_resolve(&host_port, SOCK_DGRAM, &candidates)) {
         goto cleanup_host_port;
     }
     reporter->candidates = candidates;
@@ -510,8 +476,7 @@ cleanup:
 
 static bool remote_reporter_write_to_socket(jaeger_remote_reporter* reporter,
                                             const uint8_t* buffer,
-                                            int buf_len,
-                                            jaeger_logger* logger)
+                                            int buf_len)
 {
     /* Delay address resolution until the first write. */
     if (reporter->candidates != NULL) {
@@ -534,10 +499,7 @@ static bool remote_reporter_write_to_socket(jaeger_remote_reporter* reporter,
         freeaddrinfo(reporter->candidates);
         reporter->candidates = NULL;
         if (!success) {
-            if (logger != NULL) {
-                logger->error(logger,
-                              "Failed to resolve remote reporter host port");
-            }
+            jaeger_log_error("Failed to resolve remote reporter host port");
             if (reporter->metrics != NULL) {
                 jaeger_counter* failed = reporter->metrics->reporter_failure;
                 assert(failed != NULL);
@@ -556,13 +518,10 @@ static bool remote_reporter_write_to_socket(jaeger_remote_reporter* reporter,
                                    sizeof(reporter->addr));
     const bool success = (num_written == buf_len);
     if (!success) {
-        if (logger != NULL) {
-            logger->error(logger,
-                          "Cannot write entire message to UDP socket, "
-                          "num written = %d, errno = %d",
-                          num_written,
-                          errno);
-        }
+        jaeger_log_error("Cannot write entire message to UDP socket, "
+                         "num written = %d, errno = %d",
+                         num_written,
+                         errno);
         if (reporter->metrics != NULL) {
             jaeger_counter* failed = reporter->metrics->reporter_failure;
             assert(failed != NULL);
@@ -573,8 +532,7 @@ static bool remote_reporter_write_to_socket(jaeger_remote_reporter* reporter,
     return success;
 }
 
-int jaeger_remote_reporter_flush(jaeger_remote_reporter* reporter,
-                                 jaeger_logger* logger)
+int jaeger_remote_reporter_flush(jaeger_remote_reporter* reporter)
 {
     assert(reporter != NULL);
 
@@ -590,8 +548,7 @@ int jaeger_remote_reporter_flush(jaeger_remote_reporter* reporter,
                      &reporter->process,
                      &reporter->spans,
                      reporter->max_packet_size,
-                     reporter->metrics,
-                     logger)) {
+                     reporter->metrics)) {
         return -1;
     }
 
@@ -600,8 +557,8 @@ int jaeger_remote_reporter_flush(jaeger_remote_reporter* reporter,
     jaegertracing__protobuf__batch__pack_to_buffer(&batch,
                                                    (ProtobufCBuffer*) &simple);
     assert((int) simple.len <= reporter->max_packet_size);
-    const bool write_succeeded = remote_reporter_write_to_socket(
-        reporter, simple.data, simple.len, logger);
+    const bool write_succeeded =
+        remote_reporter_write_to_socket(reporter, simple.data, simple.len);
     PROTOBUF_C_BUFFER_SIMPLE_CLEAR(&simple);
     if (!write_succeeded) {
         goto cleanup;

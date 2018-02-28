@@ -45,8 +45,7 @@ extern "C" {
     bool (*is_sampled)(struct jaeger_sampler * sampler, \
                        const jaeger_trace_id* trace_id, \
                        const char* operation,           \
-                       jaeger_vector* tags,             \
-                       jaeger_logger* logger)
+                       jaeger_vector* tags)
 
 typedef struct jaeger_sampler {
     JAEGERTRACINGC_SAMPLER_SUBCLASS;
@@ -101,7 +100,10 @@ typedef struct jaeger_operation_sampler {
 static inline void
 jaeger_operation_sampler_destroy(jaeger_operation_sampler* op_sampler)
 {
-    assert(op_sampler != NULL);
+    if (op_sampler == NULL) {
+        return;
+    }
+
     if (op_sampler->operation_name != NULL) {
         jaeger_free(op_sampler->operation_name);
         op_sampler->operation_name = NULL;
@@ -120,8 +122,7 @@ typedef struct jaeger_adaptive_sampler {
 bool jaeger_adaptive_sampler_init(
     jaeger_adaptive_sampler* sampler,
     const jaeger_per_operation_strategy* strategies,
-    int max_operations,
-    jaeger_logger* logger);
+    int max_operations);
 
 typedef enum jaeger_sampler_type {
     jaeger_const_sampler_type,
@@ -153,8 +154,7 @@ typedef struct jaeger_sampler_choice {
     }
 
 static inline jaeger_sampler*
-jaeger_sampler_choice_get_sampler(jaeger_sampler_choice* sampler,
-                                  jaeger_logger* logger)
+jaeger_sampler_choice_get_sampler(jaeger_sampler_choice* sampler)
 {
 #define JAEGERTRACINGC_SAMPLER_TYPE_CASE(type) \
     case jaeger_##type##_sampler_type:         \
@@ -167,8 +167,7 @@ jaeger_sampler_choice_get_sampler(jaeger_sampler_choice* sampler,
         JAEGERTRACINGC_SAMPLER_TYPE_CASE(guaranteed_throughput_probabilistic);
         JAEGERTRACINGC_SAMPLER_TYPE_CASE(adaptive);
     default:
-        logger->warn(
-            logger,
+        jaeger_log_warn(
             "Invalid sampler type in sampler choice, sampler type = %d",
             sampler->type);
         return NULL;
@@ -180,8 +179,7 @@ jaeger_sampler_choice_get_sampler(jaeger_sampler_choice* sampler,
 static inline void jaeger_sampler_choice_destroy(jaeger_sampler_choice* sampler)
 {
     assert(sampler != NULL);
-    jaeger_sampler* s =
-        jaeger_sampler_choice_get_sampler(sampler, jaeger_null_logger());
+    jaeger_sampler* s = jaeger_sampler_choice_get_sampler(sampler);
     if (s != NULL) {
         s->destroy((jaeger_destructible*) s);
     }
@@ -222,11 +220,10 @@ bool jaeger_remotely_controlled_sampler_init(
     const char* sampling_server_url,
     const jaeger_sampler_choice* initial_sampler,
     int max_operations,
-    jaeger_metrics* metrics,
-    jaeger_logger* logger);
+    jaeger_metrics* metrics);
 
 bool jaeger_remotely_controlled_sampler_update(
-    jaeger_remotely_controlled_sampler* sampler, jaeger_logger* logger);
+    jaeger_remotely_controlled_sampler* sampler);
 
 #ifdef __cplusplus
 } /* extern C */

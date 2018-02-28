@@ -38,11 +38,9 @@ extern "C" {
 
 #define JAEGERTRACINGC_DEFAULT_UDP_BUFFER_SIZE USHRT_MAX
 
-#define JAEGERTRACINGC_REPORTER_SUBCLASS              \
-    JAEGERTRACINGC_DESTRUCTIBLE_SUBCLASS;             \
-    void (*report)(struct jaeger_reporter * reporter, \
-                   const jaeger_span* span,           \
-                   jaeger_logger* logger)
+#define JAEGERTRACINGC_REPORTER_SUBCLASS  \
+    JAEGERTRACINGC_DESTRUCTIBLE_SUBCLASS; \
+    void (*report)(struct jaeger_reporter * reporter, const jaeger_span* span)
 
 typedef struct jaeger_reporter {
     JAEGERTRACINGC_REPORTER_SUBCLASS;
@@ -59,26 +57,22 @@ typedef struct jaeger_in_memory_reporter {
     jaeger_mutex mutex;
 } jaeger_in_memory_reporter;
 
-bool jaeger_in_memory_reporter_init(jaeger_in_memory_reporter* reporter,
-                                    jaeger_logger* logger);
+bool jaeger_in_memory_reporter_init(jaeger_in_memory_reporter* reporter);
 
 typedef struct jaeger_composite_reporter {
     JAEGERTRACINGC_REPORTER_SUBCLASS;
     jaeger_vector reporters;
 } jaeger_composite_reporter;
 
-bool jaeger_composite_reporter_init(jaeger_composite_reporter* reporter,
-                                    jaeger_logger* logger);
+bool jaeger_composite_reporter_init(jaeger_composite_reporter* reporter);
 
 static inline bool
 jaeger_composite_reporter_add(jaeger_composite_reporter* reporter,
-                              jaeger_reporter* new_reporter,
-                              jaeger_logger* logger)
+                              jaeger_reporter* new_reporter)
 {
     assert(reporter != NULL);
     assert(new_reporter != NULL);
-    jaeger_reporter** reporter_ptr =
-        jaeger_vector_append(&reporter->reporters, logger);
+    jaeger_reporter** reporter_ptr = jaeger_vector_append(&reporter->reporters);
     if (reporter_ptr == NULL) {
         return false;
     }
@@ -101,11 +95,9 @@ typedef struct jaeger_remote_reporter {
 bool jaeger_remote_reporter_init(jaeger_remote_reporter* reporter,
                                  const char* host_port,
                                  int max_packet_size,
-                                 jaeger_metrics* metrics,
-                                 jaeger_logger* logger);
+                                 jaeger_metrics* metrics);
 
-int jaeger_remote_reporter_flush(jaeger_remote_reporter* reporter,
-                                 jaeger_logger* logger);
+int jaeger_remote_reporter_flush(jaeger_remote_reporter* reporter);
 
 #ifdef __cplusplus
 } /* extern C */

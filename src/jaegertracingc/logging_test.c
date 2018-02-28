@@ -20,7 +20,9 @@ void test_logging()
 {
     jaeger_logger std_logger;
     jaeger_std_logger_init(&std_logger);
-    std_logger.error(&std_logger, "Testing error logging");
-    std_logger.warn(&std_logger, "Testing warn logging");
-    std_logger.info(&std_logger, "Testing info logging");
+    jaeger_set_logger(&std_logger);
+    jaeger_log_error("Testing error logging");
+    jaeger_log_warn("Testing warn logging");
+    jaeger_log_info("Testing info logging");
+    jaeger_set_logger(jaeger_null_logger());
 }

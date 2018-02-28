@@ -37,9 +37,8 @@ void test_metrics()
     jaeger_gauge* null_gauge = jaeger_null_gauge();
     null_gauge->update(null_gauge, 4);
 
-    jaeger_logger* logger = jaeger_null_logger();
     jaeger_metrics metrics;
-    jaeger_default_metrics_init(&metrics, logger);
+    jaeger_default_metrics_init(&metrics);
     jaeger_metrics_destroy(&metrics);
 
     jaeger_null_metrics();

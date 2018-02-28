@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-#include "init.h"
+#include "logging.h"
 #include "unit_test_driver.h"
 
 int main()
 {
-    jaeger_init_lib(NULL, NULL);
+    jaeger_set_logger(jaeger_null_logger());
     run_tests();
     return 0;
 }

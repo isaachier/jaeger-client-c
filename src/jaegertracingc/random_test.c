@@ -26,7 +26,7 @@ static void* random_func(void* arg)
     TEST_ASSERT_NOT_NULL(arg);
     int64_t* x = arg;
     jaeger_logger* logger = jaeger_null_logger();
-    *x = random64(logger);
+    *x = random64();
     return NULL;
 }
 
@@ -46,7 +46,7 @@ void test_random()
     jaeger_logger* logger = jaeger_null_logger();
     uint64_t seed[NUM_UINT64_IN_SEED];
     memset(seed, 0, sizeof(seed));
-    read_random_seed(seed, "bad-path", logger);
+    read_random_seed(seed, "bad-path");
     TEST_ASSERT_EQUAL(0, seed[0]);
     TEST_ASSERT_EQUAL(0, seed[1]);
 
@@ -55,7 +55,7 @@ void test_random()
     const uint64_t seed_values[NUM_UINT64_IN_SEED] = {0x0123456789ABCDEF, 0};
     TEST_ASSERT_EQUAL(1, fwrite(seed_values, sizeof(seed_values[0]), 1, f));
     fclose(f);
-    read_random_seed(seed, "good-path", logger);
+    read_random_seed(seed, "good-path");
     TEST_ASSERT_EQUAL_HEX64(seed_values[0], seed[0]);
     TEST_ASSERT_EQUAL_HEX64(seed_values[1], seed[1]);
     remove("good-path");

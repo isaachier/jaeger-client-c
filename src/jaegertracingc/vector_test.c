@@ -26,29 +26,29 @@ void test_vector()
     jaeger_vector vec;
     jaeger_logger* logger = jaeger_null_logger();
 
-    TEST_ASSERT_FALSE(jaeger_vector_init(&vec, sizeof(char), alloc, logger));
+    jaeger_set_allocator(jaeger_null_allocator());
+    TEST_ASSERT_FALSE(jaeger_vector_init(&vec, sizeof(char)));
 
-    TEST_ASSERT_TRUE(jaeger_vector_init(&vec, sizeof(char), NULL, logger));
-    vec.alloc = alloc;
+    jaeger_set_allocator(jaeger_built_in_allocator());
+    TEST_ASSERT_TRUE(jaeger_vector_init(&vec, sizeof(char)));
+    jaeger_set_allocator(jaeger_null_allocator());
     while (jaeger_vector_length(&vec) < JAEGERTRACINGC_VECTOR_INIT_CAPACITY) {
-        TEST_ASSERT_NOT_NULL(jaeger_vector_append(&vec, logger));
+        TEST_ASSERT_NOT_NULL(jaeger_vector_append(&vec));
     }
-    TEST_ASSERT_NULL(jaeger_vector_append(&vec, logger));
-    jaeger_vector_remove(&vec, 0, logger);
-    vec.alloc = jaeger_built_in_allocator();
-    TEST_ASSERT_NULL(
-        jaeger_vector_get(&vec, jaeger_vector_length(&vec), logger));
+    TEST_ASSERT_NULL(jaeger_vector_append(&vec));
+    jaeger_vector_remove(&vec, 0);
+    TEST_ASSERT_NULL(jaeger_vector_get(&vec, jaeger_vector_length(&vec)));
+    jaeger_set_allocator(jaeger_built_in_allocator());
     jaeger_vector_destroy(&vec);
 
-    TEST_ASSERT_TRUE(
-        jaeger_vector_init(&vec, sizeof(jaeger_tag), NULL, logger));
-    vec.alloc = alloc;
+    TEST_ASSERT_TRUE(jaeger_vector_init(&vec, sizeof(jaeger_tag)));
     jaeger_tag tag = JAEGERTRACINGC_TAG_INIT;
     tag.value_case = JAEGERTRACINGC_TAG_TYPE(LONG);
     tag.long_value = 0;
-    TEST_ASSERT_TRUE(jaeger_vector_extend(
-        &vec, 0, JAEGERTRACINGC_VECTOR_INIT_CAPACITY, logger));
-    TEST_ASSERT_FALSE(jaeger_tag_vector_append(&vec, &tag, logger));
-    vec.alloc = jaeger_built_in_allocator();
+    TEST_ASSERT_TRUE(
+        jaeger_vector_extend(&vec, 0, JAEGERTRACINGC_VECTOR_INIT_CAPACITY));
+    jaeger_set_allocator(jaeger_null_allocator());
+    TEST_ASSERT_FALSE(jaeger_tag_vector_append(&vec, &tag));
+    jaeger_set_allocator(jaeger_built_in_allocator());
     jaeger_vector_destroy(&vec);
 }

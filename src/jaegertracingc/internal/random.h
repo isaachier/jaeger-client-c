@@ -21,8 +21,7 @@
 
 #include "pcg_variants.h"
 
-#include "jaegertracingc/alloc.h"
-#include "jaegertracingc/logging.h"
+#include "jaegertracingc/common.h"
 #include "jaegertracingc/random.h"
 #include "jaegertracingc/threading.h"
 
@@ -34,16 +33,16 @@
 #include <sys/syscall.h>
 #include <unistd.h>
 
-#define RANDOM_SEED(seed, logger) \
+#define RANDOM_SEED(seed) \
     syscall(SYS_getrandom, seed, sizeof(seed), GRND_NONBLOCK)
 
 #elif defined(HAVE_ARC4RANDOM_BUF)
 
-#define RANDOM_SEED(seed, logger) arc4random_buf(seed, sizeof(seed))
+#define RANDOM_SEED(seed) arc4random_buf(seed, sizeof(seed))
 
 #else
 
-#define RANDOM_SEED(seed, logger) read_random_seed(seed, "/dev/random", logger)
+#define RANDOM_SEED(seed) read_random_seed(seed, "/dev/random")
 
 #endif /* HAVE_GETRANDOM */
 
@@ -55,18 +54,14 @@ typedef struct jaeger_rng {
 } jaeger_rng;
 
 static inline void read_random_seed(uint64_t* seed,
-                                    const char* random_source_path,
-                                    jaeger_logger* logger)
+                                    const char* random_source_path)
 {
     FILE* random_source_file = fopen(random_source_path, "r");
     if (random_source_file == NULL) {
-        if (logger != NULL) {
-            logger->warn(logger,
-                         "Cannot open %s to initialize random seed, "
-                         "errno = %d",
-                         random_source_path,
-                         errno);
-        }
+        jaeger_log_warn("Cannot open %s to initialize random seed, "
+                        "errno = %d",
+                        random_source_path,
+                        errno);
         return;
     }
 
@@ -76,13 +71,12 @@ static inline void read_random_seed(uint64_t* seed,
 
     /* Warn if we could not read entire seed from random source, but not an
      * error regardless. */
-    if (num_read != NUM_UINT64_IN_SEED && logger != NULL) {
-        logger->warn(logger,
-                     "Could not read entire random block, "
-                     "bytes requested = %lu, bytes read = %lu, errno = %d",
-                     NUM_UINT64_IN_SEED * sizeof(uint64_t),
-                     num_read * sizeof(uint64_t),
-                     errno);
+    if (num_read != NUM_UINT64_IN_SEED) {
+        jaeger_log_warn("Could not read entire random block, "
+                        "bytes requested = %lu, bytes read = %lu, errno = %d",
+                        NUM_UINT64_IN_SEED * sizeof(uint64_t),
+                        num_read * sizeof(uint64_t),
+                        errno);
     }
 }
 
@@ -91,25 +85,25 @@ static void rng_destroy(jaeger_destructible* d)
     if (d == NULL) {
         return;
     }
-    jaeger_free(d);
+    jaeger_rng* rng = (jaeger_rng*) d;
+    jaeger_free(rng);
 }
 
-static inline void jaeger_rng_init(jaeger_rng* rng, jaeger_logger* logger)
+static inline void jaeger_rng_init(jaeger_rng* rng)
 {
-    (void) logger;
     assert(rng != NULL);
     rng->destroy = &rng_destroy;
     uint64_t seed[NUM_UINT64_IN_SEED];
     memset(seed, 0, sizeof(seed));
-    RANDOM_SEED(seed, logger);
+    RANDOM_SEED(seed);
     pcg32_srandom_r(&rng->state, seed[0], seed[1]);
 }
 
-static inline jaeger_rng* jaeger_rng_alloc(jaeger_logger* logger)
+static inline jaeger_rng* jaeger_rng_alloc(void)
 {
     jaeger_rng* rng = (jaeger_rng*) jaeger_malloc(sizeof(jaeger_rng));
-    if (rng == NULL && logger != NULL) {
-        logger->error(logger, "Cannot allocate random number generator");
+    if (rng == NULL) {
+        jaeger_log_error("Cannot allocate random number generator");
     }
     return rng;
 }

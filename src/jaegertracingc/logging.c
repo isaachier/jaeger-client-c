@@ -15,61 +15,63 @@
  */
 
 #include "jaegertracingc/logging.h"
-#include <stdarg.h>
 #include "jaegertracingc/threading.h"
 
-static void null_log(jaeger_logger* logger, const char* format, ...)
+static void null_log(jaeger_logger* logger, const char* format, va_list args)
 {
     (void) logger;
     (void) format;
+    (void) args;
 }
 
-static inline void
-std_log(jaeger_logger* logger, const char* format, va_list args)
-{
-    assert(logger != NULL);
-    assert(format != NULL);
-    vfprintf(stderr, format, args);
-}
+static jaeger_mutex stdout_mutex = JAEGERTRACINGC_MUTEX_INIT;
+static jaeger_mutex stderr_mutex = JAEGERTRACINGC_MUTEX_INIT;
 
-#define STD_LOG_FUNC(level, prefix)                               \
-    static void std_log_##level(                                  \
-        jaeger_logger* logger, const char* format, ...)           \
-    {                                                             \
-        char fmt[strlen(format) + strlen(#prefix ": ") + 2];      \
-        const int result =                                        \
-            snprintf(fmt, sizeof(fmt), #prefix ": %s\n", format); \
-        (void) result;                                            \
-        assert(result < (int) sizeof(fmt));                       \
-        va_list args;                                             \
-        va_start(args, format);                                   \
-        std_log(logger, fmt, args);                               \
-        va_end(args);                                             \
+#define STD_LOG_FUNC(level, stream, mutex)                       \
+    static void std_log_##level(                                 \
+        jaeger_logger* logger, const char* format, va_list args) \
+    {                                                            \
+        (void) logger;                                           \
+        fprintf(stream, "%s: ", #level);                         \
+        jaeger_mutex_lock(&mutex);                               \
+        vfprintf(stream, format, args);                          \
+        fputc('\n', stream);                                     \
+        jaeger_mutex_unlock(&mutex);                             \
     }
-
-static jaeger_logger null_logger;
-
-static void init_null_logger()
-{
-    null_logger = (jaeger_logger){
-        .error = &null_log, .warn = &null_log, .info = &null_log};
-}
 
 jaeger_logger* jaeger_null_logger()
 {
-    static jaeger_once once = JAEGERTRACINGC_ONCE_INIT;
-    jaeger_do_once(&once, &init_null_logger);
+    static jaeger_logger null_logger = {
+        .error = &null_log, .warn = &null_log, .info = &null_log};
     return &null_logger;
 }
 
-STD_LOG_FUNC(error, ERROR)
-STD_LOG_FUNC(warn, WARNING)
-STD_LOG_FUNC(info, INFO)
+STD_LOG_FUNC(error, stderr, stderr_mutex)
+STD_LOG_FUNC(warn, stderr, stderr_mutex)
+STD_LOG_FUNC(info, stdout, stdout_mutex)
+
+#define STD_LOGGER_INIT                                                       \
+    {                                                                         \
+        .error = &std_log_error, .warn = &std_log_warn, .info = &std_log_info \
+    }
 
 void jaeger_std_logger_init(jaeger_logger* logger)
 {
     assert(logger != NULL);
+    *logger = (jaeger_logger) STD_LOGGER_INIT;
     logger->error = &std_log_error;
     logger->warn = &std_log_warn;
     logger->info = &std_log_info;
+}
+
+jaeger_logger* jaeger_get_logger(void)
+{
+    static jaeger_logger logger = STD_LOGGER_INIT;
+    return &logger;
+}
+
+void jaeger_set_logger(jaeger_logger* logger)
+{
+    assert(logger != NULL);
+    *jaeger_get_logger() = *logger;
 }

@@ -16,9 +16,6 @@
 
 #include "jaegertracingc/alloc.h"
 
-#ifdef JAEGERTRACINGC_VERBOSE_ALLOC
-#include <stdio.h>
-#endif /* JAEGERTRACINGC_VERBOSE_ALLOC */
 #include <stdlib.h>
 
 static void* built_in_malloc(jaeger_allocator* alloc, size_t sz)
@@ -77,18 +74,51 @@ static void null_free(jaeger_allocator* alloc, void* ptr)
     (void) ptr;
 }
 
-jaeger_allocator* jaeger_built_in_allocator()
+#define BUILT_IN_ALLOCATOR_INIT                                   \
+    {                                                             \
+        .malloc = &built_in_malloc, .realloc = &built_in_realloc, \
+        .free = &built_in_free                                    \
+    }
+
+jaeger_allocator* jaeger_built_in_allocator(void)
 {
-    static struct jaeger_allocator built_in_alloc = {.malloc = &built_in_malloc,
-                                                     .realloc =
-                                                         &built_in_realloc,
-                                                     .free = &built_in_free};
+    static struct jaeger_allocator built_in_alloc = BUILT_IN_ALLOCATOR_INIT;
     return &built_in_alloc;
 }
 
-jaeger_allocator* jaeger_null_allocator()
+jaeger_allocator* jaeger_null_allocator(void)
 {
     static struct jaeger_allocator null_alloc = {
         .malloc = &null_malloc, .realloc = &null_realloc, .free = &null_free};
     return &null_alloc;
+}
+
+void jaeger_set_allocator(jaeger_allocator* alloc)
+{
+    assert(alloc != NULL);
+    *jaeger_get_allocator() = *alloc;
+}
+
+jaeger_allocator* jaeger_get_allocator(void)
+{
+    static jaeger_allocator shared_alloc = BUILT_IN_ALLOCATOR_INIT;
+    return &shared_alloc;
+}
+
+void* jaeger_malloc(size_t sz)
+{
+    jaeger_allocator* alloc = jaeger_get_allocator();
+    return alloc->malloc(alloc, sz);
+}
+
+void* jaeger_realloc(void* ptr, size_t sz)
+{
+    jaeger_allocator* alloc = jaeger_get_allocator();
+    return alloc->realloc(alloc, ptr, sz);
+}
+
+void jaeger_free(void* ptr)
+{
+    jaeger_allocator* alloc = jaeger_get_allocator();
+    alloc->free(alloc, ptr);
 }

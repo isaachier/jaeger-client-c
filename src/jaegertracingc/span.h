@@ -70,35 +70,35 @@ static inline void jaeger_span_context_destroy(jaeger_span_context* ctx)
     if (ctx == NULL) {
         return;
     }
+
     JAEGERTRACINGC_VECTOR_FOR_EACH(
         &ctx->baggage, jaeger_key_value_destroy, jaeger_key_value);
+
+#undef JAEGERTRACINGC_KEY_VALUE_DESTROY
+
     jaeger_vector_destroy(&ctx->baggage);
 }
 
-static inline bool jaeger_span_context_init(jaeger_span_context* ctx,
-                                            jaeger_logger* logger)
+static inline bool jaeger_span_context_init(jaeger_span_context* ctx)
 {
     assert(ctx != NULL);
     *ctx = (jaeger_span_context) JAEGERTRACINGC_SPAN_CONTEXT_INIT;
-    return jaeger_vector_init(
-        &ctx->baggage, sizeof(jaeger_key_value), NULL, logger);
+    return jaeger_vector_init(&ctx->baggage, sizeof(jaeger_key_value));
 }
 
 static inline bool
 jaeger_span_context_copy(jaeger_span_context* restrict dst,
-                         const jaeger_span_context* restrict src,
-                         jaeger_logger* logger)
+                         const jaeger_span_context* restrict src)
 {
     assert(dst != NULL);
     assert(src != NULL);
-    if (!jaeger_span_context_init(dst, logger)) {
+    if (!jaeger_span_context_init(dst)) {
         return false;
     }
     if (!jaeger_vector_copy(&dst->baggage,
                             &src->baggage,
                             &jaeger_key_value_copy_wrapper,
-                            NULL,
-                            logger)) {
+                            NULL)) {
         jaeger_span_context_destroy(dst);
         return false;
     }
@@ -122,12 +122,11 @@ typedef struct jaeger_span_ref {
         .type = (jaeger_span_ref_type) -1            \
     }
 
-static inline bool jaeger_span_ref_init(jaeger_span_ref* span_ref,
-                                        jaeger_logger* logger)
+static inline bool jaeger_span_ref_init(jaeger_span_ref* span_ref)
 {
     assert(span_ref != NULL);
     *span_ref = (jaeger_span_ref) JAEGERTRACINGC_SPAN_REF_INIT;
-    return jaeger_span_context_init(&span_ref->context, logger);
+    return jaeger_span_context_init(&span_ref->context);
 }
 
 static inline void jaeger_span_ref_destroy(jaeger_span_ref* span_ref)
@@ -139,10 +138,8 @@ static inline void jaeger_span_ref_destroy(jaeger_span_ref* span_ref)
     jaeger_span_context_destroy(&span_ref->context);
 }
 
-static inline bool jaeger_span_ref_copy(void* arg,
-                                        void* restrict dst,
-                                        const void* restrict src,
-                                        jaeger_logger* logger)
+static inline bool
+jaeger_span_ref_copy(void* arg, void* restrict dst, const void* restrict src)
 {
     (void) arg;
     assert(dst != NULL);
@@ -152,8 +149,8 @@ static inline bool jaeger_span_ref_copy(void* arg,
      * jaeger_span_context_copy due to double initialization of span context.
      */
     const jaeger_span_ref* src_span_ref = (const jaeger_span_ref*) src;
-    if (!jaeger_span_context_copy(
-            &dst_span_ref->context, &src_span_ref->context, logger)) {
+    if (!jaeger_span_context_copy(&dst_span_ref->context,
+                                  &src_span_ref->context)) {
         return false;
     }
     dst_span_ref->type = src_span_ref->type;
@@ -176,8 +173,7 @@ JAEGERTRACINGC_WRAP_DESTROY(jaeger_span_ref_protobuf_destroy,
 
 static inline bool
 jaeger_span_ref_to_protobuf(Jaegertracing__Protobuf__SpanRef* restrict dst,
-                            const jaeger_span_ref* restrict src,
-                            jaeger_logger* logger)
+                            const jaeger_span_ref* restrict src)
 {
     assert(dst != NULL);
     assert(src != NULL);
@@ -186,10 +182,7 @@ jaeger_span_ref_to_protobuf(Jaegertracing__Protobuf__SpanRef* restrict dst,
     dst->trace_id = (Jaegertracing__Protobuf__TraceID*) jaeger_malloc(
         sizeof(Jaegertracing__Protobuf__TraceID));
     if (dst->trace_id == NULL) {
-        if (logger != NULL) {
-            logger->error(logger,
-                          "Cannot allocate trace ID for span ref message");
-        }
+        jaeger_log_error("Cannot allocate trace ID for span ref message");
         return false;
     }
     *dst->trace_id = (Jaegertracing__Protobuf__TraceID)
@@ -233,7 +226,6 @@ typedef struct jaeger_span {
         .refs = JAEGERTRACINGC_VECTOR_INIT, .mutex = JAEGERTRACINGC_MUTEX_INIT \
     }
 
-/* N.B. Caller must be holding span->mutex if span is not null. */
 static inline void jaeger_span_destroy(jaeger_span* span)
 {
     if (span == NULL) {
@@ -261,31 +253,28 @@ static inline void jaeger_span_destroy(jaeger_span* span)
     jaeger_mutex_destroy(&span->mutex);
 }
 
-static inline bool jaeger_span_init_vectors(jaeger_span* span,
-                                            jaeger_logger* logger)
+static inline bool jaeger_span_init_vectors(jaeger_span* span)
 {
-    if (!jaeger_vector_init(&span->tags, sizeof(jaeger_tag), NULL, logger)) {
+    if (!jaeger_vector_init(&span->tags, sizeof(jaeger_tag))) {
         return false;
     }
-    if (!jaeger_vector_init(
-            &span->logs, sizeof(jaeger_log_record), NULL, logger)) {
+    if (!jaeger_vector_init(&span->logs, sizeof(jaeger_log_record))) {
         return false;
     }
-    if (!jaeger_vector_init(
-            &span->refs, sizeof(jaeger_span_ref), NULL, logger)) {
+    if (!jaeger_vector_init(&span->refs, sizeof(jaeger_span_ref))) {
         return false;
     }
     return true;
 }
 
-static inline bool jaeger_span_init(jaeger_span* span, jaeger_logger* logger)
+static inline bool jaeger_span_init(jaeger_span* span)
 {
     assert(span != NULL);
     *span = (jaeger_span) JAEGERTRACINGC_SPAN_INIT;
-    if (!jaeger_span_context_init(&span->context, logger)) {
+    if (!jaeger_span_context_init(&span->context)) {
         return false;
     }
-    if (!jaeger_span_init_vectors(span, logger)) {
+    if (!jaeger_span_init_vectors(span)) {
         goto cleanup;
     }
     return true;
@@ -296,41 +285,39 @@ cleanup:
 }
 
 static inline bool jaeger_span_copy(jaeger_span* restrict dst,
-                                    const jaeger_span* restrict src,
-                                    jaeger_logger* logger)
+                                    const jaeger_span* restrict src)
 {
     assert(dst != NULL);
     assert(src != NULL);
     *dst = (jaeger_span) JAEGERTRACINGC_SPAN_INIT;
-    if (!jaeger_span_init_vectors(dst, logger)) {
+    if (!jaeger_span_init_vectors(dst)) {
         return false;
     }
     jaeger_lock(&dst->mutex, (jaeger_mutex*) &src->mutex);
     dst->start_time_system = src->start_time_system;
     dst->start_time_steady = src->start_time_steady;
     dst->duration = src->duration;
-    dst->operation_name = jaeger_strdup(src->operation_name, logger);
-    if (!jaeger_span_context_copy(&dst->context, &src->context, logger)) {
+    dst->operation_name = jaeger_strdup(src->operation_name);
+    if (!jaeger_span_context_copy(&dst->context, &src->context)) {
         goto cleanup;
     }
     if (dst->operation_name == NULL) {
         goto cleanup;
     }
     if (!jaeger_vector_copy(
-            &dst->tags, &src->tags, &jaeger_tag_copy_wrapper, NULL, logger)) {
+            &dst->tags, &src->tags, &jaeger_tag_copy_wrapper, NULL)) {
         goto cleanup;
     }
 
     if (!jaeger_vector_copy(&dst->logs,
                             &src->logs,
                             &jaeger_log_record_copy_wrapper,
-                            &jaeger_log_record_destroy_wrapper,
-                            logger)) {
+                            &jaeger_log_record_destroy_wrapper)) {
         goto cleanup;
     }
 
     if (!jaeger_vector_copy(
-            &dst->refs, &src->refs, &jaeger_span_ref_copy, NULL, logger)) {
+            &dst->refs, &src->refs, &jaeger_span_ref_copy, NULL)) {
         goto cleanup;
     }
 
@@ -340,8 +327,8 @@ static inline bool jaeger_span_copy(jaeger_span* restrict dst,
 
 cleanup:
     jaeger_mutex_unlock((jaeger_mutex*) &src->mutex);
-    jaeger_span_destroy(dst);
     jaeger_mutex_unlock(&dst->mutex);
+    jaeger_span_destroy(dst);
     return false;
 }
 
@@ -360,12 +347,10 @@ static inline bool jaeger_span_is_sampled_no_lock(const jaeger_span* span)
  * Set operation name of span.
  * @param span The span instance.
  * @param operation_name The new operation name.
- * @param logger The logger to log to in case of error.
  * @return True on success, false otherwise.
  */
 static inline bool jaeger_span_set_operation_name(jaeger_span* span,
-                                                  const char* operation_name,
-                                                  jaeger_logger* logger)
+                                                  const char* operation_name)
 {
     assert(span != NULL);
     assert(operation_name != NULL);
@@ -375,7 +360,7 @@ static inline bool jaeger_span_set_operation_name(jaeger_span* span,
         goto cleanup;
     }
 
-    char* operation_name_copy = jaeger_strdup(operation_name, logger);
+    char* operation_name_copy = jaeger_strdup(operation_name);
     if (operation_name_copy == NULL) {
         success = false;
         goto cleanup;
@@ -396,20 +381,17 @@ cleanup:
  * Add tag to span without locking.
  * @param span The span instance.
  * @param tag The tag to append.
- * @param logger The logger to log to in case of error.
  * @return True on success, false, otherwise.
  * @see jaeger_span_set_tag()
  */
 static inline bool jaeger_span_set_tag_no_locking(jaeger_span* span,
-                                                  const jaeger_tag* tag,
-                                                  jaeger_logger* logger)
+                                                  const jaeger_tag* tag)
 {
-    jaeger_tag* tag_copy =
-        (jaeger_tag*) jaeger_vector_append(&span->tags, logger);
+    jaeger_tag* tag_copy = (jaeger_tag*) jaeger_vector_append(&span->tags);
     if (tag_copy == NULL) {
         return false;
     }
-    if (!jaeger_tag_copy(tag_copy, tag, logger)) {
+    if (!jaeger_tag_copy(tag_copy, tag)) {
         span->tags.len--;
         return false;
     }
@@ -448,12 +430,9 @@ static inline bool jaeger_span_set_sampling_priority(jaeger_span* span,
  * Add tag to span.
  * @param span The span instance.
  * @param tag The tag to append.
- * @param logger The logger to log to in case of error.
  * @return True on success, false otherwise.
  */
-static inline bool jaeger_span_set_tag(jaeger_span* span,
-                                       const jaeger_tag* tag,
-                                       jaeger_logger* logger)
+static inline bool jaeger_span_set_tag(jaeger_span* span, const jaeger_tag* tag)
 {
     assert(span != NULL);
     assert(tag != NULL);
@@ -464,7 +443,7 @@ static inline bool jaeger_span_set_tag(jaeger_span* span,
     bool success = true;
     jaeger_mutex_lock(&span->mutex);
     if (jaeger_span_is_sampled_no_lock(span)) {
-        success = jaeger_span_set_tag_no_locking(span, tag, logger);
+        success = jaeger_span_set_tag_no_locking(span, tag);
     }
     jaeger_mutex_unlock(&span->mutex);
     return success;
@@ -474,22 +453,20 @@ static inline bool jaeger_span_set_tag(jaeger_span* span,
  * Append to span logs without locking.
  * @param span The span instance.
  * @param log_record The log record to append.
- * @param logger Logger to log to in case of error.
  * @return True on success, false otherwise.
  * @see jaeger_span_log()
  */
 static inline bool
 jaeger_span_log_no_locking(jaeger_span* span,
-                           const jaeger_log_record* log_record,
-                           jaeger_logger* logger)
+                           const jaeger_log_record* log_record)
 {
     jaeger_log_record* log_record_copy =
-        (jaeger_log_record*) jaeger_vector_append(&span->logs, logger);
+        (jaeger_log_record*) jaeger_vector_append(&span->logs);
     if (log_record_copy == NULL) {
         return false;
     }
     *log_record_copy = (jaeger_log_record) JAEGERTRACINGC_LOG_RECORD_INIT;
-    if (!jaeger_log_record_copy(log_record_copy, log_record, logger)) {
+    if (!jaeger_log_record_copy(log_record_copy, log_record)) {
         goto cleanup;
     }
     return true;
@@ -503,19 +480,17 @@ cleanup:
  * Append to span logs.
  * @param span The span instance.
  * @param log_record The log record to append.
- * @param logger Logger to log to in case of error.
  * @return True on success, false otherwise.
  */
 static inline bool jaeger_span_log(jaeger_span* span,
-                                   const jaeger_log_record* log_record,
-                                   jaeger_logger* logger)
+                                   const jaeger_log_record* log_record)
 {
     assert(span != NULL);
     assert(log_record != NULL);
     bool success = true;
     jaeger_mutex_lock(&span->mutex);
     if (jaeger_span_is_sampled_no_lock(span)) {
-        success = jaeger_span_log_no_locking(span, log_record, logger);
+        success = jaeger_span_log_no_locking(span, log_record);
     }
     jaeger_mutex_unlock(&span->mutex);
     return success;
@@ -566,26 +541,26 @@ jaeger_span_finish_with_options(jaeger_span* span,
 
         assert(options->num_logs == 0 || options->logs != NULL);
         for (int i = 0; i < options->num_logs; i++) {
-            jaeger_span_log_no_locking(span, &options->logs[i], NULL);
+            jaeger_span_log_no_locking(span, &options->logs[i]);
         }
     }
     jaeger_mutex_unlock(&span->mutex);
 }
 
 static inline void
-jaeger_protobuf_list_destroy(void** data, int num, void (*dtor)(void*))
+jaeger_protobuf_list_destroy(void** data, int num, void (*destroy)(void*))
 {
     if (num == 0) {
         return;
     }
     assert(num > 0);
     assert(data != NULL);
-    assert(dtor != NULL);
+    assert(destroy != NULL);
     for (int i = 0; i < (int) num; i++) {
         if (data[i] == NULL) {
             continue;
         }
-        dtor(data[i]);
+        destroy(data[i]);
         jaeger_free(data[i]);
     }
     jaeger_free(data);
@@ -627,17 +602,15 @@ jaeger_span_protobuf_destroy(Jaegertracing__Protobuf__Span* span)
 
 static inline bool
 jaeger_span_to_protobuf(Jaegertracing__Protobuf__Span* restrict dst,
-                        const jaeger_span* restrict src,
-                        jaeger_logger* logger)
+                        const jaeger_span* restrict src)
 {
     assert(dst != NULL);
     assert(src != NULL);
     *dst = (Jaegertracing__Protobuf__Span) JAEGERTRACING__PROTOBUF__SPAN__INIT;
-    dst->trace_id = jaeger_malloc(sizeof(Jaegertracing__Protobuf__TraceID));
+    dst->trace_id = (Jaegertracing__Protobuf__TraceID*) jaeger_malloc(
+        sizeof(Jaegertracing__Protobuf__TraceID));
     if (dst->trace_id == NULL) {
-        if (logger != NULL) {
-            logger->error(logger, "Cannot allocate trace ID for span message");
-        }
+        jaeger_log_error("Cannot allocate trace ID for span message");
         return false;
     }
     *dst->trace_id = (Jaegertracing__Protobuf__TraceID)
@@ -650,7 +623,7 @@ jaeger_span_to_protobuf(Jaegertracing__Protobuf__Span* restrict dst,
     jaeger_trace_id_to_protobuf(dst->trace_id, &src->context.trace_id);
     dst->span_id = src->context.span_id;
     dst->parent_span_id = src->context.parent_id;
-    dst->operation_name = jaeger_strdup(src->operation_name, logger);
+    dst->operation_name = jaeger_strdup(src->operation_name);
     if (dst->operation_name == NULL) {
         goto cleanup;
     }
@@ -661,8 +634,7 @@ jaeger_span_to_protobuf(Jaegertracing__Protobuf__Span* restrict dst,
                                      sizeof(jaeger_tag),
                                      &jaeger_tag_copy_wrapper,
                                      &jaeger_tag_destroy_wrapper,
-                                     NULL,
-                                     logger)) {
+                                     NULL)) {
         goto cleanup;
     }
     if (!jaeger_vector_protobuf_copy(
@@ -672,8 +644,7 @@ jaeger_span_to_protobuf(Jaegertracing__Protobuf__Span* restrict dst,
             sizeof(Jaegertracing__Protobuf__Log),
             &jaeger_log_record_to_protobuf_wrapper,
             &jaeger_log_record_protobuf_destroy_wrapper,
-            NULL,
-            logger)) {
+            NULL)) {
         goto cleanup;
     }
     if (!jaeger_vector_protobuf_copy((void***) &dst->references,
@@ -682,8 +653,7 @@ jaeger_span_to_protobuf(Jaegertracing__Protobuf__Span* restrict dst,
                                      sizeof(Jaegertracing__Protobuf__SpanRef),
                                      &jaeger_span_ref_to_protobuf_wrapper,
                                      &jaeger_span_ref_protobuf_destroy_wrapper,
-                                     NULL,
-                                     logger)) {
+                                     NULL)) {
         goto cleanup;
     }
     jaeger_mutex_unlock((jaeger_mutex*) &src->mutex);
