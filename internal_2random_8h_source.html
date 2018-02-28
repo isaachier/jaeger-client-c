@@ -168,7 +168,7 @@ $(document).ready(function(){initNavTree('internal_2random_8h_source.html','');}
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    FILE* random_source_file = fopen(random_source_path, <span class="stringliteral">&quot;r&quot;</span>);</div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="keywordflow">if</span> (random_source_file == NULL) {</div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        <span class="keywordflow">if</span> (logger != NULL) {</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;            logger-&gt;<a class="code" href="structjaeger__logger.html#aac44c83b9346f6eab58b222e49e08af1">warn</a>(logger,</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;            logger-&gt;<a class="code" href="structjaeger__logger.html#a018418b7839931281fce2c7b0a8dc93c">warn</a>(logger,</div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;                         <span class="stringliteral">&quot;Cannot open %s to initialize random seed, &quot;</span></div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;                         <span class="stringliteral">&quot;errno = %d&quot;</span>,</div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;                         random_source_path,</div>
@@ -184,9 +184,9 @@ $(document).ready(function(){initNavTree('internal_2random_8h_source.html','');}
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <span class="comment">/* Warn if we could not read entire seed from random source, but not an</span></div>
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="comment">     * error regardless. */</span></div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="keywordflow">if</span> (num_read != NUM_UINT64_IN_SEED &amp;&amp; logger != NULL) {</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        logger-&gt;<a class="code" href="structjaeger__logger.html#aac44c83b9346f6eab58b222e49e08af1">warn</a>(logger,</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        logger-&gt;<a class="code" href="structjaeger__logger.html#a018418b7839931281fce2c7b0a8dc93c">warn</a>(logger,</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;                     <span class="stringliteral">&quot;Could not read entire random block, &quot;</span></div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;                     <span class="stringliteral">&quot;bytes requested = %d, bytes read = %d, errno = %d&quot;</span>,</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;                     <span class="stringliteral">&quot;bytes requested = %lu, bytes read = %lu, errno = %d&quot;</span>,</div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;                     NUM_UINT64_IN_SEED * <span class="keyword">sizeof</span>(uint64_t),</div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;                     num_read * <span class="keyword">sizeof</span>(uint64_t),</div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;                     errno);</div>
@@ -216,20 +216,20 @@ $(document).ready(function(){initNavTree('internal_2random_8h_source.html','');}
 <div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;{</div>
 <div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    <a class="code" href="structjaeger__rng.html">jaeger_rng</a>* rng = (<a class="code" href="structjaeger__rng.html">jaeger_rng</a>*) jaeger_malloc(<span class="keyword">sizeof</span>(<a class="code" href="structjaeger__rng.html">jaeger_rng</a>));</div>
 <div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    <span class="keywordflow">if</span> (rng == NULL &amp;&amp; logger != NULL) {</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;        logger-&gt;<a class="code" href="structjaeger__logger.html#a414655004e94cba854c130f03b3bcaee">error</a>(logger, <span class="stringliteral">&quot;Cannot allocate random number generator&quot;</span>);</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;        logger-&gt;<a class="code" href="structjaeger__logger.html#a8248a1acae52a12fb4d1efabd3cb2689">error</a>(logger, <span class="stringliteral">&quot;Cannot allocate random number generator&quot;</span>);</div>
 <div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    }</div>
 <div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    <span class="keywordflow">return</span> rng;</div>
 <div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;}</div>
 <div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;</div>
 <div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* JAEGERTRACINGC_INTERNAL_RANDOM_H */</span><span class="preprocessor"></span></div>
+<div class="ttc" id="structjaeger__logger_html_a8248a1acae52a12fb4d1efabd3cb2689"><div class="ttname"><a href="structjaeger__logger.html#a8248a1acae52a12fb4d1efabd3cb2689">jaeger_logger::error</a></div><div class="ttdeci">void(* error)(struct jaeger_logger *logger, const char *format,...) JAEGERTRACINGC_FORMAT_ATTRIBUTE(printf</div><div class="ttdoc">Error log function. </div><div class="ttdef"><b>Definition:</b> logging.h:38</div></div>
 <div class="ttc" id="logging_8h_html"><div class="ttname"><a href="logging_8h.html">logging.h</a></div><div class="ttdoc">Logging interface and initialization functions. </div></div>
 <div class="ttc" id="threading_8h_html"><div class="ttname"><a href="threading_8h.html">threading.h</a></div><div class="ttdoc">Threading utilities. </div></div>
 <div class="ttc" id="structjaeger__destructible_html"><div class="ttname"><a href="structjaeger__destructible.html">jaeger_destructible</a></div><div class="ttdef"><b>Definition:</b> common.h:51</div></div>
 <div class="ttc" id="alloc_8h_html"><div class="ttname"><a href="alloc_8h.html">alloc.h</a></div><div class="ttdoc">Allocator struct and functions. </div></div>
-<div class="ttc" id="structjaeger__logger_html_aac44c83b9346f6eab58b222e49e08af1"><div class="ttname"><a href="structjaeger__logger.html#aac44c83b9346f6eab58b222e49e08af1">jaeger_logger::warn</a></div><div class="ttdeci">void(* warn)(struct jaeger_logger *logger, const char *format,...)</div><div class="ttdoc">Warn log function. </div><div class="ttdef"><b>Definition:</b> logging.h:45</div></div>
 <div class="ttc" id="structjaeger__logger_html"><div class="ttname"><a href="structjaeger__logger.html">jaeger_logger</a></div><div class="ttdoc">Logger interface to customize log output. </div><div class="ttdef"><b>Definition:</b> logging.h:32</div></div>
 <div class="ttc" id="random_8h_html"><div class="ttname"><a href="random_8h.html">random.h</a></div><div class="ttdoc">Random number generation. </div></div>
-<div class="ttc" id="structjaeger__logger_html_a414655004e94cba854c130f03b3bcaee"><div class="ttname"><a href="structjaeger__logger.html#a414655004e94cba854c130f03b3bcaee">jaeger_logger::error</a></div><div class="ttdeci">void(* error)(struct jaeger_logger *logger, const char *format,...)</div><div class="ttdoc">Error log function. </div><div class="ttdef"><b>Definition:</b> logging.h:38</div></div>
+<div class="ttc" id="structjaeger__logger_html_a018418b7839931281fce2c7b0a8dc93c"><div class="ttname"><a href="structjaeger__logger.html#a018418b7839931281fce2c7b0a8dc93c">jaeger_logger::warn</a></div><div class="ttdeci">void(*) void(* warn)(struct jaeger_logger *logger, const char *format,...) JAEGERTRACINGC_FORMAT_ATTRIBUTE(printf</div><div class="ttdoc">Warn log function. </div><div class="ttdef"><b>Definition:</b> logging.h:46</div></div>
 <div class="ttc" id="structjaeger__thread__local_html"><div class="ttname"><a href="structjaeger__thread__local.html">jaeger_thread_local</a></div><div class="ttdef"><b>Definition:</b> threading.h:85</div></div>
 <div class="ttc" id="structjaeger__rng_html"><div class="ttname"><a href="structjaeger__rng.html">jaeger_rng</a></div><div class="ttdef"><b>Definition:</b> random.h:52</div></div>
 </div><!-- fragment --></div><!-- contents -->

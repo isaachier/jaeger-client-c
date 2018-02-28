@@ -170,7 +170,7 @@ $(document).ready(function(){initNavTree('vector_8h_source.html','');});
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="keywordtype">void</span>* data = alloc-&gt;<a class="code" href="structjaeger__allocator.html#ab89e0bce9f7223d60b7788b51dcceaa6">malloc</a>(alloc, allocated_size);</div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="keywordflow">if</span> (data == NULL) {</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        <span class="keywordflow">if</span> (logger != NULL) {</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;            logger-&gt;<a class="code" href="structjaeger__logger.html#a414655004e94cba854c130f03b3bcaee">error</a>(logger,</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;            logger-&gt;<a class="code" href="structjaeger__logger.html#a8248a1acae52a12fb4d1efabd3cb2689">error</a>(logger,</div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;                          <span class="stringliteral">&quot;Failed to initialize vector because initial memory &quot;</span></div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;                          <span class="stringliteral">&quot;could not be allocated&quot;</span>);</div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        }</div>
@@ -198,7 +198,7 @@ $(document).ready(function(){initNavTree('vector_8h_source.html','');});
 <div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    assert(index &gt;= 0);</div>
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    <span class="keywordflow">if</span> (index &gt;= jaeger_vector_length(vec)) {</div>
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;        <span class="keywordflow">if</span> (logger != NULL) {</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;            logger-&gt;<a class="code" href="structjaeger__logger.html#a414655004e94cba854c130f03b3bcaee">error</a>(logger,</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;            logger-&gt;<a class="code" href="structjaeger__logger.html#a8248a1acae52a12fb4d1efabd3cb2689">error</a>(logger,</div>
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;                          <span class="stringliteral">&quot;Invalid access to index %d in vector of length %d&quot;</span>,</div>
 <div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;                          index,</div>
 <div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;                          jaeger_vector_length(vec));</div>
@@ -225,7 +225,7 @@ $(document).ready(function(){initNavTree('vector_8h_source.html','');});
 <div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;        vec-&gt;alloc, vec-&gt;data, vec-&gt;type_size * aligned_capacity);</div>
 <div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    <span class="keywordflow">if</span> (new_data == NULL) {</div>
 <div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;        <span class="keywordflow">if</span> (logger != NULL) {</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;            logger-&gt;<a class="code" href="structjaeger__logger.html#a414655004e94cba854c130f03b3bcaee">error</a>(logger,</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;            logger-&gt;<a class="code" href="structjaeger__logger.html#a8248a1acae52a12fb4d1efabd3cb2689">error</a>(logger,</div>
 <div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;                          <span class="stringliteral">&quot;Failed to allocate memory for vector resize, &quot;</span></div>
 <div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;                          <span class="stringliteral">&quot;current size = %d, new size = %d&quot;</span>,</div>
 <div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;                          vec-&gt;type_size * vec-&gt;capacity,</div>
@@ -270,7 +270,7 @@ $(document).ready(function(){initNavTree('vector_8h_source.html','');});
 <div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">int</span> len = jaeger_vector_length(vec);</div>
 <div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    <span class="keywordflow">if</span> (index &lt; 0 || index &gt;= len) {</div>
 <div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;        <span class="keywordflow">if</span> (logger != NULL) {</div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;            logger-&gt;<a class="code" href="structjaeger__logger.html#a414655004e94cba854c130f03b3bcaee">error</a>(logger,</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;            logger-&gt;<a class="code" href="structjaeger__logger.html#a8248a1acae52a12fb4d1efabd3cb2689">error</a>(logger,</div>
 <div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;                          <span class="stringliteral">&quot;Invalid removal of index %d in vector of length %d&quot;</span>,</div>
 <div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;                          index,</div>
 <div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;                          len);</div>
@@ -425,7 +425,7 @@ $(document).ready(function(){initNavTree('vector_8h_source.html','');});
 <div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;    *ptr = (<span class="keywordtype">void</span>**) ctx-&gt;alloc-&gt;<a class="code" href="structjaeger__allocator.html#ab89e0bce9f7223d60b7788b51dcceaa6">malloc</a>(ctx-&gt;alloc, ctx-&gt;type_size);</div>
 <div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;    <span class="keywordflow">if</span> (*ptr == NULL) {</div>
 <div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;        <span class="keywordflow">if</span> (logger != NULL) {</div>
-<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;            logger-&gt;<a class="code" href="structjaeger__logger.html#a414655004e94cba854c130f03b3bcaee">error</a>(logger,</div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;            logger-&gt;<a class="code" href="structjaeger__logger.html#a8248a1acae52a12fb4d1efabd3cb2689">error</a>(logger,</div>
 <div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;                          <span class="stringliteral">&quot;Cannot allocate %d bytes for vector pointer&quot;</span>,</div>
 <div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;                          ctx-&gt;type_size);</div>
 <div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;        }</div>
@@ -451,7 +451,7 @@ $(document).ready(function(){initNavTree('vector_8h_source.html','');});
 <div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;    assert(dst != NULL);</div>
 <div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;    <span class="keywordflow">if</span> (dst-&gt;type_size != <span class="keyword">sizeof</span>(<span class="keywordtype">void</span>*)) {</div>
 <div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;        <span class="keywordflow">if</span> (logger != NULL) {</div>
-<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;            logger-&gt;<a class="code" href="structjaeger__logger.html#a414655004e94cba854c130f03b3bcaee">error</a>(logger,</div>
+<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;            logger-&gt;<a class="code" href="structjaeger__logger.html#a8248a1acae52a12fb4d1efabd3cb2689">error</a>(logger,</div>
 <div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;                          <span class="stringliteral">&quot;Cannot copy to vector that does not hold pointers, &quot;</span></div>
 <div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;                          <span class="stringliteral">&quot;type size = %d&quot;</span>,</div>
 <div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;                          dst-&gt;type_size);</div>
@@ -520,6 +520,7 @@ $(document).ready(function(){initNavTree('vector_8h_source.html','');});
 <div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;<span class="preprocessor"></span></div>
 <div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* JAEGERTRACINGC_VECTOR_H */</span><span class="preprocessor"></span></div>
 <div class="ttc" id="structjaeger__allocator_html_a5d839c78b9aa35c89776628b79bb97bb"><div class="ttname"><a href="structjaeger__allocator.html#a5d839c78b9aa35c89776628b79bb97bb">jaeger_allocator::realloc</a></div><div class="ttdeci">void *(* realloc)(struct jaeger_allocator *alloc, void *ptr, size_t sz)</div><div class="ttdoc">realloc function override. </div><div class="ttdef"><b>Definition:</b> alloc.h:48</div></div>
+<div class="ttc" id="structjaeger__logger_html_a8248a1acae52a12fb4d1efabd3cb2689"><div class="ttname"><a href="structjaeger__logger.html#a8248a1acae52a12fb4d1efabd3cb2689">jaeger_logger::error</a></div><div class="ttdeci">void(* error)(struct jaeger_logger *logger, const char *format,...) JAEGERTRACINGC_FORMAT_ATTRIBUTE(printf</div><div class="ttdoc">Error log function. </div><div class="ttdef"><b>Definition:</b> logging.h:38</div></div>
 <div class="ttc" id="structjaeger__allocator_html_ab78cf40f1aa7faf1001b466bc4f07c33"><div class="ttname"><a href="structjaeger__allocator.html#ab78cf40f1aa7faf1001b466bc4f07c33">jaeger_allocator::free</a></div><div class="ttdeci">void(* free)(struct jaeger_allocator *alloc, void *ptr)</div><div class="ttdoc">free function override. </div><div class="ttdef"><b>Definition:</b> alloc.h:54</div></div>
 <div class="ttc" id="logging_8h_html"><div class="ttname"><a href="logging_8h.html">logging.h</a></div><div class="ttdoc">Logging interface and initialization functions. </div></div>
 <div class="ttc" id="structjaeger__allocator_html"><div class="ttname"><a href="structjaeger__allocator.html">jaeger_allocator</a></div><div class="ttdoc">Interface to override default allocator. </div><div class="ttdef"><b>Definition:</b> alloc.h:34</div></div>
@@ -528,7 +529,6 @@ $(document).ready(function(){initNavTree('vector_8h_source.html','');});
 <div class="ttc" id="structjaeger__vector__ptr__copy__arg_html"><div class="ttname"><a href="structjaeger__vector__ptr__copy__arg.html">jaeger_vector_ptr_copy_arg</a></div><div class="ttdef"><b>Definition:</b> vector.h:308</div></div>
 <div class="ttc" id="structjaeger__allocator_html_ab89e0bce9f7223d60b7788b51dcceaa6"><div class="ttname"><a href="structjaeger__allocator.html#ab89e0bce9f7223d60b7788b51dcceaa6">jaeger_allocator::malloc</a></div><div class="ttdeci">void *(* malloc)(struct jaeger_allocator *alloc, size_t sz)</div><div class="ttdoc">malloc function override. </div><div class="ttdef"><b>Definition:</b> alloc.h:40</div></div>
 <div class="ttc" id="common_8h_html"><div class="ttname"><a href="common_8h.html">common.h</a></div><div class="ttdoc">Common headers, struct definitions, and macros. </div></div>
-<div class="ttc" id="structjaeger__logger_html_a414655004e94cba854c130f03b3bcaee"><div class="ttname"><a href="structjaeger__logger.html#a414655004e94cba854c130f03b3bcaee">jaeger_logger::error</a></div><div class="ttdeci">void(* error)(struct jaeger_logger *logger, const char *format,...)</div><div class="ttdoc">Error log function. </div><div class="ttdef"><b>Definition:</b> logging.h:38</div></div>
 <div class="ttc" id="structjaeger__vector_html"><div class="ttname"><a href="structjaeger__vector.html">jaeger_vector</a></div><div class="ttdef"><b>Definition:</b> vector.h:38</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->

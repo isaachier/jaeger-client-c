@@ -269,7 +269,7 @@ $(document).ready(function(){initNavTree('sampler_8h_source.html','');});
 <div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;        JAEGERTRACINGC_SAMPLER_TYPE_CASE(guaranteed_throughput_probabilistic);</div>
 <div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;        JAEGERTRACINGC_SAMPLER_TYPE_CASE(adaptive);</div>
 <div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    <span class="keywordflow">default</span>:</div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;        logger-&gt;<a class="code" href="structjaeger__logger.html#aac44c83b9346f6eab58b222e49e08af1">warn</a>(</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;        logger-&gt;<a class="code" href="structjaeger__logger.html#a018418b7839931281fce2c7b0a8dc93c">warn</a>(</div>
 <div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;            logger,</div>
 <div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;            <span class="stringliteral">&quot;Invalid sampler type in sampler choice, sampler type = %d&quot;</span>,</div>
 <div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;            sampler-&gt;type);</div>
@@ -352,7 +352,6 @@ $(document).ready(function(){initNavTree('sampler_8h_source.html','');});
 <div class="ttc" id="structjaeger__guaranteed__throughput__probabilistic__sampler_html"><div class="ttname"><a href="structjaeger__guaranteed__throughput__probabilistic__sampler.html">jaeger_guaranteed_throughput_probabilistic_sampler</a></div><div class="ttdef"><b>Definition:</b> sampler.h:79</div></div>
 <div class="ttc" id="structjaeger__destructible_html"><div class="ttname"><a href="structjaeger__destructible.html">jaeger_destructible</a></div><div class="ttdef"><b>Definition:</b> common.h:51</div></div>
 <div class="ttc" id="token__bucket_8h_html"><div class="ttname"><a href="token__bucket_8h.html">token_bucket.h</a></div><div class="ttdoc">Token bucket implementation. </div></div>
-<div class="ttc" id="structjaeger__logger_html_aac44c83b9346f6eab58b222e49e08af1"><div class="ttname"><a href="structjaeger__logger.html#aac44c83b9346f6eab58b222e49e08af1">jaeger_logger::warn</a></div><div class="ttdeci">void(* warn)(struct jaeger_logger *logger, const char *format,...)</div><div class="ttdoc">Warn log function. </div><div class="ttdef"><b>Definition:</b> logging.h:45</div></div>
 <div class="ttc" id="structjaeger__http__sampling__manager_html"><div class="ttname"><a href="structjaeger__http__sampling__manager.html">jaeger_http_sampling_manager</a></div><div class="ttdef"><b>Definition:</b> sampler.h:192</div></div>
 <div class="ttc" id="structjaeger__const__sampler_html"><div class="ttname"><a href="structjaeger__const__sampler.html">jaeger_const_sampler</a></div><div class="ttdef"><b>Definition:</b> sampler.h:55</div></div>
 <div class="ttc" id="vector_8h_html"><div class="ttname"><a href="vector_8h.html">vector.h</a></div><div class="ttdoc">C generic vector implementation. </div></div>
@@ -364,6 +363,7 @@ $(document).ready(function(){initNavTree('sampler_8h_source.html','');});
 <div class="ttc" id="structjaeger__vector_html"><div class="ttname"><a href="structjaeger__vector.html">jaeger_vector</a></div><div class="ttdef"><b>Definition:</b> vector.h:38</div></div>
 <div class="ttc" id="metrics_8h_html"><div class="ttname"><a href="metrics_8h.html">metrics.h</a></div><div class="ttdoc">Metrics interfaces to track various numbers while tracing. </div></div>
 <div class="ttc" id="structjaeger__sampler__choice_html"><div class="ttname"><a href="structjaeger__sampler__choice.html">jaeger_sampler_choice</a></div><div class="ttdef"><b>Definition:</b> sampler.h:134</div></div>
+<div class="ttc" id="structjaeger__logger_html_a018418b7839931281fce2c7b0a8dc93c"><div class="ttname"><a href="structjaeger__logger.html#a018418b7839931281fce2c7b0a8dc93c">jaeger_logger::warn</a></div><div class="ttdeci">void(*) void(* warn)(struct jaeger_logger *logger, const char *format,...) JAEGERTRACINGC_FORMAT_ATTRIBUTE(printf</div><div class="ttdoc">Warn log function. </div><div class="ttdef"><b>Definition:</b> logging.h:46</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

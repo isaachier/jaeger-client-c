@@ -1,5 +1,6 @@
 var NAVTREEINDEX1 =
 {
+"struct__Jaegertracing____Protobuf____SamplingManager____PerOperationSamplingStrategy____OperationSamplingStrategy.html#add0d0327453eac9421bc4f96a271d18a":[0,0,12,0],
 "struct__Jaegertracing____Protobuf____SamplingManager____PerOperationSamplingStrategy____OperationSamplingStrategy.html#ae3e65181bbe7873e7d7bd30083b4eb51":[0,0,12,1],
 "struct__Jaegertracing____Protobuf____SamplingManager____ProbabilisticSamplingStrategy.html":[0,0,13],
 "struct__Jaegertracing____Protobuf____SamplingManager____ProbabilisticSamplingStrategy.html#a191605c4af2a8294cefe0c50573fc4c7":[0,0,13,1],
@@ -108,9 +109,9 @@ var NAVTREEINDEX1 =
 "structjaeger__log__record.html#a0ccac56ec47a1f065b0a38b17d0c7a07":[0,0,36,1],
 "structjaeger__log__record.html#a7e92d49bbf95a25adf10d22d0c87c70f":[0,0,36,0],
 "structjaeger__logger.html":[0,0,37],
-"structjaeger__logger.html#a414655004e94cba854c130f03b3bcaee":[0,0,37,0],
-"structjaeger__logger.html#a8225a39d6955e08f48271d70c0e7d221":[0,0,37,1],
-"structjaeger__logger.html#aac44c83b9346f6eab58b222e49e08af1":[0,0,37,2],
+"structjaeger__logger.html#a018418b7839931281fce2c7b0a8dc93c":[0,0,37,2],
+"structjaeger__logger.html#a8248a1acae52a12fb4d1efabd3cb2689":[0,0,37,0],
+"structjaeger__logger.html#ab6af127e89a154524bcd5d7fdd085e64":[0,0,37,1],
 "structjaeger__metrics.html":[0,0,38],
 "structjaeger__operation__sampler.html":[0,0,39],
 "structjaeger__operation__sampler.html#a3996d2cdbbb5f6047a1e130e2ca397b5":[0,0,39,1],
@@ -248,6 +249,5 @@ var NAVTREEINDEX1 =
 "vector_8h.html#a9871659dd9abe55096365c3b3fbf2ac1":[1,0,0,21,3],
 "vector_8h.html#a9dcfea2680cf6a2a7eab96d71298c60d":[1,0,0,21,2],
 "vector_8h.html#aac3189a37050bee32a769aa1c469c2a4":[1,0,0,21,7],
-"vector_8h.html#ac370ae89b3abdc9f81910a3bd2f8347a":[1,0,0,21,8],
-"vector_8h.html#af10da7fdb37d0a573e24c3d0a48d15f2":[1,0,0,21,10]
+"vector_8h.html#ac370ae89b3abdc9f81910a3bd2f8347a":[1,0,0,21,8]
 };
