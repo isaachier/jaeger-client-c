@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['finish_5ftime',['finish_time',['../structjaeger__span__finish__options.html#a9c18ce18a4885d1909194c9e3af849d2',1,'jaeger_span_finish_options']]],
-  ['free',['free',['../structjaeger__allocator.html#ab78cf40f1aa7faf1001b466bc4f07c33',1,'jaeger_allocator']]]
+  ['allocated',['allocated',['../structjaeger__tracer.html#a1641ebc0d544d288c89eb1e1e95fce08',1,'jaeger_tracer']]],
+  ['amount',['amount',['../structjaeger__default__gauge.html#a5b5def7f03d492758487c564d9e0e6e3',1,'jaeger_default_gauge']]]
 ];

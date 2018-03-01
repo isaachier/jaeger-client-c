@@ -119,6 +119,9 @@ Data Fields</h2></td></tr>
 <tr class="memitem:a2f266f1e4c48383eb3460f3a042a14c3"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structjaeger__tracer.html#a2f266f1e4c48383eb3460f3a042a14c3">service_name</a></td></tr>
 <tr class="memdesc:a2f266f1e4c48383eb3460f3a042a14c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Name of the current service.  <a href="#a2f266f1e4c48383eb3460f3a042a14c3">More...</a><br/></td></tr>
 <tr class="separator:a2f266f1e4c48383eb3460f3a042a14c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1dd0f33dd401acec1affee5e74e4ce1a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structjaeger__metrics.html">jaeger_metrics</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structjaeger__tracer.html#a1dd0f33dd401acec1affee5e74e4ce1a">metrics</a></td></tr>
+<tr class="memdesc:a1dd0f33dd401acec1affee5e74e4ce1a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Metrics object to use in tracer.  <a href="#a1dd0f33dd401acec1affee5e74e4ce1a">More...</a><br/></td></tr>
+<tr class="separator:a1dd0f33dd401acec1affee5e74e4ce1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a988ac3ac189df44661bedc45d55b56c8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structjaeger__sampler.html">jaeger_sampler</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structjaeger__tracer.html#a988ac3ac189df44661bedc45d55b56c8">sampler</a></td></tr>
 <tr class="memdesc:a988ac3ac189df44661bedc45d55b56c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sampler to select spans for tracing.  <a href="#a988ac3ac189df44661bedc45d55b56c8">More...</a><br/></td></tr>
 <tr class="separator:a988ac3ac189df44661bedc45d55b56c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -131,10 +134,53 @@ Data Fields</h2></td></tr>
 <tr class="memitem:a6e776148ebfb95dc49bbf018b58841e5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structjaeger__vector.html">jaeger_vector</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structjaeger__tracer.html#a6e776148ebfb95dc49bbf018b58841e5">tags</a></td></tr>
 <tr class="memdesc:a6e776148ebfb95dc49bbf018b58841e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tags to store metadata about the current process (i.e.  <a href="#a6e776148ebfb95dc49bbf018b58841e5">More...</a><br/></td></tr>
 <tr class="separator:a6e776148ebfb95dc49bbf018b58841e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1641ebc0d544d288c89eb1e1e95fce08"><td class="memItemLeft" ><a class="anchor" id="a1641ebc0d544d288c89eb1e1e95fce08"></a>
+struct {</td></tr>
+<tr class="memitem:a49ba4e03fdebd2153ab20883d22207e1"><td class="memItemLeft" >&#160;&#160;&#160;bool&#160;&#160;&#160;<a class="el" href="structjaeger__tracer.html#ad829501be0454a1ede7de6448d923705">metrics</a>: 1</td></tr>
+<tr class="memdesc:a49ba4e03fdebd2153ab20883d22207e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">True if metrics is heap-allocated, false otherwise.  <a href="#a49ba4e03fdebd2153ab20883d22207e1">More...</a><br/></td></tr>
+<tr class="separator:a49ba4e03fdebd2153ab20883d22207e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a405bf35be79aca3aa10f2650d4ffbffc"><td class="memItemLeft" >&#160;&#160;&#160;bool&#160;&#160;&#160;<a class="el" href="structjaeger__tracer.html#a77efb5d19028805e0531787e7059dd39">sampler</a>: 1</td></tr>
+<tr class="memdesc:a405bf35be79aca3aa10f2650d4ffbffc"><td class="mdescLeft">&#160;</td><td class="mdescRight">True if sampler is heap-allocated, false otherwise.  <a href="#a405bf35be79aca3aa10f2650d4ffbffc">More...</a><br/></td></tr>
+<tr class="separator:a405bf35be79aca3aa10f2650d4ffbffc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae9df496dc530fb823b72092bca18afba"><td class="memItemLeft" >&#160;&#160;&#160;bool&#160;&#160;&#160;<a class="el" href="structjaeger__tracer.html#a7d7447ff17fbafd8adf6e68dfba758e9">reporter</a>: 1</td></tr>
+<tr class="memdesc:ae9df496dc530fb823b72092bca18afba"><td class="mdescLeft">&#160;</td><td class="mdescRight">True if reporter is heap-allocated, false otherwise.  <a href="#ae9df496dc530fb823b72092bca18afba">More...</a><br/></td></tr>
+<tr class="separator:ae9df496dc530fb823b72092bca18afba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1641ebc0d544d288c89eb1e1e95fce08"><td class="memItemLeft" valign="top">}&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structjaeger__tracer.html#a1641ebc0d544d288c89eb1e1e95fce08">allocated</a></td></tr>
+<tr class="memdesc:a1641ebc0d544d288c89eb1e1e95fce08"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flags to keep track of the members that were heap-allocated and must be freed by the tracer. <br/></td></tr>
+<tr class="separator:a1641ebc0d544d288c89eb1e1e95fce08"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Tracer implementation. </p>
 </div><h2 class="groupheader">Field Documentation</h2>
+<a class="anchor" id="a1dd0f33dd401acec1affee5e74e4ce1a"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structjaeger__metrics.html">jaeger_metrics</a>* jaeger_tracer::metrics</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Metrics object to use in tracer. </p>
+<dl class="section see"><dt>See Also</dt><dd><a class="el" href="structjaeger__metrics.html">jaeger_metrics</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ad829501be0454a1ede7de6448d923705"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool jaeger_tracer::metrics</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>True if metrics is heap-allocated, false otherwise. </p>
+
+</div>
+</div>
 <a class="anchor" id="ac75ef3b2257e8ba0eea1dfb8828ec193"></a>
 <div class="memitem">
 <div class="memproto">
@@ -148,7 +194,7 @@ Data Fields</h2></td></tr>
 <p>Custom options passed into the tracer at construction. </p>
 <dl class="section see"><dt>See Also</dt><dd><a class="el" href="structjaeger__tracer__options.html" title="Options that can be used to customize the tracer. ">jaeger_tracer_options</a> </dd>
 <dd>
-<a class="el" href="tracer_8h.html#a8b05049688a9534b5c3a4573664e54c4" title="Initialize a new tracer. ">jaeger_tracer_init()</a> </dd></dl>
+<a class="el" href="tracer_8h.html#aa07dbdbe42478395d2ee98572826eea2" title="Initialize a new tracer. ">jaeger_tracer_init()</a> </dd></dl>
 
 </div>
 </div>
@@ -167,6 +213,20 @@ Data Fields</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a7d7447ff17fbafd8adf6e68dfba758e9"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool jaeger_tracer::reporter</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>True if reporter is heap-allocated, false otherwise. </p>
+
+</div>
+</div>
 <a class="anchor" id="a988ac3ac189df44661bedc45d55b56c8"></a>
 <div class="memitem">
 <div class="memproto">
@@ -179,6 +239,20 @@ Data Fields</h2></td></tr>
 
 <p>Sampler to select spans for tracing. </p>
 <dl class="section see"><dt>See Also</dt><dd><a class="el" href="structjaeger__sampler.html">jaeger_sampler</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a77efb5d19028805e0531787e7059dd39"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool jaeger_tracer::sampler</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>True if sampler is heap-allocated, false otherwise. </p>
 
 </div>
 </div>

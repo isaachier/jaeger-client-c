@@ -153,9 +153,12 @@ typedef struct <a class="el" href="structjaeger__tracer.html">jaeger_tracer</a>&
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a8b05049688a9534b5c3a4573664e54c4"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tracer_8h.html#a8b05049688a9534b5c3a4573664e54c4">jaeger_tracer_init</a> (<a class="el" href="structjaeger__tracer.html">jaeger_tracer</a> *tracer, <a class="el" href="structjaeger__sampler.html">jaeger_sampler</a> *sampler, <a class="el" href="structjaeger__reporter.html">jaeger_reporter</a> *reporter, const <a class="el" href="structjaeger__tracer__options.html">jaeger_tracer_options</a> *options)</td></tr>
-<tr class="memdesc:a8b05049688a9534b5c3a4573664e54c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize a new tracer.  <a href="#a8b05049688a9534b5c3a4573664e54c4">More...</a><br/></td></tr>
-<tr class="separator:a8b05049688a9534b5c3a4573664e54c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a422fc08b0041b743d48bf1bd0489f0ca"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tracer_8h.html#a422fc08b0041b743d48bf1bd0489f0ca">jaeger_tracer_destroy</a> (<a class="el" href="structjaeger__tracer.html">jaeger_tracer</a> *tracer)</td></tr>
+<tr class="memdesc:a422fc08b0041b743d48bf1bd0489f0ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Close and free resources associated with the tracer.  <a href="#a422fc08b0041b743d48bf1bd0489f0ca">More...</a><br/></td></tr>
+<tr class="separator:a422fc08b0041b743d48bf1bd0489f0ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa07dbdbe42478395d2ee98572826eea2"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tracer_8h.html#aa07dbdbe42478395d2ee98572826eea2">jaeger_tracer_init</a> (<a class="el" href="structjaeger__tracer.html">jaeger_tracer</a> *tracer, const char *service_name, <a class="el" href="structjaeger__sampler.html">jaeger_sampler</a> *sampler, <a class="el" href="structjaeger__reporter.html">jaeger_reporter</a> *reporter, <a class="el" href="structjaeger__metrics.html">jaeger_metrics</a> *metrics, const <a class="el" href="structjaeger__tracer__options.html">jaeger_tracer_options</a> *options)</td></tr>
+<tr class="memdesc:aa07dbdbe42478395d2ee98572826eea2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize a new tracer.  <a href="#aa07dbdbe42478395d2ee98572826eea2">More...</a><br/></td></tr>
+<tr class="separator:aa07dbdbe42478395d2ee98572826eea2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab1c38f1b4e905dc2d474399d7e87b533"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab1c38f1b4e905dc2d474399d7e87b533"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_tracer_report_span</b> (<a class="el" href="structjaeger__tracer.html">jaeger_tracer</a> *tracer, <a class="el" href="structjaeger__span.html">jaeger_span</a> *span)</td></tr>
 <tr class="separator:ab1c38f1b4e905dc2d474399d7e87b533"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -188,18 +191,47 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_tracer_report_
       </table>
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line">{                                                            \</div>
-<div class="line">        .service_name = NULL, .sampler = NULL, .reporter = NULL, \</div>
-<div class="line">        .options = JAEGER_TRACER_OPTIONS_INIT, .tags = NULL      \</div>
+<div class="line">        .service_name = NULL, .metrics = NULL, .sampler = NULL,  \</div>
+<div class="line">        .reporter = NULL, .options = JAEGER_TRACER_OPTIONS_INIT, \</div>
+<div class="line">        .tags = JAEGERTRACINGC_VECTOR_INIT, .allocated = {       \</div>
+<div class="line">            .metrics = <span class="keyword">false</span>,                                    \</div>
+<div class="line">            .sampler = <span class="keyword">false</span>,                                    \</div>
+<div class="line">            .reporter = <span class="keyword">false</span>                                    \</div>
+<div class="line">        }                                                        \</div>
 <div class="line">    }</div>
 </div><!-- fragment -->
 <p>Static initializer for <a class="el" href="structjaeger__tracer.html" title="Tracer implementation. ">jaeger_tracer</a>. </p>
 <p>May be used to initialize an empty tracer, but the caller must also invoke jaeger_tracer_init to fully construct the tracer. </p>
-<dl class="section see"><dt>See Also</dt><dd><a class="el" href="tracer_8h.html#a8b05049688a9534b5c3a4573664e54c4" title="Initialize a new tracer. ">jaeger_tracer_init</a> </dd></dl>
+<dl class="section see"><dt>See Also</dt><dd><a class="el" href="tracer_8h.html#aa07dbdbe42478395d2ee98572826eea2" title="Initialize a new tracer. ">jaeger_tracer_init</a> </dd></dl>
 
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
-<a class="anchor" id="a8b05049688a9534b5c3a4573664e54c4"></a>
+<a class="anchor" id="a422fc08b0041b743d48bf1bd0489f0ca"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void jaeger_tracer_destroy </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structjaeger__tracer.html">jaeger_tracer</a> *&#160;</td>
+          <td class="paramname"><em>tracer</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Close and free resources associated with the tracer. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">tracer</td><td>Tracer to destroy </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="aa07dbdbe42478395d2ee98572826eea2"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -212,6 +244,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_tracer_report_
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>service_name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype"><a class="el" href="structjaeger__sampler.html">jaeger_sampler</a> *&#160;</td>
           <td class="paramname"><em>sampler</em>, </td>
         </tr>
@@ -220,6 +258,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_tracer_report_
           <td></td>
           <td class="paramtype"><a class="el" href="structjaeger__reporter.html">jaeger_reporter</a> *&#160;</td>
           <td class="paramname"><em>reporter</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structjaeger__metrics.html">jaeger_metrics</a> *&#160;</td>
+          <td class="paramname"><em>metrics</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -239,8 +283,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_tracer_report_
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">tracer</td><td>Tracer to initialize. </td></tr>
-    <tr><td class="paramname">sampler</td><td>Sampler for tracer to use. </td></tr>
-    <tr><td class="paramname">reporter</td><td>Reporter for tracer to use. </td></tr>
+    <tr><td class="paramname">service_name</td><td>Name of the current service, may not be NULL. Tracer copies this string internally so it need not be allocated upfront. </td></tr>
+    <tr><td class="paramname">sampler</td><td>Sampler for tracer to use, may be NULL. </td></tr>
+    <tr><td class="paramname">reporter</td><td>Reporter for tracer to use, may be NULL. </td></tr>
+    <tr><td class="paramname">metrics</td><td>Metrics object to use, may be NULL. </td></tr>
     <tr><td class="paramname">options</td><td>Options for tracer to use, may be NULL. </td></tr>
   </table>
   </dd>

@@ -21,8 +21,8 @@ var metrics_8h =
     [ "jaeger_default_gauge", "metrics_8h.html#a910f3796c5fe04d7fda927096b30beb5", null ],
     [ "jaeger_gauge", "metrics_8h.html#a4e6ae6a29bd2e7d4a41aa1968e15a13a", null ],
     [ "jaeger_metrics", "metrics_8h.html#adae092e70a3aa82c8cdf6865996309ad", null ],
-    [ "jaeger_default_counter_init", "metrics_8h.html#a56b8d00e9621de3ff5064cee7d978a09", null ],
-    [ "jaeger_default_gauge_init", "metrics_8h.html#a5bdcf4c168a4eb3e90ec079c0536e197", null ],
+    [ "jaeger_default_counter_init", "metrics_8h.html#a20133ddc6d04b70fa199bcd2399371bc", null ],
+    [ "jaeger_default_gauge_init", "metrics_8h.html#a304557430b295514cf0f6dc35320c41c", null ],
     [ "jaeger_null_counter", "metrics_8h.html#aeff8270c8b4a9200a3d80f6a03e9271e", null ],
     [ "jaeger_null_gauge", "metrics_8h.html#a4aef5aa91fefd57be92c5219135efee2", null ],
     [ "jaeger_null_metrics", "metrics_8h.html#a27408885f719d3c90dd4bb330862591f", null ]

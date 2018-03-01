@@ -79,6 +79,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="globals_defs.html"><span>Macros</span></a></li>
     </ul>
   </div>
+  <div id="navrow4" class="tabs3">
+    <ul class="tablist">
+      <li class="current"><a href="#index_j"><span>j</span></a></li>
+    </ul>
+  </div>
 </div><!-- top -->
 <div id="side-nav" class="ui-resizable side-nav-resizable">
   <div id="nav-tree">
@@ -109,15 +114,35 @@ $(document).ready(function(){initNavTree('globals.html','');});
 </div>
 
 <div class="contents">
-<div class="textblock">Here is a list of all documented functions, variables, defines, enums, and typedefs with links to the documentation:</div><ul>
+<div class="textblock">Here is a list of all documented functions, variables, defines, enums, and typedefs with links to the documentation:</div>
+
+<h3><a class="anchor" id="index_j"></a>- j -</h3><ul>
 <li>jaeger_allocator
 : <a class="el" href="alloc_8h.html#a2a438fd982df387349202a40bfca6050">alloc.h</a>
 </li>
 <li>jaeger_built_in_allocator()
 : <a class="el" href="alloc_8h.html#abba0f94c3fc30d4184dd15706fff3879">alloc.h</a>
 </li>
+<li>jaeger_counter
+: <a class="el" href="metrics_8h.html#a3db03a0fcd5a7e7eed36e7570576908f">metrics.h</a>
+</li>
+<li>jaeger_default_counter
+: <a class="el" href="metrics_8h.html#ac43bb648a3a165ec1e09041008771ce3">metrics.h</a>
+</li>
+<li>jaeger_default_counter_init()
+: <a class="el" href="metrics_8h.html#a20133ddc6d04b70fa199bcd2399371bc">metrics.h</a>
+</li>
+<li>jaeger_default_gauge
+: <a class="el" href="metrics_8h.html#a910f3796c5fe04d7fda927096b30beb5">metrics.h</a>
+</li>
+<li>jaeger_default_gauge_init()
+: <a class="el" href="metrics_8h.html#a304557430b295514cf0f6dc35320c41c">metrics.h</a>
+</li>
 <li>jaeger_free()
 : <a class="el" href="alloc_8h.html#ad094b3d57aa0ee6af7b5d3d347a578e5">alloc.h</a>
+</li>
+<li>jaeger_gauge
+: <a class="el" href="metrics_8h.html#a4e6ae6a29bd2e7d4a41aa1968e15a13a">metrics.h</a>
 </li>
 <li>jaeger_get_allocator()
 : <a class="el" href="alloc_8h.html#abd1b3422f9bfb294c07bcb44ec2c26e7">alloc.h</a>
@@ -133,6 +158,9 @@ $(document).ready(function(){initNavTree('globals.html','');});
 </li>
 <li>jaeger_null_allocator()
 : <a class="el" href="alloc_8h.html#a312e479c128951e44cbfeab715691a82">alloc.h</a>
+</li>
+<li>jaeger_null_counter()
+: <a class="el" href="metrics_8h.html#aeff8270c8b4a9200a3d80f6a03e9271e">metrics.h</a>
 </li>
 <li>jaeger_null_logger()
 : <a class="el" href="logging_8h.html#ad043d24bb8ef0d4d53e01664ed1647fd">logging.h</a>
@@ -158,8 +186,11 @@ $(document).ready(function(){initNavTree('globals.html','');});
 <li>jaeger_tracer
 : <a class="el" href="tracer_8h.html#aecb3ad27e5f06cfdc881d96ebec29783">tracer.h</a>
 </li>
+<li>jaeger_tracer_destroy()
+: <a class="el" href="tracer_8h.html#a422fc08b0041b743d48bf1bd0489f0ca">tracer.h</a>
+</li>
 <li>jaeger_tracer_init()
-: <a class="el" href="tracer_8h.html#a8b05049688a9534b5c3a4573664e54c4">tracer.h</a>
+: <a class="el" href="tracer_8h.html#aa07dbdbe42478395d2ee98572826eea2">tracer.h</a>
 </li>
 <li>jaeger_tracer_options
 : <a class="el" href="tracer_8h.html#abe813aa7689a8224a1545960d0efce71">tracer.h</a>
