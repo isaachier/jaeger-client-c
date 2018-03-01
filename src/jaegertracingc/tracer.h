@@ -107,6 +107,14 @@ bool jaeger_tracer_init(jaeger_tracer* tracer,
                         jaeger_reporter* reporter,
                         const jaeger_tracer_options* options);
 
+/**
+ * @internal
+ * Report completed span.
+ * @param tracer Tracer instance.
+ * @param span Span to report.
+ */
+void jaeger_tracer_report_span(jaeger_tracer* tracer, jaeger_span* span);
+
 #ifdef __cplusplus
 } /* extern C */
 #endif /* __cplusplus */

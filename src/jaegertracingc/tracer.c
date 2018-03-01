@@ -16,6 +16,12 @@
 
 #include "jaegertracingc/tracer.h"
 
+#include <arpa/inet.h>
+#include <errno.h>
+#include <ifaddrs.h>
+#include <net/if.h>
+#include <sys/ioctl.h>
+#include <sys/types.h>
 #include <unistd.h>
 
 #ifdef HOST_NAME_MAX
@@ -24,32 +30,119 @@
 #define HOST_NAME_MAX_LEN 256
 #endif /* HOST_NAME_MAX */
 
-static inline void append_hostname_tag(jaeger_tracer* tracer)
+static inline char* hostname()
 {
-    assert(tracer != NULL);
     char hostname[HOST_NAME_MAX_LEN] = {'\0'};
     if (gethostname(hostname, HOST_NAME_MAX_LEN) != 0) {
-        return;
+        jaeger_log_warn("Cannot get hostname, errno = %d", errno);
+        return NULL;
     }
-    jaeger_tag* tag = jaeger_vector_append(&tracer->tags);
-    if (tag == NULL) {
-        return;
+    return strdup(hostname);
+}
+
+static inline int score_addr(const struct ifaddrs* addr)
+{
+    assert(addr != NULL);
+    int score = 0;
+    const struct sockaddr* sock_addr = addr->ifa_addr;
+    if (sock_addr == NULL) {
+        return 0;
+    }
+    if (sock_addr->sa_family == AF_INET) {
+        score += 300;
+    }
+    struct sockaddr_in* ip_addr = (struct sockaddr_in*) sock_addr;
+    if ((addr->ifa_flags & IFF_LOOPBACK) == 0 &&
+        ip_addr->sin_addr.s_addr != htonl(INADDR_LOOPBACK)) {
+        score += 100;
+        if ((addr->ifa_flags & IFF_UP) != 0) {
+            score += 100;
+        }
+    }
+    return score;
+}
+
+static inline char* local_ip_str()
+{
+    struct ifaddrs* addrs = NULL;
+    if (getifaddrs(&addrs) != 0) {
+        jaeger_log_warn("Cannot get local IP, errno = %d", errno);
+        return NULL;
     }
 
+    int max_score = 0;
+    struct ifaddrs* best_addr = NULL;
+    for (struct ifaddrs* iter = addrs; iter != NULL; iter = iter->ifa_next) {
+        const int score = score_addr(iter);
+        if (score > max_score) {
+            best_addr = iter;
+            max_score = score;
+        }
+    }
+    char* result = NULL;
+    if (best_addr != NULL && best_addr->ifa_addr != NULL) {
+        int max_host = 0;
+        int port = 0;
+        const void* src = NULL;
+        if (best_addr->ifa_addr->sa_family == AF_INET) {
+            max_host = INET_ADDRSTRLEN;
+            const struct sockaddr_in* addr =
+                (const struct sockaddr_in*) best_addr->ifa_addr;
+            src = (const void*) &addr->sin_addr;
+            port = htons(addr->sin_port);
+        }
+        else {
+            max_host = INET6_ADDRSTRLEN;
+            const struct sockaddr_in6* addr =
+                (const struct sockaddr_in6*) best_addr->ifa_addr;
+            src = (const void*) &addr->sin6_addr;
+            port = htons(addr->sin6_port);
+        }
+
+        char buffer[max_host + 1 + JAEGERTRACINGC_MAX_PORT_STR_LEN];
+        if (inet_ntop(
+                best_addr->ifa_addr->sa_family, src, buffer, sizeof(buffer)) ==
+            NULL) {
+            jaeger_log_warn("Cannot convert IP address to string, errno = %d",
+                            errno);
+            goto cleanup;
+        }
+
+        const int len = strlen(buffer);
+        const int rem_len = sizeof(buffer) - len;
+        const int num_chars = snprintf(&buffer[len], rem_len, ":%d", port);
+        if (num_chars <= rem_len) {
+            result = strdup(buffer);
+        }
+    }
+
+cleanup:
+    freeifaddrs(addrs);
+    return result;
+}
+
+static inline bool append_tag(jaeger_vector* tags, const char* key, char* value)
+{
+    if (value == NULL) {
+        return false;
+    }
+    jaeger_tag* tag = jaeger_vector_append(tags);
+    if (tag == NULL) {
+        goto cleanup;
+    }
     *tag = (jaeger_tag) JAEGERTRACINGC_TAG_INIT;
-    if (!jaeger_tag_init(tag, JAEGERTRACINGC_TRACER_HOSTNAME_TAG_KEY)) {
+    if (!jaeger_tag_init(tag, (key))) {
         goto cleanup;
     }
     tag->value_case = JAEGERTRACINGC_TAG_TYPE(STR);
-    tag->str_value = jaeger_strdup(hostname);
-    if (tag->str_value == NULL) {
-        goto cleanup;
-    }
-    return;
+    tag->str_value = value;
+    return true;
 
 cleanup:
+    jaeger_free(value);
     jaeger_tag_destroy(tag);
-    tracer->tags.len--;
+    tags->len--;
+    return false;
 }
 
 bool jaeger_tracer_init(jaeger_tracer* tracer,
@@ -77,7 +170,29 @@ bool jaeger_tracer_init(jaeger_tracer* tracer,
         return false;
     }
 
-    append_hostname_tag(tracer);
+    if (!append_tag(&tracer->tags,
+                    JAEGERTRACINGC_CLIENT_VERSION_TAG_KEY,
+                    strdup(JAEGERTRACINGC_CLIENT_VERSION))) {
+        goto finish;
+    }
 
+    if (!append_tag(&tracer->tags,
+                    JAEGERTRACINGC_TRACER_HOSTNAME_TAG_KEY,
+                    hostname())) {
+        goto finish;
+    }
+
+    if (!append_tag(
+            &tracer->tags, JAEGERTRACINGC_TRACER_IP_TAG_KEY, local_ip_str())) {
+    }
+
+finish:
     return true;
+}
+
+void jaeger_tracer_report_span(jaeger_tracer* tracer, jaeger_span* span)
+{
+    /* TODO */
+    (void) tracer;
+    (void) span;
 }

@@ -513,6 +513,9 @@ typedef struct jaeger_span_finish_options {
         .num_logs = 0                                               \
     }
 
+/* Forward declaration */
+void jaeger_tracer_report_span(struct jaeger_tracer* tracer, jaeger_span* span);
+
 /** Finish span with options.
  * @param span The span instance.
  * @param options Options to determine finish timestamp, etc. May be NULL.
@@ -545,6 +548,11 @@ jaeger_span_finish_with_options(jaeger_span* span,
         }
     }
     jaeger_mutex_unlock(&span->mutex);
+
+    /* Call jaeger_tracer_report_span even for non-sampled traces, in case we
+     * need to return the span to a pool.
+     */
+    jaeger_tracer_report_span(span->tracer, span);
 }
 
 static inline void
