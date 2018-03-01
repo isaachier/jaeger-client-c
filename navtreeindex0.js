@@ -105,7 +105,7 @@ var NAVTREEINDEX0 =
 "random_8h.html#a17fc000486e500c19f3f1765d08f6720":[1,0,0,9,0],
 "random_8h_source.html":[1,0,0,9],
 "reporter_8h.html":[1,0,0,10],
-"reporter_8h.html#a110fed594e4e9a0d96a3f9f36812a665":[1,0,0,10,16],
+"reporter_8h.html#a110fed594e4e9a0d96a3f9f36812a665":[1,0,0,10,15],
 "reporter_8h.html#a1bd5a6feda92a6a127a8d3aee2cf273a":[1,0,0,10,10],
 "reporter_8h.html#a474f815550ebf3183d7ce99de693c891":[1,0,0,10,7],
 "reporter_8h.html#a654864cc63645948293a6f26381240b1":[1,0,0,10,9],
@@ -113,7 +113,6 @@ var NAVTREEINDEX0 =
 "reporter_8h.html#a943eedaf7c7dec3d6810d538fc083b4d":[1,0,0,10,11],
 "reporter_8h.html#aa724134ec45a47da872d2cd70e84b232":[1,0,0,10,6],
 "reporter_8h.html#ab348b89e85a9eb6487b28ac8be08dd38":[1,0,0,10,12],
-"reporter_8h.html#ab3c0b584d3ab646ef73007375ce83d96":[1,0,0,10,15],
 "reporter_8h.html#ac55084184207b8552438c3142f00b877":[1,0,0,10,14],
 "reporter_8h.html#adb4f51b833d7e45f8074da1798674503":[1,0,0,10,4],
 "reporter_8h.html#afb601672f1d1777fb3cca8db4a021b29":[1,0,0,10,5],
@@ -249,5 +248,6 @@ var NAVTREEINDEX0 =
 "struct__Jaegertracing____Protobuf____SamplingManager____PerOperationSamplingStrategy____OperationSamplingStrategy.html#ae3e65181bbe7873e7d7bd30083b4eb51":[0,0,12,1],
 "struct__Jaegertracing____Protobuf____SamplingManager____ProbabilisticSamplingStrategy.html":[0,0,13],
 "struct__Jaegertracing____Protobuf____SamplingManager____ProbabilisticSamplingStrategy.html#a191605c4af2a8294cefe0c50573fc4c7":[0,0,13,1],
-"struct__Jaegertracing____Protobuf____SamplingManager____ProbabilisticSamplingStrategy.html#a4354f095f0e49c79abfbc7f786be6b41":[0,0,13,0]
+"struct__Jaegertracing____Protobuf____SamplingManager____ProbabilisticSamplingStrategy.html#a4354f095f0e49c79abfbc7f786be6b41":[0,0,13,0],
+"struct__Jaegertracing____Protobuf____SamplingManager____RateLimitingSamplingStrategy.html":[0,0,14]
 };

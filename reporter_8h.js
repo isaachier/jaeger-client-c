@@ -15,6 +15,5 @@ var reporter_8h =
     [ "jaeger_in_memory_reporter_init", "reporter_8h.html#ab348b89e85a9eb6487b28ac8be08dd38", null ],
     [ "jaeger_logging_reporter_init", "reporter_8h.html#a6b1b2dc017426244f2986867981f6c18", null ],
     [ "jaeger_null_reporter", "reporter_8h.html#ac55084184207b8552438c3142f00b877", null ],
-    [ "jaeger_remote_reporter_flush", "reporter_8h.html#ab3c0b584d3ab646ef73007375ce83d96", null ],
     [ "jaeger_remote_reporter_init", "reporter_8h.html#a110fed594e4e9a0d96a3f9f36812a665", null ]
 ];

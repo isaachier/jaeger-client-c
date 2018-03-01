@@ -180,9 +180,6 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_composite_repo
 <tr class="memitem:a110fed594e4e9a0d96a3f9f36812a665"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a110fed594e4e9a0d96a3f9f36812a665"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_remote_reporter_init</b> (<a class="el" href="structjaeger__remote__reporter.html">jaeger_remote_reporter</a> *reporter, const char *host_port, int max_packet_size, <a class="el" href="structjaeger__metrics.html">jaeger_metrics</a> *metrics)</td></tr>
 <tr class="separator:a110fed594e4e9a0d96a3f9f36812a665"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab3c0b584d3ab646ef73007375ce83d96"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab3c0b584d3ab646ef73007375ce83d96"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_remote_reporter_flush</b> (<a class="el" href="structjaeger__remote__reporter.html">jaeger_remote_reporter</a> *reporter)</td></tr>
-<tr class="separator:ab3c0b584d3ab646ef73007375ce83d96"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Span reporter interface. </p>
@@ -196,9 +193,11 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_remote_reporter
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">JAEGERTRACINGC_DESTRUCTIBLE_SUBCLASS; \</div>
-<div class="line">    void (*report)(<span class="keyword">struct </span><a class="code" href="structjaeger__reporter.html">jaeger_reporter</a> * reporter, <span class="keyword">const</span> <a class="code" href="structjaeger__span.html">jaeger_span</a>* span)</div>
-<div class="ttc" id="structjaeger__reporter_html"><div class="ttname"><a href="structjaeger__reporter.html">jaeger_reporter</a></div><div class="ttdef"><b>Definition:</b> reporter.h:45</div></div>
+<b>Value:</b><div class="fragment"><div class="line">JAEGERTRACINGC_DESTRUCTIBLE_SUBCLASS;                     \                                                       \</div>
+<div class="line">    void (*report)(<span class="keyword">struct </span><a class="code" href="structjaeger__reporter.html">jaeger_reporter</a> * reporter,         \</div>
+<div class="line">                   const <a class="code" href="structjaeger__span.html">jaeger_span</a>* span);                  \                                                       \</div>
+<div class="line">    bool (*flush)(<span class="keyword">struct </span><a class="code" href="structjaeger__reporter.html">jaeger_reporter</a> * reporter)</div>
+<div class="ttc" id="structjaeger__reporter_html"><div class="ttname"><a href="structjaeger__reporter.html">jaeger_reporter</a></div><div class="ttdef"><b>Definition:</b> reporter.h:57</div></div>
 <div class="ttc" id="structjaeger__span_html"><div class="ttname"><a href="structjaeger__span.html">jaeger_span</a></div><div class="ttdef"><b>Definition:</b> span.h:205</div></div>
 </div><!-- fragment -->
 </div>

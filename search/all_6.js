@@ -49,6 +49,7 @@ var searchData=
   ['jaeger_5ftrace_5fid',['jaeger_trace_id',['../structjaeger__trace__id.html',1,'jaeger_trace_id'],['../trace__id_8h.html#a52559bed65fca78dcba42ff2388a6a85',1,'jaeger_trace_id():&#160;trace_id.h']]],
   ['jaeger_5ftracer',['jaeger_tracer',['../structjaeger__tracer.html',1,'jaeger_tracer'],['../tracer_8h.html#aecb3ad27e5f06cfdc881d96ebec29783',1,'jaeger_tracer():&#160;tracer.h']]],
   ['jaeger_5ftracer_5fdestroy',['jaeger_tracer_destroy',['../tracer_8h.html#a422fc08b0041b743d48bf1bd0489f0ca',1,'tracer.c']]],
+  ['jaeger_5ftracer_5fflush',['jaeger_tracer_flush',['../tracer_8h.html#ad5de5e280e85d209bccef344280481f5',1,'tracer.c']]],
   ['jaeger_5ftracer_5finit',['jaeger_tracer_init',['../tracer_8h.html#aa07dbdbe42478395d2ee98572826eea2',1,'tracer.c']]],
   ['jaeger_5ftracer_5foptions',['jaeger_tracer_options',['../structjaeger__tracer__options.html',1,'jaeger_tracer_options'],['../tracer_8h.html#abe813aa7689a8224a1545960d0efce71',1,'jaeger_tracer_options():&#160;tracer.h']]],
   ['jaeger_5furl',['jaeger_url',['../structjaeger__url.html',1,'']]],

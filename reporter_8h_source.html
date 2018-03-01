@@ -140,84 +140,86 @@ $(document).ready(function(){initNavTree('reporter_8h_source.html','');});
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="preprocessor"></span></div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="preprocessor">#define JAEGERTRACINGC_DEFAULT_UDP_BUFFER_SIZE USHRT_MAX</span></div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="preprocessor">#define JAEGERTRACINGC_REPORTER_SUBCLASS  \</span></div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="preprocessor">    JAEGERTRACINGC_DESTRUCTIBLE_SUBCLASS; \</span></div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="preprocessor">    void (*report)(struct jaeger_reporter * reporter, const jaeger_span* span)</span></div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00045"></a><span class="lineno"><a class="line" href="structjaeger__reporter.html">   45</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structjaeger__reporter.html">jaeger_reporter</a> {</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    JAEGERTRACINGC_REPORTER_SUBCLASS;</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;} <a class="code" href="structjaeger__reporter.html">jaeger_reporter</a>;</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="comment">/* Shared instance of null reporter. DO NOT MODIFY MEMBERS! */</span></div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<a class="code" href="structjaeger__reporter.html">jaeger_reporter</a>* jaeger_null_reporter();</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="keywordtype">void</span> jaeger_logging_reporter_init(<a class="code" href="structjaeger__reporter.html">jaeger_reporter</a>* reporter);</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;</div>
-<div class="line"><a name="l00054"></a><span class="lineno"><a class="line" href="structjaeger__in__memory__reporter.html">   54</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structjaeger__in__memory__reporter.html">jaeger_in_memory_reporter</a> {</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    JAEGERTRACINGC_REPORTER_SUBCLASS;</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <a class="code" href="structjaeger__vector.html">jaeger_vector</a> spans;</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    jaeger_mutex mutex;</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;} <a class="code" href="structjaeger__in__memory__reporter.html">jaeger_in_memory_reporter</a>;</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="keywordtype">bool</span> jaeger_in_memory_reporter_init(<a class="code" href="structjaeger__in__memory__reporter.html">jaeger_in_memory_reporter</a>* reporter);</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;</div>
-<div class="line"><a name="l00062"></a><span class="lineno"><a class="line" href="structjaeger__composite__reporter.html">   62</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structjaeger__composite__reporter.html">jaeger_composite_reporter</a> {</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    JAEGERTRACINGC_REPORTER_SUBCLASS;</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <a class="code" href="structjaeger__vector.html">jaeger_vector</a> reporters;</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;} <a class="code" href="structjaeger__composite__reporter.html">jaeger_composite_reporter</a>;</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="keywordtype">bool</span> jaeger_composite_reporter_init(<a class="code" href="structjaeger__composite__reporter.html">jaeger_composite_reporter</a>* reporter);</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">bool</span></div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;jaeger_composite_reporter_add(<a class="code" href="structjaeger__composite__reporter.html">jaeger_composite_reporter</a>* reporter,</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;                              <a class="code" href="structjaeger__reporter.html">jaeger_reporter</a>* new_reporter)</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;{</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    assert(reporter != NULL);</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    assert(new_reporter != NULL);</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <a class="code" href="structjaeger__reporter.html">jaeger_reporter</a>** reporter_ptr = jaeger_vector_append(&amp;reporter-&gt;reporters);</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    <span class="keywordflow">if</span> (reporter_ptr == NULL) {</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    }</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    *reporter_ptr = new_reporter;</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;}</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;</div>
-<div class="line"><a name="l00083"></a><span class="lineno"><a class="line" href="structjaeger__remote__reporter.html">   83</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structjaeger__remote__reporter.html">jaeger_remote_reporter</a> {</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    JAEGERTRACINGC_REPORTER_SUBCLASS;</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="keywordtype">int</span> max_packet_size;</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <span class="keywordtype">int</span> fd;</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <a class="code" href="structjaeger__metrics.html">jaeger_metrics</a>* metrics;</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <a class="code" href="struct__Jaegertracing____Protobuf____Process.html">Jaegertracing__Protobuf__Process</a> process;</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <a class="code" href="structjaeger__vector.html">jaeger_vector</a> spans;</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    <span class="keyword">struct </span>addrinfo* candidates;</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    <span class="keyword">struct </span>sockaddr_in addr;</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    jaeger_mutex mutex;</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;} <a class="code" href="structjaeger__remote__reporter.html">jaeger_remote_reporter</a>;</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="preprocessor">#define JAEGERTRACINGC_REPORTER_SUBCLASS                      \</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="preprocessor">    JAEGERTRACINGC_DESTRUCTIBLE_SUBCLASS;                     \</span></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="preprocessor">                                                       \</span></div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="preprocessor">    void (*report)(struct jaeger_reporter * reporter,         \</span></div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="preprocessor">                   const jaeger_span* span);                  \</span></div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="preprocessor">                                                       \</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="preprocessor">    bool (*flush)(struct jaeger_reporter * reporter)</span></div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="preprocessor"></span></div>
+<div class="line"><a name="l00057"></a><span class="lineno"><a class="line" href="structjaeger__reporter.html">   57</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structjaeger__reporter.html">jaeger_reporter</a> {</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    JAEGERTRACINGC_REPORTER_SUBCLASS;</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;} <a class="code" href="structjaeger__reporter.html">jaeger_reporter</a>;</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="comment">/* Shared instance of null reporter. DO NOT MODIFY MEMBERS! */</span></div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<a class="code" href="structjaeger__reporter.html">jaeger_reporter</a>* jaeger_null_reporter();</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="keywordtype">void</span> jaeger_logging_reporter_init(<a class="code" href="structjaeger__reporter.html">jaeger_reporter</a>* reporter);</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;</div>
+<div class="line"><a name="l00066"></a><span class="lineno"><a class="line" href="structjaeger__in__memory__reporter.html">   66</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structjaeger__in__memory__reporter.html">jaeger_in_memory_reporter</a> {</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    JAEGERTRACINGC_REPORTER_SUBCLASS;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <a class="code" href="structjaeger__vector.html">jaeger_vector</a> spans;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    jaeger_mutex mutex;</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;} <a class="code" href="structjaeger__in__memory__reporter.html">jaeger_in_memory_reporter</a>;</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="keywordtype">bool</span> jaeger_in_memory_reporter_init(<a class="code" href="structjaeger__in__memory__reporter.html">jaeger_in_memory_reporter</a>* reporter);</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div>
+<div class="line"><a name="l00074"></a><span class="lineno"><a class="line" href="structjaeger__composite__reporter.html">   74</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structjaeger__composite__reporter.html">jaeger_composite_reporter</a> {</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    JAEGERTRACINGC_REPORTER_SUBCLASS;</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    <a class="code" href="structjaeger__vector.html">jaeger_vector</a> reporters;</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;} <a class="code" href="structjaeger__composite__reporter.html">jaeger_composite_reporter</a>;</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="keywordtype">bool</span> jaeger_composite_reporter_init(<a class="code" href="structjaeger__composite__reporter.html">jaeger_composite_reporter</a>* reporter);</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">bool</span></div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;jaeger_composite_reporter_add(<a class="code" href="structjaeger__composite__reporter.html">jaeger_composite_reporter</a>* reporter,</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;                              <a class="code" href="structjaeger__reporter.html">jaeger_reporter</a>* new_reporter)</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;{</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    assert(reporter != NULL);</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    assert(new_reporter != NULL);</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <a class="code" href="structjaeger__reporter.html">jaeger_reporter</a>** reporter_ptr = jaeger_vector_append(&amp;reporter-&gt;reporters);</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <span class="keywordflow">if</span> (reporter_ptr == NULL) {</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    }</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    *reporter_ptr = new_reporter;</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;}</div>
 <div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<span class="keywordtype">bool</span> jaeger_remote_reporter_init(<a class="code" href="structjaeger__remote__reporter.html">jaeger_remote_reporter</a>* reporter,</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;                                 <span class="keyword">const</span> <span class="keywordtype">char</span>* host_port,</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;                                 <span class="keywordtype">int</span> max_packet_size,</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;                                 <a class="code" href="structjaeger__metrics.html">jaeger_metrics</a>* metrics);</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;<span class="keywordtype">int</span> jaeger_remote_reporter_flush(<a class="code" href="structjaeger__remote__reporter.html">jaeger_remote_reporter</a>* reporter);</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;<span class="preprocessor"></span>} <span class="comment">/* extern C */</span></div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span><span class="preprocessor"></span></div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* JAEGERTRACINGC_REPORTER_H */</span><span class="preprocessor"></span></div>
-<div class="ttc" id="structjaeger__reporter_html"><div class="ttname"><a href="structjaeger__reporter.html">jaeger_reporter</a></div><div class="ttdef"><b>Definition:</b> reporter.h:45</div></div>
+<div class="line"><a name="l00095"></a><span class="lineno"><a class="line" href="structjaeger__remote__reporter.html">   95</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structjaeger__remote__reporter.html">jaeger_remote_reporter</a> {</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    JAEGERTRACINGC_REPORTER_SUBCLASS;</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    <span class="keywordtype">int</span> max_packet_size;</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    <span class="keywordtype">int</span> fd;</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    <a class="code" href="structjaeger__metrics.html">jaeger_metrics</a>* metrics;</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    <a class="code" href="struct__Jaegertracing____Protobuf____Process.html">Jaegertracing__Protobuf__Process</a> process;</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    <a class="code" href="structjaeger__vector.html">jaeger_vector</a> spans;</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    <span class="keyword">struct </span>addrinfo* candidates;</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    <span class="keyword">struct </span>sockaddr_in addr;</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    jaeger_mutex mutex;</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;} <a class="code" href="structjaeger__remote__reporter.html">jaeger_remote_reporter</a>;</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;<span class="keywordtype">bool</span> jaeger_remote_reporter_init(<a class="code" href="structjaeger__remote__reporter.html">jaeger_remote_reporter</a>* reporter,</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;                                 <span class="keyword">const</span> <span class="keywordtype">char</span>* host_port,</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;                                 <span class="keywordtype">int</span> max_packet_size,</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;                                 <a class="code" href="structjaeger__metrics.html">jaeger_metrics</a>* metrics);</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;<span class="preprocessor"></span>} <span class="comment">/* extern C */</span></div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* __cplusplus */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;<span class="preprocessor"></span></div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* JAEGERTRACINGC_REPORTER_H */</span><span class="preprocessor"></span></div>
+<div class="ttc" id="structjaeger__reporter_html"><div class="ttname"><a href="structjaeger__reporter.html">jaeger_reporter</a></div><div class="ttdef"><b>Definition:</b> reporter.h:57</div></div>
 <div class="ttc" id="net_8h_html"><div class="ttname"><a href="net_8h.html">net.h</a></div><div class="ttdoc">Network utilities. </div></div>
 <div class="ttc" id="span_8h_html"><div class="ttname"><a href="span_8h.html">span.h</a></div><div class="ttdoc">Span, span context, and span ref representations and functions. </div></div>
 <div class="ttc" id="structjaeger__metrics_html"><div class="ttname"><a href="structjaeger__metrics.html">jaeger_metrics</a></div><div class="ttdef"><b>Definition:</b> metrics.h:132</div></div>
 <div class="ttc" id="logging_8h_html"><div class="ttname"><a href="logging_8h.html">logging.h</a></div><div class="ttdoc">Logging interface and initialization functions. </div></div>
 <div class="ttc" id="threading_8h_html"><div class="ttname"><a href="threading_8h.html">threading.h</a></div><div class="ttdoc">Threading utilities. </div></div>
 <div class="ttc" id="struct__Jaegertracing____Protobuf____Process_html"><div class="ttname"><a href="struct__Jaegertracing____Protobuf____Process.html">_Jaegertracing__Protobuf__Process</a></div><div class="ttdef"><b>Definition:</b> jaeger.pb-c.h:123</div></div>
-<div class="ttc" id="structjaeger__remote__reporter_html"><div class="ttname"><a href="structjaeger__remote__reporter.html">jaeger_remote_reporter</a></div><div class="ttdef"><b>Definition:</b> reporter.h:83</div></div>
-<div class="ttc" id="structjaeger__in__memory__reporter_html"><div class="ttname"><a href="structjaeger__in__memory__reporter.html">jaeger_in_memory_reporter</a></div><div class="ttdef"><b>Definition:</b> reporter.h:54</div></div>
+<div class="ttc" id="structjaeger__remote__reporter_html"><div class="ttname"><a href="structjaeger__remote__reporter.html">jaeger_remote_reporter</a></div><div class="ttdef"><b>Definition:</b> reporter.h:95</div></div>
+<div class="ttc" id="structjaeger__in__memory__reporter_html"><div class="ttname"><a href="structjaeger__in__memory__reporter.html">jaeger_in_memory_reporter</a></div><div class="ttdef"><b>Definition:</b> reporter.h:66</div></div>
 <div class="ttc" id="vector_8h_html"><div class="ttname"><a href="vector_8h.html">vector.h</a></div><div class="ttdoc">C generic vector implementation. </div></div>
 <div class="ttc" id="common_8h_html"><div class="ttname"><a href="common_8h.html">common.h</a></div><div class="ttdoc">Common headers, struct definitions, and macros. </div></div>
-<div class="ttc" id="structjaeger__composite__reporter_html"><div class="ttname"><a href="structjaeger__composite__reporter.html">jaeger_composite_reporter</a></div><div class="ttdef"><b>Definition:</b> reporter.h:62</div></div>
+<div class="ttc" id="structjaeger__composite__reporter_html"><div class="ttname"><a href="structjaeger__composite__reporter.html">jaeger_composite_reporter</a></div><div class="ttdef"><b>Definition:</b> reporter.h:74</div></div>
 <div class="ttc" id="structjaeger__vector_html"><div class="ttname"><a href="structjaeger__vector.html">jaeger_vector</a></div><div class="ttdef"><b>Definition:</b> vector.h:36</div></div>
 <div class="ttc" id="metrics_8h_html"><div class="ttname"><a href="metrics_8h.html">metrics.h</a></div><div class="ttdoc">Metrics interfaces to track various numbers while tracing. </div></div>
 </div><!-- fragment --></div><!-- contents -->
