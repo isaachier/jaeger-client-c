@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['realloc',['realloc',['../structjaeger__allocator.html#a5d839c78b9aa35c89776628b79bb97bb',1,'jaeger_allocator']]]
+  ['options',['options',['../structjaeger__tracer.html#ac75ef3b2257e8ba0eea1dfb8828ec193',1,'jaeger_tracer']]]
 ];

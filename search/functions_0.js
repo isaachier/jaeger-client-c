@@ -10,5 +10,6 @@ var searchData=
   ['jaeger_5frealloc',['jaeger_realloc',['../alloc_8h.html#a2f9fd6513d1b13e8be7d42abf89ad140',1,'alloc.c']]],
   ['jaeger_5fset_5fallocator',['jaeger_set_allocator',['../alloc_8h.html#a028e4a5c56db3be5bd20496b1a64f920',1,'alloc.c']]],
   ['jaeger_5fset_5flogger',['jaeger_set_logger',['../logging_8h.html#ab67748c4ba5d8b37d6ba8b48dd5e61c0',1,'logging.c']]],
-  ['jaeger_5fstd_5flogger_5finit',['jaeger_std_logger_init',['../logging_8h.html#ac01da6c9df20fe92039d247c05bfdbef',1,'logging.c']]]
+  ['jaeger_5fstd_5flogger_5finit',['jaeger_std_logger_init',['../logging_8h.html#ac01da6c9df20fe92039d247c05bfdbef',1,'logging.c']]],
+  ['jaeger_5ftracer_5finit',['jaeger_tracer_init',['../tracer_8h.html#a8b05049688a9534b5c3a4573664e54c4',1,'tracer.c']]]
 ];

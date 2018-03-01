@@ -1,8 +1,8 @@
 var searchData=
 [
-  ['tag_2eh',['tag.h',['../tag_8h.html',1,'']]],
-  ['threading_2eh',['threading.h',['../threading_8h.html',1,'']]],
-  ['token_5fbucket_2eh',['token_bucket.h',['../token__bucket_8h.html',1,'']]],
-  ['trace_5fid_2eh',['trace_id.h',['../trace__id_8h.html',1,'']]],
-  ['tracer_2eh',['tracer.h',['../tracer_8h.html',1,'']]]
+  ['sampler',['sampler',['../structjaeger__tracer.html#a988ac3ac189df44661bedc45d55b56c8',1,'jaeger_tracer']]],
+  ['sampler_2eh',['sampler.h',['../sampler_8h.html',1,'']]],
+  ['sampling_5fstrategy_2eh',['sampling_strategy.h',['../sampling__strategy_8h.html',1,'']]],
+  ['service_5fname',['service_name',['../structjaeger__tracer.html#a2f266f1e4c48383eb3460f3a042a14c3',1,'jaeger_tracer']]],
+  ['span_2eh',['span.h',['../span_8h.html',1,'']]]
 ];

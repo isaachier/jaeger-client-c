@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['sampler_2eh',['sampler.h',['../sampler_8h.html',1,'']]],
-  ['sampling_5fstrategy_2eh',['sampling_strategy.h',['../sampling__strategy_8h.html',1,'']]],
-  ['span_2eh',['span.h',['../span_8h.html',1,'']]]
+  ['random_2eh',['random.h',['../random_8h.html',1,'']]],
+  ['realloc',['realloc',['../structjaeger__allocator.html#a5d839c78b9aa35c89776628b79bb97bb',1,'jaeger_allocator']]],
+  ['reporter',['reporter',['../structjaeger__tracer.html#ade315b4e4a1bef2bbccee5f9e8bb4f3d',1,'jaeger_tracer']]],
+  ['reporter_2eh',['reporter.h',['../reporter_8h.html',1,'']]]
 ];

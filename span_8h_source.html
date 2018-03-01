@@ -305,7 +305,7 @@ $(document).ready(function(){initNavTree('span_8h_source.html','');});
 <div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;    time_t start_time_system;</div>
 <div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;    jaeger_timestamp start_time_steady;</div>
 <div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;    jaeger_duration duration;</div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;    <a class="code" href="structjaeger__vector.html">jaeger_vector</a> tags;</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;    <a class="code" href="structjaeger__vector.html">jaeger_vector</a> <a class="code" href="structjaeger__tracer.html#a6e776148ebfb95dc49bbf018b58841e5">tags</a>;</div>
 <div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;    <a class="code" href="structjaeger__vector.html">jaeger_vector</a> logs;</div>
 <div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;    <a class="code" href="structjaeger__vector.html">jaeger_vector</a> refs;</div>
 <div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;    jaeger_mutex mutex;</div>
@@ -809,6 +809,7 @@ $(document).ready(function(){initNavTree('span_8h_source.html','');});
 <div class="ttc" id="log__record_8h_html"><div class="ttname"><a href="log__record_8h.html">log_record.h</a></div><div class="ttdoc">Log record representation for use in span. </div></div>
 <div class="ttc" id="structjaeger__key__value_html"><div class="ttname"><a href="structjaeger__key__value.html">jaeger_key_value</a></div><div class="ttdef"><b>Definition:</b> key_value.h:34</div></div>
 <div class="ttc" id="structjaeger__span__ref_html"><div class="ttname"><a href="structjaeger__span__ref.html">jaeger_span_ref</a></div><div class="ttdef"><b>Definition:</b> span.h:114</div></div>
+<div class="ttc" id="structjaeger__tracer_html_a6e776148ebfb95dc49bbf018b58841e5"><div class="ttname"><a href="structjaeger__tracer.html#a6e776148ebfb95dc49bbf018b58841e5">jaeger_tracer::tags</a></div><div class="ttdeci">jaeger_vector tags</div><div class="ttdoc">Tags to store metadata about the current process (i.e. </div><div class="ttdef"><b>Definition:</b> tracer.h:82</div></div>
 <div class="ttc" id="structjaeger__span_html"><div class="ttname"><a href="structjaeger__span.html">jaeger_span</a></div><div class="ttdef"><b>Definition:</b> span.h:205</div></div>
 <div class="ttc" id="struct__Jaegertracing____Protobuf____SpanRef_html"><div class="ttname"><a href="struct__Jaegertracing____Protobuf____SpanRef.html">_Jaegertracing__Protobuf__SpanRef</a></div><div class="ttdef"><b>Definition:</b> jaeger.pb-c.h:89</div></div>
 <div class="ttc" id="structjaeger__log__record_html"><div class="ttname"><a href="structjaeger__log__record.html">jaeger_log_record</a></div><div class="ttdef"><b>Definition:</b> log_record.h:36</div></div>
@@ -820,7 +821,7 @@ $(document).ready(function(){initNavTree('span_8h_source.html','');});
 <div class="ttc" id="span_8h_html_a5dfa867871567eb8938ac19e636d92ed"><div class="ttname"><a href="span_8h.html#a5dfa867871567eb8938ac19e636d92ed">JAEGERTRACINGC_SPAN_FINISH_OPTIONS_INIT</a></div><div class="ttdeci">#define JAEGERTRACINGC_SPAN_FINISH_OPTIONS_INIT</div><div class="ttdoc">Static initializer for jaeger_span_finish_with_options. </div><div class="ttdef"><b>Definition:</b> span.h:510</div></div>
 <div class="ttc" id="structjaeger__span__finish__options_html_a9c18ce18a4885d1909194c9e3af849d2"><div class="ttname"><a href="structjaeger__span__finish__options.html#a9c18ce18a4885d1909194c9e3af849d2">jaeger_span_finish_options::finish_time</a></div><div class="ttdeci">jaeger_timestamp finish_time</div><div class="ttdoc">The time the operation was completed. </div><div class="ttdef"><b>Definition:</b> span.h:502</div></div>
 <div class="ttc" id="struct__Jaegertracing____Protobuf____TraceID_html"><div class="ttname"><a href="struct__Jaegertracing____Protobuf____TraceID.html">_Jaegertracing__Protobuf__TraceID</a></div><div class="ttdef"><b>Definition:</b> jaeger.pb-c.h:78</div></div>
-<div class="ttc" id="structjaeger__tracer_html"><div class="ttname"><a href="structjaeger__tracer.html">jaeger_tracer</a></div><div class="ttdef"><b>Definition:</b> tracer.h:52</div></div>
+<div class="ttc" id="structjaeger__tracer_html"><div class="ttname"><a href="structjaeger__tracer.html">jaeger_tracer</a></div><div class="ttdoc">Tracer implementation. </div><div class="ttdef"><b>Definition:</b> tracer.h:55</div></div>
 <div class="ttc" id="structjaeger__vector_html"><div class="ttname"><a href="structjaeger__vector.html">jaeger_vector</a></div><div class="ttdef"><b>Definition:</b> vector.h:36</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->

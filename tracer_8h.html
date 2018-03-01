@@ -104,7 +104,8 @@ $(document).ready(function(){initNavTree('tracer_8h.html','');});
   <div class="summary">
 <a href="#nested-classes">Data Structures</a> &#124;
 <a href="#define-members">Macros</a> &#124;
-<a href="#typedef-members">Typedefs</a>  </div>
+<a href="#typedef-members">Typedefs</a> &#124;
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">tracer.h File Reference</div>  </div>
 </div><!--header-->
@@ -127,12 +128,16 @@ Data Structures</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Options that can be used to customize the tracer.  <a href="structjaeger__tracer__options.html#details">More...</a><br/></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structjaeger__tracer.html">jaeger_tracer</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tracer implementation.  <a href="structjaeger__tracer.html#details">More...</a><br/></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
 Macros</h2></td></tr>
 <tr class="memitem:a7c0027c81aa5510e7e6ca12a52ad85cd"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><b>JAEGER_TRACER_OPTIONS_INIT</b></td></tr>
 <tr class="separator:a7c0027c81aa5510e7e6ca12a52ad85cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad7a6054b6b4bb4b57c129e7cc6935a1a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tracer_8h.html#ad7a6054b6b4bb4b57c129e7cc6935a1a">JAEGERTRACINGC_TRACER_INIT</a></td></tr>
+<tr class="memdesc:ad7a6054b6b4bb4b57c129e7cc6935a1a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Static initializer for <a class="el" href="structjaeger__tracer.html" title="Tracer implementation. ">jaeger_tracer</a>.  <a href="#ad7a6054b6b4bb4b57c129e7cc6935a1a">More...</a><br/></td></tr>
+<tr class="separator:ad7a6054b6b4bb4b57c129e7cc6935a1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
@@ -142,8 +147,15 @@ typedef struct <br class="typebreak"/>
 <tr class="memdesc:abe813aa7689a8224a1545960d0efce71"><td class="mdescLeft">&#160;</td><td class="mdescRight">Options that can be used to customize the tracer. <br/></td></tr>
 <tr class="separator:abe813aa7689a8224a1545960d0efce71"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aecb3ad27e5f06cfdc881d96ebec29783"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aecb3ad27e5f06cfdc881d96ebec29783"></a>
-typedef struct <a class="el" href="structjaeger__tracer.html">jaeger_tracer</a>&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_tracer</b></td></tr>
+typedef struct <a class="el" href="structjaeger__tracer.html">jaeger_tracer</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tracer_8h.html#aecb3ad27e5f06cfdc881d96ebec29783">jaeger_tracer</a></td></tr>
+<tr class="memdesc:aecb3ad27e5f06cfdc881d96ebec29783"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tracer implementation. <br/></td></tr>
 <tr class="separator:aecb3ad27e5f06cfdc881d96ebec29783"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a8b05049688a9534b5c3a4573664e54c4"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tracer_8h.html#a8b05049688a9534b5c3a4573664e54c4">jaeger_tracer_init</a> (<a class="el" href="structjaeger__tracer.html">jaeger_tracer</a> *tracer, <a class="el" href="structjaeger__sampler.html">jaeger_sampler</a> *sampler, <a class="el" href="structjaeger__reporter.html">jaeger_reporter</a> *reporter, const <a class="el" href="structjaeger__tracer__options.html">jaeger_tracer_options</a> *options)</td></tr>
+<tr class="memdesc:a8b05049688a9534b5c3a4573664e54c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize a new tracer.  <a href="#a8b05049688a9534b5c3a4573664e54c4">More...</a><br/></td></tr>
+<tr class="separator:a8b05049688a9534b5c3a4573664e54c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Tracer implementation. </p>
@@ -161,6 +173,77 @@ typedef struct <a class="el" href="structjaeger__tracer.html">jaeger_tracer</a>&
 <div class="line">        .gen_128_bit = <span class="keyword">false</span>       \</div>
 <div class="line">    }</div>
 </div><!-- fragment -->
+</div>
+</div>
+<a class="anchor" id="ad7a6054b6b4bb4b57c129e7cc6935a1a"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define JAEGERTRACINGC_TRACER_INIT</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">{                                                            \</div>
+<div class="line">        .service_name = NULL, .sampler = NULL, .reporter = NULL, \</div>
+<div class="line">        .options = JAEGER_TRACER_OPTIONS_INIT, .tags = NULL      \</div>
+<div class="line">    }</div>
+</div><!-- fragment -->
+<p>Static initializer for <a class="el" href="structjaeger__tracer.html" title="Tracer implementation. ">jaeger_tracer</a>. </p>
+<p>May be used to initialize an empty tracer, but the caller must also invoke jaeger_tracer_init to fully construct the tracer. </p>
+<dl class="section see"><dt>See Also</dt><dd><a class="el" href="tracer_8h.html#a8b05049688a9534b5c3a4573664e54c4" title="Initialize a new tracer. ">jaeger_tracer_init</a> </dd></dl>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a class="anchor" id="a8b05049688a9534b5c3a4573664e54c4"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool jaeger_tracer_init </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structjaeger__tracer.html">jaeger_tracer</a> *&#160;</td>
+          <td class="paramname"><em>tracer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structjaeger__sampler.html">jaeger_sampler</a> *&#160;</td>
+          <td class="paramname"><em>sampler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structjaeger__reporter.html">jaeger_reporter</a> *&#160;</td>
+          <td class="paramname"><em>reporter</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structjaeger__tracer__options.html">jaeger_tracer_options</a> *&#160;</td>
+          <td class="paramname"><em>options</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Initialize a new tracer. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">tracer</td><td>Tracer to initialize. </td></tr>
+    <tr><td class="paramname">sampler</td><td>Sampler for tracer to use. </td></tr>
+    <tr><td class="paramname">reporter</td><td>Reporter for tracer to use. </td></tr>
+    <tr><td class="paramname">options</td><td>Options for tracer to use, may be NULL. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>True on success, false otherwise. </dd></dl>
+
 </div>
 </div>
 </div><!-- contents -->

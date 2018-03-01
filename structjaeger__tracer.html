@@ -108,25 +108,109 @@ $(document).ready(function(){initNavTree('structjaeger__tracer.html','');});
 <div class="title">jaeger_tracer Struct Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Tracer implementation.  
+ <a href="structjaeger__tracer.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="tracer_8h_source.html">jaegertracingc/tracer.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Data Fields</h2></td></tr>
-<tr class="memitem:a2f266f1e4c48383eb3460f3a042a14c3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2f266f1e4c48383eb3460f3a042a14c3"></a>
-char *&#160;</td><td class="memItemRight" valign="bottom"><b>service_name</b></td></tr>
+<tr class="memitem:a2f266f1e4c48383eb3460f3a042a14c3"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structjaeger__tracer.html#a2f266f1e4c48383eb3460f3a042a14c3">service_name</a></td></tr>
+<tr class="memdesc:a2f266f1e4c48383eb3460f3a042a14c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Name of the current service.  <a href="#a2f266f1e4c48383eb3460f3a042a14c3">More...</a><br/></td></tr>
 <tr class="separator:a2f266f1e4c48383eb3460f3a042a14c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a988ac3ac189df44661bedc45d55b56c8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a988ac3ac189df44661bedc45d55b56c8"></a>
-<a class="el" href="structjaeger__sampler.html">jaeger_sampler</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>sampler</b></td></tr>
+<tr class="memitem:a988ac3ac189df44661bedc45d55b56c8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structjaeger__sampler.html">jaeger_sampler</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structjaeger__tracer.html#a988ac3ac189df44661bedc45d55b56c8">sampler</a></td></tr>
+<tr class="memdesc:a988ac3ac189df44661bedc45d55b56c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sampler to select spans for tracing.  <a href="#a988ac3ac189df44661bedc45d55b56c8">More...</a><br/></td></tr>
 <tr class="separator:a988ac3ac189df44661bedc45d55b56c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ade315b4e4a1bef2bbccee5f9e8bb4f3d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ade315b4e4a1bef2bbccee5f9e8bb4f3d"></a>
-<a class="el" href="structjaeger__reporter.html">jaeger_reporter</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>reporter</b></td></tr>
+<tr class="memitem:ade315b4e4a1bef2bbccee5f9e8bb4f3d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structjaeger__reporter.html">jaeger_reporter</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structjaeger__tracer.html#ade315b4e4a1bef2bbccee5f9e8bb4f3d">reporter</a></td></tr>
+<tr class="memdesc:ade315b4e4a1bef2bbccee5f9e8bb4f3d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reporter to handle spans after they are completed.  <a href="#ade315b4e4a1bef2bbccee5f9e8bb4f3d">More...</a><br/></td></tr>
 <tr class="separator:ade315b4e4a1bef2bbccee5f9e8bb4f3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac75ef3b2257e8ba0eea1dfb8828ec193"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac75ef3b2257e8ba0eea1dfb8828ec193"></a>
-<a class="el" href="structjaeger__tracer__options.html">jaeger_tracer_options</a>&#160;</td><td class="memItemRight" valign="bottom"><b>options</b></td></tr>
+<tr class="memitem:ac75ef3b2257e8ba0eea1dfb8828ec193"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structjaeger__tracer__options.html">jaeger_tracer_options</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structjaeger__tracer.html#ac75ef3b2257e8ba0eea1dfb8828ec193">options</a></td></tr>
+<tr class="memdesc:ac75ef3b2257e8ba0eea1dfb8828ec193"><td class="mdescLeft">&#160;</td><td class="mdescRight">Custom options passed into the tracer at construction.  <a href="#ac75ef3b2257e8ba0eea1dfb8828ec193">More...</a><br/></td></tr>
 <tr class="separator:ac75ef3b2257e8ba0eea1dfb8828ec193"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6e776148ebfb95dc49bbf018b58841e5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6e776148ebfb95dc49bbf018b58841e5"></a>
-<a class="el" href="structjaeger__vector.html">jaeger_vector</a>&#160;</td><td class="memItemRight" valign="bottom"><b>tags</b></td></tr>
+<tr class="memitem:a6e776148ebfb95dc49bbf018b58841e5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structjaeger__vector.html">jaeger_vector</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structjaeger__tracer.html#a6e776148ebfb95dc49bbf018b58841e5">tags</a></td></tr>
+<tr class="memdesc:a6e776148ebfb95dc49bbf018b58841e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tags to store metadata about the current process (i.e.  <a href="#a6e776148ebfb95dc49bbf018b58841e5">More...</a><br/></td></tr>
 <tr class="separator:a6e776148ebfb95dc49bbf018b58841e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Tracer implementation. </p>
+</div><h2 class="groupheader">Field Documentation</h2>
+<a class="anchor" id="ac75ef3b2257e8ba0eea1dfb8828ec193"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structjaeger__tracer__options.html">jaeger_tracer_options</a> jaeger_tracer::options</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Custom options passed into the tracer at construction. </p>
+<dl class="section see"><dt>See Also</dt><dd><a class="el" href="structjaeger__tracer__options.html" title="Options that can be used to customize the tracer. ">jaeger_tracer_options</a> </dd>
+<dd>
+<a class="el" href="tracer_8h.html#a8b05049688a9534b5c3a4573664e54c4" title="Initialize a new tracer. ">jaeger_tracer_init()</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ade315b4e4a1bef2bbccee5f9e8bb4f3d"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structjaeger__reporter.html">jaeger_reporter</a>* jaeger_tracer::reporter</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Reporter to handle spans after they are completed. </p>
+<dl class="section see"><dt>See Also</dt><dd><a class="el" href="structjaeger__reporter.html">jaeger_reporter</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a988ac3ac189df44661bedc45d55b56c8"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structjaeger__sampler.html">jaeger_sampler</a>* jaeger_tracer::sampler</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sampler to select spans for tracing. </p>
+<dl class="section see"><dt>See Also</dt><dd><a class="el" href="structjaeger__sampler.html">jaeger_sampler</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a2f266f1e4c48383eb3460f3a042a14c3"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">char* jaeger_tracer::service_name</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Name of the current service. </p>
+
+</div>
+</div>
+<a class="anchor" id="a6e776148ebfb95dc49bbf018b58841e5"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structjaeger__vector.html">jaeger_vector</a> jaeger_tracer::tags</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Tags to store metadata about the current process (i.e. </p>
+<p>hostname, client version, etc.). </p>
+
+</div>
+</div>
 <hr/>The documentation for this struct was generated from the following file:<ul>
 <li>jaegertracingc/<a class="el" href="tracer_8h_source.html">tracer.h</a></li>
 </ul>
