@@ -1,5 +1,6 @@
 var NAVTREEINDEX1 =
 {
+"struct__Jaegertracing____Protobuf____SamplingManager____RateLimitingSamplingStrategy.html":[0,0,14],
 "struct__Jaegertracing____Protobuf____SamplingManager____RateLimitingSamplingStrategy.html#a2fe496a01a9eff8b38c97d67565cd182":[0,0,14,1],
 "struct__Jaegertracing____Protobuf____SamplingManager____RateLimitingSamplingStrategy.html#a796a0f18fc2f503c0b6986c547283eaa":[0,0,14,0],
 "struct__Jaegertracing____Protobuf____SamplingManager____SamplingManager__Service.html":[0,0,15],
@@ -230,6 +231,7 @@ var NAVTREEINDEX1 =
 "tracer_8h.html":[1,0,0,18],
 "tracer_8h.html#a7c0027c81aa5510e7e6ca12a52ad85cd":[1,0,0,18,2],
 "tracer_8h.html#a8b05049688a9534b5c3a4573664e54c4":[1,0,0,18,6],
+"tracer_8h.html#ab1c38f1b4e905dc2d474399d7e87b533":[1,0,0,18,7],
 "tracer_8h.html#abe813aa7689a8224a1545960d0efce71":[1,0,0,18,5],
 "tracer_8h.html#ad7a6054b6b4bb4b57c129e7cc6935a1a":[1,0,0,18,3],
 "tracer_8h.html#aecb3ad27e5f06cfdc881d96ebec29783":[1,0,0,18,4],

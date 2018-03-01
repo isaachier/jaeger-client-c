@@ -24,7 +24,7 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "agent_8pb-c_8h_source.html",
-"struct__Jaegertracing____Protobuf____SamplingManager____RateLimitingSamplingStrategy.html#a2fe496a01a9eff8b38c97d67565cd182"
+"struct__Jaegertracing____Protobuf____SamplingManager____RateLimitingSamplingStrategy.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

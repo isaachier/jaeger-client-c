@@ -20,6 +20,7 @@ var span_8h =
     [ "assert", "span_8h.html#af80c22aed8c299798394a947ad71c6a4", null ],
     [ "if", "span_8h.html#afc88e55d2f2a2e0de7fd9b045daca9ed", null ],
     [ "jaeger_trace_id_to_protobuf", "span_8h.html#aefba2a120386a8af12f073370b449882", null ],
+    [ "jaeger_tracer_report_span", "span_8h.html#a2107bc90f5262311719751dd11a627ad", null ],
     [ "JAEGERTRACINGC_WRAP_COPY", "span_8h.html#ab8cecf89062fb525a9bbb8fe8eb68589", null ],
     [ "JAEGERTRACINGC_WRAP_DESTROY", "span_8h.html#a602ec5f6c779a6f8ad23848c9116dd3f", null ],
     [ "dst", "span_8h.html#ab30ce5929cacc46873c25a334765b9b3", null ],
