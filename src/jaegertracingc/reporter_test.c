@@ -43,7 +43,7 @@ static void* flush_reporter(void* arg)
     TEST_ASSERT_NOT_NULL(arg);
     jaeger_reporter* r = (jaeger_reporter*) arg;
     bool success = r->flush(r);
-    int* return_value = jaeger_malloc(sizeof(bool));
+    bool* return_value = jaeger_malloc(sizeof(bool));
     TEST_ASSERT_NOT_NULL(return_value);
     *return_value = success;
     return return_value;
