@@ -144,6 +144,14 @@ bool jaeger_tracer_init(jaeger_tracer* tracer,
                         const jaeger_tracer_options* options);
 
 /**
+ * Flush any pending spans in tracer. Only effective when using remote reporter,
+ * which is the default reporter.
+ * @param tracer Tracer instance to flush.
+ * @return True on success, false otherwise.
+ */
+bool jaeger_tracer_flush(jaeger_tracer* tracer);
+
+/**
  * @internal
  * Report completed span.
  * @param tracer Tracer instance.

@@ -326,6 +326,12 @@ cleanup:
     return false;
 }
 
+bool jaeger_tracer_flush(jaeger_tracer* tracer)
+{
+    assert(tracer != NULL);
+    return tracer->reporter->flush(tracer->reporter);
+}
+
 void jaeger_tracer_report_span(jaeger_tracer* tracer, jaeger_span* span)
 {
     jaeger_counter* spans_finished = tracer->metrics->spans_finished;

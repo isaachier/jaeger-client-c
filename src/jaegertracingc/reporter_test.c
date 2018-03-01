@@ -40,11 +40,12 @@ static inline int start_udp_server()
 
 static void* flush_reporter(void* arg)
 {
-    assert(arg != NULL);
-    const int num_flushed = jaeger_remote_reporter_flush(arg);
-    int* return_value = jaeger_malloc(sizeof(int));
+    TEST_ASSERT_NOT_NULL(arg);
+    jaeger_reporter* r = (jaeger_reporter*) arg;
+    bool success = r->flush(r);
+    int* return_value = jaeger_malloc(sizeof(bool));
     TEST_ASSERT_NOT_NULL(return_value);
-    *return_value = num_flushed;
+    *return_value = success;
     return return_value;
 }
 
@@ -111,44 +112,6 @@ void test_reporter()
     r->report(r, &span);
     r->destroy((jaeger_destructible*) r);
 
-    /* Test connecting to a server address, closing the server socket, then
-     * attempting a flush.
-     */
-    int fake_socket_fd = socket(AF_INET, SOCK_DGRAM, 0);
-    struct sockaddr_in fake_server_addr;
-    memset(&fake_server_addr, 0, sizeof(fake_server_addr));
-    TEST_ASSERT_EQUAL(0,
-                      bind(fake_socket_fd,
-                           (struct sockaddr*) &fake_server_addr,
-                           sizeof(fake_server_addr)));
-    socklen_t fake_server_addr_len = sizeof(fake_server_addr);
-    TEST_ASSERT_EQUAL(0,
-                      getsockname(fake_socket_fd,
-                                  (struct sockaddr*) &fake_server_addr,
-                                  &fake_server_addr_len));
-    TEST_ASSERT_EQUAL(sizeof(fake_server_addr), fake_server_addr_len);
-    char fake_host_port[INET_ADDRSTRLEN + 1 + MAX_PORT_LEN];
-    TEST_ASSERT_NOT_NULL(inet_ntop(AF_INET,
-                                   &fake_server_addr.sin_addr,
-                                   fake_host_port,
-                                   sizeof(fake_host_port)));
-    const int fake_host_end = strlen(fake_host_port);
-    TEST_ASSERT_LESS_THAN(sizeof(fake_host_port) - fake_host_end,
-                          snprintf(&fake_host_port[fake_host_end],
-                                   sizeof(fake_host_port) - fake_host_end,
-                                   ":%d",
-                                   ntohs(fake_server_addr.sin_port)));
-    jaeger_remote_reporter remote_reporter;
-    char buffer[1024];
-    jaeger_metrics* metrics = jaeger_null_metrics();
-    TEST_ASSERT_TRUE(jaeger_remote_reporter_init(
-        &remote_reporter, fake_host_port, sizeof(buffer), metrics));
-    r->report(r, &span);
-    close(fake_socket_fd);
-    TEST_ASSERT_FALSE(jaeger_remote_reporter_flush(&remote_reporter));
-    remote_reporter.destroy((jaeger_destructible*) &remote_reporter);
-
-    /* Test connection to real server works as expected. */
     const int server_fd = start_udp_server();
     struct sockaddr_in addr;
     memset(&addr, 0, sizeof(addr));
@@ -166,6 +129,10 @@ void test_reporter()
                                    ":%d",
                                    ntohs(addr.sin_port)));
 
+    jaeger_remote_reporter remote_reporter;
+    char buffer[1024];
+    jaeger_metrics* metrics = jaeger_null_metrics();
+    r = (jaeger_reporter*) &remote_reporter;
     TEST_ASSERT_TRUE(jaeger_remote_reporter_init(
         &remote_reporter, host_port, sizeof(buffer), metrics));
     r = (jaeger_reporter*) &remote_reporter;
@@ -180,12 +147,13 @@ void test_reporter()
         jaegertracing__protobuf__batch__unpack(
             NULL, num_read, (const uint8_t*) buffer);
     TEST_ASSERT_NOT_NULL(batch);
-    void* num_flushed = NULL;
-    jaeger_thread_join(thread, &num_flushed);
-    TEST_ASSERT_EQUAL(*(int*) num_flushed, batch->n_spans);
+    void* success = NULL;
+    jaeger_thread_join(thread, &success);
+    TEST_ASSERT_NOT_NULL(success);
+    TEST_ASSERT_EQUAL(true, *(bool*) success);
     jaegertracing__protobuf__batch__free_unpacked(batch, NULL);
     r->destroy((jaeger_destructible*) r);
-    jaeger_free(num_flushed);
+    jaeger_free(success);
 
     const int small_packet_size = 1;
     TEST_ASSERT_TRUE(jaeger_remote_reporter_init(
@@ -193,10 +161,11 @@ void test_reporter()
     r->report(r, &span);
     TEST_ASSERT_EQUAL(
         0, jaeger_thread_init(&thread, &flush_reporter, &remote_reporter));
-    num_flushed = NULL;
-    jaeger_thread_join(thread, &num_flushed);
-    TEST_ASSERT_EQUAL(-1, *(int*) num_flushed);
-    jaeger_free(num_flushed);
+    success = NULL;
+    jaeger_thread_join(thread, &success);
+    TEST_ASSERT_NOT_NULL(success);
+    TEST_ASSERT_EQUAL(false, *(bool*) success);
+    jaeger_free(success);
     r->destroy((jaeger_destructible*) r);
 
     close(server_fd);

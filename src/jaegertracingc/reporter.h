@@ -38,9 +38,21 @@ extern "C" {
 
 #define JAEGERTRACINGC_DEFAULT_UDP_BUFFER_SIZE USHRT_MAX
 
-#define JAEGERTRACINGC_REPORTER_SUBCLASS  \
-    JAEGERTRACINGC_DESTRUCTIBLE_SUBCLASS; \
-    void (*report)(struct jaeger_reporter * reporter, const jaeger_span* span)
+#define JAEGERTRACINGC_REPORTER_SUBCLASS                      \
+    JAEGERTRACINGC_DESTRUCTIBLE_SUBCLASS;                     \
+    /**                                                       \
+     * Report span.                                           \
+     * @param reporter Reporter instance.                     \
+     * @param span Span to report.                            \
+     */                                                       \
+    void (*report)(struct jaeger_reporter * reporter,         \
+                   const jaeger_span* span);                  \
+    /**                                                       \
+     * Flush any pending spans. Only used in remote reporter. \
+     * @param reporter Reporter instance.                     \
+     * @return True on success, false otherwise.              \
+     */                                                       \
+    bool (*flush)(struct jaeger_reporter * reporter)
 
 typedef struct jaeger_reporter {
     JAEGERTRACINGC_REPORTER_SUBCLASS;
@@ -96,8 +108,6 @@ bool jaeger_remote_reporter_init(jaeger_remote_reporter* reporter,
                                  const char* host_port,
                                  int max_packet_size,
                                  jaeger_metrics* metrics);
-
-int jaeger_remote_reporter_flush(jaeger_remote_reporter* reporter);
 
 #ifdef __cplusplus
 } /* extern C */
