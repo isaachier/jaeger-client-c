@@ -28,38 +28,75 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#define JAEGERTRACINGC_COUNTER_SUBCLASS   \
-    JAEGERTRACINGC_DESTRUCTIBLE_SUBCLASS; \
+#define JAEGERTRACINGC_COUNTER_SUBCLASS     \
+    JAEGERTRACINGC_DESTRUCTIBLE_SUBCLASS;   \
+    /**                                     \
+     * Increment count.                     \
+     * @param counter Counter to increment. \
+     * @param delta Amount to increment.    \
+     */                                     \
     void (*inc)(struct jaeger_counter * counter, int64_t delta);
 
+/**
+ * Counter metric interface. Counters are used to keep track of a total
+ * number of events (i.e. number of spans reported).
+ */
 typedef struct jaeger_counter {
     JAEGERTRACINGC_COUNTER_SUBCLASS;
 } jaeger_counter;
 
+/**
+ * Implements the counter interface with basic 64 bit integer value.
+ */
 typedef struct jaeger_default_counter {
     JAEGERTRACINGC_COUNTER_SUBCLASS;
+    /** Current total. */
     int64_t total;
 } jaeger_default_counter;
 
-/* Shared instance of null counter. DO NOT MODIFY MEMBERS! */
+/**
+ * Shared instance of null counter. The null counter does not do anything in its
+ * inc() function. DO NOT MODIFY MEMBERS!
+ */
 jaeger_counter* jaeger_null_counter();
 
-bool jaeger_default_counter_init(jaeger_default_counter* counter);
+/**
+ * Initialize a default counter.
+ * @param counter Counter to initialize.
+ */
+void jaeger_default_counter_init(jaeger_default_counter* counter);
 
 #define JAEGERTRACINGC_GAUGE_SUBCLASS     \
     JAEGERTRACINGC_DESTRUCTIBLE_SUBCLASS; \
+    /**                                   \
+     * Update current value of gauge.     \
+     * @param gauge Gauge to update.      \
+     * @param amount New amount.          \
+     */                                   \
     void (*update)(struct jaeger_gauge * gauge, int64_t amount);
 
+/**
+ * Gauge metric interface. Gauges are used to keep track of a changing number
+ * (i.e. number of items currently in a queue).
+ */
 typedef struct jaeger_gauge {
     JAEGERTRACINGC_GAUGE_SUBCLASS;
 } jaeger_gauge;
 
+/**
+ * Implements gauge interface with basic 64 bit integer value.
+ */
 typedef struct jaeger_default_gauge {
     JAEGERTRACINGC_GAUGE_SUBCLASS;
+    /** Current amount. */
     int64_t amount;
 } jaeger_default_gauge;
 
-bool jaeger_default_gauge_init(jaeger_default_gauge* gauge);
+/**
+ * Initialize a default gauge.
+ * @param gauge Gauge object to be initialized, may not be NULL.
+ */
+void jaeger_default_gauge_init(jaeger_default_gauge* gauge);
 
 /* Shared instance of null gauge. DO NOT MODIFY MEMBERS! */
 jaeger_gauge* jaeger_null_gauge();
@@ -102,6 +139,10 @@ typedef struct jaeger_metrics {
 
 static inline void jaeger_metrics_destroy(jaeger_metrics* metrics)
 {
+    if (metrics == NULL) {
+        return;
+    }
+
 #define JAEGERTRACINGC_METRICS_DESTROY_IF_NOT_NULL(member)                    \
     do {                                                                      \
         if (metrics->member != NULL) {                                        \
@@ -110,8 +151,6 @@ static inline void jaeger_metrics_destroy(jaeger_metrics* metrics)
             metrics->member = NULL;                                           \
         }                                                                     \
     } while (0);
-
-    assert(metrics != NULL);
 
     JAEGERTRACINGC_METRICS_COUNTERS(JAEGERTRACINGC_METRICS_DESTROY_IF_NOT_NULL)
     JAEGERTRACINGC_METRICS_GAUGES(JAEGERTRACINGC_METRICS_DESTROY_IF_NOT_NULL)
@@ -128,7 +167,7 @@ static inline void jaeger_metrics_destroy(jaeger_metrics* metrics)
                 success = false;                                             \
             }                                                                \
             else {                                                           \
-                success = init((type*) metrics->member);                     \
+                init((type*) metrics->member);                               \
             }                                                                \
         }                                                                    \
     } while (0)
@@ -149,6 +188,11 @@ static inline void jaeger_metrics_destroy(jaeger_metrics* metrics)
         return success;                                            \
     } while (0)
 
+/**
+ * Initialize a new metrics container with default metric implementations.
+ * @param metrics Metrics instance to initialize.
+ * @return True on success, false otherwise.
+ */
 static inline bool jaeger_default_metrics_init(jaeger_metrics* metrics)
 {
 #define JAEGERTRACINGC_DEFAULT_COUNTER_ALLOC_INIT(member)     \

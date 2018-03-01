@@ -29,13 +29,12 @@ static void jaeger_default_counter_inc(jaeger_counter* counter, int64_t delta)
     c->total += delta;
 }
 
-bool jaeger_default_counter_init(jaeger_default_counter* counter)
+void jaeger_default_counter_init(jaeger_default_counter* counter)
 {
     assert(counter != NULL);
     counter->total = 0;
     counter->destroy = &null_destroy;
     counter->inc = &jaeger_default_counter_inc;
-    return true;
 }
 
 static void null_counter_inc(jaeger_counter* counter, int64_t delta)
@@ -66,13 +65,12 @@ static void jaeger_default_gauge_update(jaeger_gauge* gauge, int64_t amount)
     g->amount = amount;
 }
 
-bool jaeger_default_gauge_init(jaeger_default_gauge* gauge)
+void jaeger_default_gauge_init(jaeger_default_gauge* gauge)
 {
     assert(gauge != NULL);
     gauge->destroy = &null_destroy;
     gauge->update = &jaeger_default_gauge_update;
     gauge->amount = 0;
-    return true;
 }
 
 static void null_gauge_update(jaeger_gauge* gauge, int64_t amount)

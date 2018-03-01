@@ -57,6 +57,12 @@ typedef struct jaeger_tracer {
     char* service_name;
 
     /**
+     * Metrics object to use in tracer.
+     * @see jaeger_metrics
+     */
+    jaeger_metrics* metrics;
+
+    /**
      * Sampler to select spans for tracing.
      * @see jaeger_sampler
      */
@@ -80,6 +86,19 @@ typedef struct jaeger_tracer {
      * client version, etc.).
      */
     jaeger_vector tags;
+
+    /**
+     * Flags to keep track of the members that were heap-allocated and must be
+     * freed by the tracer.
+     */
+    struct {
+        /** True if metrics is heap-allocated, false otherwise. */
+        bool metrics : 1;
+        /** True if sampler is heap-allocated, false otherwise. */
+        bool sampler : 1;
+        /** True if reporter is heap-allocated, false otherwise. */
+        bool reporter : 1;
+    } allocated;
 } jaeger_tracer;
 
 /**
@@ -90,21 +109,38 @@ typedef struct jaeger_tracer {
  */
 #define JAEGERTRACINGC_TRACER_INIT                               \
     {                                                            \
-        .service_name = NULL, .sampler = NULL, .reporter = NULL, \
-        .options = JAEGER_TRACER_OPTIONS_INIT, .tags = NULL      \
+        .service_name = NULL, .metrics = NULL, .sampler = NULL,  \
+        .reporter = NULL, .options = JAEGER_TRACER_OPTIONS_INIT, \
+        .tags = JAEGERTRACINGC_VECTOR_INIT, .allocated = {       \
+            .metrics = false,                                    \
+            .sampler = false,                                    \
+            .reporter = false                                    \
+        }                                                        \
     }
+
+/**
+ * Close and free resources associated with the tracer.
+ * @param tracer Tracer to destroy
+ */
+void jaeger_tracer_destroy(jaeger_tracer* tracer);
 
 /**
  * Initialize a new tracer.
  * @param tracer Tracer to initialize.
- * @param sampler Sampler for tracer to use.
- * @param reporter Reporter for tracer to use.
+ * @param service_name Name of the current service, may not be NULL.
+ *                     Tracer copies this string internally so it need not be
+ *                     allocated upfront.
+ * @param sampler Sampler for tracer to use, may be NULL.
+ * @param reporter Reporter for tracer to use, may be NULL.
+ * @param metrics Metrics object to use, may be NULL.
  * @param options Options for tracer to use, may be NULL.
  * @return True on success, false otherwise.
  */
 bool jaeger_tracer_init(jaeger_tracer* tracer,
+                        const char* service_name,
                         jaeger_sampler* sampler,
                         jaeger_reporter* reporter,
+                        jaeger_metrics* metrics,
                         const jaeger_tracer_options* options);
 
 /**

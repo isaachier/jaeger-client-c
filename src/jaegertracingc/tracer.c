@@ -145,20 +145,151 @@ cleanup:
     return false;
 }
 
+static inline jaeger_metrics* default_metrics()
+{
+    /* TODO: Reconsider this in favor of null metrics like Go client does. */
+    jaeger_metrics* metrics = jaeger_malloc(sizeof(jaeger_metrics));
+    if (metrics == NULL) {
+        jaeger_log_error("Cannot allocate default metrics");
+        return NULL;
+    }
+    if (!jaeger_default_metrics_init(metrics)) {
+        jaeger_log_error("Cannot initialize default metrics");
+        return NULL;
+    }
+    return metrics;
+}
+
+static inline jaeger_sampler* default_sampler(const char* service_name,
+                                              jaeger_metrics* metrics)
+{
+    jaeger_remotely_controlled_sampler* remote_sampler =
+        jaeger_malloc(sizeof(jaeger_remotely_controlled_sampler));
+    if (remote_sampler == NULL) {
+        jaeger_log_error("Cannot allocate default sampler");
+        return NULL;
+    }
+    if (!jaeger_remotely_controlled_sampler_init(
+            remote_sampler, service_name, NULL, NULL, 0, metrics)) {
+        jaeger_log_error("Cannot initialize default sampler");
+        jaeger_free(remote_sampler);
+        return NULL;
+    }
+    return (jaeger_sampler*) remote_sampler;
+}
+
+static inline jaeger_reporter* default_reporter(jaeger_metrics* metrics)
+{
+    jaeger_remote_reporter* reporter =
+        jaeger_malloc(sizeof(jaeger_remote_reporter));
+    if (reporter == NULL) {
+        jaeger_log_error("Cannot allocate default reporter");
+        return NULL;
+    }
+    if (!jaeger_remote_reporter_init(reporter, NULL, 0, metrics)) {
+        jaeger_log_error("Cannot initialize default reporter");
+        jaeger_free(reporter);
+        return NULL;
+    }
+    return (jaeger_reporter*) reporter;
+}
+
+void jaeger_tracer_destroy(jaeger_tracer* tracer)
+{
+    if (tracer == NULL) {
+        return;
+    }
+
+    if (tracer->service_name != NULL) {
+        jaeger_free(tracer->service_name);
+        tracer->service_name = NULL;
+    }
+
+    if (tracer->metrics != NULL) {
+        jaeger_metrics_destroy(tracer->metrics);
+        if (tracer->allocated.metrics) {
+            jaeger_free(tracer->metrics);
+            tracer->allocated.metrics = false;
+        }
+        tracer->metrics = NULL;
+    }
+
+    if (tracer->sampler != NULL) {
+        tracer->sampler->destroy((jaeger_destructible*) tracer->sampler);
+        if (tracer->allocated.sampler) {
+            jaeger_free(tracer->sampler);
+            tracer->allocated.sampler = false;
+        }
+        tracer->sampler = NULL;
+    }
+
+    if (tracer->reporter != NULL) {
+        tracer->reporter->destroy((jaeger_destructible*) tracer->reporter);
+        if (tracer->allocated.sampler) {
+            jaeger_free(tracer->reporter);
+            tracer->allocated.reporter = false;
+        }
+        tracer->reporter = NULL;
+    }
+
+    JAEGERTRACINGC_VECTOR_FOR_EACH(
+        &tracer->tags, jaeger_tag_destroy, jaeger_tag);
+    jaeger_vector_destroy(&tracer->tags);
+}
+
 bool jaeger_tracer_init(jaeger_tracer* tracer,
+                        const char* service_name,
                         jaeger_sampler* sampler,
                         jaeger_reporter* reporter,
+                        jaeger_metrics* metrics,
                         const jaeger_tracer_options* options)
 {
     assert(tracer != NULL);
-    assert(sampler != NULL);
-    assert(reporter != NULL);
+
+    tracer->service_name = jaeger_strdup(service_name);
+    if (tracer->service_name == NULL) {
+        goto cleanup;
+    }
+
+    if (metrics == NULL) {
+        tracer->metrics = default_metrics();
+        if (tracer->metrics == NULL) {
+            goto cleanup;
+        }
+        tracer->allocated.metrics = true;
+    }
+    else {
+        tracer->metrics = metrics;
+        tracer->allocated.metrics = false;
+    }
+
+    if (sampler == NULL) {
+        tracer->sampler = default_sampler(service_name, metrics);
+        if (tracer->sampler == NULL) {
+            goto cleanup;
+        }
+        tracer->allocated.sampler = true;
+    }
+    else {
+        tracer->sampler = sampler;
+        tracer->allocated.sampler = false;
+    }
+
+    if (reporter == NULL) {
+        tracer->reporter = default_reporter(metrics);
+        if (tracer->reporter == NULL) {
+            goto cleanup;
+        }
+        tracer->allocated.reporter = true;
+    }
+    else {
+        tracer->reporter = reporter;
+        tracer->allocated.reporter = false;
+    }
 
     if (options != NULL) {
         tracer->options = *options;
     }
-    tracer->sampler = sampler;
-    tracer->reporter = reporter;
 
     if (jaeger_vector_init(&tracer->tags, sizeof(jaeger_tag))) {
         /* If we run out of memory on tracer construction, we might as well
@@ -184,15 +315,23 @@ bool jaeger_tracer_init(jaeger_tracer* tracer,
 
     if (!append_tag(
             &tracer->tags, JAEGERTRACINGC_TRACER_IP_TAG_KEY, local_ip_str())) {
+        goto finish;
     }
 
 finish:
     return true;
+
+cleanup:
+    jaeger_tracer_destroy(tracer);
+    return false;
 }
 
 void jaeger_tracer_report_span(jaeger_tracer* tracer, jaeger_span* span)
 {
-    /* TODO */
-    (void) tracer;
-    (void) span;
+    jaeger_counter* spans_finished = tracer->metrics->spans_finished;
+    spans_finished->inc(spans_finished, 1);
+    if (jaeger_span_is_sampled(span)) {
+        tracer->reporter->report(tracer->reporter, span);
+    }
+    /* TODO: pooling? */
 }

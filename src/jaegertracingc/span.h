@@ -333,11 +333,12 @@ cleanup:
 }
 
 /**
- * Get the sampling status of the span without locking.
+ * Get the sampling status of the span. Does not need to lock mutex because span
+ * context is immutable.
  * @param span The span instance.
  * @return True if sampled, false otherwise.
  */
-static inline bool jaeger_span_is_sampled_no_lock(const jaeger_span* span)
+static inline bool jaeger_span_is_sampled(const jaeger_span* span)
 {
     assert(span != NULL);
     return (span->context.flags & jaeger_sampling_flag_sampled) != 0;
@@ -356,7 +357,7 @@ static inline bool jaeger_span_set_operation_name(jaeger_span* span,
     assert(operation_name != NULL);
     bool success = true;
     jaeger_mutex_lock(&span->mutex);
-    if (!jaeger_span_is_sampled_no_lock(span)) {
+    if (!jaeger_span_is_sampled(span)) {
         goto cleanup;
     }
 
@@ -442,7 +443,7 @@ static inline bool jaeger_span_set_tag(jaeger_span* span, const jaeger_tag* tag)
     }
     bool success = true;
     jaeger_mutex_lock(&span->mutex);
-    if (jaeger_span_is_sampled_no_lock(span)) {
+    if (jaeger_span_is_sampled(span)) {
         success = jaeger_span_set_tag_no_locking(span, tag);
     }
     jaeger_mutex_unlock(&span->mutex);
@@ -489,7 +490,7 @@ static inline bool jaeger_span_log(jaeger_span* span,
     assert(log_record != NULL);
     bool success = true;
     jaeger_mutex_lock(&span->mutex);
-    if (jaeger_span_is_sampled_no_lock(span)) {
+    if (jaeger_span_is_sampled(span)) {
         success = jaeger_span_log_no_locking(span, log_record);
     }
     jaeger_mutex_unlock(&span->mutex);
@@ -531,8 +532,8 @@ jaeger_span_finish_with_options(jaeger_span* span,
         jaeger_span_finish_with_options(span, &default_finish_options);
         return;
     }
-    jaeger_mutex_lock(&span->mutex);
-    if (jaeger_span_is_sampled_no_lock(span)) {
+    if (jaeger_span_is_sampled(span)) {
+        jaeger_mutex_lock(&span->mutex);
         jaeger_duration finish_time = options->finish_time;
         if (finish_time.tv_sec == 0 && finish_time.tv_nsec == 0) {
             jaeger_duration_now(&finish_time);
@@ -546,8 +547,8 @@ jaeger_span_finish_with_options(jaeger_span* span,
         for (int i = 0; i < options->num_logs; i++) {
             jaeger_span_log_no_locking(span, &options->logs[i]);
         }
+        jaeger_mutex_unlock(&span->mutex);
     }
-    jaeger_mutex_unlock(&span->mutex);
 
     /* Call jaeger_tracer_report_span even for non-sampled traces, in case we
      * need to return the span to a pool.

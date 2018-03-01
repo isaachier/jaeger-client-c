@@ -50,15 +50,14 @@ static void* flush_reporter(void* arg)
 
 void test_reporter()
 {
+    jaeger_tracer tracer = JAEGERTRACINGC_TRACER_INIT;
+    jaeger_tracer_init(&tracer, "test-service", NULL, NULL, NULL, NULL);
+
     jaeger_span span = JAEGERTRACINGC_SPAN_INIT;
     TEST_ASSERT_TRUE(jaeger_span_init(&span));
     span.context.flags = jaeger_sampling_flag_sampled;
-
-    /* TODO: Update once tracer is implemented */
-    jaeger_tracer tracer;
-    tracer.service_name = "test service";
-    TEST_ASSERT_TRUE(jaeger_vector_init(&tracer.tags, sizeof(jaeger_tag)));
     span.tracer = &tracer;
+
     TEST_ASSERT_NULL(span.operation_name);
     TEST_ASSERT_TRUE(jaeger_span_set_operation_name(&span, "test-operation"));
     TEST_ASSERT_NOT_NULL(span.operation_name);
@@ -90,13 +89,13 @@ void test_reporter()
     *kv = (jaeger_key_value) JAEGERTRACINGC_KEY_VALUE_INIT;
     TEST_ASSERT_TRUE(jaeger_key_value_init(kv, "key", "value"));
 
-    jaeger_span_finish_with_options(&span, NULL);
-
     jaeger_reporter* r = jaeger_null_reporter();
     r->report(r, &span);
     r->destroy((jaeger_destructible*) r);
 
-    jaeger_logging_reporter_init(r);
+    jaeger_reporter reporter;
+    jaeger_logging_reporter_init(&reporter);
+    r = &reporter;
     r->report(r, &span);
     r->destroy((jaeger_destructible*) r);
 
@@ -203,8 +202,5 @@ void test_reporter()
     close(server_fd);
     jaeger_span_destroy(&span);
 
-    /* TODO: Update once tracer is implemented */
-    JAEGERTRACINGC_VECTOR_FOR_EACH(
-        &tracer.tags, jaeger_tag_destroy, jaeger_tag);
-    jaeger_vector_destroy(&tracer.tags);
+    jaeger_tracer_destroy(&tracer);
 }
