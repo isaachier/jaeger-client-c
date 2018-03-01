@@ -15,3 +15,69 @@
  */
 
 #include "jaegertracingc/tracer.h"
+
+#include <unistd.h>
+
+#ifdef HOST_NAME_MAX
+#define HOST_NAME_MAX_LEN HOST_NAME_MAX + 1
+#else
+#define HOST_NAME_MAX_LEN 256
+#endif /* HOST_NAME_MAX */
+
+static inline void append_hostname_tag(jaeger_tracer* tracer)
+{
+    assert(tracer != NULL);
+    char hostname[HOST_NAME_MAX_LEN] = {'\0'};
+    if (gethostname(hostname, HOST_NAME_MAX_LEN) != 0) {
+        return;
+    }
+    jaeger_tag* tag = jaeger_vector_append(&tracer->tags);
+    if (tag == NULL) {
+        return;
+    }
+
+    *tag = (jaeger_tag) JAEGERTRACINGC_TAG_INIT;
+    if (!jaeger_tag_init(tag, JAEGERTRACINGC_TRACER_HOSTNAME_TAG_KEY)) {
+        goto cleanup;
+    }
+    tag->value_case = JAEGERTRACINGC_TAG_TYPE(STR);
+    tag->str_value = jaeger_strdup(hostname);
+    if (tag->str_value == NULL) {
+        goto cleanup;
+    }
+    return;
+
+cleanup:
+    jaeger_tag_destroy(tag);
+    tracer->tags.len--;
+}
+
+bool jaeger_tracer_init(jaeger_tracer* tracer,
+                        jaeger_sampler* sampler,
+                        jaeger_reporter* reporter,
+                        const jaeger_tracer_options* options)
+{
+    assert(tracer != NULL);
+    assert(sampler != NULL);
+    assert(reporter != NULL);
+
+    if (options != NULL) {
+        tracer->options = *options;
+    }
+    tracer->sampler = sampler;
+    tracer->reporter = reporter;
+
+    if (jaeger_vector_init(&tracer->tags, sizeof(jaeger_tag))) {
+        /* If we run out of memory on tracer construction, we might as well
+         * consider it a fatal error seeing as nothing will work. Strictly
+         * speaking, the tags might be not critical to tracer execution, but it
+         * is not worth considering the edge case given the clear memory issues
+         * this case would imply.
+         */
+        return false;
+    }
+
+    append_hostname_tag(tracer);
+
+    return true;
+}

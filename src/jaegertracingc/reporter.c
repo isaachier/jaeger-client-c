@@ -50,7 +50,7 @@ jaeger_reporter* jaeger_null_reporter()
 static void logging_reporter_report(jaeger_reporter* reporter,
                                     const jaeger_span* span)
 {
-    assert(reporter != NULL);
+    (void) reporter;
     if (span != NULL) {
         char buffer[JAEGERTRACINGC_SPAN_CONTEXT_MAX_STR_LEN + 1];
         buffer[JAEGERTRACINGC_SPAN_CONTEXT_MAX_STR_LEN] = '\0';

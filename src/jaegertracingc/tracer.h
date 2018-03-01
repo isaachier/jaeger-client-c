@@ -49,13 +49,63 @@ typedef struct jaeger_tracer_options {
         .gen_128_bit = false       \
     }
 
+/**
+ * Tracer implementation.
+ */
 typedef struct jaeger_tracer {
+    /** Name of the current service. */
     char* service_name;
+
+    /**
+     * Sampler to select spans for tracing.
+     * @see jaeger_sampler
+     */
     jaeger_sampler* sampler;
+
+    /**
+     * Reporter to handle spans after they are completed.
+     * @see jaeger_reporter
+     */
     jaeger_reporter* reporter;
+
+    /**
+     * Custom options passed into the tracer at construction.
+     * @see jaeger_tracer_options
+     * @see jaeger_tracer_init()
+     */
     jaeger_tracer_options options;
+
+    /**
+     * Tags to store metadata about the current process (i.e. hostname,
+     * client version, etc.).
+     */
     jaeger_vector tags;
 } jaeger_tracer;
+
+/**
+ * Static initializer for jaeger_tracer. May be used to initialize an empty
+ * tracer, but the caller must also invoke jaeger_tracer_init to fully construct
+ * the tracer.
+ * @see jaeger_tracer_init
+ */
+#define JAEGERTRACINGC_TRACER_INIT                               \
+    {                                                            \
+        .service_name = NULL, .sampler = NULL, .reporter = NULL, \
+        .options = JAEGER_TRACER_OPTIONS_INIT, .tags = NULL      \
+    }
+
+/**
+ * Initialize a new tracer.
+ * @param tracer Tracer to initialize.
+ * @param sampler Sampler for tracer to use.
+ * @param reporter Reporter for tracer to use.
+ * @param options Options for tracer to use, may be NULL.
+ * @return True on success, false otherwise.
+ */
+bool jaeger_tracer_init(jaeger_tracer* tracer,
+                        jaeger_sampler* sampler,
+                        jaeger_reporter* reporter,
+                        const jaeger_tracer_options* options);
 
 #ifdef __cplusplus
 } /* extern C */
