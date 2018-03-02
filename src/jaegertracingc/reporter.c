@@ -363,6 +363,9 @@ static void remote_reporter_destroy(jaeger_destructible* destructible)
     }
     jaeger_remote_reporter* r = (jaeger_remote_reporter*) destructible;
 
+    /* Try to flush any spans we have not flushed yet. */
+    r->flush((jaeger_reporter*) r);
+
     if (r->fd >= 0) {
         close(r->fd);
         r->fd = -1;
