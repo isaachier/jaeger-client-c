@@ -30,15 +30,16 @@ void test_token_bucket()
     jaeger_token_bucket_init(&tok, credits_per_second, max_balance);
     bool result = jaeger_token_bucket_check_credit(&tok, max_balance);
     TEST_ASSERT_TRUE(result);
-    jaeger_duration sleep_time = {.tv_sec = 0, .tv_nsec = NS_PER_S * 0.01};
-    jaeger_duration rem_time = {.tv_sec = 0, .tv_nsec = 0};
-    nanosleep(&sleep_time, &rem_time);
+    jaeger_duration sleep_time = {
+        .value = {.tv_sec = 0, .tv_nsec = NS_PER_S * 0.01}};
+    jaeger_duration rem_time = {.value = {.tv_sec = 0, .tv_nsec = 0}};
+    nanosleep(&sleep_time.value, &rem_time.value);
     jaeger_duration interval;
     result = jaeger_duration_subtract(&sleep_time, &rem_time, &interval);
     TEST_ASSERT_TRUE(result);
     const double expected_credits =
-        credits_per_second * interval.tv_sec +
-        credits_per_second * interval.tv_nsec / NS_PER_S;
+        credits_per_second * interval.value.tv_sec +
+        credits_per_second * interval.value.tv_nsec / NS_PER_S;
     result = jaeger_token_bucket_check_credit(&tok, expected_credits);
     TEST_ASSERT_TRUE(result);
     result = jaeger_token_bucket_check_credit(&tok, expected_credits);

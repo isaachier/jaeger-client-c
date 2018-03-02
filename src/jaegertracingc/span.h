@@ -51,18 +51,41 @@ enum {
     jaeger_sampling_flag_debug = (1 << 1)
 };
 
+/**
+ * Span context represents propagated span identity and state.
+ */
 typedef struct jaeger_span_context {
+    /** Trace ID of the trace containing this span. */
     jaeger_trace_id trace_id;
+
+    /**
+     * Randomly generated unique ID. Must be unique within its trace, but not
+     * necessarily globally unique.
+     */
     uint64_t span_id;
+
+    /** Span ID of parent span. Parent ID of zero represents root span. */
     uint64_t parent_id;
+
+    /** Sampling flags. */
     uint8_t flags;
+
+    /** Key-value pairs that are propagated along with the span. */
     jaeger_vector baggage;
+
+    /**
+     * Can be set to correlation ID when the context is being extracted from a
+     * carrier.
+     * @see JAEGERTRACINGC_DEBUG_HEADER
+     */
+    char* debug_id;
 } jaeger_span_context;
 
-#define JAEGERTRACINGC_SPAN_CONTEXT_INIT                                  \
-    {                                                                     \
-        .trace_id = JAEGERTRACINGC_TRACE_ID_INIT, .span_id = 0,           \
-        .parent_id = 0, .flags = 0, .baggage = JAEGERTRACINGC_VECTOR_INIT \
+#define JAEGERTRACINGC_SPAN_CONTEXT_INIT                                   \
+    {                                                                      \
+        .trace_id = JAEGERTRACINGC_TRACE_ID_INIT, .span_id = 0,            \
+        .parent_id = 0, .flags = 0, .baggage = JAEGERTRACINGC_VECTOR_INIT, \
+        .debug_id = NULL                                                   \
     }
 
 static inline void jaeger_span_context_destroy(jaeger_span_context* ctx)
@@ -70,13 +93,13 @@ static inline void jaeger_span_context_destroy(jaeger_span_context* ctx)
     if (ctx == NULL) {
         return;
     }
-
     JAEGERTRACINGC_VECTOR_FOR_EACH(
         &ctx->baggage, jaeger_key_value_destroy, jaeger_key_value);
-
-#undef JAEGERTRACINGC_KEY_VALUE_DESTROY
-
     jaeger_vector_destroy(&ctx->baggage);
+    if (ctx->debug_id != NULL) {
+        jaeger_free(ctx->debug_id);
+        ctx->debug_id = NULL;
+    }
 }
 
 static inline bool jaeger_span_context_init(jaeger_span_context* ctx)
@@ -107,6 +130,40 @@ jaeger_span_context_copy(jaeger_span_context* restrict dst,
     dst->parent_id = src->parent_id;
     dst->flags = src->flags;
     return true;
+}
+
+/**
+ * @internal
+ * Returns whether or not the span context is valid.
+ * @param ctx Span context instance. May not be NULL.
+ * @return True if valid, false otherwise.
+ */
+static inline bool jaeger_span_context_is_valid(const jaeger_span_context* ctx)
+{
+    assert(ctx != NULL);
+    return ctx->trace_id.high != 0 || ctx->trace_id.low != 0;
+}
+
+/**
+ * @internal
+ * Determines whether or not a span context is only used to return the
+ * debug/correlation ID from extract() method. This happens in the situation
+ * when "jaeger-debug-id" header is passed in the carrier to the extract()
+ * method, but the request otherwise has no span context in it. Previously
+ * this
+ * would have returned an error (opentracing.ErrSpanContextNotFound) from
+ * the
+ * extract method, but now it returns a dummy context with only debugID
+ * filled
+ * in.
+ * @param ctx Span context instance. May not be NULL.
+ * @return True if just debug container, false otherwise.
+ */
+static inline bool
+jaeger_span_context_is_debug_id_container_only(const jaeger_span_context* ctx)
+{
+    assert(ctx != NULL);
+    return !jaeger_span_context_is_valid(ctx) && ctx->debug_id != NULL;
 }
 
 typedef Jaegertracing__Protobuf__SpanRef__Type jaeger_span_ref_type;
@@ -146,7 +203,8 @@ jaeger_span_ref_copy(void* arg, void* restrict dst, const void* restrict src)
     assert(src != NULL);
     jaeger_span_ref* dst_span_ref = (jaeger_span_ref*) dst;
     /* Do not call jaeger_span_ref_init so we avoid memory leak in
-     * jaeger_span_context_copy due to double initialization of span context.
+     * jaeger_span_context_copy due to double initialization of span
+     * context.
      */
     const jaeger_span_ref* src_span_ref = (const jaeger_span_ref*) src;
     if (!jaeger_span_context_copy(&dst_span_ref->context,
@@ -206,8 +264,8 @@ typedef struct jaeger_span {
     struct jaeger_tracer* tracer;
     jaeger_span_context context;
     char* operation_name;
-    time_t start_time_system;
-    jaeger_timestamp start_time_steady;
+    jaeger_timestamp start_time_system;
+    jaeger_duration start_time_steady;
     jaeger_duration duration;
     jaeger_vector tags;
     jaeger_vector logs;
@@ -218,8 +276,9 @@ typedef struct jaeger_span {
 #define JAEGERTRACINGC_SPAN_INIT                                               \
     {                                                                          \
         .tracer = NULL, .context = JAEGERTRACINGC_SPAN_CONTEXT_INIT,           \
-        .operation_name = NULL, .start_time_system = 0,                        \
-        .start_time_steady = JAEGERTRACINGC_TIMESTAMP_INIT,                    \
+        .operation_name = NULL,                                                \
+        .start_time_system = JAEGERTRACINGC_TIMESTAMP_INIT,                    \
+        .start_time_steady = JAEGERTRACINGC_DURATION_INIT,                     \
         .duration = JAEGERTRACINGC_DURATION_INIT,                              \
         .tags = JAEGERTRACINGC_VECTOR_INIT,                                    \
         .logs = JAEGERTRACINGC_VECTOR_INIT,                                    \
@@ -267,6 +326,15 @@ static inline bool jaeger_span_init_vectors(jaeger_span* span)
     return true;
 }
 
+/**
+ * @internal
+ * Initialize a new span. This function should not be called directly.
+ * Instead,
+ * use jaeger_tracer_start_span to start a new span.
+ * @param span Span to initialize. May not be NULL.
+ * @return True on success, false otherwise.
+ * @see jaeger_tracer_start_span()
+ */
 static inline bool jaeger_span_init(jaeger_span* span)
 {
     assert(span != NULL);
@@ -333,7 +401,8 @@ cleanup:
 }
 
 /**
- * Get the sampling status of the span. Does not need to lock mutex because span
+ * Get the sampling status of the span. Does not need to lock mutex because
+ * span
  * context is immutable.
  * @param span The span instance.
  * @return True if sampled, false otherwise.
@@ -499,8 +568,11 @@ static inline bool jaeger_span_log(jaeger_span* span,
 
 /** Options caller may set for span finish. */
 typedef struct jaeger_span_finish_options {
-    /** The time the operation was completed. */
-    jaeger_timestamp finish_time;
+    /**
+     * The time the operation was completed. Must be initialized with
+     * monotonic/steady clock.
+     */
+    jaeger_duration finish_time;
     /** Logs to append to the span logs. */
     const jaeger_log_record* logs;
     /** Number of logs to append to the span logs. */
@@ -535,7 +607,7 @@ jaeger_span_finish_with_options(jaeger_span* span,
     if (jaeger_span_is_sampled(span)) {
         jaeger_mutex_lock(&span->mutex);
         jaeger_duration finish_time = options->finish_time;
-        if (finish_time.tv_sec == 0 && finish_time.tv_nsec == 0) {
+        if (finish_time.value.tv_sec == 0 && finish_time.value.tv_nsec == 0) {
             jaeger_duration_now(&finish_time);
         }
         jaeger_duration elapsed_time = JAEGERTRACINGC_DURATION_INIT;
@@ -550,7 +622,8 @@ jaeger_span_finish_with_options(jaeger_span* span,
         jaeger_mutex_unlock(&span->mutex);
     }
 
-    /* Call jaeger_tracer_report_span even for non-sampled traces, in case we
+    /* Call jaeger_tracer_report_span even for non-sampled traces, in case
+     * we
      * need to return the span to a pool.
      */
     jaeger_tracer_report_span(span->tracer, span);

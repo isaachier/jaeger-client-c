@@ -26,7 +26,13 @@ static void jaeger_default_counter_inc(jaeger_counter* counter, int64_t delta)
 {
     assert(counter != NULL);
     jaeger_default_counter* c = (jaeger_default_counter*) counter;
+#ifdef JAEGERTRACINGC_HAVE_ATOMICS
+    __atomic_add_fetch(&c->total, delta, __ATOMIC_RELAXED);
+#else
+    jaeger_mutex_lock(&c->mutex);
     c->total += delta;
+    jaeger_mutex_unlock(&c->mutex);
+#endif /* JAEGERTRACINGC_HAVE_ATOMICS */
 }
 
 void jaeger_default_counter_init(jaeger_default_counter* counter)
@@ -62,7 +68,13 @@ static void jaeger_default_gauge_update(jaeger_gauge* gauge, int64_t amount)
 {
     assert(gauge != NULL);
     jaeger_default_gauge* g = (jaeger_default_gauge*) gauge;
+#ifdef JAEGERTRACINGC_HAVE_ATOMICS
+    __atomic_store_n(&g->amount, amount, __ATOMIC_RELAXED);
+#else
+    jaeger_mutex_lock(&g->mutex);
     g->amount = amount;
+    jaeger_mutex_unlock(&g->mutex);
+#endif /* JAEGERTRACINGC_HAVE_ATOMICS */
 }
 
 void jaeger_default_gauge_init(jaeger_default_gauge* gauge)

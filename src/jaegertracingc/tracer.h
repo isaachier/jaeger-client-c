@@ -127,13 +127,13 @@ void jaeger_tracer_destroy(jaeger_tracer* tracer);
 /**
  * Initialize a new tracer.
  * @param tracer Tracer to initialize.
- * @param service_name Name of the current service, may not be NULL.
+ * @param service_name Name of the current service. May not be NULL.
  *                     Tracer copies this string internally so it need not be
  *                     allocated upfront.
- * @param sampler Sampler for tracer to use, may be NULL.
- * @param reporter Reporter for tracer to use, may be NULL.
- * @param metrics Metrics object to use, may be NULL.
- * @param options Options for tracer to use, may be NULL.
+ * @param sampler Sampler for tracer to use. May be NULL.
+ * @param reporter Reporter for tracer to use. May be NULL.
+ * @param metrics Metrics object to use. May be NULL.
+ * @param options Options for tracer to use. May be NULL.
  * @return True on success, false otherwise.
  */
 bool jaeger_tracer_init(jaeger_tracer* tracer,
@@ -142,6 +142,33 @@ bool jaeger_tracer_init(jaeger_tracer* tracer,
                         jaeger_reporter* reporter,
                         jaeger_metrics* metrics,
                         const jaeger_tracer_options* options);
+
+/**
+ * Start a new span.
+ * @param tracer Tracer instance. May not be NULL.
+ * @param operation_name Operation name associated with this span.
+ *                       May not be NULL.
+ * @param start_time_system Time to consider span start, represented as time
+ *                          since epoch (realtime clock). If NULL or zero,
+ *                          current time will be used.
+ * @param start_time_steady Time to consider span start using monotonic clock.
+ *                          If NULL or zero, current time will be used.
+ * @param span_refs Array of span references to associate with new span
+ *                  (i.e. child of, follows from). May be NULL only if
+ *                  num_span_refs is zero.
+ * @param num_span_refs Number of spans references in span_refs.
+ * @param tags Array of tags to associate with new span. May be NULL only if
+ *             num_tags is zero.
+ * @return New span on success, NULL otherwise.
+ */
+jaeger_span* jaeger_tracer_start_span(jaeger_tracer* tracer,
+                                      const char* operation_name,
+                                      const jaeger_timestamp* start_time_system,
+                                      const jaeger_duration* start_time_steady,
+                                      const jaeger_span_ref* span_refs,
+                                      int num_span_refs,
+                                      const jaeger_tag* tags,
+                                      int num_tags);
 
 /**
  * Flush any pending spans in tracer. Only effective when using remote reporter,

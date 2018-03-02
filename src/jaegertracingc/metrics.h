@@ -24,6 +24,10 @@
 
 #include "jaegertracingc/common.h"
 
+#ifndef JAEGERTRACINGC_HAVE_ATOMICS
+#include "jaegertracingc/threading.h"
+#endif /* JAEGERTRACINGC_HAVE_ATOMICS */
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
@@ -52,6 +56,10 @@ typedef struct jaeger_default_counter {
     JAEGERTRACINGC_COUNTER_SUBCLASS;
     /** Current total. */
     int64_t total;
+#ifndef JAEGERTRACINGC_HAVE_ATOMICS
+    /** Lock to avoid data races. */
+    jaeger_mutex mutex;
+#endif /* JAEGERTRACINGC_HAVE_ATOMICS */
 } jaeger_default_counter;
 
 /**
@@ -90,11 +98,15 @@ typedef struct jaeger_default_gauge {
     JAEGERTRACINGC_GAUGE_SUBCLASS;
     /** Current amount. */
     int64_t amount;
+#ifndef JAEGERTRACINGC_HAVE_ATOMICS
+    /** Lock to avoid data races. */
+    jaeger_mutex mutex;
+#endif /* JAEGERTRACINGC_HAVE_ATOMICS */
 } jaeger_default_gauge;
 
 /**
  * Initialize a default gauge.
- * @param gauge Gauge object to be initialized, may not be NULL.
+ * @param gauge Gauge object to be initialized. May not be NULL.
  */
 void jaeger_default_gauge_init(jaeger_default_gauge* gauge);
 

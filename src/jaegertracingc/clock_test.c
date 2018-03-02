@@ -22,19 +22,20 @@
 
 void test_clock()
 {
-    jaeger_duration x = {.tv_sec = 1, .tv_nsec = 0};
-    jaeger_duration y = {.tv_sec = 0, .tv_nsec = NS_PER_S * 0.5};
+    jaeger_duration x = {.value = {.tv_sec = 1, .tv_nsec = 0}};
+    jaeger_duration y = {.value = {.tv_sec = 0, .tv_nsec = NS_PER_S * 0.5}};
     jaeger_duration result;
     jaeger_duration_subtract(&x, &y, &result);
-    TEST_ASSERT_EQUAL(0, result.tv_sec);
-    TEST_ASSERT_EQUAL(NS_PER_S * 0.5, result.tv_nsec);
+    TEST_ASSERT_EQUAL(0, result.value.tv_sec);
+    TEST_ASSERT_EQUAL(NS_PER_S * 0.5, result.value.tv_nsec);
 
     x = (jaeger_duration){
-        .tv_sec = 0,
-        .tv_nsec = NS_PER_S * 1.1 /* Testing edge case for coverage */
-    };
-    y = (jaeger_duration){.tv_sec = 0, .tv_nsec = NS_PER_S * 0.0};
+        .value = {
+            .tv_sec = 0,
+            .tv_nsec = NS_PER_S * 1.1 /* Testing edge case for coverage */
+        }};
+    y = (jaeger_duration){.value = {.tv_sec = 0, .tv_nsec = NS_PER_S * 0.0}};
     jaeger_duration_subtract(&x, &y, &result);
-    TEST_ASSERT_EQUAL(1, result.tv_sec);
-    TEST_ASSERT_EQUAL(NS_PER_S * 0.1, result.tv_nsec);
+    TEST_ASSERT_EQUAL(1, result.value.tv_sec);
+    TEST_ASSERT_EQUAL(NS_PER_S * 0.1, result.value.tv_nsec);
 }

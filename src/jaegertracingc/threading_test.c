@@ -43,12 +43,13 @@ void test_threading()
 
     jaeger_mutex_unlock(&locks[0]);
     jaeger_duration sleep_duration = {
-        .tv_sec = 0, .tv_nsec = 0.01 * JAEGERTRACINGC_NANOSECONDS_PER_SECOND};
-    nanosleep(&sleep_duration, NULL);
+        .value = {.tv_sec = 0,
+                  .tv_nsec = 0.01 * JAEGERTRACINGC_NANOSECONDS_PER_SECOND}};
+    nanosleep(&sleep_duration.value, NULL);
 
     jaeger_mutex_unlock(&locks[1]);
-    sleep_duration.tv_nsec = 0.1 * JAEGERTRACINGC_NANOSECONDS_PER_SECOND;
-    nanosleep(&sleep_duration, NULL);
+    sleep_duration.value.tv_nsec = 0.1 * JAEGERTRACINGC_NANOSECONDS_PER_SECOND;
+    nanosleep(&sleep_duration.value, NULL);
 
     jaeger_thread_join(thread, NULL);
     jaeger_mutex_destroy(&locks[0]);

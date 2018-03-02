@@ -59,10 +59,10 @@ static inline bool jaeger_token_bucket_check_credit(jaeger_token_bucket* tok,
         jaeger_duration_subtract(&current_time, &tok->last_tick, &interval);
     (void) result;
     assert(result);
-    const double diff =
-        (((double) interval.tv_nsec) / JAEGERTRACINGC_NANOSECONDS_PER_SECOND +
-         interval.tv_sec) *
-        tok->credits_per_second;
+    const double diff = (((double) interval.value.tv_nsec) /
+                             JAEGERTRACINGC_NANOSECONDS_PER_SECOND +
+                         interval.value.tv_sec) *
+                        tok->credits_per_second;
     const double new_balance = tok->balance + diff;
     tok->balance =
         (tok->max_balance < new_balance) ? tok->max_balance : new_balance;

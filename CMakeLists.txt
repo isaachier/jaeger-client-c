@@ -29,7 +29,8 @@ include(CMakeDependentOption)
 include(CTest)
 
 include(GenerateDocumentation)
-include(FormatAttribute)
+include(CheckFormatAttribute)
+include(CheckAtomics)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -214,6 +215,13 @@ if(JAEGERTRACINGC_MT)
   target_compile_definitions(jaegertracingc PUBLIC JAEGERTRACINGC_MT)
 endif()
 
+check_atomics(have_atomics)
+if(have_atomics)
+  target_compile_definitions(jaegertracingc PUBLIC
+    "-DJAEGERTRACINGC_HAVE_ATOMICS")
+else()
+endif()
+
 check_symbol_exists(
   "SYS_getrandom" "linux/random.h;sys/syscall.h;unistd.h" have_getrandom)
 if(have_getrandom)
@@ -225,13 +233,10 @@ else()
   endif()
 endif()
 
-format_attribute(have_format_attribute)
+check_format_attribute(have_format_attribute)
 if(have_format_attribute)
-  message(STATUS "Checking for __attribute__(format) - Success")
   target_compile_definitions(
     jaegertracingc PUBLIC "-DJAEGERTRACINGC_HAVE_FORMAT_ATTRIBUTE")
-else()
-  message(STATUS "Checking for __attribute__(format) - Failed")
 endif()
 
 if(JAEGERTRACINGC_VERBOSE_ALLOC)

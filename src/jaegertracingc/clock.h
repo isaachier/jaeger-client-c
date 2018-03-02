@@ -32,35 +32,40 @@ extern "C" {
 #define JAEGERTRACINGC_MICROSECONDS_PER_SECOND 1000000
 #define JAEGERTRACINGC_NANOSECONDS_PER_MICROSECOND 1000
 
-typedef struct timespec jaeger_timestamp;
+typedef struct jaeger_timestamp {
+    struct timespec value;
+} jaeger_timestamp;
 
-#define JAEGERTRACINGC_TIMESTAMP_INIT \
-    {                                 \
-        .tv_sec = 0, .tv_nsec = 0     \
+#define JAEGERTRACINGC_TIMESTAMP_INIT         \
+    {                                         \
+        .value = {.tv_sec = 0, .tv_nsec = 0 } \
     }
 
 static inline void jaeger_timestamp_now(jaeger_timestamp* timestamp)
 {
     assert(timestamp != NULL);
-    clock_gettime(CLOCK_REALTIME, timestamp);
+    clock_gettime(CLOCK_REALTIME, &timestamp->value);
 }
 
 static inline int64_t
 jaeger_timestamp_microseconds(const jaeger_timestamp* const timestamp)
 {
     assert(timestamp != NULL);
-    return timestamp->tv_sec * JAEGERTRACINGC_MICROSECONDS_PER_SECOND +
-           timestamp->tv_nsec * JAEGERTRACINGC_NANOSECONDS_PER_MICROSECOND;
+    return timestamp->value.tv_sec * JAEGERTRACINGC_MICROSECONDS_PER_SECOND +
+           timestamp->value.tv_nsec *
+               JAEGERTRACINGC_NANOSECONDS_PER_MICROSECOND;
 }
 
-typedef struct timespec jaeger_duration;
+typedef struct jaeger_duration {
+    struct timespec value;
+} jaeger_duration;
 
 #define JAEGERTRACINGC_DURATION_INIT JAEGERTRACINGC_TIMESTAMP_INIT
 
 static inline void jaeger_duration_now(jaeger_duration* duration)
 {
     assert(duration != NULL);
-    clock_gettime(CLOCK_MONOTONIC, duration);
+    clock_gettime(CLOCK_MONOTONIC, &duration->value);
 }
 
 // Algorithm based on
@@ -74,8 +79,8 @@ jaeger_duration_subtract(const jaeger_duration* restrict const lhs,
     assert(rhs != NULL);
     assert(result != NULL);
 
-    jaeger_duration x = *lhs;
-    jaeger_duration y = *rhs;
+    struct timespec x = lhs->value;
+    struct timespec y = rhs->value;
 
     if (x.tv_nsec < y.tv_nsec) {
         const int64_t nsec =
@@ -91,8 +96,8 @@ jaeger_duration_subtract(const jaeger_duration* restrict const lhs,
         y.tv_sec -= nsec;
     }
 
-    result->tv_sec = x.tv_sec - y.tv_sec;
-    result->tv_nsec = x.tv_nsec - y.tv_nsec;
+    result->value.tv_sec = x.tv_sec - y.tv_sec;
+    result->value.tv_nsec = x.tv_nsec - y.tv_nsec;
     return x.tv_sec >= y.tv_sec;
 }
 

@@ -24,11 +24,15 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include "jaegertracingc/random.h"
+
 #ifdef HOST_NAME_MAX
 #define HOST_NAME_MAX_LEN HOST_NAME_MAX + 1
 #else
 #define HOST_NAME_MAX_LEN 256
 #endif /* HOST_NAME_MAX */
+
+#define SAMPLING_PRIORITY_TAG_KEY "sampling.priority"
 
 static inline char* hostname()
 {
@@ -324,6 +328,165 @@ finish:
 cleanup:
     jaeger_tracer_destroy(tracer);
     return false;
+}
+
+static inline bool span_inherit_from_parent(jaeger_tracer* tracer,
+                                            jaeger_span* span,
+                                            const jaeger_span_ref* span_refs,
+                                            int num_span_refs)
+{
+    assert(tracer != NULL);
+    assert(span != NULL);
+    const jaeger_span_context* parent = NULL;
+    bool has_parent = false;
+    for (int i = 0; i < num_span_refs; i++) {
+        const jaeger_span_ref* span_ref = &span_refs[i];
+        if (!jaeger_span_context_is_valid(&span_ref->context) &&
+            !jaeger_span_context_is_debug_id_container_only(
+                &span_ref->context) &&
+            jaeger_vector_length(&span_ref->context.baggage) == 0) {
+            continue;
+        }
+        jaeger_span_ref* span_ref_copy = jaeger_vector_append(&span->refs);
+        if (span_ref_copy == NULL) {
+            return false;
+        }
+        if (!jaeger_span_ref_copy(
+                NULL, (void*) span_ref_copy, (const void*) span_ref)) {
+            span->refs.len--;
+            return false;
+        }
+        if (parent == NULL) {
+            parent = &span_ref->context;
+            has_parent = (span_ref->type ==
+                          JAEGERTRACING__PROTOBUF__SPAN_REF__TYPE__CHILD_OF);
+        }
+    }
+
+    if (!has_parent && parent != NULL && jaeger_span_context_is_valid(parent)) {
+        has_parent = true;
+    }
+
+    if (!has_parent || parent == NULL ||
+        !jaeger_span_context_is_valid(parent)) {
+        span->context.trace_id.low = random64();
+        if (tracer->options.gen_128_bit) {
+            span->context.trace_id.high = random64();
+        }
+        span->context.span_id = span->context.trace_id.low;
+        span->context.parent_id = 0;
+        span->context.flags = 0;
+        if (has_parent &&
+            jaeger_span_context_is_debug_id_container_only(parent)) {
+            span->context.flags |=
+                (jaeger_sampling_flag_sampled | jaeger_sampling_flag_debug);
+            append_tag(
+                &span->tags, JAEGERTRACINGC_DEBUG_HEADER, parent->debug_id);
+        }
+        else if (tracer->sampler->is_sampled(tracer->sampler,
+                                             &span->context.trace_id,
+                                             span->operation_name,
+                                             &span->tags)) {
+            span->context.flags |= jaeger_sampling_flag_sampled;
+        }
+    }
+    else {
+        span->context.trace_id = parent->trace_id;
+        span->context.span_id = random64();
+        span->context.parent_id = parent->span_id;
+        span->context.flags = parent->flags;
+    }
+
+    if (has_parent) {
+        assert(parent != NULL);
+        if (!jaeger_vector_copy(&span->context.baggage,
+                                &parent->baggage,
+                                jaeger_key_value_copy_wrapper,
+                                NULL)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+static inline void update_metrics_for_new_span(jaeger_metrics* metrics,
+                                               const jaeger_span* span)
+{
+    /* TODO */
+    (void) metrics;
+    (void) span;
+}
+
+jaeger_span* jaeger_tracer_start_span(jaeger_tracer* tracer,
+                                      const char* operation_name,
+                                      const jaeger_timestamp* start_time_system,
+                                      const jaeger_duration* start_time_steady,
+                                      const jaeger_span_ref* span_refs,
+                                      int num_span_refs,
+                                      const jaeger_tag* tags,
+                                      int num_tags)
+{
+    assert(tracer != NULL);
+    assert(operation_name != NULL);
+    assert(num_span_refs >= 0);
+    assert(span_refs == NULL || num_span_refs == 0);
+    assert(num_tags >= 0);
+    assert(tags == NULL || num_tags == 0);
+
+    jaeger_span* span = jaeger_malloc(sizeof(jaeger_span));
+    if (span == NULL) {
+        jaeger_log_error("Cannot allocate span, operation name = %s",
+                         operation_name);
+        return NULL;
+    }
+    if (!jaeger_span_init(span) ||
+        !span_inherit_from_parent(tracer, span, span_refs, num_span_refs)) {
+        goto cleanup;
+    }
+    for (int i = 0; i < num_tags; i++) {
+        const jaeger_tag* src_tag = &tags[i];
+        assert(src_tag->key != NULL);
+        if (strcmp(src_tag->key, SAMPLING_PRIORITY_TAG_KEY) == 0 &&
+            jaeger_span_set_sampling_priority(span, src_tag)) {
+            continue;
+        }
+        if (!jaeger_span_set_tag_no_locking(span, src_tag)) {
+            goto cleanup;
+        }
+    }
+
+    span->tracer = tracer;
+    span->operation_name = jaeger_strdup(operation_name);
+    if (span->operation_name == NULL) {
+        goto cleanup;
+    }
+    span->duration = (jaeger_duration) JAEGERTRACINGC_DURATION_INIT;
+
+    if (start_time_system == NULL || (start_time_system->value.tv_sec == 0 &&
+                                      start_time_system->value.tv_nsec == 0)) {
+        jaeger_timestamp_now(&span->start_time_system);
+    }
+    else {
+        span->start_time_system = *start_time_system;
+    }
+
+    if (start_time_steady == NULL || (start_time_steady->value.tv_sec == 0 &&
+                                      start_time_steady->value.tv_nsec == 0)) {
+        jaeger_duration_now(&span->start_time_steady);
+    }
+    else {
+        span->start_time_steady = *start_time_steady;
+    }
+
+    update_metrics_for_new_span(tracer->metrics, span);
+
+    return span;
+
+cleanup:
+    jaeger_span_destroy(span);
+    jaeger_free(span);
+    return NULL;
 }
 
 bool jaeger_tracer_flush(jaeger_tracer* tracer)
