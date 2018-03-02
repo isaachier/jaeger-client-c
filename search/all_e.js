@@ -1,8 +1,5 @@
 var searchData=
 [
-  ['sampler',['sampler',['../structjaeger__tracer.html#a988ac3ac189df44661bedc45d55b56c8',1,'jaeger_tracer::sampler()'],['../structjaeger__tracer.html#a77efb5d19028805e0531787e7059dd39',1,'jaeger_tracer::sampler()']]],
-  ['sampler_2eh',['sampler.h',['../sampler_8h.html',1,'']]],
-  ['sampling_5fstrategy_2eh',['sampling_strategy.h',['../sampling__strategy_8h.html',1,'']]],
-  ['service_5fname',['service_name',['../structjaeger__tracer.html#a2f266f1e4c48383eb3460f3a042a14c3',1,'jaeger_tracer']]],
-  ['span_2eh',['span.h',['../span_8h.html',1,'']]]
+  ['parent_5fid',['parent_id',['../structjaeger__span__context.html#a66ebaca50e8853b5fab9d4ebe82cfb32',1,'jaeger_span_context']]],
+  ['parsing_5fcontext',['parsing_context',['../structparsing__context.html',1,'']]]
 ];

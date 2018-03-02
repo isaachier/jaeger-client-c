@@ -9,5 +9,6 @@ var tracer_8h =
     [ "jaeger_tracer_destroy", "tracer_8h.html#a422fc08b0041b743d48bf1bd0489f0ca", null ],
     [ "jaeger_tracer_flush", "tracer_8h.html#ad5de5e280e85d209bccef344280481f5", null ],
     [ "jaeger_tracer_init", "tracer_8h.html#aa07dbdbe42478395d2ee98572826eea2", null ],
-    [ "jaeger_tracer_report_span", "tracer_8h.html#ab1c38f1b4e905dc2d474399d7e87b533", null ]
+    [ "jaeger_tracer_report_span", "tracer_8h.html#ab1c38f1b4e905dc2d474399d7e87b533", null ],
+    [ "jaeger_tracer_start_span", "tracer_8h.html#aa19e1f967201fb66cf6e4edafa72ae19", null ]
 ];

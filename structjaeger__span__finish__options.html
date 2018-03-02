@@ -116,9 +116,9 @@ $(document).ready(function(){initNavTree('structjaeger__span__finish__options.ht
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Data Fields</h2></td></tr>
-<tr class="memitem:a9c18ce18a4885d1909194c9e3af849d2"><td class="memItemLeft" align="right" valign="top">jaeger_timestamp&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structjaeger__span__finish__options.html#a9c18ce18a4885d1909194c9e3af849d2">finish_time</a></td></tr>
-<tr class="memdesc:a9c18ce18a4885d1909194c9e3af849d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">The time the operation was completed.  <a href="#a9c18ce18a4885d1909194c9e3af849d2">More...</a><br/></td></tr>
-<tr class="separator:a9c18ce18a4885d1909194c9e3af849d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac72f0fc657593705e2a4bee1060d1124"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structjaeger__duration.html">jaeger_duration</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structjaeger__span__finish__options.html#ac72f0fc657593705e2a4bee1060d1124">finish_time</a></td></tr>
+<tr class="memdesc:ac72f0fc657593705e2a4bee1060d1124"><td class="mdescLeft">&#160;</td><td class="mdescRight">The time the operation was completed.  <a href="#ac72f0fc657593705e2a4bee1060d1124">More...</a><br/></td></tr>
+<tr class="separator:ac72f0fc657593705e2a4bee1060d1124"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7c01d9a1844445089b3699af5f620635"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="structjaeger__log__record.html">jaeger_log_record</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structjaeger__span__finish__options.html#a7c01d9a1844445089b3699af5f620635">logs</a></td></tr>
 <tr class="memdesc:a7c01d9a1844445089b3699af5f620635"><td class="mdescLeft">&#160;</td><td class="mdescRight">Logs to append to the span logs.  <a href="#a7c01d9a1844445089b3699af5f620635">More...</a><br/></td></tr>
 <tr class="separator:a7c01d9a1844445089b3699af5f620635"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -129,17 +129,18 @@ Data Fields</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Options caller may set for span finish. </p>
 </div><h2 class="groupheader">Field Documentation</h2>
-<a class="anchor" id="a9c18ce18a4885d1909194c9e3af849d2"></a>
+<a class="anchor" id="ac72f0fc657593705e2a4bee1060d1124"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">jaeger_timestamp jaeger_span_finish_options::finish_time</td>
+          <td class="memname"><a class="el" href="structjaeger__duration.html">jaeger_duration</a> jaeger_span_finish_options::finish_time</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>The time the operation was completed. </p>
+<p>Must be initialized with monotonic/steady clock. </p>
 
 </div>
 </div>

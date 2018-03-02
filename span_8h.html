@@ -129,6 +129,7 @@ $(document).ready(function(){initNavTree('span_8h.html','');});
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structjaeger__span__context.html">jaeger_span_context</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Span context represents propagated span identity and state.  <a href="structjaeger__span__context.html#details">More...</a><br/></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structjaeger__span__ref.html">jaeger_span_ref</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -141,7 +142,7 @@ Data Structures</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
 Macros</h2></td></tr>
 <tr class="memitem:aeb8749527eb268509c1e6e09c54299c3"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="span_8h.html#aeb8749527eb268509c1e6e09c54299c3">JAEGERTRACINGC_SPAN_CONTEXT_MAX_STR_LEN</a>&#160;&#160;&#160;<a class="el" href="trace__id_8h.html#a37168d3dd11dd4695cc6b2cf1833067f">JAEGERTRACINGC_TRACE_ID_MAX_STR_LEN</a> + 21</td></tr>
-<tr class="memdesc:aeb8749527eb268509c1e6e09c54299c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Max number of characters needed for string representation of <a class="el" href="structjaeger__span__context.html">jaeger_span_context</a> (excluding null byte).  <a href="#aeb8749527eb268509c1e6e09c54299c3">More...</a><br/></td></tr>
+<tr class="memdesc:aeb8749527eb268509c1e6e09c54299c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Max number of characters needed for string representation of <a class="el" href="structjaeger__span__context.html" title="Span context represents propagated span identity and state. ">jaeger_span_context</a> (excluding null byte).  <a href="#aeb8749527eb268509c1e6e09c54299c3">More...</a><br/></td></tr>
 <tr class="separator:aeb8749527eb268509c1e6e09c54299c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a506ab74e10564fec528c0b9aca717928"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a506ab74e10564fec528c0b9aca717928"></a>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>JAEGERTRACINGC_SAMPLING_PRIORITY</b>&#160;&#160;&#160;&quot;sampling.priority&quot;</td></tr>
@@ -159,7 +160,8 @@ Macros</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
 <tr class="memitem:ae413911b9fc5d9af9e9895c90d3a34d7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae413911b9fc5d9af9e9895c90d3a34d7"></a>
-typedef struct <a class="el" href="structjaeger__span__context.html">jaeger_span_context</a>&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_span_context</b></td></tr>
+typedef struct <a class="el" href="structjaeger__span__context.html">jaeger_span_context</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="span_8h.html#ae413911b9fc5d9af9e9895c90d3a34d7">jaeger_span_context</a></td></tr>
+<tr class="memdesc:ae413911b9fc5d9af9e9895c90d3a34d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Span context represents propagated span identity and state. <br/></td></tr>
 <tr class="separator:ae413911b9fc5d9af9e9895c90d3a34d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a26aee09011ff3b3efb33a62fa8cd780b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a26aee09011ff3b3efb33a62fa8cd780b"></a>
 typedef <br class="typebreak"/>
@@ -234,9 +236,10 @@ return&#160;</td><td class="memItemRight" valign="bottom"><b>true</b></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">{                                                                     \</div>
-<div class="line">        .trace_id = <a class="code" href="trace__id_8h.html#a732f892ef9f04a3fe2e71c1acdd532d0">JAEGERTRACINGC_TRACE_ID_INIT</a>, .span_id = 0,           \</div>
-<div class="line">        .parent_id = 0, .flags = 0, .baggage = JAEGERTRACINGC_VECTOR_INIT \</div>
+<b>Value:</b><div class="fragment"><div class="line">{                                                                      \</div>
+<div class="line">        .trace_id = <a class="code" href="trace__id_8h.html#a732f892ef9f04a3fe2e71c1acdd532d0">JAEGERTRACINGC_TRACE_ID_INIT</a>, .span_id = 0,            \</div>
+<div class="line">        .parent_id = 0, .flags = 0, .baggage = JAEGERTRACINGC_VECTOR_INIT, \</div>
+<div class="line">        .debug_id = NULL                                                   \</div>
 <div class="line">    }</div>
 <div class="ttc" id="trace__id_8h_html_a732f892ef9f04a3fe2e71c1acdd532d0"><div class="ttname"><a href="trace__id_8h.html#a732f892ef9f04a3fe2e71c1acdd532d0">JAEGERTRACINGC_TRACE_ID_INIT</a></div><div class="ttdeci">#define JAEGERTRACINGC_TRACE_ID_INIT</div><div class="ttdoc">Static initializer for trace ID struct. </div><div class="ttdef"><b>Definition:</b> trace_id.h:41</div></div>
 </div><!-- fragment -->
@@ -252,7 +255,7 @@ return&#160;</td><td class="memItemRight" valign="bottom"><b>true</b></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Max number of characters needed for string representation of <a class="el" href="structjaeger__span__context.html">jaeger_span_context</a> (excluding null byte). </p>
+<p>Max number of characters needed for string representation of <a class="el" href="structjaeger__span__context.html" title="Span context represents propagated span identity and state. ">jaeger_span_context</a> (excluding null byte). </p>
 <p>3 delimiters, 2 uint64_t hex (8 characters each), 1 short hex (2 characters). 3 + 16 + 2 = 21 </p>
 
 </div>
@@ -286,8 +289,9 @@ return&#160;</td><td class="memItemRight" valign="bottom"><b>true</b></td></tr>
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line">{                                                                          \</div>
 <div class="line">        .tracer = NULL, .context = JAEGERTRACINGC_SPAN_CONTEXT_INIT,           \</div>
-<div class="line">        .operation_name = NULL, .start_time_system = 0,                        \</div>
-<div class="line">        .start_time_steady = JAEGERTRACINGC_TIMESTAMP_INIT,                    \</div>
+<div class="line">        .operation_name = NULL,                                                \</div>
+<div class="line">        .start_time_system = JAEGERTRACINGC_TIMESTAMP_INIT,                    \</div>
+<div class="line">        .start_time_steady = JAEGERTRACINGC_DURATION_INIT,                     \</div>
 <div class="line">        .duration = JAEGERTRACINGC_DURATION_INIT,                              \</div>
 <div class="line">        .tags = JAEGERTRACINGC_VECTOR_INIT,                                    \</div>
 <div class="line">        .logs = JAEGERTRACINGC_VECTOR_INIT,                                    \</div>

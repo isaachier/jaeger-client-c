@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['logs',['logs',['../structjaeger__span__finish__options.html#a7c01d9a1844445089b3699af5f620635',1,'jaeger_span_finish_options']]],
-  ['low',['low',['../structjaeger__trace__id.html#af6a2c57fe8c53b8a1dbe114a757ab3b7',1,'jaeger_trace_id']]]
+  ['gen_5f128_5fbit',['gen_128_bit',['../structjaeger__tracer__options.html#a32b273ee8cdf9219ef434cca6038ae9e',1,'jaeger_tracer_options']]]
 ];

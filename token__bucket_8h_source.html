@@ -135,7 +135,7 @@ $(document).ready(function(){initNavTree('token__bucket_8h_source.html','');});
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="keywordtype">double</span> credits_per_second;</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <span class="keywordtype">double</span> max_balance;</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <span class="keywordtype">double</span> balance;</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    jaeger_duration last_tick;</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <a class="code" href="structjaeger__duration.html">jaeger_duration</a> last_tick;</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;} <a class="code" href="structjaeger__token__bucket.html">jaeger_token_bucket</a>;</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">void</span> jaeger_token_bucket_init(<a class="code" href="structjaeger__token__bucket.html">jaeger_token_bucket</a>* tok,</div>
@@ -153,17 +153,17 @@ $(document).ready(function(){initNavTree('token__bucket_8h_source.html','');});
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;                                                    <span class="keywordtype">double</span> cost)</div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;{</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    assert(tok != NULL);</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    jaeger_duration current_time;</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <a class="code" href="structjaeger__duration.html">jaeger_duration</a> current_time;</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    jaeger_duration_now(&amp;current_time);</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    jaeger_duration interval;</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <a class="code" href="structjaeger__duration.html">jaeger_duration</a> interval;</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">bool</span> result =</div>
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        jaeger_duration_subtract(&amp;current_time, &amp;tok-&gt;last_tick, &amp;interval);</div>
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    (void) result;</div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    assert(result);</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">double</span> diff =</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        (((double) interval.tv_nsec) / JAEGERTRACINGC_NANOSECONDS_PER_SECOND +</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;         interval.tv_sec) *</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;        tok-&gt;credits_per_second;</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">double</span> diff = (((double) interval.value.tv_nsec) /</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;                             JAEGERTRACINGC_NANOSECONDS_PER_SECOND +</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;                         interval.value.tv_sec) *</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;                        tok-&gt;credits_per_second;</div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">double</span> new_balance = tok-&gt;balance + diff;</div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    tok-&gt;balance =</div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        (tok-&gt;max_balance &lt; new_balance) ? tok-&gt;max_balance : new_balance;</div>
@@ -182,6 +182,7 @@ $(document).ready(function(){initNavTree('token__bucket_8h_source.html','');});
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* JAEGERTRACINGC_TOKEN_BUCKET_H */</span><span class="preprocessor"></span></div>
 <div class="ttc" id="structjaeger__token__bucket_html"><div class="ttname"><a href="structjaeger__token__bucket.html">jaeger_token_bucket</a></div><div class="ttdef"><b>Definition:</b> token_bucket.h:33</div></div>
 <div class="ttc" id="clock_8h_html"><div class="ttname"><a href="clock_8h.html">clock.h</a></div><div class="ttdoc">Timestamp and duration representations. </div></div>
+<div class="ttc" id="structjaeger__duration_html"><div class="ttname"><a href="structjaeger__duration.html">jaeger_duration</a></div><div class="ttdef"><b>Definition:</b> clock.h:59</div></div>
 <div class="ttc" id="common_8h_html"><div class="ttname"><a href="common_8h.html">common.h</a></div><div class="ttdoc">Common headers, struct definitions, and macros. </div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->

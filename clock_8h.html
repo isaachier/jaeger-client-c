@@ -102,6 +102,7 @@ $(document).ready(function(){initNavTree('clock_8h.html','');});
 
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Data Structures</a> &#124;
 <a href="#define-members">Macros</a> &#124;
 <a href="#typedef-members">Typedefs</a>  </div>
   <div class="headertitle">
@@ -115,6 +116,13 @@ $(document).ready(function(){initNavTree('clock_8h.html','');});
 </div>
 <p><a href="clock_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
+Data Structures</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structjaeger__timestamp.html">jaeger_timestamp</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structjaeger__duration.html">jaeger_duration</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
 Macros</h2></td></tr>
 <tr class="memitem:a2063a571cd76bc80e468c7eb7acd4948"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2063a571cd76bc80e468c7eb7acd4948"></a>
@@ -134,12 +142,12 @@ Macros</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:a7e2c1916ce669b19211ea1072b6d1668"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7e2c1916ce669b19211ea1072b6d1668"></a>
-typedef struct timespec&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_timestamp</b></td></tr>
-<tr class="separator:a7e2c1916ce669b19211ea1072b6d1668"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaaf83e4df5dc15d216405759e9441963"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aaaf83e4df5dc15d216405759e9441963"></a>
-typedef struct timespec&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_duration</b></td></tr>
-<tr class="separator:aaaf83e4df5dc15d216405759e9441963"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a376a2a5c41e737fa6b48761ffc1bdd8e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a376a2a5c41e737fa6b48761ffc1bdd8e"></a>
+typedef struct <a class="el" href="structjaeger__timestamp.html">jaeger_timestamp</a>&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_timestamp</b></td></tr>
+<tr class="separator:a376a2a5c41e737fa6b48761ffc1bdd8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a41a9d174ee9b214128649a399c2df22c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a41a9d174ee9b214128649a399c2df22c"></a>
+typedef struct <a class="el" href="structjaeger__duration.html">jaeger_duration</a>&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_duration</b></td></tr>
+<tr class="separator:a41a9d174ee9b214128649a399c2df22c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Timestamp and duration representations. </p>
@@ -153,8 +161,8 @@ typedef struct timespec&#160;</td><td class="memItemRight" valign="bottom"><b>ja
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">{                                 \</div>
-<div class="line">        .tv_sec = 0, .tv_nsec = 0     \</div>
+<b>Value:</b><div class="fragment"><div class="line">{                                         \</div>
+<div class="line">        .value = {.tv_sec = 0, .tv_nsec = 0 } \</div>
 <div class="line">    }</div>
 </div><!-- fragment -->
 </div>

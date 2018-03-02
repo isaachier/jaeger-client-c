@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['clock_2eh',['clock.h',['../clock_8h.html',1,'']]],
-  ['common_2eh',['common.h',['../common_8h.html',1,'']]]
+  ['baggage',['baggage',['../structjaeger__span__context.html#af30317425d6b678805199dc01f5a29b2',1,'jaeger_span_context']]]
 ];

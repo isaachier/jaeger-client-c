@@ -1,10 +1,7 @@
 var searchData=
 [
-  ['tag_2eh',['tag.h',['../tag_8h.html',1,'']]],
-  ['tags',['tags',['../structjaeger__tracer.html#a6e776148ebfb95dc49bbf018b58841e5',1,'jaeger_tracer']]],
-  ['threading_2eh',['threading.h',['../threading_8h.html',1,'']]],
-  ['token_5fbucket_2eh',['token_bucket.h',['../token__bucket_8h.html',1,'']]],
-  ['total',['total',['../structjaeger__default__counter.html#aaa90f254bc0b9720567642d2bb0422e8',1,'jaeger_default_counter']]],
-  ['trace_5fid_2eh',['trace_id.h',['../trace__id_8h.html',1,'']]],
-  ['tracer_2eh',['tracer.h',['../tracer_8h.html',1,'']]]
+  ['random_2eh',['random.h',['../random_8h.html',1,'']]],
+  ['realloc',['realloc',['../structjaeger__allocator.html#a5d839c78b9aa35c89776628b79bb97bb',1,'jaeger_allocator']]],
+  ['reporter',['reporter',['../structjaeger__tracer.html#ade315b4e4a1bef2bbccee5f9e8bb4f3d',1,'jaeger_tracer::reporter()'],['../structjaeger__tracer.html#a7d7447ff17fbafd8adf6e68dfba758e9',1,'jaeger_tracer::reporter()']]],
+  ['reporter_2eh',['reporter.h',['../reporter_8h.html',1,'']]]
 ];

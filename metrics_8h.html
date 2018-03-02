@@ -215,7 +215,7 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line">JAEGERTRACINGC_DESTRUCTIBLE_SUBCLASS;   \                                     \</div>
 <div class="line">    void (*inc)(<span class="keyword">struct </span><a class="code" href="structjaeger__counter.html">jaeger_counter</a> * counter, int64_t delta);</div>
-<div class="ttc" id="structjaeger__counter_html"><div class="ttname"><a href="structjaeger__counter.html">jaeger_counter</a></div><div class="ttdoc">Counter metric interface. </div><div class="ttdef"><b>Definition:</b> metrics.h:44</div></div>
+<div class="ttc" id="structjaeger__counter_html"><div class="ttname"><a href="structjaeger__counter.html">jaeger_counter</a></div><div class="ttdoc">Counter metric interface. </div><div class="ttdef"><b>Definition:</b> metrics.h:48</div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -236,9 +236,9 @@ Functions</h2></td></tr>
 <div class="line">                                      <a class="code" href="structjaeger__counter.html">jaeger_counter</a>,         \</div>
 <div class="line">                                      <a class="code" href="structjaeger__default__counter.html">jaeger_default_counter</a>, \</div>
 <div class="line">                                      <a class="code" href="metrics_8h.html#a20133ddc6d04b70fa199bcd2399371bc">jaeger_default_counter_init</a>);</div>
-<div class="ttc" id="structjaeger__default__counter_html"><div class="ttname"><a href="structjaeger__default__counter.html">jaeger_default_counter</a></div><div class="ttdoc">Implements the counter interface with basic 64 bit integer value. </div><div class="ttdef"><b>Definition:</b> metrics.h:51</div></div>
-<div class="ttc" id="metrics_8h_html_a20133ddc6d04b70fa199bcd2399371bc"><div class="ttname"><a href="metrics_8h.html#a20133ddc6d04b70fa199bcd2399371bc">jaeger_default_counter_init</a></div><div class="ttdeci">void jaeger_default_counter_init(jaeger_default_counter *counter)</div><div class="ttdoc">Initialize a default counter. </div><div class="ttdef"><b>Definition:</b> metrics.c:32</div></div>
-<div class="ttc" id="structjaeger__counter_html"><div class="ttname"><a href="structjaeger__counter.html">jaeger_counter</a></div><div class="ttdoc">Counter metric interface. </div><div class="ttdef"><b>Definition:</b> metrics.h:44</div></div>
+<div class="ttc" id="structjaeger__default__counter_html"><div class="ttname"><a href="structjaeger__default__counter.html">jaeger_default_counter</a></div><div class="ttdoc">Implements the counter interface with basic 64 bit integer value. </div><div class="ttdef"><b>Definition:</b> metrics.h:55</div></div>
+<div class="ttc" id="metrics_8h_html_a20133ddc6d04b70fa199bcd2399371bc"><div class="ttname"><a href="metrics_8h.html#a20133ddc6d04b70fa199bcd2399371bc">jaeger_default_counter_init</a></div><div class="ttdeci">void jaeger_default_counter_init(jaeger_default_counter *counter)</div><div class="ttdoc">Initialize a default counter. </div><div class="ttdef"><b>Definition:</b> metrics.c:38</div></div>
+<div class="ttc" id="structjaeger__counter_html"><div class="ttname"><a href="structjaeger__counter.html">jaeger_counter</a></div><div class="ttdoc">Counter metric interface. </div><div class="ttdef"><b>Definition:</b> metrics.h:48</div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -259,9 +259,9 @@ Functions</h2></td></tr>
 <div class="line">                                      <a class="code" href="structjaeger__gauge.html">jaeger_gauge</a>,         \</div>
 <div class="line">                                      <a class="code" href="structjaeger__default__gauge.html">jaeger_default_gauge</a>, \</div>
 <div class="line">                                      <a class="code" href="metrics_8h.html#a304557430b295514cf0f6dc35320c41c">jaeger_default_gauge_init</a>);</div>
-<div class="ttc" id="structjaeger__gauge_html"><div class="ttname"><a href="structjaeger__gauge.html">jaeger_gauge</a></div><div class="ttdoc">Gauge metric interface. </div><div class="ttdef"><b>Definition:</b> metrics.h:82</div></div>
-<div class="ttc" id="structjaeger__default__gauge_html"><div class="ttname"><a href="structjaeger__default__gauge.html">jaeger_default_gauge</a></div><div class="ttdoc">Implements gauge interface with basic 64 bit integer value. </div><div class="ttdef"><b>Definition:</b> metrics.h:89</div></div>
-<div class="ttc" id="metrics_8h_html_a304557430b295514cf0f6dc35320c41c"><div class="ttname"><a href="metrics_8h.html#a304557430b295514cf0f6dc35320c41c">jaeger_default_gauge_init</a></div><div class="ttdeci">void jaeger_default_gauge_init(jaeger_default_gauge *gauge)</div><div class="ttdoc">Initialize a default gauge. </div><div class="ttdef"><b>Definition:</b> metrics.c:68</div></div>
+<div class="ttc" id="structjaeger__gauge_html"><div class="ttname"><a href="structjaeger__gauge.html">jaeger_gauge</a></div><div class="ttdoc">Gauge metric interface. </div><div class="ttdef"><b>Definition:</b> metrics.h:90</div></div>
+<div class="ttc" id="structjaeger__default__gauge_html"><div class="ttname"><a href="structjaeger__default__gauge.html">jaeger_default_gauge</a></div><div class="ttdoc">Implements gauge interface with basic 64 bit integer value. </div><div class="ttdef"><b>Definition:</b> metrics.h:97</div></div>
+<div class="ttc" id="metrics_8h_html_a304557430b295514cf0f6dc35320c41c"><div class="ttname"><a href="metrics_8h.html#a304557430b295514cf0f6dc35320c41c">jaeger_default_gauge_init</a></div><div class="ttdeci">void jaeger_default_gauge_init(jaeger_default_gauge *gauge)</div><div class="ttdoc">Initialize a default gauge. </div><div class="ttdef"><b>Definition:</b> metrics.c:80</div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -276,7 +276,7 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line">JAEGERTRACINGC_DESTRUCTIBLE_SUBCLASS; \                                   \</div>
 <div class="line">    void (*update)(<span class="keyword">struct </span><a class="code" href="structjaeger__gauge.html">jaeger_gauge</a> * gauge, int64_t amount);</div>
-<div class="ttc" id="structjaeger__gauge_html"><div class="ttname"><a href="structjaeger__gauge.html">jaeger_gauge</a></div><div class="ttdoc">Gauge metric interface. </div><div class="ttdef"><b>Definition:</b> metrics.h:82</div></div>
+<div class="ttc" id="structjaeger__gauge_html"><div class="ttname"><a href="structjaeger__gauge.html">jaeger_gauge</a></div><div class="ttdoc">Gauge metric interface. </div><div class="ttdef"><b>Definition:</b> metrics.h:90</div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -506,7 +506,7 @@ Functions</h2></td></tr>
 <p>Initialize a default gauge. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">gauge</td><td>Gauge object to be initialized, may not be NULL. </td></tr>
+    <tr><td class="paramname">gauge</td><td>Gauge object to be initialized. May not be NULL. </td></tr>
   </table>
   </dd>
 </dl>

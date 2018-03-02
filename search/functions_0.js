@@ -16,5 +16,6 @@ var searchData=
   ['jaeger_5fstd_5flogger_5finit',['jaeger_std_logger_init',['../logging_8h.html#ac01da6c9df20fe92039d247c05bfdbef',1,'logging.c']]],
   ['jaeger_5ftracer_5fdestroy',['jaeger_tracer_destroy',['../tracer_8h.html#a422fc08b0041b743d48bf1bd0489f0ca',1,'tracer.c']]],
   ['jaeger_5ftracer_5fflush',['jaeger_tracer_flush',['../tracer_8h.html#ad5de5e280e85d209bccef344280481f5',1,'tracer.c']]],
-  ['jaeger_5ftracer_5finit',['jaeger_tracer_init',['../tracer_8h.html#aa07dbdbe42478395d2ee98572826eea2',1,'tracer.c']]]
+  ['jaeger_5ftracer_5finit',['jaeger_tracer_init',['../tracer_8h.html#aa07dbdbe42478395d2ee98572826eea2',1,'tracer.c']]],
+  ['jaeger_5ftracer_5fstart_5fspan',['jaeger_tracer_start_span',['../tracer_8h.html#aa19e1f967201fb66cf6e4edafa72ae19',1,'tracer.c']]]
 ];

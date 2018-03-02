@@ -159,6 +159,9 @@ Functions</h2></td></tr>
 <tr class="memitem:aa07dbdbe42478395d2ee98572826eea2"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tracer_8h.html#aa07dbdbe42478395d2ee98572826eea2">jaeger_tracer_init</a> (<a class="el" href="structjaeger__tracer.html">jaeger_tracer</a> *tracer, const char *service_name, <a class="el" href="structjaeger__sampler.html">jaeger_sampler</a> *sampler, <a class="el" href="structjaeger__reporter.html">jaeger_reporter</a> *reporter, <a class="el" href="structjaeger__metrics.html">jaeger_metrics</a> *metrics, const <a class="el" href="structjaeger__tracer__options.html">jaeger_tracer_options</a> *options)</td></tr>
 <tr class="memdesc:aa07dbdbe42478395d2ee98572826eea2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize a new tracer.  <a href="#aa07dbdbe42478395d2ee98572826eea2">More...</a><br/></td></tr>
 <tr class="separator:aa07dbdbe42478395d2ee98572826eea2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa19e1f967201fb66cf6e4edafa72ae19"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structjaeger__span.html">jaeger_span</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tracer_8h.html#aa19e1f967201fb66cf6e4edafa72ae19">jaeger_tracer_start_span</a> (<a class="el" href="structjaeger__tracer.html">jaeger_tracer</a> *tracer, const char *operation_name, const <a class="el" href="structjaeger__timestamp.html">jaeger_timestamp</a> *start_time_system, const <a class="el" href="structjaeger__duration.html">jaeger_duration</a> *start_time_steady, const <a class="el" href="structjaeger__span__ref.html">jaeger_span_ref</a> *span_refs, int num_span_refs, const jaeger_tag *tags, int num_tags)</td></tr>
+<tr class="memdesc:aa19e1f967201fb66cf6e4edafa72ae19"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start a new span.  <a href="#aa19e1f967201fb66cf6e4edafa72ae19">More...</a><br/></td></tr>
+<tr class="separator:aa19e1f967201fb66cf6e4edafa72ae19"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad5de5e280e85d209bccef344280481f5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tracer_8h.html#ad5de5e280e85d209bccef344280481f5">jaeger_tracer_flush</a> (<a class="el" href="structjaeger__tracer.html">jaeger_tracer</a> *tracer)</td></tr>
 <tr class="memdesc:ad5de5e280e85d209bccef344280481f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flush any pending spans in tracer.  <a href="#ad5de5e280e85d209bccef344280481f5">More...</a><br/></td></tr>
 <tr class="separator:ad5de5e280e85d209bccef344280481f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -312,15 +315,92 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_tracer_report_
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">tracer</td><td>Tracer to initialize. </td></tr>
-    <tr><td class="paramname">service_name</td><td>Name of the current service, may not be NULL. Tracer copies this string internally so it need not be allocated upfront. </td></tr>
-    <tr><td class="paramname">sampler</td><td>Sampler for tracer to use, may be NULL. </td></tr>
-    <tr><td class="paramname">reporter</td><td>Reporter for tracer to use, may be NULL. </td></tr>
-    <tr><td class="paramname">metrics</td><td>Metrics object to use, may be NULL. </td></tr>
-    <tr><td class="paramname">options</td><td>Options for tracer to use, may be NULL. </td></tr>
+    <tr><td class="paramname">service_name</td><td>Name of the current service. May not be NULL. Tracer copies this string internally so it need not be allocated upfront. </td></tr>
+    <tr><td class="paramname">sampler</td><td>Sampler for tracer to use. May be NULL. </td></tr>
+    <tr><td class="paramname">reporter</td><td>Reporter for tracer to use. May be NULL. </td></tr>
+    <tr><td class="paramname">metrics</td><td>Metrics object to use. May be NULL. </td></tr>
+    <tr><td class="paramname">options</td><td>Options for tracer to use. May be NULL. </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True on success, false otherwise. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="aa19e1f967201fb66cf6e4edafa72ae19"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structjaeger__span.html">jaeger_span</a>* jaeger_tracer_start_span </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structjaeger__tracer.html">jaeger_tracer</a> *&#160;</td>
+          <td class="paramname"><em>tracer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>operation_name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structjaeger__timestamp.html">jaeger_timestamp</a> *&#160;</td>
+          <td class="paramname"><em>start_time_system</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structjaeger__duration.html">jaeger_duration</a> *&#160;</td>
+          <td class="paramname"><em>start_time_steady</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structjaeger__span__ref.html">jaeger_span_ref</a> *&#160;</td>
+          <td class="paramname"><em>span_refs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>num_span_refs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const jaeger_tag *&#160;</td>
+          <td class="paramname"><em>tags</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>num_tags</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Start a new span. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">tracer</td><td>Tracer instance. May not be NULL. </td></tr>
+    <tr><td class="paramname">operation_name</td><td>Operation name associated with this span. May not be NULL. </td></tr>
+    <tr><td class="paramname">start_time_system</td><td>Time to consider span start, represented as time since epoch (realtime clock). If NULL or zero, current time will be used. </td></tr>
+    <tr><td class="paramname">start_time_steady</td><td>Time to consider span start using monotonic clock. If NULL or zero, current time will be used. </td></tr>
+    <tr><td class="paramname">span_refs</td><td>Array of span references to associate with new span (i.e. child of, follows from). May be NULL only if num_span_refs is zero. </td></tr>
+    <tr><td class="paramname">num_span_refs</td><td>Number of spans references in span_refs. </td></tr>
+    <tr><td class="paramname">tags</td><td>Array of tags to associate with new span. May be NULL only if num_tags is zero. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>New span on success, NULL otherwise. </dd></dl>
 
 </div>
 </div>
