@@ -52,7 +52,9 @@ static void* flush_reporter(void* arg)
 void test_reporter()
 {
     jaeger_tracer tracer = JAEGERTRACINGC_TRACER_INIT;
-    jaeger_tracer_init(&tracer, "test-service", NULL, NULL, NULL, NULL);
+    TEST_ASSERT_TRUE(
+        jaeger_tracer_init(&tracer, "test-service", NULL, NULL, NULL, NULL));
+    TEST_ASSERT_NOT_NULL(tracer.service_name);
 
     jaeger_span span = JAEGERTRACINGC_SPAN_INIT;
     TEST_ASSERT_TRUE(jaeger_span_init(&span));

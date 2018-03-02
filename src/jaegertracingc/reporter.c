@@ -442,11 +442,9 @@ static void remote_reporter_report(jaeger_reporter* reporter,
 
     if (r->process.service_name == NULL ||
         strlen(r->process.service_name) == 0) {
-        jaeger_mutex_lock((jaeger_mutex*) &span->mutex);
         /* Building process will not affect this span, so ignore return value.
          */
         build_process(&r->process, span->tracer);
-        jaeger_mutex_unlock((jaeger_mutex*) &span->mutex);
     }
 
     goto unlock;
