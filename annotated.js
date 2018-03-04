@@ -62,5 +62,8 @@ var annotated =
     [ "jaeger_url", "structjaeger__url.html", "structjaeger__url" ],
     [ "jaeger_vector", "structjaeger__vector.html", "structjaeger__vector" ],
     [ "jaeger_vector_ptr_copy_arg", "structjaeger__vector__ptr__copy__arg.html", "structjaeger__vector__ptr__copy__arg" ],
+    [ "mock_http_response", "structmock__http__response.html", "structmock__http__response" ],
+    [ "mock_http_server", "structmock__http__server.html", "structmock__http__server" ],
+    [ "mock_http_server_context", "structmock__http__server__context.html", "structmock__http__server__context" ],
     [ "parsing_context", "structparsing__context.html", "structparsing__context" ]
 ];

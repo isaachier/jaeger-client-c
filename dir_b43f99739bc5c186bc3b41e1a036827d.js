@@ -8,6 +8,7 @@ var dir_b43f99739bc5c186bc3b41e1a036827d =
     [ "log_record.h", "log__record_8h.html", "log__record_8h" ],
     [ "logging.h", "logging_8h.html", "logging_8h" ],
     [ "metrics.h", "metrics_8h.html", "metrics_8h" ],
+    [ "mock_agent.h", "mock__agent_8h.html", "mock__agent_8h" ],
     [ "net.h", "net_8h.html", "net_8h" ],
     [ "random.h", "random_8h.html", "random_8h" ],
     [ "reporter.h", "reporter_8h.html", "reporter_8h" ],
