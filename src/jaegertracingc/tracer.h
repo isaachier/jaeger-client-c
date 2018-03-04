@@ -144,31 +144,60 @@ bool jaeger_tracer_init(jaeger_tracer* tracer,
                         const jaeger_tracer_options* options);
 
 /**
+ * Type to encapsulate options that may be passed to jaeger_tracer_start_span.
+ * @see jaeger_tracer_start_span()
+ */
+typedef struct jaeger_start_span_options {
+    /**
+     * Time to consider span start, represented as time since epoch (realtime
+     * clock). If zero, current time will be used.
+     */
+    jaeger_timestamp start_time_system;
+
+    /**
+     *  Time to consider span start using monotonic clock. If NULL or zero,
+     *  current time will be used.
+     */
+    jaeger_duration start_time_steady;
+
+    /**
+     * Array of span references to associate with new span (i.e. child of,
+     * follows from). May be NULL only if num_span_refs is zero.
+     */
+    const jaeger_span_ref* span_refs;
+
+    /** Number of spans references in span_refs. */
+    int num_span_refs;
+
+    /**
+     * Array of tags to associate with new span. May be NULL only if num_tags is
+     * zero.
+     */
+    const jaeger_tag* tags;
+
+    /** Number of tags in tags. */
+    int num_tags;
+} jaeger_start_span_options;
+
+/** Static initializer for jaeger_start_span_options. */
+#define JAEGERTRACINGC_START_SPAN_OPTIONS_INIT                                \
+    {                                                                         \
+        .start_time_system = JAEGERTRACINGC_TIMESTAMP_INIT,                   \
+        .start_time_steady = JAEGERTRACINGC_DURATION_INIT, .span_refs = NULL, \
+        .num_span_refs = 0, .tags = NULL, .num_tags = 0                       \
+    }
+
+/**
  * Start a new span.
  * @param tracer Tracer instance. May not be NULL.
  * @param operation_name Operation name associated with this span.
  *                       May not be NULL.
- * @param start_time_system Time to consider span start, represented as time
- *                          since epoch (realtime clock). If NULL or zero,
- *                          current time will be used.
- * @param start_time_steady Time to consider span start using monotonic clock.
- *                          If NULL or zero, current time will be used.
- * @param span_refs Array of span references to associate with new span
- *                  (i.e. child of, follows from). May be NULL only if
- *                  num_span_refs is zero.
- * @param num_span_refs Number of spans references in span_refs.
- * @param tags Array of tags to associate with new span. May be NULL only if
- *             num_tags is zero.
+ * @param options Additional options for starting span. May be NULL.
  * @return New span on success, NULL otherwise.
  */
 jaeger_span* jaeger_tracer_start_span(jaeger_tracer* tracer,
                                       const char* operation_name,
-                                      const jaeger_timestamp* start_time_system,
-                                      const jaeger_duration* start_time_steady,
-                                      const jaeger_span_ref* span_refs,
-                                      int num_span_refs,
-                                      const jaeger_tag* tags,
-                                      int num_tags);
+                                      const jaeger_start_span_options* options);
 
 /**
  * Flush any pending spans in tracer. Only effective when using remote reporter,

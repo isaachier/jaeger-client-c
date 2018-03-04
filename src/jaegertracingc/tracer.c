@@ -420,19 +420,22 @@ static inline void update_metrics_for_new_span(jaeger_metrics* metrics,
 
 jaeger_span* jaeger_tracer_start_span(jaeger_tracer* tracer,
                                       const char* operation_name,
-                                      const jaeger_timestamp* start_time_system,
-                                      const jaeger_duration* start_time_steady,
-                                      const jaeger_span_ref* span_refs,
-                                      int num_span_refs,
-                                      const jaeger_tag* tags,
-                                      int num_tags)
+                                      const jaeger_start_span_options* options)
 {
     assert(tracer != NULL);
     assert(operation_name != NULL);
-    assert(num_span_refs >= 0);
-    assert(span_refs == NULL || num_span_refs == 0);
-    assert(num_tags >= 0);
-    assert(tags == NULL || num_tags == 0);
+
+    if (options == NULL) {
+        const jaeger_start_span_options opts =
+            JAEGERTRACINGC_START_SPAN_OPTIONS_INIT;
+        return jaeger_tracer_start_span(tracer, operation_name, &opts);
+    }
+
+    assert(options != NULL);
+    assert(options->num_span_refs >= 0);
+    assert(options->span_refs == NULL || options->num_span_refs == 0);
+    assert(options->num_tags >= 0);
+    assert(options->tags == NULL || options->num_tags == 0);
 
     jaeger_span* span = jaeger_malloc(sizeof(jaeger_span));
     if (span == NULL) {
@@ -441,11 +444,12 @@ jaeger_span* jaeger_tracer_start_span(jaeger_tracer* tracer,
         return NULL;
     }
     if (!jaeger_span_init(span) ||
-        !span_inherit_from_parent(tracer, span, span_refs, num_span_refs)) {
+        !span_inherit_from_parent(
+            tracer, span, options->span_refs, options->num_span_refs)) {
         goto cleanup;
     }
-    for (int i = 0; i < num_tags; i++) {
-        const jaeger_tag* src_tag = &tags[i];
+    for (int i = 0; i < options->num_tags; i++) {
+        const jaeger_tag* src_tag = &options->tags[i];
         assert(src_tag->key != NULL);
         if (strcmp(src_tag->key, SAMPLING_PRIORITY_TAG_KEY) == 0 &&
             jaeger_span_set_sampling_priority(span, src_tag)) {
@@ -463,20 +467,20 @@ jaeger_span* jaeger_tracer_start_span(jaeger_tracer* tracer,
     }
     span->duration = (jaeger_duration) JAEGERTRACINGC_DURATION_INIT;
 
-    if (start_time_system == NULL || (start_time_system->value.tv_sec == 0 &&
-                                      start_time_system->value.tv_nsec == 0)) {
+    if (options->start_time_system.value.tv_sec == 0 &&
+        options->start_time_system.value.tv_nsec == 0) {
         jaeger_timestamp_now(&span->start_time_system);
     }
     else {
-        span->start_time_system = *start_time_system;
+        span->start_time_system = options->start_time_system;
     }
 
-    if (start_time_steady == NULL || (start_time_steady->value.tv_sec == 0 &&
-                                      start_time_steady->value.tv_nsec == 0)) {
+    if (options->start_time_steady.value.tv_sec == 0 &&
+        options->start_time_steady.value.tv_nsec == 0) {
         jaeger_duration_now(&span->start_time_steady);
     }
     else {
-        span->start_time_steady = *start_time_steady;
+        span->start_time_steady = options->start_time_steady;
     }
 
     update_metrics_for_new_span(tracer->metrics, span);
