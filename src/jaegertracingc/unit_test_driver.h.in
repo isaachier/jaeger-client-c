@@ -23,8 +23,11 @@
 extern "C" {
 #endif /* __cplusplus */
 
-static inline void run_tests()
-{@unit_test_driver_impl@
+static inline int run_tests()
+{
+    UNITY_BEGIN();
+    @unit_test_driver_impl@
+    return UNITY_END();
 }
 
 #ifdef __cplusplus
