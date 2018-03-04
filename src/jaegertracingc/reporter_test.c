@@ -51,9 +51,16 @@ static void* flush_reporter(void* arg)
 
 void test_reporter()
 {
+    jaeger_const_sampler const_sampler;
+    jaeger_const_sampler_init(&const_sampler, true);
+
     jaeger_tracer tracer = JAEGERTRACINGC_TRACER_INIT;
-    TEST_ASSERT_TRUE(
-        jaeger_tracer_init(&tracer, "test-service", NULL, NULL, NULL, NULL));
+    TEST_ASSERT_TRUE(jaeger_tracer_init(&tracer,
+                                        "test-service",
+                                        (jaeger_sampler*) &const_sampler,
+                                        NULL,
+                                        NULL,
+                                        NULL));
     TEST_ASSERT_NOT_NULL(tracer.service_name);
 
     jaeger_span span = JAEGERTRACINGC_SPAN_INIT;
@@ -174,4 +181,6 @@ void test_reporter()
     jaeger_span_destroy(&span);
 
     jaeger_tracer_destroy(&tracer);
+
+    const_sampler.destroy((jaeger_destructible*) &const_sampler);
 }

@@ -281,7 +281,7 @@ if(BUILD_TESTING)
     "src/jaegertracingc/unit_test_driver.h.in"
     "${generated_src_dir}/unit_test_driver.h"
     @ONLY)
-  add_library(jaegertracingc_test ${test_src})
+  add_library(jaegertracingc_test ${test_src} "src/jaegertracingc/mock_agent.c")
   target_include_directories(jaegertracingc_test PUBLIC
     "src/jaegertracingc" $<BUILD_INTERFACE:${generated_src_dir}>)
   target_link_libraries(jaegertracingc_test PUBLIC jaegertracingc unity)

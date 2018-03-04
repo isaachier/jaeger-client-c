@@ -229,7 +229,7 @@ void jaeger_tracer_destroy(jaeger_tracer* tracer)
 
     if (tracer->reporter != NULL) {
         tracer->reporter->destroy((jaeger_destructible*) tracer->reporter);
-        if (tracer->allocated.sampler) {
+        if (tracer->allocated.reporter) {
             jaeger_free(tracer->reporter);
             tracer->allocated.reporter = false;
         }
@@ -295,7 +295,7 @@ bool jaeger_tracer_init(jaeger_tracer* tracer,
         tracer->options = *options;
     }
 
-    if (jaeger_vector_init(&tracer->tags, sizeof(jaeger_tag))) {
+    if (!jaeger_vector_init(&tracer->tags, sizeof(jaeger_tag))) {
         /* If we run out of memory on tracer construction, we might as well
          * consider it a fatal error seeing as nothing will work. Strictly
          * speaking, the tags might be not critical to tracer execution, but it

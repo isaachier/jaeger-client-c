@@ -15,14 +15,7 @@
  */
 
 #include "jaegertracingc/sampler.h"
-#include <errno.h>
-#include <http_parser.h>
-#include <netinet/in.h>
-#include <stdio.h>
-#include <string.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <unistd.h>
+#include "jaegertracingc/mock_agent.h"
 #include "jaegertracingc/threading.h"
 #include "unity.h"
 
@@ -256,208 +249,6 @@ static inline void test_adaptive_sampler()
     TEAR_DOWN_SAMPLER_TEST(a);
 }
 
-#define MOCK_HTTP_BACKLOG 1
-#define MOCK_HTTP_MAX_URL 256
-
-typedef struct mock_http_server {
-    int socket_fd;
-    struct sockaddr_in addr;
-    jaeger_thread thread;
-    int url_len;
-    char url_buffer[MOCK_HTTP_MAX_URL];
-} mock_http_server;
-
-#define MOCK_HTTP_SERVER_INIT                                   \
-    {                                                           \
-        .socket_fd = -1, .addr = {}, .thread = 0, .url_len = 0, \
-        .url_buffer = {                                         \
-            '\0'                                                \
-        }                                                       \
-    }
-
-static int
-mock_http_server_on_url(http_parser* parser, const char* at, size_t len)
-{
-    TEST_ASSERT_NOT_NULL(parser);
-    TEST_ASSERT_NOT_NULL(parser->data);
-    mock_http_server* server = (mock_http_server*) parser->data;
-    TEST_ASSERT_NOT_NULL(at);
-    TEST_ASSERT_LESS_OR_EQUAL(MOCK_HTTP_MAX_URL, server->url_len + len);
-    memcpy(&server->url_buffer[server->url_len], at, len);
-    server->url_len += len;
-    return 0;
-}
-
-static inline void
-read_client_request(int client_fd, char* buffer, int* buffer_len)
-{
-    int num_read = read(client_fd,
-                        buffer,
-                        JAEGERTRACINGC_HTTP_SAMPLING_MANAGER_REQUEST_MAX_LEN);
-
-    while (num_read > 0) {
-        TEST_ASSERT_LESS_OR_EQUAL(
-            JAEGERTRACINGC_HTTP_SAMPLING_MANAGER_REQUEST_MAX_LEN, *buffer_len);
-        TEST_ASSERT_LESS_OR_EQUAL(
-            JAEGERTRACINGC_HTTP_SAMPLING_MANAGER_REQUEST_MAX_LEN,
-            *buffer_len + num_read);
-        *buffer_len += num_read;
-        if (*buffer_len >= 4 &&
-            memcmp(&buffer[*buffer_len - 4], "\r\n\r\n", 4) == 0) {
-            break;
-        }
-        num_read = read(client_fd,
-                        buffer,
-                        JAEGERTRACINGC_HTTP_SAMPLING_MANAGER_REQUEST_MAX_LEN);
-    }
-}
-
-static void* mock_http_server_run_loop(void* context)
-{
-    TEST_ASSERT_NOT_NULL(context);
-    mock_http_server* server = (mock_http_server*) context;
-    int client_fd = -1;
-
-    client_fd = accept(server->socket_fd, NULL, 0);
-    http_parser parser;
-    http_parser_init(&parser, HTTP_REQUEST);
-    parser.data = server;
-    http_parser_settings settings;
-    memset(&settings, 0, sizeof(settings));
-    settings.on_url = &mock_http_server_on_url;
-
-    const struct {
-        const char* json_format;
-        double arg_value;
-    } responses[] = {
-        {.json_format = "{\n"
-                        "  \"probabilisticSampling\": {\n"
-                        "      \"samplingRate\": %f\n"
-                        "    }\n"
-                        "}\n",
-         .arg_value = TEST_DEFAULT_SAMPLING_PROBABILITY},
-        {.json_format = "{\n"
-                        "  \"rateLimitingSampling\": {\n"
-                        "      \"maxTracesPerSecond\": %0.0f\n"
-                        "    }\n"
-                        "}\n",
-         .arg_value = TEST_DEFAULT_MAX_TRACES_PER_SECOND},
-        {.json_format = "{\n"
-                        "  \"operationSampling\": {\n"
-                        "    \"defaultLowerBoundTracesPerSecond\": 1.0,\n"
-                        "    \"defaultSamplingProbability\": 0.001,\n"
-                        "    \"perOperationStrategies\": [{\n"
-                        "      \"operation\": \"test-operation\",\n"
-                        "      \"probabilisticSampling\": {\n"
-                        "        \"samplingRate\": %f\n"
-                        "      }\n"
-                        "    }]\n"
-                        "  }\n"
-                        "}\n",
-         .arg_value = TEST_DEFAULT_SAMPLING_PROBABILITY + 0.1},
-        {.json_format = "{\n"
-                        "  \"operationSampling\": {\n"
-                        "    \"defaultLowerBoundTracesPerSecond\": 1.0,\n"
-                        "    \"defaultSamplingProbability\": 0.001,\n"
-                        "    \"perOperationStrategies\": [{\n"
-                        "      \"operation\": \"test-operation\",\n"
-                        "      \"probabilisticSampling\": {\n"
-                        "        \"samplingRate\": %f\n"
-                        "      }\n"
-                        "    }]\n"
-                        "  }\n"
-                        "}\n",
-         .arg_value = TEST_DEFAULT_SAMPLING_PROBABILITY - 0.1}};
-    const int num_responses = sizeof(responses) / sizeof(responses[0]);
-    for (int i = 0; i < num_responses; i++) {
-        server->url_len = 0;
-        char buffer[JAEGERTRACINGC_HTTP_SAMPLING_MANAGER_REQUEST_MAX_LEN];
-        int buffer_len = 0;
-        read_client_request(client_fd, buffer, &buffer_len);
-
-        TEST_ASSERT_EQUAL(
-            buffer_len,
-            http_parser_execute(&parser, &settings, buffer, buffer_len));
-        struct http_parser_url url;
-        TEST_ASSERT_EQUAL(
-            0,
-            http_parser_parse_url(
-                &server->url_buffer[0], server->url_len, false, &url));
-        TEST_ASSERT_TRUE(url.field_set & (1 << UF_QUERY));
-        char query[url.field_data[UF_QUERY].len + 1];
-        memcpy(query,
-               &server->url_buffer[url.field_data[UF_QUERY].off],
-               sizeof(query) - 1);
-        query[sizeof(query) - 1] = '\0';
-        TEST_ASSERT_EQUAL_STRING("service=test-service", query);
-
-        char strategy_response[strlen(responses[i].json_format) + 10];
-        TEST_ASSERT_LESS_THAN(sizeof(strategy_response),
-                              snprintf(strategy_response,
-                                       sizeof(strategy_response),
-                                       responses[i].json_format,
-                                       responses[i].arg_value));
-        const char http_response_format[] = "HTTP/1.1 200 OK\r\n"
-                                            "Content-Type: application/json\r\n"
-                                            "Content-Length: %zu\r\n\r\n"
-                                            "%s";
-        const int num_digits = 10;
-        char http_response[strlen(strategy_response) +
-                           strlen(http_response_format) + num_digits + 1];
-        const int result = snprintf(http_response,
-                                    sizeof(http_response),
-                                    http_response_format,
-                                    strlen(strategy_response),
-                                    strategy_response);
-        TEST_ASSERT_LESS_OR_EQUAL(sizeof(http_response) - 1, result);
-
-        const int num_written =
-            write(client_fd, http_response, strlen(http_response));
-        TEST_ASSERT_EQUAL(strlen(http_response), num_written);
-    }
-    close(client_fd);
-    return NULL;
-}
-
-static inline void mock_http_server_start(mock_http_server* server)
-{
-    TEST_ASSERT_NOT_NULL(server);
-
-    server->socket_fd = socket(AF_INET, SOCK_STREAM, 0);
-    TEST_ASSERT_GREATER_OR_EQUAL(0, server->socket_fd);
-    server->addr.sin_addr.s_addr = htonl(INADDR_ANY);
-    server->addr.sin_family = AF_INET;
-    server->addr.sin_port = 0;
-    TEST_ASSERT_EQUAL(0,
-                      bind(server->socket_fd,
-                           (struct sockaddr*) &server->addr,
-                           sizeof(server->addr)));
-    TEST_ASSERT_EQUAL(0, listen(server->socket_fd, MOCK_HTTP_BACKLOG));
-    socklen_t addr_len = sizeof(server->addr);
-    TEST_ASSERT_EQUAL(0,
-                      getsockname(server->socket_fd,
-                                  (struct sockaddr*) &server->addr,
-                                  &addr_len));
-    TEST_ASSERT_EQUAL(sizeof(server->addr), addr_len);
-    TEST_ASSERT_EQUAL(0,
-                      jaeger_thread_init(
-                          &server->thread, &mock_http_server_run_loop, server));
-}
-
-static inline void mock_http_server_destroy(mock_http_server* server)
-{
-    if (server->socket_fd > -1) {
-        shutdown(server->socket_fd, SHUT_RDWR);
-        close(server->socket_fd);
-        server->socket_fd = -1;
-    }
-    if (server->thread != 0) {
-        jaeger_thread_join(server->thread, NULL);
-        server->thread = 0;
-    }
-    memset(&server->addr, 0, sizeof(server->addr));
-}
-
 static inline void test_remotely_controlled_sampler()
 {
     jaeger_metrics* metrics = jaeger_null_metrics();
@@ -478,16 +269,67 @@ static inline void test_remotely_controlled_sampler()
                                                 TEST_DEFAULT_MAX_OPERATIONS,
                                                 metrics));
 
+    const mock_http_response responses[] = {
+        {.service_name = "test-service",
+         .json_format = "{\n"
+                        "  \"probabilisticSampling\": {\n"
+                        "      \"samplingRate\": %f\n"
+                        "    }\n"
+                        "}\n",
+         .arg_value = TEST_DEFAULT_SAMPLING_PROBABILITY},
+        {.service_name = "test-service",
+         .json_format = "{\n"
+                        "  \"rateLimitingSampling\": {\n"
+                        "      \"maxTracesPerSecond\": %0.0f\n"
+                        "    }\n"
+                        "}\n",
+         .arg_value = TEST_DEFAULT_MAX_TRACES_PER_SECOND},
+        {.service_name = "test-service",
+         .json_format = "{\n"
+                        "  \"operationSampling\": {\n"
+                        "    \"defaultLowerBoundTracesPerSecond\": 1.0,\n"
+                        "    \"defaultSamplingProbability\": 0.001,\n"
+                        "    \"perOperationStrategies\": [{\n"
+                        "      \"operation\": \"test-operation\",\n"
+                        "      \"probabilisticSampling\": {\n"
+                        "        \"samplingRate\": %f\n"
+                        "      }\n"
+                        "    }]\n"
+                        "  }\n"
+                        "}\n",
+         .arg_value = TEST_DEFAULT_SAMPLING_PROBABILITY + 0.1},
+        {.service_name = "test-service",
+         .json_format = "{\n"
+                        "  \"operationSampling\": {\n"
+                        "    \"defaultLowerBoundTracesPerSecond\": 1.0,\n"
+                        "    \"defaultSamplingProbability\": 0.001,\n"
+                        "    \"perOperationStrategies\": [{\n"
+                        "      \"operation\": \"test-operation\",\n"
+                        "      \"probabilisticSampling\": {\n"
+                        "        \"samplingRate\": %f\n"
+                        "      }\n"
+                        "    }]\n"
+                        "  }\n"
+                        "}\n",
+         .arg_value = TEST_DEFAULT_SAMPLING_PROBABILITY - 0.1}};
+
+    int index = 0;
+    mock_http_server_set_response(&server, &responses[index]);
+    index++;
     TEST_ASSERT_TRUE(jaeger_remotely_controlled_sampler_update(&r));
     TEST_ASSERT_EQUAL(jaeger_probabilistic_sampler_type, r.sampler.type);
     TEST_ASSERT_EQUAL(TEST_DEFAULT_SAMPLING_PROBABILITY,
                       r.sampler.probabilistic_sampler.sampling_rate);
 
+    mock_http_server_set_response(&server, &responses[index]);
+    index++;
     TEST_ASSERT_TRUE(jaeger_remotely_controlled_sampler_update(&r));
     TEST_ASSERT_EQUAL(jaeger_rate_limiting_sampler_type, r.sampler.type);
     TEST_ASSERT_EQUAL(TEST_DEFAULT_MAX_TRACES_PER_SECOND,
                       r.sampler.rate_limiting_sampler.max_traces_per_second);
 
+    mock_http_server_set_response(&server, &responses[index]);
+    index++;
     TEST_ASSERT_TRUE(jaeger_remotely_controlled_sampler_update(&r));
     TEST_ASSERT_EQUAL(jaeger_adaptive_sampler_type, r.sampler.type);
     TEST_ASSERT_EQUAL(
@@ -497,6 +339,8 @@ static inline void test_remotely_controlled_sampler()
     TEST_ASSERT_NOT_NULL(op_sampler);
     TEST_ASSERT_EQUAL_STRING("test-operation", op_sampler->operation_name);
 
+    mock_http_server_set_response(&server, &responses[index]);
+    index++;
     TEST_ASSERT_TRUE(jaeger_remotely_controlled_sampler_update(&r));
     TEST_ASSERT_EQUAL(jaeger_adaptive_sampler_type, r.sampler.type);
     TEST_ASSERT_EQUAL(

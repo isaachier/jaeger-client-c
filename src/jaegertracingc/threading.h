@@ -73,6 +73,26 @@ static inline int jaeger_mutex_destroy(jaeger_mutex* mutex)
     return pthread_mutex_destroy(mutex);
 }
 
+typedef pthread_cond_t jaeger_cond;
+
+#define JAEGERTRACINGC_COND_INIT PTHREAD_COND_INITIALIZER
+
+static inline int jaeger_cond_destroy(jaeger_cond* cond)
+{
+    return pthread_cond_destroy(cond);
+}
+
+static inline int jaeger_cond_signal(jaeger_cond* cond)
+{
+    return pthread_cond_signal(cond);
+}
+
+static inline int jaeger_cond_wait(jaeger_cond* restrict cond,
+                                   jaeger_mutex* restrict mutex)
+{
+    return pthread_cond_wait(cond, mutex);
+}
+
 typedef pthread_once_t jaeger_once;
 #define JAEGERTRACINGC_ONCE_INIT PTHREAD_ONCE_INIT
 
@@ -229,6 +249,39 @@ static inline int jaeger_mutex_destroy(jaeger_mutex* mutex)
         return EBUSY;
     }
     return 0;
+}
+
+typedef struct {
+    bool signal;
+} jaeger_cond;
+
+#define JAEGERTRACINGC_COND_INIT \
+    {                            \
+        .signal = false          \
+    }
+
+static inline int jaeger_cond_destroy(jaeger_cond* cond)
+{
+    assert(cond != NULL);
+    cond->signal = false;
+    return 0;
+}
+
+static inline int jaeger_cond_signal(jaeger_cond* cond)
+{
+    assert(cond != NULL);
+    cond->signal = true;
+    return 0;
+}
+
+static inline int jaeger_cond_wait(jaeger_cond* restrict cond,
+                                   jaeger_mutex* restrict mutex)
+{
+    assert(mutex->locked);
+    mutex->locked = false;
+    while (!cond->signal)
+        ;
+    mutex->locked = true;
 }
 
 typedef struct {
