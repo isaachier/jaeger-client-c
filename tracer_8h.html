@@ -130,6 +130,9 @@ Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structjaeger__tracer.html">jaeger_tracer</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tracer implementation.  <a href="structjaeger__tracer.html#details">More...</a><br/></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structjaeger__start__span__options.html">jaeger_start_span_options</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type to encapsulate options that may be passed to jaeger_tracer_start_span.  <a href="structjaeger__start__span__options.html#details">More...</a><br/></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
 Macros</h2></td></tr>
@@ -138,6 +141,9 @@ Macros</h2></td></tr>
 <tr class="memitem:ad7a6054b6b4bb4b57c129e7cc6935a1a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tracer_8h.html#ad7a6054b6b4bb4b57c129e7cc6935a1a">JAEGERTRACINGC_TRACER_INIT</a></td></tr>
 <tr class="memdesc:ad7a6054b6b4bb4b57c129e7cc6935a1a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Static initializer for <a class="el" href="structjaeger__tracer.html" title="Tracer implementation. ">jaeger_tracer</a>.  <a href="#ad7a6054b6b4bb4b57c129e7cc6935a1a">More...</a><br/></td></tr>
 <tr class="separator:ad7a6054b6b4bb4b57c129e7cc6935a1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae2409a1e6c06517d944b67f621939244"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tracer_8h.html#ae2409a1e6c06517d944b67f621939244">JAEGERTRACINGC_START_SPAN_OPTIONS_INIT</a></td></tr>
+<tr class="memdesc:ae2409a1e6c06517d944b67f621939244"><td class="mdescLeft">&#160;</td><td class="mdescRight">Static initializer for <a class="el" href="structjaeger__start__span__options.html" title="Type to encapsulate options that may be passed to jaeger_tracer_start_span. ">jaeger_start_span_options</a>.  <a href="#ae2409a1e6c06517d944b67f621939244">More...</a><br/></td></tr>
+<tr class="separator:ae2409a1e6c06517d944b67f621939244"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
@@ -150,6 +156,10 @@ typedef struct <br class="typebreak"/>
 typedef struct <a class="el" href="structjaeger__tracer.html">jaeger_tracer</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tracer_8h.html#aecb3ad27e5f06cfdc881d96ebec29783">jaeger_tracer</a></td></tr>
 <tr class="memdesc:aecb3ad27e5f06cfdc881d96ebec29783"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tracer implementation. <br/></td></tr>
 <tr class="separator:aecb3ad27e5f06cfdc881d96ebec29783"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:affbaeb3e3b2bc49401b0d365eb91b4b8"><td class="memItemLeft" align="right" valign="top">typedef struct <br class="typebreak"/>
+<a class="el" href="structjaeger__start__span__options.html">jaeger_start_span_options</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tracer_8h.html#affbaeb3e3b2bc49401b0d365eb91b4b8">jaeger_start_span_options</a></td></tr>
+<tr class="memdesc:affbaeb3e3b2bc49401b0d365eb91b4b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type to encapsulate options that may be passed to jaeger_tracer_start_span.  <a href="#affbaeb3e3b2bc49401b0d365eb91b4b8">More...</a><br/></td></tr>
+<tr class="separator:affbaeb3e3b2bc49401b0d365eb91b4b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
@@ -159,9 +169,9 @@ Functions</h2></td></tr>
 <tr class="memitem:aa07dbdbe42478395d2ee98572826eea2"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tracer_8h.html#aa07dbdbe42478395d2ee98572826eea2">jaeger_tracer_init</a> (<a class="el" href="structjaeger__tracer.html">jaeger_tracer</a> *tracer, const char *service_name, <a class="el" href="structjaeger__sampler.html">jaeger_sampler</a> *sampler, <a class="el" href="structjaeger__reporter.html">jaeger_reporter</a> *reporter, <a class="el" href="structjaeger__metrics.html">jaeger_metrics</a> *metrics, const <a class="el" href="structjaeger__tracer__options.html">jaeger_tracer_options</a> *options)</td></tr>
 <tr class="memdesc:aa07dbdbe42478395d2ee98572826eea2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize a new tracer.  <a href="#aa07dbdbe42478395d2ee98572826eea2">More...</a><br/></td></tr>
 <tr class="separator:aa07dbdbe42478395d2ee98572826eea2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa19e1f967201fb66cf6e4edafa72ae19"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structjaeger__span.html">jaeger_span</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tracer_8h.html#aa19e1f967201fb66cf6e4edafa72ae19">jaeger_tracer_start_span</a> (<a class="el" href="structjaeger__tracer.html">jaeger_tracer</a> *tracer, const char *operation_name, const <a class="el" href="structjaeger__timestamp.html">jaeger_timestamp</a> *start_time_system, const <a class="el" href="structjaeger__duration.html">jaeger_duration</a> *start_time_steady, const <a class="el" href="structjaeger__span__ref.html">jaeger_span_ref</a> *span_refs, int num_span_refs, const jaeger_tag *tags, int num_tags)</td></tr>
-<tr class="memdesc:aa19e1f967201fb66cf6e4edafa72ae19"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start a new span.  <a href="#aa19e1f967201fb66cf6e4edafa72ae19">More...</a><br/></td></tr>
-<tr class="separator:aa19e1f967201fb66cf6e4edafa72ae19"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac63703df0d8ab978f8e1327daa16fc69"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structjaeger__span.html">jaeger_span</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tracer_8h.html#ac63703df0d8ab978f8e1327daa16fc69">jaeger_tracer_start_span</a> (<a class="el" href="structjaeger__tracer.html">jaeger_tracer</a> *tracer, const char *operation_name, const <a class="el" href="structjaeger__start__span__options.html">jaeger_start_span_options</a> *options)</td></tr>
+<tr class="memdesc:ac63703df0d8ab978f8e1327daa16fc69"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start a new span.  <a href="#ac63703df0d8ab978f8e1327daa16fc69">More...</a><br/></td></tr>
+<tr class="separator:ac63703df0d8ab978f8e1327daa16fc69"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad5de5e280e85d209bccef344280481f5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tracer_8h.html#ad5de5e280e85d209bccef344280481f5">jaeger_tracer_flush</a> (<a class="el" href="structjaeger__tracer.html">jaeger_tracer</a> *tracer)</td></tr>
 <tr class="memdesc:ad5de5e280e85d209bccef344280481f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flush any pending spans in tracer.  <a href="#ad5de5e280e85d209bccef344280481f5">More...</a><br/></td></tr>
 <tr class="separator:ad5de5e280e85d209bccef344280481f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -187,6 +197,25 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_tracer_report_
 </div><!-- fragment -->
 </div>
 </div>
+<a class="anchor" id="ae2409a1e6c06517d944b67f621939244"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define JAEGERTRACINGC_START_SPAN_OPTIONS_INIT</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">{                                                                         \</div>
+<div class="line">        .start_time_system = JAEGERTRACINGC_TIMESTAMP_INIT,                   \</div>
+<div class="line">        .start_time_steady = JAEGERTRACINGC_DURATION_INIT, .span_refs = NULL, \</div>
+<div class="line">        .num_span_refs = 0, .tags = NULL, .num_tags = 0                       \</div>
+<div class="line">    }</div>
+</div><!-- fragment -->
+<p>Static initializer for <a class="el" href="structjaeger__start__span__options.html" title="Type to encapsulate options that may be passed to jaeger_tracer_start_span. ">jaeger_start_span_options</a>. </p>
+
+</div>
+</div>
 <a class="anchor" id="ad7a6054b6b4bb4b57c129e7cc6935a1a"></a>
 <div class="memitem">
 <div class="memproto">
@@ -209,6 +238,22 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_tracer_report_
 <p>Static initializer for <a class="el" href="structjaeger__tracer.html" title="Tracer implementation. ">jaeger_tracer</a>. </p>
 <p>May be used to initialize an empty tracer, but the caller must also invoke jaeger_tracer_init to fully construct the tracer. </p>
 <dl class="section see"><dt>See Also</dt><dd><a class="el" href="tracer_8h.html#aa07dbdbe42478395d2ee98572826eea2" title="Initialize a new tracer. ">jaeger_tracer_init</a> </dd></dl>
+
+</div>
+</div>
+<h2 class="groupheader">Typedef Documentation</h2>
+<a class="anchor" id="affbaeb3e3b2bc49401b0d365eb91b4b8"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="structjaeger__start__span__options.html">jaeger_start_span_options</a>  <a class="el" href="structjaeger__start__span__options.html">jaeger_start_span_options</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Type to encapsulate options that may be passed to jaeger_tracer_start_span. </p>
+<dl class="section see"><dt>See Also</dt><dd><a class="el" href="tracer_8h.html#ac63703df0d8ab978f8e1327daa16fc69" title="Start a new span. ">jaeger_tracer_start_span()</a> </dd></dl>
 
 </div>
 </div>
@@ -327,7 +372,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_tracer_report_
 
 </div>
 </div>
-<a class="anchor" id="aa19e1f967201fb66cf6e4edafa72ae19"></a>
+<a class="anchor" id="ac63703df0d8ab978f8e1327daa16fc69"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -346,38 +391,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_tracer_report_
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="structjaeger__timestamp.html">jaeger_timestamp</a> *&#160;</td>
-          <td class="paramname"><em>start_time_system</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="structjaeger__duration.html">jaeger_duration</a> *&#160;</td>
-          <td class="paramname"><em>start_time_steady</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="structjaeger__span__ref.html">jaeger_span_ref</a> *&#160;</td>
-          <td class="paramname"><em>span_refs</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>num_span_refs</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const jaeger_tag *&#160;</td>
-          <td class="paramname"><em>tags</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>num_tags</em>&#160;</td>
+          <td class="paramtype">const <a class="el" href="structjaeger__start__span__options.html">jaeger_start_span_options</a> *&#160;</td>
+          <td class="paramname"><em>options</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -392,11 +407,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_tracer_report_
   <table class="params">
     <tr><td class="paramname">tracer</td><td>Tracer instance. May not be NULL. </td></tr>
     <tr><td class="paramname">operation_name</td><td>Operation name associated with this span. May not be NULL. </td></tr>
-    <tr><td class="paramname">start_time_system</td><td>Time to consider span start, represented as time since epoch (realtime clock). If NULL or zero, current time will be used. </td></tr>
-    <tr><td class="paramname">start_time_steady</td><td>Time to consider span start using monotonic clock. If NULL or zero, current time will be used. </td></tr>
-    <tr><td class="paramname">span_refs</td><td>Array of span references to associate with new span (i.e. child of, follows from). May be NULL only if num_span_refs is zero. </td></tr>
-    <tr><td class="paramname">num_span_refs</td><td>Number of spans references in span_refs. </td></tr>
-    <tr><td class="paramname">tags</td><td>Array of tags to associate with new span. May be NULL only if num_tags is zero. </td></tr>
+    <tr><td class="paramname">options</td><td>Additional options for starting span. May be NULL. </td></tr>
   </table>
   </dd>
 </dl>

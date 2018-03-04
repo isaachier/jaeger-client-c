@@ -53,6 +53,7 @@ var annotated =
     [ "jaeger_span_context", "structjaeger__span__context.html", "structjaeger__span__context" ],
     [ "jaeger_span_finish_options", "structjaeger__span__finish__options.html", "structjaeger__span__finish__options" ],
     [ "jaeger_span_ref", "structjaeger__span__ref.html", "structjaeger__span__ref" ],
+    [ "jaeger_start_span_options", "structjaeger__start__span__options.html", "structjaeger__start__span__options" ],
     [ "jaeger_thread_local", "structjaeger__thread__local.html", "structjaeger__thread__local" ],
     [ "jaeger_timestamp", "structjaeger__timestamp.html", "structjaeger__timestamp" ],
     [ "jaeger_token_bucket", "structjaeger__token__bucket.html", "structjaeger__token__bucket" ],

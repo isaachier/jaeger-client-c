@@ -25,7 +25,7 @@ var NAVTREEINDEX =
 [
 "agent_8pb-c_8h_source.html",
 "struct__Jaegertracing____Protobuf____SamplingManager____PerOperationSamplingStrategy____OperationSamplingStrategy.html#a3b268b07f41b0fbc60ebff3c8ad36d37",
-"threading_8h.html#a7d99df41b20e8f6533a42b03be13dc42"
+"tag_8h.html#aa4b112374828b44332e98e0e2163c8a4"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
