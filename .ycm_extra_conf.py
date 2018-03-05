@@ -41,7 +41,7 @@ flags = [
 '-I',
 os.path.join(project_dir, 'src'),
 '-I',
-os.path.join(project_dir, 'build/generated/include')
+os.path.join(project_dir, 'build/src')
 ]
 
 compilation_database_folder = os.path.join(project_dir, 'build')
