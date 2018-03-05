@@ -49,11 +49,8 @@ extern "C" {
 #define JAEGERTRACINGC_CLAMP(x, low, high) \
     JAEGERTRACINGC_MIN(JAEGERTRACINGC_MAX((x), (low)), (high))
 
-#define JAEGERTRACINGC_DESTRUCTIBLE_SUBCLASS \
-    void (*destroy)(struct jaeger_destructible*)
-
 typedef struct jaeger_destructible {
-    JAEGERTRACINGC_DESTRUCTIBLE_SUBCLASS;
+    void (*destroy)(struct jaeger_destructible* destructible);
 } jaeger_destructible;
 
 static inline void jaeger_destructible_destroy(jaeger_destructible* d)

@@ -42,8 +42,9 @@ static bool null_flush(jaeger_reporter* reporter)
 
 static void init_null_reporter()
 {
-    null_reporter = (jaeger_reporter){
-        .destroy = &null_destroy, .report = &null_report, .flush = &null_flush};
+    null_reporter = (jaeger_reporter){.base = {.destroy = &null_destroy},
+                                      .report = &null_report,
+                                      .flush = &null_flush};
 }
 
 jaeger_reporter* jaeger_null_reporter()
@@ -67,7 +68,7 @@ static void logging_reporter_report(jaeger_reporter* reporter,
 void jaeger_logging_reporter_init(jaeger_reporter* reporter)
 {
     assert(reporter != NULL);
-    reporter->destroy = &null_destroy;
+    ((jaeger_destructible*) reporter)->destroy = &null_destroy;
     reporter->report = &logging_reporter_report;
     reporter->flush = &null_flush;
 }
@@ -108,9 +109,9 @@ bool jaeger_in_memory_reporter_init(jaeger_in_memory_reporter* reporter)
     if (!jaeger_vector_init(&reporter->spans, sizeof(jaeger_span))) {
         return false;
     }
-    reporter->destroy = &in_memory_reporter_destroy;
-    reporter->report = &in_memory_reporter_report;
-    reporter->flush = &null_flush;
+    ((jaeger_destructible*) reporter)->destroy = &in_memory_reporter_destroy;
+    ((jaeger_reporter*) reporter)->report = &in_memory_reporter_report;
+    ((jaeger_reporter*) reporter)->flush = &null_flush;
     reporter->mutex = (jaeger_mutex) JAEGERTRACINGC_MUTEX_INIT;
     return true;
 }
@@ -199,9 +200,9 @@ bool jaeger_composite_reporter_init(jaeger_composite_reporter* reporter)
         return false;
     }
 
-    reporter->destroy = &composite_reporter_destroy;
-    reporter->report = &composite_reporter_report;
-    reporter->flush = &composite_reporter_flush;
+    ((jaeger_destructible*) reporter)->destroy = &composite_reporter_destroy;
+    ((jaeger_reporter*) reporter)->report = &composite_reporter_report;
+    ((jaeger_reporter*) reporter)->flush = &composite_reporter_flush;
     return true;
 }
 
@@ -364,7 +365,7 @@ static void remote_reporter_destroy(jaeger_destructible* destructible)
     jaeger_remote_reporter* r = (jaeger_remote_reporter*) destructible;
 
     /* Try to flush any spans we have not flushed yet. */
-    r->flush((jaeger_reporter*) r);
+    ((jaeger_reporter*) r)->flush((jaeger_reporter*) r);
 
     if (r->fd >= 0) {
         close(r->fd);
@@ -629,9 +630,9 @@ bool jaeger_remote_reporter_init(jaeger_remote_reporter* reporter,
 
     jaeger_host_port_destroy(&host_port);
     reporter->metrics = metrics;
-    reporter->destroy = &remote_reporter_destroy;
-    reporter->report = &remote_reporter_report;
-    reporter->flush = &remote_reporter_flush;
+    ((jaeger_destructible*) reporter)->destroy = &remote_reporter_destroy;
+    ((jaeger_reporter*) reporter)->report = &remote_reporter_report;
+    ((jaeger_reporter*) reporter)->flush = &remote_reporter_flush;
     reporter->mutex = (jaeger_mutex) JAEGERTRACINGC_MUTEX_INIT;
     return true;
 

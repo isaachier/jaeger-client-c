@@ -62,8 +62,8 @@ void jaeger_const_sampler_init(jaeger_const_sampler* sampler, bool decision)
 {
     assert(sampler != NULL);
     sampler->decision = decision;
-    sampler->is_sampled = &jaeger_const_sampler_is_sampled;
-    sampler->destroy = &jaeger_sampler_noop_destroy;
+    ((jaeger_sampler*) sampler)->is_sampled = &jaeger_const_sampler_is_sampled;
+    ((jaeger_destructible*) sampler)->destroy = &jaeger_sampler_noop_destroy;
 }
 
 static bool
@@ -99,8 +99,9 @@ void jaeger_probabilistic_sampler_init(jaeger_probabilistic_sampler* sampler,
                                        double sampling_rate)
 {
     assert(sampler != NULL);
-    sampler->is_sampled = &jaeger_probabilistic_sampler_is_sampled;
-    sampler->destroy = &jaeger_sampler_noop_destroy;
+    ((jaeger_sampler*) sampler)->is_sampled =
+        &jaeger_probabilistic_sampler_is_sampled;
+    ((jaeger_destructible*) sampler)->destroy = &jaeger_sampler_noop_destroy;
     sampler->sampling_rate = JAEGERTRACINGC_CLAMP(sampling_rate, 0, 1);
     jaeger_duration duration;
     jaeger_duration_now(&duration);
@@ -137,8 +138,9 @@ void jaeger_rate_limiting_sampler_init(jaeger_rate_limiting_sampler* sampler,
                                        double max_traces_per_second)
 {
     assert(sampler != NULL);
-    sampler->is_sampled = &jaeger_rate_limiting_sampler_is_sampled;
-    sampler->destroy = &jaeger_sampler_noop_destroy;
+    ((jaeger_sampler*) sampler)->is_sampled =
+        jaeger_rate_limiting_sampler_is_sampled;
+    ((jaeger_destructible*) sampler)->destroy = &jaeger_sampler_noop_destroy;
     jaeger_token_bucket_init(&sampler->tok,
                              max_traces_per_second,
                              JAEGERTRACINGC_MAX(max_traces_per_second, 1));
@@ -156,17 +158,18 @@ static bool jaeger_guaranteed_throughput_probabilistic_sampler_is_sampled(
     assert(sampler != NULL);
     jaeger_guaranteed_throughput_probabilistic_sampler* s =
         (jaeger_guaranteed_throughput_probabilistic_sampler*) sampler;
-    bool decision = s->probabilistic_sampler.is_sampled(
-        (jaeger_sampler*) &s->probabilistic_sampler,
-        trace_id,
-        operation_name,
-        NULL);
+    bool decision =
+        ((jaeger_sampler*) &s->probabilistic_sampler)
+            ->is_sampled((jaeger_sampler*) &s->probabilistic_sampler,
+                         trace_id,
+                         operation_name,
+                         NULL);
     if (decision) {
-        s->lower_bound_sampler.is_sampled(
-            (jaeger_sampler*) &s->lower_bound_sampler,
-            trace_id,
-            operation_name,
-            NULL);
+        ((jaeger_sampler*) &s->lower_bound_sampler)
+            ->is_sampled((jaeger_sampler*) &s->lower_bound_sampler,
+                         trace_id,
+                         operation_name,
+                         NULL);
         if (tags != NULL &&
             jaeger_vector_reserve(tags, jaeger_vector_length(tags) + 2)) {
             jaeger_tag tag = JAEGERTRACINGC_TAG_INIT;
@@ -182,11 +185,11 @@ static bool jaeger_guaranteed_throughput_probabilistic_sampler_is_sampled(
         }
         return true;
     }
-    decision = s->lower_bound_sampler.is_sampled(
-        (jaeger_sampler*) &s->lower_bound_sampler,
-        trace_id,
-        operation_name,
-        NULL);
+    decision = ((jaeger_sampler*) &s->lower_bound_sampler)
+                   ->is_sampled((jaeger_sampler*) &s->lower_bound_sampler,
+                                trace_id,
+                                operation_name,
+                                NULL);
     if (tags != NULL &&
         jaeger_vector_reserve(tags, jaeger_vector_length(tags) + 2)) {
         jaeger_tag tag = JAEGERTRACINGC_TAG_INIT;
@@ -209,10 +212,10 @@ static void jaeger_guaranteed_throughput_probabilistic_sampler_destroy(
     assert(sampler != NULL);
     jaeger_guaranteed_throughput_probabilistic_sampler* s =
         (jaeger_guaranteed_throughput_probabilistic_sampler*) sampler;
-    s->probabilistic_sampler.destroy(
-        (jaeger_destructible*) &s->probabilistic_sampler);
-    s->lower_bound_sampler.destroy(
-        (jaeger_destructible*) &s->lower_bound_sampler);
+    ((jaeger_destructible*) &s->probabilistic_sampler)
+        ->destroy((jaeger_destructible*) &s->probabilistic_sampler);
+    ((jaeger_destructible*) &s->lower_bound_sampler)
+        ->destroy((jaeger_destructible*) &s->lower_bound_sampler);
 }
 
 void jaeger_guaranteed_throughput_probabilistic_sampler_init(
@@ -221,9 +224,9 @@ void jaeger_guaranteed_throughput_probabilistic_sampler_init(
     double sampling_rate)
 {
     assert(sampler != NULL);
-    sampler->is_sampled =
+    ((jaeger_sampler*) sampler)->is_sampled =
         &jaeger_guaranteed_throughput_probabilistic_sampler_is_sampled;
-    sampler->destroy =
+    ((jaeger_destructible*) sampler)->destroy =
         &jaeger_guaranteed_throughput_probabilistic_sampler_destroy;
     jaeger_probabilistic_sampler_init(&sampler->probabilistic_sampler,
                                       sampling_rate);
@@ -238,14 +241,14 @@ void jaeger_guaranteed_throughput_probabilistic_sampler_update(
 {
     assert(sampler != NULL);
     if (sampler->probabilistic_sampler.sampling_rate != sampling_rate) {
-        sampler->probabilistic_sampler.destroy(
-            (jaeger_destructible*) &sampler->probabilistic_sampler);
+        ((jaeger_destructible*) &sampler->probabilistic_sampler)
+            ->destroy((jaeger_destructible*) &sampler->probabilistic_sampler);
         jaeger_probabilistic_sampler_init(&sampler->probabilistic_sampler,
                                           sampling_rate);
     }
     if (sampler->lower_bound_sampler.max_traces_per_second != lower_bound) {
-        sampler->lower_bound_sampler.destroy(
-            (jaeger_destructible*) &sampler->lower_bound_sampler);
+        ((jaeger_destructible*) &sampler->lower_bound_sampler)
+            ->destroy((jaeger_destructible*) &sampler->lower_bound_sampler);
         jaeger_rate_limiting_sampler_init(&sampler->lower_bound_sampler,
                                           lower_bound);
     }
@@ -336,7 +339,9 @@ static bool jaeger_adaptive_sampler_is_sampled(jaeger_sampler* sampler,
         jaeger_guaranteed_throughput_probabilistic_sampler* g =
             &op_sampler->sampler;
         const bool decision =
-            g->is_sampled((jaeger_sampler*) g, trace_id, operation_name, tags);
+            ((jaeger_sampler*) g)
+                ->is_sampled(
+                    (jaeger_sampler*) g, trace_id, operation_name, tags);
         jaeger_mutex_unlock(&s->mutex);
         return decision;
     }
@@ -364,17 +369,22 @@ static bool jaeger_adaptive_sampler_is_sampled(jaeger_sampler* sampler,
         s->lower_bound,
         s->default_sampler.sampling_rate);
 
-    const bool decision = op_sampler_ptr->sampler.is_sampled(
-        (jaeger_sampler*) &op_sampler_ptr->sampler,
-        trace_id,
-        operation_name,
-        tags);
+    const bool decision =
+        ((jaeger_sampler*) &op_sampler_ptr->sampler)
+            ->is_sampled((jaeger_sampler*) &op_sampler_ptr->sampler,
+                         trace_id,
+                         operation_name,
+                         tags);
     jaeger_mutex_unlock(&s->mutex);
     return decision;
 
 use_default_sampler : {
-    const bool decision = s->default_sampler.is_sampled(
-        (jaeger_sampler*) &s->default_sampler, trace_id, operation_name, tags);
+    const bool decision =
+        ((jaeger_sampler*) &s->default_sampler)
+            ->is_sampled((jaeger_sampler*) &s->default_sampler,
+                         trace_id,
+                         operation_name,
+                         tags);
     jaeger_mutex_unlock(&s->mutex);
     return decision;
 }
@@ -410,8 +420,10 @@ bool jaeger_adaptive_sampler_init(
     sampler->lower_bound = strategies->default_lower_bound_traces_per_second;
     sampler->max_operations = max_operations;
     sampler->mutex = (jaeger_mutex) JAEGERTRACINGC_MUTEX_INIT;
-    sampler->is_sampled = &jaeger_adaptive_sampler_is_sampled;
-    sampler->destroy = &jaeger_adaptive_sampler_destroy;
+    ((jaeger_sampler*) sampler)->is_sampled =
+        &jaeger_adaptive_sampler_is_sampled;
+    ((jaeger_destructible*) sampler)->destroy =
+        &jaeger_adaptive_sampler_destroy;
     return true;
 }
 
@@ -1183,8 +1195,8 @@ bool jaeger_remotely_controlled_sampler_init(
     max_operations =
         (max_operations <= 0) ? DEFAULT_MAX_OPERATIONS : max_operations;
     *sampler = (jaeger_remotely_controlled_sampler){
-        &jaeger_remotely_controlled_sampler_destroy,
-        &jaeger_remotely_controlled_sampler_is_sampled,
+        {{&jaeger_remotely_controlled_sampler_destroy},
+         &jaeger_remotely_controlled_sampler_is_sampled},
         JAEGERTRACINGC_SAMPLER_CHOICE_INIT,
         max_operations,
         metrics,

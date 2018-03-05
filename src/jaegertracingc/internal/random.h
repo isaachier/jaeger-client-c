@@ -49,7 +49,7 @@
 extern jaeger_thread_local rng_storage;
 
 typedef struct jaeger_rng {
-    JAEGERTRACINGC_DESTRUCTIBLE_SUBCLASS;
+    jaeger_destructible base;
     struct pcg_state_setseq_64 state;
 } jaeger_rng;
 
@@ -92,7 +92,7 @@ static void rng_destroy(jaeger_destructible* d)
 static inline void jaeger_rng_init(jaeger_rng* rng)
 {
     assert(rng != NULL);
-    rng->destroy = &rng_destroy;
+    ((jaeger_destructible*) rng)->destroy = &rng_destroy;
     uint64_t seed[NUM_UINT64_IN_SEED];
     memset(seed, 0, sizeof(seed));
     RANDOM_SEED(seed);

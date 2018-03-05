@@ -37,34 +37,34 @@ extern "C" {
 #define JAEGERTRACINGC_FORMAT_ATTRIBUTE(archetype, string_index, first_to_check)
 #endif
 
-#define JAEGERTRACINGC_LOGGER_SUBCLASS                                    \
-    /** Error log function.                                               \
-     *  @param logger Logger instance.                                    \
-     *  @param format Format string of the message.                       \
-     *  @param[in] ... Arguments to format.                               \
-     */                                                                   \
-    void (*error)(                                                        \
-        struct jaeger_logger * logger, const char* format, va_list args); \
-                                                                          \
-    /** Warn log function.                                                \
-     *  @param logger Logger instance.                                    \
-     *  @param format Format string of the message.                       \
-     *  @param[in] ... Arguments to format.                               \
-     */                                                                   \
-    void (*warn)(                                                         \
-        struct jaeger_logger * logger, const char* format, va_list args); \
-                                                                          \
-    /** Info log function.                                                \
-     *  @param logger Logger instance.                                    \
-     *  @param format Format string of the message.                       \
-     *  @param[in] ... Arguments to format.                               \
-     */                                                                   \
-    void (*info)(                                                         \
-        struct jaeger_logger * logger, const char* format, va_list args);
-
 /** Logger interface to customize log output. */
 typedef struct jaeger_logger {
-    JAEGERTRACINGC_LOGGER_SUBCLASS;
+    /** Error log function.
+     *  @param logger Logger instance.
+     *  @param format Format string of the message.
+     *  @param[in] ... Arguments to format.
+     */
+    void (*error)(struct jaeger_logger* logger,
+                  const char* format,
+                  va_list args);
+
+    /** Warn log function.
+     *  @param logger Logger instance.
+     *  @param format Format string of the message.
+     *  @param[in] ... Arguments to format.
+     */
+    void (*warn)(struct jaeger_logger* logger,
+                 const char* format,
+                 va_list args);
+
+    /** Info log function.
+     *  @param logger Logger instance.
+     *  @param format Format string of the message.
+     *  @param[in] ... Arguments to format.
+     */
+    void (*info)(struct jaeger_logger* logger,
+                 const char* format,
+                 va_list args);
 } jaeger_logger;
 
 /**

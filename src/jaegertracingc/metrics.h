@@ -32,28 +32,28 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#define JAEGERTRACINGC_COUNTER_SUBCLASS     \
-    JAEGERTRACINGC_DESTRUCTIBLE_SUBCLASS;   \
-    /**                                     \
-     * Increment count.                     \
-     * @param counter Counter to increment. \
-     * @param delta Amount to increment.    \
-     */                                     \
-    void (*inc)(struct jaeger_counter * counter, int64_t delta);
-
 /**
  * Counter metric interface. Counters are used to keep track of a total
  * number of events (i.e. number of spans reported).
+ * @extends jaeger_destructible
  */
 typedef struct jaeger_counter {
-    JAEGERTRACINGC_COUNTER_SUBCLASS;
+    /** Base class member. */
+    jaeger_destructible base;
+
+    /**
+     * Increment count.
+     * @param counter Counter to increment.
+     * @param delta Amount to increment.
+     */
+    void (*inc)(struct jaeger_counter* counter, int64_t delta);
 } jaeger_counter;
 
 /**
  * Implements the counter interface with basic 64 bit integer value.
  */
 typedef struct jaeger_default_counter {
-    JAEGERTRACINGC_COUNTER_SUBCLASS;
+    jaeger_counter base;
     /** Current total. */
     int64_t total;
 #ifndef JAEGERTRACINGC_HAVE_ATOMICS
@@ -74,28 +74,28 @@ jaeger_counter* jaeger_null_counter();
  */
 void jaeger_default_counter_init(jaeger_default_counter* counter);
 
-#define JAEGERTRACINGC_GAUGE_SUBCLASS     \
-    JAEGERTRACINGC_DESTRUCTIBLE_SUBCLASS; \
-    /**                                   \
-     * Update current value of gauge.     \
-     * @param gauge Gauge to update.      \
-     * @param amount New amount.          \
-     */                                   \
-    void (*update)(struct jaeger_gauge * gauge, int64_t amount);
-
 /**
  * Gauge metric interface. Gauges are used to keep track of a changing number
  * (i.e. number of items currently in a queue).
+ * @extends jaeger_destructible
  */
 typedef struct jaeger_gauge {
-    JAEGERTRACINGC_GAUGE_SUBCLASS;
+    /** Base class member. */
+    jaeger_destructible base;
+
+    /**
+     * Update current value of gauge.
+     * @param gauge Gauge to update.
+     * @param amount New amount.
+     */
+    void (*update)(struct jaeger_gauge* gauge, int64_t amount);
 } jaeger_gauge;
 
 /**
  * Implements gauge interface with basic 64 bit integer value.
  */
 typedef struct jaeger_default_gauge {
-    JAEGERTRACINGC_GAUGE_SUBCLASS;
+    jaeger_gauge base;
     /** Current amount. */
     int64_t amount;
 #ifndef JAEGERTRACINGC_HAVE_ATOMICS
@@ -155,13 +155,14 @@ static inline void jaeger_metrics_destroy(jaeger_metrics* metrics)
         return;
     }
 
-#define JAEGERTRACINGC_METRICS_DESTROY_IF_NOT_NULL(member)                    \
-    do {                                                                      \
-        if (metrics->member != NULL) {                                        \
-            metrics->member->destroy((jaeger_destructible*) metrics->member); \
-            jaeger_free(metrics->member);                                     \
-            metrics->member = NULL;                                           \
-        }                                                                     \
+#define JAEGERTRACINGC_METRICS_DESTROY_IF_NOT_NULL(member)                   \
+    do {                                                                     \
+        if (metrics->member != NULL) {                                       \
+            jaeger_destructible* d = (jaeger_destructible*) metrics->member; \
+            d->destroy(d);                                                   \
+            jaeger_free(metrics->member);                                    \
+            metrics->member = NULL;                                          \
+        }                                                                    \
     } while (0);
 
     JAEGERTRACINGC_METRICS_COUNTERS(JAEGERTRACINGC_METRICS_DESTROY_IF_NOT_NULL)

@@ -101,25 +101,25 @@ void test_reporter()
 
     jaeger_reporter* r = jaeger_null_reporter();
     r->report(r, &span);
-    r->destroy((jaeger_destructible*) r);
+    ((jaeger_destructible*) r)->destroy((jaeger_destructible*) r);
 
     jaeger_reporter reporter;
     jaeger_logging_reporter_init(&reporter);
     r = &reporter;
     r->report(r, &span);
-    r->destroy((jaeger_destructible*) r);
+    ((jaeger_destructible*) r)->destroy((jaeger_destructible*) r);
 
     jaeger_in_memory_reporter in_memory_reporter;
     TEST_ASSERT_TRUE(jaeger_in_memory_reporter_init(&in_memory_reporter));
     r = (jaeger_reporter*) &in_memory_reporter;
     r->report(r, &span);
-    r->destroy((jaeger_destructible*) r);
+    ((jaeger_destructible*) r)->destroy((jaeger_destructible*) r);
 
     jaeger_composite_reporter composite_reporter;
     TEST_ASSERT_TRUE(jaeger_composite_reporter_init(&composite_reporter));
     r = (jaeger_reporter*) &composite_reporter;
     r->report(r, &span);
-    r->destroy((jaeger_destructible*) r);
+    ((jaeger_destructible*) r)->destroy((jaeger_destructible*) r);
 
     const int server_fd = start_udp_server();
     struct sockaddr_in addr;
@@ -161,7 +161,7 @@ void test_reporter()
     TEST_ASSERT_NOT_NULL(success);
     TEST_ASSERT_EQUAL(true, *(bool*) success);
     jaegertracing__protobuf__batch__free_unpacked(batch, NULL);
-    r->destroy((jaeger_destructible*) r);
+    ((jaeger_destructible*) r)->destroy((jaeger_destructible*) r);
     jaeger_free(success);
 
     const int small_packet_size = 1;
@@ -175,12 +175,13 @@ void test_reporter()
     TEST_ASSERT_NOT_NULL(success);
     TEST_ASSERT_EQUAL(false, *(bool*) success);
     jaeger_free(success);
-    r->destroy((jaeger_destructible*) r);
+    ((jaeger_destructible*) r)->destroy((jaeger_destructible*) r);
 
     close(server_fd);
     jaeger_span_destroy(&span);
 
     jaeger_tracer_destroy(&tracer);
 
-    const_sampler.destroy((jaeger_destructible*) &const_sampler);
+    ((jaeger_destructible*) &const_sampler)
+        ->destroy((jaeger_destructible*) &const_sampler);
 }

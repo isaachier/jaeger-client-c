@@ -40,26 +40,23 @@ extern "C" {
 
 #define JAEGERTRACINGC_DOUBLE_STR_SIZE 16
 
-#define JAEGERTRACINGC_SAMPLER_SUBCLASS                 \
-    JAEGERTRACINGC_DESTRUCTIBLE_SUBCLASS;               \
-    bool (*is_sampled)(struct jaeger_sampler * sampler, \
-                       const jaeger_trace_id* trace_id, \
-                       const char* operation,           \
-                       jaeger_vector* tags)
-
 typedef struct jaeger_sampler {
-    JAEGERTRACINGC_SAMPLER_SUBCLASS;
+    jaeger_destructible base;
+    bool (*is_sampled)(struct jaeger_sampler* sampler,
+                       const jaeger_trace_id* trace_id,
+                       const char* operation,
+                       jaeger_vector* tags);
 } jaeger_sampler;
 
 typedef struct jaeger_const_sampler {
-    JAEGERTRACINGC_SAMPLER_SUBCLASS;
+    jaeger_sampler base;
     bool decision;
 } jaeger_const_sampler;
 
 void jaeger_const_sampler_init(jaeger_const_sampler* sampler, bool decision);
 
 typedef struct jaeger_probabilistic_sampler {
-    JAEGERTRACINGC_SAMPLER_SUBCLASS;
+    jaeger_sampler base;
     double sampling_rate;
 } jaeger_probabilistic_sampler;
 
@@ -67,7 +64,7 @@ void jaeger_probabilistic_sampler_init(jaeger_probabilistic_sampler* sampler,
                                        double sampling_rate);
 
 typedef struct jaeger_rate_limiting_sampler {
-    JAEGERTRACINGC_SAMPLER_SUBCLASS;
+    jaeger_sampler base;
     jaeger_token_bucket tok;
     double max_traces_per_second;
 } jaeger_rate_limiting_sampler;
@@ -76,7 +73,7 @@ void jaeger_rate_limiting_sampler_init(jaeger_rate_limiting_sampler* sampler,
                                        double max_traces_per_second);
 
 typedef struct jaeger_guaranteed_throughput_probabilistic_sampler {
-    JAEGERTRACINGC_SAMPLER_SUBCLASS;
+    jaeger_sampler base;
     jaeger_probabilistic_sampler probabilistic_sampler;
     jaeger_rate_limiting_sampler lower_bound_sampler;
 } jaeger_guaranteed_throughput_probabilistic_sampler;
@@ -111,7 +108,7 @@ jaeger_operation_sampler_destroy(jaeger_operation_sampler* op_sampler)
 }
 
 typedef struct jaeger_adaptive_sampler {
-    JAEGERTRACINGC_SAMPLER_SUBCLASS;
+    jaeger_sampler base;
     jaeger_vector op_samplers;
     jaeger_probabilistic_sampler default_sampler;
     double lower_bound;
@@ -144,13 +141,12 @@ typedef struct jaeger_sampler_choice {
     };
 } jaeger_sampler_choice;
 
-#define JAEGERTRACINGC_SAMPLER_CHOICE_INIT \
-    {                                      \
-        .type = -1, .const_sampler = {     \
-            .is_sampled = NULL,            \
-            .destroy = NULL,               \
-            .decision = false              \
-        }                                  \
+#define JAEGERTRACINGC_SAMPLER_CHOICE_INIT                           \
+    {                                                                \
+        .type = -1, .const_sampler = {                               \
+            .base = {.base = {.destroy = NULL}, .is_sampled = NULL}, \
+            .decision = false                                        \
+        }                                                            \
     }
 
 static inline jaeger_sampler*
@@ -181,7 +177,7 @@ static inline void jaeger_sampler_choice_destroy(jaeger_sampler_choice* sampler)
     assert(sampler != NULL);
     jaeger_sampler* s = jaeger_sampler_choice_get_sampler(sampler);
     if (s != NULL) {
-        s->destroy((jaeger_destructible*) s);
+        ((jaeger_destructible*) s)->destroy((jaeger_destructible*) s);
     }
 }
 
@@ -206,7 +202,7 @@ typedef struct jaeger_http_sampling_manager {
     }
 
 typedef struct jaeger_remotely_controlled_sampler {
-    JAEGERTRACINGC_SAMPLER_SUBCLASS;
+    jaeger_sampler base;
     jaeger_sampler_choice sampler;
     int max_operations;
     jaeger_metrics* metrics;

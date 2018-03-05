@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#include "jaegertracingc/sampler.h"
 #include "jaegertracingc/mock_agent.h"
+#include "jaegertracingc/sampler.h"
 #include "jaegertracingc/threading.h"
 #include "unity.h"
 
@@ -28,7 +28,8 @@
     (void) trace_id
 
 #define TEAR_DOWN_SAMPLER_TEST(sampler)                                    \
-    sampler.destroy((jaeger_destructible*) &sampler);                      \
+    ((jaeger_destructible*) &sampler)                                      \
+        ->destroy((jaeger_destructible*) &sampler);                        \
     JAEGERTRACINGC_VECTOR_FOR_EACH(&tags, jaeger_tag_destroy, jaeger_tag); \
     jaeger_vector_destroy(&tags)
 
@@ -85,15 +86,19 @@ static inline void test_const_sampler()
     jaeger_const_sampler_init(&c, true);
 
     TEST_ASSERT_TRUE(
-        c.is_sampled((jaeger_sampler*) &c, &trace_id, operation_name, &tags));
+        ((jaeger_sampler*) &c)
+            ->is_sampled(
+                (jaeger_sampler*) &c, &trace_id, operation_name, &tags));
     CHECK_CONST_TAGS(c, tags);
 
-    c.destroy((jaeger_destructible*) &c);
+    ((jaeger_destructible*) &c)->destroy((jaeger_destructible*) &c);
     JAEGERTRACINGC_VECTOR_FOR_EACH(&tags, jaeger_tag_destroy, jaeger_tag);
     jaeger_vector_clear(&tags);
     jaeger_const_sampler_init(&c, false);
     TEST_ASSERT_FALSE(
-        c.is_sampled((jaeger_sampler*) &c, &trace_id, operation_name, &tags));
+        ((jaeger_sampler*) &c)
+            ->is_sampled(
+                (jaeger_sampler*) &c, &trace_id, operation_name, &tags));
 
     TEAR_DOWN_SAMPLER_TEST(c);
 }
@@ -106,16 +111,20 @@ static inline void test_probabilistic_sampler()
     double sampling_rate = 1;
     jaeger_probabilistic_sampler_init(&p, sampling_rate);
     TEST_ASSERT_TRUE(
-        p.is_sampled((jaeger_sampler*) &p, &trace_id, operation_name, &tags));
+        ((jaeger_sampler*) &p)
+            ->is_sampled(
+                (jaeger_sampler*) &p, &trace_id, operation_name, &tags));
     CHECK_PROBABILISTIC_TAGS(p, tags);
-    p.destroy((jaeger_destructible*) &p);
+    ((jaeger_destructible*) &p)->destroy((jaeger_destructible*) &p);
 
     sampling_rate = 0;
     JAEGERTRACINGC_VECTOR_FOR_EACH(&tags, jaeger_tag_destroy, jaeger_tag);
     jaeger_vector_clear(&tags);
     jaeger_probabilistic_sampler_init(&p, sampling_rate);
     TEST_ASSERT_FALSE(
-        p.is_sampled((jaeger_sampler*) &p, &trace_id, operation_name, &tags));
+        ((jaeger_sampler*) &p)
+            ->is_sampled(
+                (jaeger_sampler*) &p, &trace_id, operation_name, &tags));
     CHECK_PROBABILISTIC_TAGS(p, tags);
 
     TEAR_DOWN_SAMPLER_TEST(p);
@@ -130,13 +139,17 @@ static inline void test_rate_limiting_sampler()
     jaeger_rate_limiting_sampler_init(&r, max_traces_per_second);
 
     TEST_ASSERT_TRUE(
-        r.is_sampled((jaeger_sampler*) &r, &trace_id, operation_name, &tags));
+        ((jaeger_sampler*) &r)
+            ->is_sampled(
+                (jaeger_sampler*) &r, &trace_id, operation_name, &tags));
     CHECK_RATE_LIMITING_TAGS(r, tags);
 
     JAEGERTRACINGC_VECTOR_FOR_EACH(&tags, jaeger_tag_destroy, jaeger_tag);
     jaeger_vector_clear(&tags);
     TEST_ASSERT_FALSE(
-        r.is_sampled((jaeger_sampler*) &r, &trace_id, operation_name, &tags));
+        ((jaeger_sampler*) &r)
+            ->is_sampled(
+                (jaeger_sampler*) &r, &trace_id, operation_name, &tags));
     CHECK_RATE_LIMITING_TAGS(r, tags);
 
     TEAR_DOWN_SAMPLER_TEST(r);
@@ -172,7 +185,9 @@ static inline void test_guaranteed_throughput_probabilistic_sampler()
     jaeger_guaranteed_throughput_probabilistic_sampler_update(
         &g, lower_bound, sampling_rate);
     TEST_ASSERT_TRUE(
-        g.is_sampled((jaeger_sampler*) &g, &trace_id, operation_name, &tags));
+        ((jaeger_sampler*) &g)
+            ->is_sampled(
+                (jaeger_sampler*) &g, &trace_id, operation_name, &tags));
     CHECK_LOWER_BOUND_TAGS(g, tags);
 
     JAEGERTRACINGC_VECTOR_FOR_EACH(&tags, jaeger_tag_destroy, jaeger_tag);
@@ -181,7 +196,9 @@ static inline void test_guaranteed_throughput_probabilistic_sampler()
     jaeger_guaranteed_throughput_probabilistic_sampler_update(
         &g, lower_bound, sampling_rate);
     TEST_ASSERT_TRUE(
-        g.is_sampled((jaeger_sampler*) &g, &trace_id, operation_name, &tags));
+        ((jaeger_sampler*) &g)
+            ->is_sampled(
+                (jaeger_sampler*) &g, &trace_id, operation_name, &tags));
     CHECK_PROBABILISTIC_TAGS(g.probabilistic_sampler, tags);
 
     TEAR_DOWN_SAMPLER_TEST(g);
@@ -220,7 +237,8 @@ static inline void test_adaptive_sampler()
     strategies.default_sampling_probability = TEST_DEFAULT_SAMPLING_PROBABILITY;
 
     jaeger_adaptive_sampler_init(&a, &strategies, TEST_DEFAULT_MAX_OPERATIONS);
-    a.is_sampled((jaeger_sampler*) &a, &trace_id, operation_name, &tags);
+    ((jaeger_sampler*) &a)
+        ->is_sampled((jaeger_sampler*) &a, &trace_id, operation_name, &tags);
 
     JAEGERTRACINGC_VECTOR_FOR_EACH(&tags, jaeger_tag_destroy, jaeger_tag);
     jaeger_vector_clear(&tags);
@@ -229,7 +247,8 @@ static inline void test_adaptive_sampler()
         TEST_ASSERT_LESS_THAN(
             sizeof(op_buffer),
             snprintf(op_buffer, sizeof(op_buffer), "new-operation-%d", i));
-        a.is_sampled((jaeger_sampler*) &a, &trace_id, op_buffer, &tags);
+        ((jaeger_sampler*) &a)
+            ->is_sampled((jaeger_sampler*) &a, &trace_id, op_buffer, &tags);
     }
     TEST_ASSERT_EQUAL(TEST_DEFAULT_MAX_OPERATIONS,
                       jaeger_vector_length(&a.op_samplers));
@@ -361,11 +380,12 @@ static inline void test_remotely_controlled_sampler()
     const jaeger_trace_id trace_id = {.high = 0, .low = 0};
     jaeger_vector tags;
     jaeger_vector_init(&tags, sizeof(jaeger_tag));
-    r.is_sampled((jaeger_sampler*) &r, &trace_id, "test-operation", &tags);
+    ((jaeger_sampler*) &r)
+        ->is_sampled((jaeger_sampler*) &r, &trace_id, "test-operation", &tags);
 
     JAEGERTRACINGC_VECTOR_FOR_EACH(&tags, jaeger_tag_destroy, jaeger_tag);
     jaeger_vector_destroy(&tags);
-    r.destroy((jaeger_destructible*) &r);
+    ((jaeger_destructible*) &r)->destroy((jaeger_destructible*) &r);
 }
 
 static inline void test_sampler_choice()

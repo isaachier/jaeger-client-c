@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-#include "jaegertracingc/metrics.h"
 #include "jaegertracingc/alloc.h"
 #include "jaegertracingc/logging.h"
+#include "jaegertracingc/metrics.h"
 #include "unity.h"
 
 void test_metrics()
 {
     jaeger_default_counter default_counter;
     jaeger_default_counter_init(&default_counter);
-    default_counter.inc((jaeger_counter*) &default_counter, 2);
+    ((jaeger_counter*) &default_counter)
+        ->inc((jaeger_counter*) &default_counter, 2);
     TEST_ASSERT_EQUAL(2, default_counter.total);
 
     jaeger_counter* null_counter = jaeger_null_counter();
@@ -31,7 +32,7 @@ void test_metrics()
 
     jaeger_default_gauge default_gauge;
     jaeger_default_gauge_init(&default_gauge);
-    default_gauge.update((jaeger_gauge*) &default_gauge, 3);
+    ((jaeger_gauge*) &default_gauge)->update((jaeger_gauge*) &default_gauge, 3);
     TEST_ASSERT_EQUAL(3, default_gauge.amount);
 
     jaeger_gauge* null_gauge = jaeger_null_gauge();

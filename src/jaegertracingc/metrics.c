@@ -39,8 +39,8 @@ void jaeger_default_counter_init(jaeger_default_counter* counter)
 {
     assert(counter != NULL);
     counter->total = 0;
-    counter->destroy = &null_destroy;
-    counter->inc = &jaeger_default_counter_inc;
+    ((jaeger_destructible*) counter)->destroy = &null_destroy;
+    ((jaeger_counter*) counter)->inc = &jaeger_default_counter_inc;
 }
 
 static void null_counter_inc(jaeger_counter* counter, int64_t delta)
@@ -53,8 +53,8 @@ static jaeger_counter null_counter;
 
 static void init_null_counter()
 {
-    null_counter =
-        (jaeger_counter){.destroy = &null_destroy, .inc = &null_counter_inc};
+    null_counter = (jaeger_counter){.base = {.destroy = &null_destroy},
+                                    .inc = &null_counter_inc};
 }
 
 jaeger_counter* jaeger_null_counter()
@@ -80,8 +80,8 @@ static void jaeger_default_gauge_update(jaeger_gauge* gauge, int64_t amount)
 void jaeger_default_gauge_init(jaeger_default_gauge* gauge)
 {
     assert(gauge != NULL);
-    gauge->destroy = &null_destroy;
-    gauge->update = &jaeger_default_gauge_update;
+    ((jaeger_destructible*) gauge)->destroy = &null_destroy;
+    ((jaeger_gauge*) gauge)->update = &jaeger_default_gauge_update;
     gauge->amount = 0;
 }
 
@@ -95,8 +95,8 @@ static jaeger_gauge null_gauge;
 
 static void init_null_gauge()
 {
-    null_gauge =
-        (jaeger_gauge){.destroy = null_destroy, .update = null_gauge_update};
+    null_gauge = (jaeger_gauge){.base = {.destroy = null_destroy},
+                                .update = null_gauge_update};
 }
 
 jaeger_gauge* jaeger_null_gauge()

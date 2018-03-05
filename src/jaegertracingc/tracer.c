@@ -219,7 +219,8 @@ void jaeger_tracer_destroy(jaeger_tracer* tracer)
     }
 
     if (tracer->sampler != NULL) {
-        tracer->sampler->destroy((jaeger_destructible*) tracer->sampler);
+        ((jaeger_destructible*) tracer->sampler)
+            ->destroy((jaeger_destructible*) tracer->sampler);
         if (tracer->allocated.sampler) {
             jaeger_free(tracer->sampler);
             tracer->allocated.sampler = false;
@@ -228,7 +229,8 @@ void jaeger_tracer_destroy(jaeger_tracer* tracer)
     }
 
     if (tracer->reporter != NULL) {
-        tracer->reporter->destroy((jaeger_destructible*) tracer->reporter);
+        ((jaeger_destructible*) tracer->reporter)
+            ->destroy((jaeger_destructible*) tracer->reporter);
         if (tracer->allocated.reporter) {
             jaeger_free(tracer->reporter);
             tracer->allocated.reporter = false;

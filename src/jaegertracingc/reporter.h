@@ -38,24 +38,21 @@ extern "C" {
 
 #define JAEGERTRACINGC_DEFAULT_UDP_BUFFER_SIZE USHRT_MAX
 
-#define JAEGERTRACINGC_REPORTER_SUBCLASS                      \
-    JAEGERTRACINGC_DESTRUCTIBLE_SUBCLASS;                     \
-    /**                                                       \
-     * Report span.                                           \
-     * @param reporter Reporter instance.                     \
-     * @param span Span to report.                            \
-     */                                                       \
-    void (*report)(struct jaeger_reporter * reporter,         \
-                   const jaeger_span* span);                  \
-    /**                                                       \
-     * Flush any pending spans. Only used in remote reporter. \
-     * @param reporter Reporter instance.                     \
-     * @return True on success, false otherwise.              \
-     */                                                       \
-    bool (*flush)(struct jaeger_reporter * reporter)
-
 typedef struct jaeger_reporter {
-    JAEGERTRACINGC_REPORTER_SUBCLASS;
+    jaeger_destructible base;
+
+    /**
+     * Report span.
+     * @param reporter Reporter instance.
+     * @param span Span to report.
+     */
+    void (*report)(struct jaeger_reporter* reporter, const jaeger_span* span);
+    /**
+     * Flush any pending spans. Only used in remote reporter.
+     * @param reporter Reporter instance.
+     * @return True on success, false otherwise.
+     */
+    bool (*flush)(struct jaeger_reporter* reporter);
 } jaeger_reporter;
 
 /* Shared instance of null reporter. DO NOT MODIFY MEMBERS! */
@@ -64,7 +61,7 @@ jaeger_reporter* jaeger_null_reporter();
 void jaeger_logging_reporter_init(jaeger_reporter* reporter);
 
 typedef struct jaeger_in_memory_reporter {
-    JAEGERTRACINGC_REPORTER_SUBCLASS;
+    jaeger_reporter base;
     jaeger_vector spans;
     jaeger_mutex mutex;
 } jaeger_in_memory_reporter;
@@ -72,7 +69,7 @@ typedef struct jaeger_in_memory_reporter {
 bool jaeger_in_memory_reporter_init(jaeger_in_memory_reporter* reporter);
 
 typedef struct jaeger_composite_reporter {
-    JAEGERTRACINGC_REPORTER_SUBCLASS;
+    jaeger_reporter base;
     jaeger_vector reporters;
 } jaeger_composite_reporter;
 
@@ -93,7 +90,7 @@ jaeger_composite_reporter_add(jaeger_composite_reporter* reporter,
 }
 
 typedef struct jaeger_remote_reporter {
-    JAEGERTRACINGC_REPORTER_SUBCLASS;
+    jaeger_reporter base;
     int max_packet_size;
     int fd;
     jaeger_metrics* metrics;
