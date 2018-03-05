@@ -1,5 +1,5 @@
 var structjaeger__gauge =
 [
-    [ "JAEGERTRACINGC_DESTRUCTIBLE_SUBCLASS", "structjaeger__gauge.html#a2c6e9edd0fe17c0fccb8ce5f029214f5", null ],
+    [ "base", "structjaeger__gauge.html#a542160d18e7ee06a0ed466e4e0dfa9bd", null ],
     [ "update", "structjaeger__gauge.html#aac2edea6f9863cc34ed363809e5e335b", null ]
 ];

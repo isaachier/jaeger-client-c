@@ -156,8 +156,6 @@ Macros</h2></td></tr>
 <tr class="memitem:a2e7886346f937d0886c28c2b742ae3ce"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2e7886346f937d0886c28c2b742ae3ce"></a>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>JAEGERTRACINGC_DOUBLE_STR_SIZE</b>&#160;&#160;&#160;16</td></tr>
 <tr class="separator:a2e7886346f937d0886c28c2b742ae3ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a277a3e0bcfcd5c1b80aaf84fa9542ead"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><b>JAEGERTRACINGC_SAMPLER_SUBCLASS</b></td></tr>
-<tr class="separator:a277a3e0bcfcd5c1b80aaf84fa9542ead"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a268a99c6febf68349aea2b668a6d332d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><b>JAEGERTRACINGC_SAMPLER_CHOICE_INIT</b></td></tr>
 <tr class="separator:a268a99c6febf68349aea2b668a6d332d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af8c356b1834e213dc4147c834f50910c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><b>JAEGERTRACINGC_SAMPLER_TYPE_CASE</b>(type)</td></tr>
@@ -281,32 +279,12 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_remotely_contr
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">{                                      \</div>
-<div class="line">        .type = -1, .const_sampler = {     \</div>
-<div class="line">            .is_sampled = NULL,            \</div>
-<div class="line">            .destroy = NULL,               \</div>
-<div class="line">            .decision = <span class="keyword">false</span>              \</div>
-<div class="line">        }                                  \</div>
+<b>Value:</b><div class="fragment"><div class="line">{                                                                \</div>
+<div class="line">        .type = -1, .const_sampler = {                               \</div>
+<div class="line">            .base = {.base = {.destroy = NULL}, .is_sampled = NULL}, \</div>
+<div class="line">            .decision = <span class="keyword">false</span>                                        \</div>
+<div class="line">        }                                                            \</div>
 <div class="line">    }</div>
-</div><!-- fragment -->
-</div>
-</div>
-<a class="anchor" id="a277a3e0bcfcd5c1b80aaf84fa9542ead"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define JAEGERTRACINGC_SAMPLER_SUBCLASS</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">JAEGERTRACINGC_DESTRUCTIBLE_SUBCLASS;               \</div>
-<div class="line">    bool (*is_sampled)(<span class="keyword">struct </span><a class="code" href="structjaeger__sampler.html">jaeger_sampler</a> * sampler, \</div>
-<div class="line">                       const <a class="code" href="structjaeger__trace__id.html">jaeger_trace_id</a>* trace_id, \</div>
-<div class="line">                       const <span class="keywordtype">char</span>* operation,           \</div>
-<div class="line">                       jaeger_vector* tags)</div>
-<div class="ttc" id="structjaeger__trace__id_html"><div class="ttname"><a href="structjaeger__trace__id.html">jaeger_trace_id</a></div><div class="ttdoc">128 bit unique ID for a given trace. </div><div class="ttdef"><b>Definition:</b> trace_id.h:33</div></div>
-<div class="ttc" id="structjaeger__sampler_html"><div class="ttname"><a href="structjaeger__sampler.html">jaeger_sampler</a></div><div class="ttdef"><b>Definition:</b> sampler.h:50</div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -325,7 +303,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_remotely_contr
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line"><span class="keywordflow">case</span> jaeger_##type##_sampler_type:         \</div>
 <div class="line">        return (<a class="code" href="structjaeger__sampler.html">jaeger_sampler</a>*) &amp;sampler-&gt;type##_sampler;</div>
-<div class="ttc" id="structjaeger__sampler_html"><div class="ttname"><a href="structjaeger__sampler.html">jaeger_sampler</a></div><div class="ttdef"><b>Definition:</b> sampler.h:50</div></div>
+<div class="ttc" id="structjaeger__sampler_html"><div class="ttname"><a href="structjaeger__sampler.html">jaeger_sampler</a></div><div class="ttdef"><b>Definition:</b> sampler.h:43</div></div>
 </div><!-- fragment -->
 </div>
 </div>

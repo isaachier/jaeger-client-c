@@ -136,10 +136,6 @@ Data Structures</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
 Macros</h2></td></tr>
-<tr class="memitem:a0590b7ed29b6d0103a6b3f2574af8a09"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><b>JAEGERTRACINGC_COUNTER_SUBCLASS</b></td></tr>
-<tr class="separator:a0590b7ed29b6d0103a6b3f2574af8a09"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa97f83c23749939db09ddb7a56f3856e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><b>JAEGERTRACINGC_GAUGE_SUBCLASS</b></td></tr>
-<tr class="separator:aa97f83c23749939db09ddb7a56f3856e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae3db83b0eb6e7791ce24204708bba117"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><b>JAEGERTRACINGC_METRICS_COUNTERS</b>(X)</td></tr>
 <tr class="separator:ae3db83b0eb6e7791ce24204708bba117"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1ed1e520dc7f714f9f5191e55c31a2dd"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1ed1e520dc7f714f9f5191e55c31a2dd"></a>
@@ -204,21 +200,6 @@ Functions</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Metrics interfaces to track various numbers while tracing. </p>
 </div><h2 class="groupheader">Macro Definition Documentation</h2>
-<a class="anchor" id="a0590b7ed29b6d0103a6b3f2574af8a09"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define JAEGERTRACINGC_COUNTER_SUBCLASS</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">JAEGERTRACINGC_DESTRUCTIBLE_SUBCLASS;   \                                     \</div>
-<div class="line">    void (*inc)(<span class="keyword">struct </span><a class="code" href="structjaeger__counter.html">jaeger_counter</a> * counter, int64_t delta);</div>
-<div class="ttc" id="structjaeger__counter_html"><div class="ttname"><a href="structjaeger__counter.html">jaeger_counter</a></div><div class="ttdoc">Counter metric interface. </div><div class="ttdef"><b>Definition:</b> metrics.h:48</div></div>
-</div><!-- fragment -->
-</div>
-</div>
 <a class="anchor" id="a4ea884496d18bcf4f34ae96a76b16a0e"></a>
 <div class="memitem">
 <div class="memproto">
@@ -238,7 +219,7 @@ Functions</h2></td></tr>
 <div class="line">                                      <a class="code" href="metrics_8h.html#a20133ddc6d04b70fa199bcd2399371bc">jaeger_default_counter_init</a>);</div>
 <div class="ttc" id="structjaeger__default__counter_html"><div class="ttname"><a href="structjaeger__default__counter.html">jaeger_default_counter</a></div><div class="ttdoc">Implements the counter interface with basic 64 bit integer value. </div><div class="ttdef"><b>Definition:</b> metrics.h:55</div></div>
 <div class="ttc" id="metrics_8h_html_a20133ddc6d04b70fa199bcd2399371bc"><div class="ttname"><a href="metrics_8h.html#a20133ddc6d04b70fa199bcd2399371bc">jaeger_default_counter_init</a></div><div class="ttdeci">void jaeger_default_counter_init(jaeger_default_counter *counter)</div><div class="ttdoc">Initialize a default counter. </div><div class="ttdef"><b>Definition:</b> metrics.c:38</div></div>
-<div class="ttc" id="structjaeger__counter_html"><div class="ttname"><a href="structjaeger__counter.html">jaeger_counter</a></div><div class="ttdoc">Counter metric interface. </div><div class="ttdef"><b>Definition:</b> metrics.h:48</div></div>
+<div class="ttc" id="structjaeger__counter_html"><div class="ttname"><a href="structjaeger__counter.html">jaeger_counter</a></div><div class="ttdoc">Counter metric interface. </div><div class="ttdef"><b>Definition:</b> metrics.h:40</div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -259,24 +240,9 @@ Functions</h2></td></tr>
 <div class="line">                                      <a class="code" href="structjaeger__gauge.html">jaeger_gauge</a>,         \</div>
 <div class="line">                                      <a class="code" href="structjaeger__default__gauge.html">jaeger_default_gauge</a>, \</div>
 <div class="line">                                      <a class="code" href="metrics_8h.html#a304557430b295514cf0f6dc35320c41c">jaeger_default_gauge_init</a>);</div>
-<div class="ttc" id="structjaeger__gauge_html"><div class="ttname"><a href="structjaeger__gauge.html">jaeger_gauge</a></div><div class="ttdoc">Gauge metric interface. </div><div class="ttdef"><b>Definition:</b> metrics.h:90</div></div>
+<div class="ttc" id="structjaeger__gauge_html"><div class="ttname"><a href="structjaeger__gauge.html">jaeger_gauge</a></div><div class="ttdoc">Gauge metric interface. </div><div class="ttdef"><b>Definition:</b> metrics.h:82</div></div>
 <div class="ttc" id="structjaeger__default__gauge_html"><div class="ttname"><a href="structjaeger__default__gauge.html">jaeger_default_gauge</a></div><div class="ttdoc">Implements gauge interface with basic 64 bit integer value. </div><div class="ttdef"><b>Definition:</b> metrics.h:97</div></div>
 <div class="ttc" id="metrics_8h_html_a304557430b295514cf0f6dc35320c41c"><div class="ttname"><a href="metrics_8h.html#a304557430b295514cf0f6dc35320c41c">jaeger_default_gauge_init</a></div><div class="ttdeci">void jaeger_default_gauge_init(jaeger_default_gauge *gauge)</div><div class="ttdoc">Initialize a default gauge. </div><div class="ttdef"><b>Definition:</b> metrics.c:80</div></div>
-</div><!-- fragment -->
-</div>
-</div>
-<a class="anchor" id="aa97f83c23749939db09ddb7a56f3856e"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define JAEGERTRACINGC_GAUGE_SUBCLASS</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">JAEGERTRACINGC_DESTRUCTIBLE_SUBCLASS; \                                   \</div>
-<div class="line">    void (*update)(<span class="keyword">struct </span><a class="code" href="structjaeger__gauge.html">jaeger_gauge</a> * gauge, int64_t amount);</div>
-<div class="ttc" id="structjaeger__gauge_html"><div class="ttname"><a href="structjaeger__gauge.html">jaeger_gauge</a></div><div class="ttdoc">Gauge metric interface. </div><div class="ttdef"><b>Definition:</b> metrics.h:90</div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -381,15 +347,16 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line"><span class="keywordflow">do</span> {                                                                      \</div>
-<div class="line">        if (metrics-&gt;member != NULL) {                                        \</div>
-<div class="line">            metrics-&gt;member-&gt;destroy((<a class="code" href="structjaeger__destructible.html">jaeger_destructible</a>*) metrics-&gt;member); <a class="code" href="alloc_8h.html#ad094b3d57aa0ee6af7b5d3d347a578e5">\</a></div>
-<div class="line"><a class="code" href="alloc_8h.html#ad094b3d57aa0ee6af7b5d3d347a578e5">            jaeger_free</a>(metrics-&gt;member);                                     \</div>
-<div class="line">            metrics-&gt;member = NULL;                                           \</div>
-<div class="line">        }                                                                     \</div>
+<b>Value:</b><div class="fragment"><div class="line"><span class="keywordflow">do</span> {                                                                     \</div>
+<div class="line">        if (metrics-&gt;member != NULL) {                                       \</div>
+<div class="line">            jaeger_destructible* d = (<a class="code" href="structjaeger__destructible.html">jaeger_destructible</a>*) metrics-&gt;member; \</div>
+<div class="line">            d-&gt;destroy(d);                                                   <a class="code" href="alloc_8h.html#ad094b3d57aa0ee6af7b5d3d347a578e5">\</a></div>
+<div class="line"><a class="code" href="alloc_8h.html#ad094b3d57aa0ee6af7b5d3d347a578e5">            jaeger_free</a>(metrics-&gt;member);                                    \</div>
+<div class="line">            metrics-&gt;member = NULL;                                          \</div>
+<div class="line">        }                                                                    \</div>
 <div class="line">    } <span class="keywordflow">while</span> (0);</div>
 <div class="ttc" id="alloc_8h_html_ad094b3d57aa0ee6af7b5d3d347a578e5"><div class="ttname"><a href="alloc_8h.html#ad094b3d57aa0ee6af7b5d3d347a578e5">jaeger_free</a></div><div class="ttdeci">void jaeger_free(void *ptr)</div><div class="ttdoc">Calls free using installed allocator. </div><div class="ttdef"><b>Definition:</b> alloc.c:132</div></div>
-<div class="ttc" id="structjaeger__destructible_html"><div class="ttname"><a href="structjaeger__destructible.html">jaeger_destructible</a></div><div class="ttdef"><b>Definition:</b> common.h:55</div></div>
+<div class="ttc" id="structjaeger__destructible_html"><div class="ttname"><a href="structjaeger__destructible.html">jaeger_destructible</a></div><div class="ttdef"><b>Definition:</b> common.h:52</div></div>
 </div><!-- fragment -->
 </div>
 </div>

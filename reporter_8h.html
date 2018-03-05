@@ -142,8 +142,6 @@ Macros</h2></td></tr>
 <tr class="memitem:adb4f51b833d7e45f8074da1798674503"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adb4f51b833d7e45f8074da1798674503"></a>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>JAEGERTRACINGC_DEFAULT_UDP_BUFFER_SIZE</b>&#160;&#160;&#160;USHRT_MAX</td></tr>
 <tr class="separator:adb4f51b833d7e45f8074da1798674503"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa724134ec45a47da872d2cd70e84b232"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><b>JAEGERTRACINGC_REPORTER_SUBCLASS</b></td></tr>
-<tr class="separator:aa724134ec45a47da872d2cd70e84b232"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
@@ -183,27 +181,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_remote_reporte
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Span reporter interface. </p>
-</div><h2 class="groupheader">Macro Definition Documentation</h2>
-<a class="anchor" id="aa724134ec45a47da872d2cd70e84b232"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define JAEGERTRACINGC_REPORTER_SUBCLASS</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">JAEGERTRACINGC_DESTRUCTIBLE_SUBCLASS;                     \                                                       \</div>
-<div class="line">    void (*report)(<span class="keyword">struct </span><a class="code" href="structjaeger__reporter.html">jaeger_reporter</a> * reporter,         \</div>
-<div class="line">                   const <a class="code" href="structjaeger__span.html">jaeger_span</a>* span);                  \                                                       \</div>
-<div class="line">    bool (*<a class="code" href="structjaeger__reporter.html#aabaeb8151ccb683159c308c220f73d55">flush</a>)(<span class="keyword">struct </span><a class="code" href="structjaeger__reporter.html">jaeger_reporter</a> * reporter)</div>
-<div class="ttc" id="structjaeger__reporter_html"><div class="ttname"><a href="structjaeger__reporter.html">jaeger_reporter</a></div><div class="ttdef"><b>Definition:</b> reporter.h:57</div></div>
-<div class="ttc" id="structjaeger__reporter_html_aabaeb8151ccb683159c308c220f73d55"><div class="ttname"><a href="structjaeger__reporter.html#aabaeb8151ccb683159c308c220f73d55">jaeger_reporter::flush</a></div><div class="ttdeci">bool(* flush)(struct jaeger_reporter *reporter)</div><div class="ttdoc">\ * Flush any pending spans. </div><div class="ttdef"><b>Definition:</b> reporter.h:58</div></div>
-<div class="ttc" id="structjaeger__span_html"><div class="ttname"><a href="structjaeger__span.html">jaeger_span</a></div><div class="ttdef"><b>Definition:</b> span.h:263</div></div>
-</div><!-- fragment -->
-</div>
-</div>
-</div><!-- contents -->
+</div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->

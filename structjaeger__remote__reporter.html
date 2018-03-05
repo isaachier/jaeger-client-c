@@ -69,6 +69,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="annotated.html"><span>Data&#160;Structures</span></a></li>
       <li><a href="classes.html"><span>Data&#160;Structure&#160;Index</span></a></li>
+      <li><a href="hierarchy.html"><span>Class&#160;Hierarchy</span></a></li>
       <li><a href="functions.html"><span>Data&#160;Fields</span></a></li>
     </ul>
   </div>
@@ -111,15 +112,9 @@ $(document).ready(function(){initNavTree('structjaeger__remote__reporter.html','
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Data Fields</h2></td></tr>
-<tr class="memitem:a3713673331790a0ec4a4b89d8d19390b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3713673331790a0ec4a4b89d8d19390b"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>JAEGERTRACINGC_DESTRUCTIBLE_SUBCLASS</b></td></tr>
-<tr class="separator:a3713673331790a0ec4a4b89d8d19390b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0650f66a55fbf0a05e2c22b270e0cfd5"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structjaeger__remote__reporter.html#a0650f66a55fbf0a05e2c22b270e0cfd5">report</a> )(struct <a class="el" href="structjaeger__reporter.html">jaeger_reporter</a> *reporter, const <a class="el" href="structjaeger__span.html">jaeger_span</a> *span)</td></tr>
-<tr class="memdesc:a0650f66a55fbf0a05e2c22b270e0cfd5"><td class="mdescLeft">&#160;</td><td class="mdescRight">\ * Report span.  <a href="#a0650f66a55fbf0a05e2c22b270e0cfd5">More...</a><br/></td></tr>
-<tr class="separator:a0650f66a55fbf0a05e2c22b270e0cfd5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a53e646238dfc50caf9d62275133e2e4d"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structjaeger__remote__reporter.html#a53e646238dfc50caf9d62275133e2e4d">flush</a> )(struct <a class="el" href="structjaeger__reporter.html">jaeger_reporter</a> *reporter)</td></tr>
-<tr class="memdesc:a53e646238dfc50caf9d62275133e2e4d"><td class="mdescLeft">&#160;</td><td class="mdescRight">\ * Flush any pending spans.  <a href="#a53e646238dfc50caf9d62275133e2e4d">More...</a><br/></td></tr>
-<tr class="separator:a53e646238dfc50caf9d62275133e2e4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a89bd53b42a0b16a2e5bfa9a95d3b5e16"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a89bd53b42a0b16a2e5bfa9a95d3b5e16"></a>
+<a class="el" href="structjaeger__reporter.html">jaeger_reporter</a>&#160;</td><td class="memItemRight" valign="bottom"><b>base</b></td></tr>
+<tr class="separator:a89bd53b42a0b16a2e5bfa9a95d3b5e16"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4b27982db06432b478b409878547bb5f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4b27982db06432b478b409878547bb5f"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>max_packet_size</b></td></tr>
 <tr class="separator:a4b27982db06432b478b409878547bb5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -145,51 +140,6 @@ struct sockaddr_in&#160;</td><td class="memItemRight" valign="bottom"><b>addr</b
 jaeger_mutex&#160;</td><td class="memItemRight" valign="bottom"><b>mutex</b></td></tr>
 <tr class="separator:a8087ff64ca9e393c1e4054e2b9eb275c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Field Documentation</h2>
-<a class="anchor" id="a53e646238dfc50caf9d62275133e2e4d"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool(* jaeger_remote_reporter::flush)(struct <a class="el" href="structjaeger__reporter.html">jaeger_reporter</a> *reporter)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>\ * Flush any pending spans. </p>
-<p>Only used in remote reporter. \ * </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">reporter</td><td>Reporter instance. \ * </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>True on success, false otherwise. \ </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a0650f66a55fbf0a05e2c22b270e0cfd5"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void(* jaeger_remote_reporter::report)(struct <a class="el" href="structjaeger__reporter.html">jaeger_reporter</a> *reporter, const <a class="el" href="structjaeger__span.html">jaeger_span</a> *span)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>\ * Report span. </p>
-<p>\ * </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">reporter</td><td>Reporter instance. \ * </td></tr>
-    <tr><td class="paramname">span</td><td>Span to report. \ </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
 <hr/>The documentation for this struct was generated from the following file:<ul>
 <li>jaegertracingc/<a class="el" href="reporter_8h_source.html">reporter.h</a></li>
 </ul>

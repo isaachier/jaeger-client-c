@@ -69,6 +69,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="annotated.html"><span>Data&#160;Structures</span></a></li>
       <li><a href="classes.html"><span>Data&#160;Structure&#160;Index</span></a></li>
+      <li><a href="hierarchy.html"><span>Class&#160;Hierarchy</span></a></li>
       <li><a href="functions.html"><span>Data&#160;Fields</span></a></li>
     </ul>
   </div>
@@ -113,20 +114,47 @@ $(document).ready(function(){initNavTree('structjaeger__gauge.html','');});
  <a href="structjaeger__gauge.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="metrics_8h_source.html">jaegertracingc/metrics.h</a>&gt;</code></p>
+<div class="dynheader">
+Inheritance diagram for jaeger_gauge:</div>
+<div class="dyncontent">
+ <div class="center">
+  <img src="structjaeger__gauge.png" usemap="#jaeger_gauge_map" alt=""/>
+  <map id="jaeger_gauge_map" name="jaeger_gauge_map">
+<area href="structjaeger__destructible.html" alt="jaeger_destructible" shape="rect" coords="0,0,120,24"/>
+</map>
+ </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Data Fields</h2></td></tr>
-<tr class="memitem:a2c6e9edd0fe17c0fccb8ce5f029214f5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2c6e9edd0fe17c0fccb8ce5f029214f5"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>JAEGERTRACINGC_DESTRUCTIBLE_SUBCLASS</b></td></tr>
-<tr class="separator:a2c6e9edd0fe17c0fccb8ce5f029214f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a542160d18e7ee06a0ed466e4e0dfa9bd"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structjaeger__destructible.html">jaeger_destructible</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structjaeger__gauge.html#a542160d18e7ee06a0ed466e4e0dfa9bd">base</a></td></tr>
+<tr class="memdesc:a542160d18e7ee06a0ed466e4e0dfa9bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Base class member.  <a href="#a542160d18e7ee06a0ed466e4e0dfa9bd">More...</a><br/></td></tr>
+<tr class="separator:a542160d18e7ee06a0ed466e4e0dfa9bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aac2edea6f9863cc34ed363809e5e335b"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structjaeger__gauge.html#aac2edea6f9863cc34ed363809e5e335b">update</a> )(struct <a class="el" href="structjaeger__gauge.html">jaeger_gauge</a> *gauge, int64_t amount)</td></tr>
-<tr class="memdesc:aac2edea6f9863cc34ed363809e5e335b"><td class="mdescLeft">&#160;</td><td class="mdescRight">\ * Update current value of gauge.  <a href="#aac2edea6f9863cc34ed363809e5e335b">More...</a><br/></td></tr>
+<tr class="memdesc:aac2edea6f9863cc34ed363809e5e335b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update current value of gauge.  <a href="#aac2edea6f9863cc34ed363809e5e335b">More...</a><br/></td></tr>
 <tr class="separator:aac2edea6f9863cc34ed363809e5e335b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_attribs_structjaeger__destructible"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_structjaeger__destructible')"><img src="closed.png" alt="-"/>&#160;Data Fields inherited from <a class="el" href="structjaeger__destructible.html">jaeger_destructible</a></td></tr>
+<tr class="memitem:ac4e4828bdea25af54e6d758563062de2 inherit pub_attribs_structjaeger__destructible"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac4e4828bdea25af54e6d758563062de2"></a>
+void(*&#160;</td><td class="memItemRight" valign="bottom"><b>destroy</b> )(struct <a class="el" href="structjaeger__destructible.html">jaeger_destructible</a> *destructible)</td></tr>
+<tr class="separator:ac4e4828bdea25af54e6d758563062de2 inherit pub_attribs_structjaeger__destructible"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Gauge metric interface. </p>
 <p>Gauges are used to keep track of a changing number (i.e. number of items currently in a queue). </p>
 </div><h2 class="groupheader">Field Documentation</h2>
+<a class="anchor" id="a542160d18e7ee06a0ed466e4e0dfa9bd"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structjaeger__destructible.html">jaeger_destructible</a> jaeger_gauge::base</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Base class member. </p>
+
+</div>
+</div>
 <a class="anchor" id="aac2edea6f9863cc34ed363809e5e335b"></a>
 <div class="memitem">
 <div class="memproto">
@@ -137,12 +165,11 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>\ * Update current value of gauge. </p>
-<p>\ * </p>
+<p>Update current value of gauge. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">gauge</td><td>Gauge to update. \ * </td></tr>
-    <tr><td class="paramname">amount</td><td>New amount. \ </td></tr>
+    <tr><td class="paramname">gauge</td><td>Gauge to update. </td></tr>
+    <tr><td class="paramname">amount</td><td>New amount. </td></tr>
   </table>
   </dd>
 </dl>

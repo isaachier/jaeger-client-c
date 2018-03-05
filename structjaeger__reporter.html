@@ -69,6 +69,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="annotated.html"><span>Data&#160;Structures</span></a></li>
       <li><a href="classes.html"><span>Data&#160;Structure&#160;Index</span></a></li>
+      <li><a href="hierarchy.html"><span>Class&#160;Hierarchy</span></a></li>
       <li><a href="functions.html"><span>Data&#160;Fields</span></a></li>
     </ul>
   </div>
@@ -111,14 +112,14 @@ $(document).ready(function(){initNavTree('structjaeger__reporter.html','');});
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Data Fields</h2></td></tr>
-<tr class="memitem:a80896b02fbc8a5dffc1963a9a36c7862"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a80896b02fbc8a5dffc1963a9a36c7862"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>JAEGERTRACINGC_DESTRUCTIBLE_SUBCLASS</b></td></tr>
-<tr class="separator:a80896b02fbc8a5dffc1963a9a36c7862"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af897c2ec6ff7a5340f14008ffad9a209"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af897c2ec6ff7a5340f14008ffad9a209"></a>
+<a class="el" href="structjaeger__destructible.html">jaeger_destructible</a>&#160;</td><td class="memItemRight" valign="bottom"><b>base</b></td></tr>
+<tr class="separator:af897c2ec6ff7a5340f14008ffad9a209"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2853fe3df52a09a0b2a71300e785478f"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structjaeger__reporter.html#a2853fe3df52a09a0b2a71300e785478f">report</a> )(struct <a class="el" href="structjaeger__reporter.html">jaeger_reporter</a> *reporter, const <a class="el" href="structjaeger__span.html">jaeger_span</a> *span)</td></tr>
-<tr class="memdesc:a2853fe3df52a09a0b2a71300e785478f"><td class="mdescLeft">&#160;</td><td class="mdescRight">\ * Report span.  <a href="#a2853fe3df52a09a0b2a71300e785478f">More...</a><br/></td></tr>
+<tr class="memdesc:a2853fe3df52a09a0b2a71300e785478f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Report span.  <a href="#a2853fe3df52a09a0b2a71300e785478f">More...</a><br/></td></tr>
 <tr class="separator:a2853fe3df52a09a0b2a71300e785478f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aabaeb8151ccb683159c308c220f73d55"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structjaeger__reporter.html#aabaeb8151ccb683159c308c220f73d55">flush</a> )(struct <a class="el" href="structjaeger__reporter.html">jaeger_reporter</a> *reporter)</td></tr>
-<tr class="memdesc:aabaeb8151ccb683159c308c220f73d55"><td class="mdescLeft">&#160;</td><td class="mdescRight">\ * Flush any pending spans.  <a href="#aabaeb8151ccb683159c308c220f73d55">More...</a><br/></td></tr>
+<tr class="memdesc:aabaeb8151ccb683159c308c220f73d55"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flush any pending spans.  <a href="#aabaeb8151ccb683159c308c220f73d55">More...</a><br/></td></tr>
 <tr class="separator:aabaeb8151ccb683159c308c220f73d55"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Field Documentation</h2>
@@ -132,15 +133,15 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>\ * Flush any pending spans. </p>
-<p>Only used in remote reporter. \ * </p>
+<p>Flush any pending spans. </p>
+<p>Only used in remote reporter. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">reporter</td><td>Reporter instance. \ * </td></tr>
+    <tr><td class="paramname">reporter</td><td>Reporter instance. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>True on success, false otherwise. \ </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>True on success, false otherwise. </dd></dl>
 
 </div>
 </div>
@@ -154,12 +155,11 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>\ * Report span. </p>
-<p>\ * </p>
+<p>Report span. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">reporter</td><td>Reporter instance. \ * </td></tr>
-    <tr><td class="paramname">span</td><td>Span to report. \ </td></tr>
+    <tr><td class="paramname">reporter</td><td>Reporter instance. </td></tr>
+    <tr><td class="paramname">span</td><td>Span to report. </td></tr>
   </table>
   </dd>
 </dl>

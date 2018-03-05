@@ -129,8 +129,6 @@ Macros</h2></td></tr>
 <tr class="memitem:a2e78622018154f10bcfb38ccdc5c7880"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2e78622018154f10bcfb38ccdc5c7880"></a>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>JAEGERTRACINGC_FORMAT_ATTRIBUTE</b>(archetype, string_index, first_to_check)&#160;&#160;&#160;__attribute__((format(archetype, string_index, first_to_check)))</td></tr>
 <tr class="separator:a2e78622018154f10bcfb38ccdc5c7880"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a09c17639bc4d85bcec7d7718965c043a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><b>JAEGERTRACINGC_LOGGER_SUBCLASS</b></td></tr>
-<tr class="separator:a09c17639bc4d85bcec7d7718965c043a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
@@ -155,30 +153,7 @@ Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Logging interface and initialization functions. </p>
-</div><h2 class="groupheader">Macro Definition Documentation</h2>
-<a class="anchor" id="a09c17639bc4d85bcec7d7718965c043a"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define JAEGERTRACINGC_LOGGER_SUBCLASS</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">                                                                   \</div>
-<div class="line">    void (*error)(                                                        \</div>
-<div class="line">        struct <a class="code" href="structjaeger__logger.html">jaeger_logger</a> * logger, <span class="keyword">const</span> <span class="keywordtype">char</span>* format, va_list args); \</div>
-<div class="line">                                                                          \                                                                   \</div>
-<div class="line">    void (*warn)(                                                         \</div>
-<div class="line">        struct <a class="code" href="structjaeger__logger.html">jaeger_logger</a> * logger, <span class="keyword">const</span> <span class="keywordtype">char</span>* format, va_list args); \</div>
-<div class="line">                                                                          \                                                                   \</div>
-<div class="line">    void (*info)(                                                         \</div>
-<div class="line">        struct <a class="code" href="structjaeger__logger.html">jaeger_logger</a> * logger, <span class="keyword">const</span> <span class="keywordtype">char</span>* format, va_list args);</div>
-<div class="ttc" id="structjaeger__logger_html"><div class="ttname"><a href="structjaeger__logger.html">jaeger_logger</a></div><div class="ttdoc">Logger interface to customize log output. </div><div class="ttdef"><b>Definition:</b> logging.h:66</div></div>
-</div><!-- fragment -->
-</div>
-</div>
-<h2 class="groupheader">Typedef Documentation</h2>
+</div><h2 class="groupheader">Typedef Documentation</h2>
 <a class="anchor" id="ad1d12d8cc063a770d4feea4dfec02785"></a>
 <div class="memitem">
 <div class="memproto">

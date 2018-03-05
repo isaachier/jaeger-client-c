@@ -4,6 +4,7 @@ var NAVTREE =
     [ "Data Structures", null, [
       [ "Data Structures", "annotated.html", "annotated" ],
       [ "Data Structure Index", "classes.html", null ],
+      [ "Class Hierarchy", "hierarchy.html", "hierarchy" ],
       [ "Data Fields", "functions.html", [
         [ "All", "functions.html", null ],
         [ "Variables", "functions_vars.html", null ]
@@ -24,8 +25,8 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "agent_8pb-c_8h_source.html",
-"struct__Jaegertracing____Protobuf____SamplingManager____PerOperationSamplingStrategy____OperationSamplingStrategy.html#a3b268b07f41b0fbc60ebff3c8ad36d37",
-"structjaeger__tracer.html#a77efb5d19028805e0531787e7059dd39"
+"struct__Jaegertracing____Protobuf____SamplingManager____ProbabilisticSamplingStrategy.html",
+"structjaeger__vector__ptr__copy__arg.html#af06cee4268c423d0688bd31ca5ca8559"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

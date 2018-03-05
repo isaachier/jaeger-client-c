@@ -14,7 +14,6 @@ var sampler_8h =
     [ "JAEGERTRACINGC_HTTP_SAMPLING_MANAGER_INIT", "sampler_8h.html#ad06d82e00c925c4fb4f1b86ae944a1da", null ],
     [ "JAEGERTRACINGC_HTTP_SAMPLING_MANAGER_REQUEST_MAX_LEN", "sampler_8h.html#a20db383401732b19b1089c12eb6a3093", null ],
     [ "JAEGERTRACINGC_SAMPLER_CHOICE_INIT", "sampler_8h.html#a268a99c6febf68349aea2b668a6d332d", null ],
-    [ "JAEGERTRACINGC_SAMPLER_SUBCLASS", "sampler_8h.html#a277a3e0bcfcd5c1b80aaf84fa9542ead", null ],
     [ "JAEGERTRACINGC_SAMPLER_TYPE_CASE", "sampler_8h.html#af8c356b1834e213dc4147c834f50910c", null ],
     [ "jaeger_adaptive_sampler", "sampler_8h.html#a3004e386ea4634cd00f5c250e0249086", null ],
     [ "jaeger_const_sampler", "sampler_8h.html#a3f6d4379c2e07902fa5adf679b661eb9", null ],

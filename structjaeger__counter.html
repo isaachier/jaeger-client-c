@@ -69,6 +69,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="annotated.html"><span>Data&#160;Structures</span></a></li>
       <li><a href="classes.html"><span>Data&#160;Structure&#160;Index</span></a></li>
+      <li><a href="hierarchy.html"><span>Class&#160;Hierarchy</span></a></li>
       <li><a href="functions.html"><span>Data&#160;Fields</span></a></li>
     </ul>
   </div>
@@ -113,20 +114,47 @@ $(document).ready(function(){initNavTree('structjaeger__counter.html','');});
  <a href="structjaeger__counter.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="metrics_8h_source.html">jaegertracingc/metrics.h</a>&gt;</code></p>
+<div class="dynheader">
+Inheritance diagram for jaeger_counter:</div>
+<div class="dyncontent">
+ <div class="center">
+  <img src="structjaeger__counter.png" usemap="#jaeger_counter_map" alt=""/>
+  <map id="jaeger_counter_map" name="jaeger_counter_map">
+<area href="structjaeger__destructible.html" alt="jaeger_destructible" shape="rect" coords="0,0,120,24"/>
+</map>
+ </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Data Fields</h2></td></tr>
-<tr class="memitem:a59c988783d136250987963dae2eaffcf"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a59c988783d136250987963dae2eaffcf"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>JAEGERTRACINGC_DESTRUCTIBLE_SUBCLASS</b></td></tr>
-<tr class="separator:a59c988783d136250987963dae2eaffcf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abc889348825fd450db8b207dbfb17777"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structjaeger__destructible.html">jaeger_destructible</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structjaeger__counter.html#abc889348825fd450db8b207dbfb17777">base</a></td></tr>
+<tr class="memdesc:abc889348825fd450db8b207dbfb17777"><td class="mdescLeft">&#160;</td><td class="mdescRight">Base class member.  <a href="#abc889348825fd450db8b207dbfb17777">More...</a><br/></td></tr>
+<tr class="separator:abc889348825fd450db8b207dbfb17777"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa3c72e6704c0bb0c9d3236fd1a82ce0b"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structjaeger__counter.html#aa3c72e6704c0bb0c9d3236fd1a82ce0b">inc</a> )(struct <a class="el" href="structjaeger__counter.html">jaeger_counter</a> *counter, int64_t delta)</td></tr>
-<tr class="memdesc:aa3c72e6704c0bb0c9d3236fd1a82ce0b"><td class="mdescLeft">&#160;</td><td class="mdescRight">\ * Increment count.  <a href="#aa3c72e6704c0bb0c9d3236fd1a82ce0b">More...</a><br/></td></tr>
+<tr class="memdesc:aa3c72e6704c0bb0c9d3236fd1a82ce0b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Increment count.  <a href="#aa3c72e6704c0bb0c9d3236fd1a82ce0b">More...</a><br/></td></tr>
 <tr class="separator:aa3c72e6704c0bb0c9d3236fd1a82ce0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_attribs_structjaeger__destructible"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_structjaeger__destructible')"><img src="closed.png" alt="-"/>&#160;Data Fields inherited from <a class="el" href="structjaeger__destructible.html">jaeger_destructible</a></td></tr>
+<tr class="memitem:ac4e4828bdea25af54e6d758563062de2 inherit pub_attribs_structjaeger__destructible"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac4e4828bdea25af54e6d758563062de2"></a>
+void(*&#160;</td><td class="memItemRight" valign="bottom"><b>destroy</b> )(struct <a class="el" href="structjaeger__destructible.html">jaeger_destructible</a> *destructible)</td></tr>
+<tr class="separator:ac4e4828bdea25af54e6d758563062de2 inherit pub_attribs_structjaeger__destructible"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Counter metric interface. </p>
 <p>Counters are used to keep track of a total number of events (i.e. number of spans reported). </p>
 </div><h2 class="groupheader">Field Documentation</h2>
+<a class="anchor" id="abc889348825fd450db8b207dbfb17777"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structjaeger__destructible.html">jaeger_destructible</a> jaeger_counter::base</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Base class member. </p>
+
+</div>
+</div>
 <a class="anchor" id="aa3c72e6704c0bb0c9d3236fd1a82ce0b"></a>
 <div class="memitem">
 <div class="memproto">
@@ -137,12 +165,11 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>\ * Increment count. </p>
-<p>\ * </p>
+<p>Increment count. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">counter</td><td>Counter to increment. \ * </td></tr>
-    <tr><td class="paramname">delta</td><td>Amount to increment. \ </td></tr>
+    <tr><td class="paramname">counter</td><td>Counter to increment. </td></tr>
+    <tr><td class="paramname">delta</td><td>Amount to increment. </td></tr>
   </table>
   </dd>
 </dl>
