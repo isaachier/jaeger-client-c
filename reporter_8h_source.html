@@ -149,7 +149,7 @@ $(document).ready(function(){initNavTree('reporter_8h_source.html','');});
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="preprocessor">    bool (*flush)(struct jaeger_reporter * reporter)</span></div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="preprocessor"></span></div>
 <div class="line"><a name="l00057"></a><span class="lineno"><a class="line" href="structjaeger__reporter.html">   57</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structjaeger__reporter.html">jaeger_reporter</a> {</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    JAEGERTRACINGC_REPORTER_SUBCLASS;</div>
+<div class="line"><a name="l00058"></a><span class="lineno"><a class="line" href="structjaeger__reporter.html#a2853fe3df52a09a0b2a71300e785478f">   58</a></span>&#160;    JAEGERTRACINGC_REPORTER_SUBCLASS;</div>
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;} <a class="code" href="structjaeger__reporter.html">jaeger_reporter</a>;</div>
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;</div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="comment">/* Shared instance of null reporter. DO NOT MODIFY MEMBERS! */</span></div>
@@ -158,7 +158,7 @@ $(document).ready(function(){initNavTree('reporter_8h_source.html','');});
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="keywordtype">void</span> jaeger_logging_reporter_init(<a class="code" href="structjaeger__reporter.html">jaeger_reporter</a>* reporter);</div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;</div>
 <div class="line"><a name="l00066"></a><span class="lineno"><a class="line" href="structjaeger__in__memory__reporter.html">   66</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structjaeger__in__memory__reporter.html">jaeger_in_memory_reporter</a> {</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    JAEGERTRACINGC_REPORTER_SUBCLASS;</div>
+<div class="line"><a name="l00067"></a><span class="lineno"><a class="line" href="structjaeger__in__memory__reporter.html#a5fc58344f7c9e3a58b82711fe7cdd031">   67</a></span>&#160;    JAEGERTRACINGC_REPORTER_SUBCLASS;</div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <a class="code" href="structjaeger__vector.html">jaeger_vector</a> spans;</div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    jaeger_mutex mutex;</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;} <a class="code" href="structjaeger__in__memory__reporter.html">jaeger_in_memory_reporter</a>;</div>
@@ -166,7 +166,7 @@ $(document).ready(function(){initNavTree('reporter_8h_source.html','');});
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="keywordtype">bool</span> jaeger_in_memory_reporter_init(<a class="code" href="structjaeger__in__memory__reporter.html">jaeger_in_memory_reporter</a>* reporter);</div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div>
 <div class="line"><a name="l00074"></a><span class="lineno"><a class="line" href="structjaeger__composite__reporter.html">   74</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structjaeger__composite__reporter.html">jaeger_composite_reporter</a> {</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    JAEGERTRACINGC_REPORTER_SUBCLASS;</div>
+<div class="line"><a name="l00075"></a><span class="lineno"><a class="line" href="structjaeger__composite__reporter.html#a5134ab27b0b97e8034d77e6def7c7df0">   75</a></span>&#160;    JAEGERTRACINGC_REPORTER_SUBCLASS;</div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    <a class="code" href="structjaeger__vector.html">jaeger_vector</a> reporters;</div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;} <a class="code" href="structjaeger__composite__reporter.html">jaeger_composite_reporter</a>;</div>
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;</div>
@@ -187,7 +187,7 @@ $(document).ready(function(){initNavTree('reporter_8h_source.html','');});
 <div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;}</div>
 <div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;</div>
 <div class="line"><a name="l00095"></a><span class="lineno"><a class="line" href="structjaeger__remote__reporter.html">   95</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structjaeger__remote__reporter.html">jaeger_remote_reporter</a> {</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    JAEGERTRACINGC_REPORTER_SUBCLASS;</div>
+<div class="line"><a name="l00096"></a><span class="lineno"><a class="line" href="structjaeger__remote__reporter.html#a0650f66a55fbf0a05e2c22b270e0cfd5">   96</a></span>&#160;    JAEGERTRACINGC_REPORTER_SUBCLASS;</div>
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    <span class="keywordtype">int</span> max_packet_size;</div>
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    <span class="keywordtype">int</span> fd;</div>
 <div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    <a class="code" href="structjaeger__metrics.html">jaeger_metrics</a>* metrics;</div>

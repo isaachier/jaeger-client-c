@@ -39,7 +39,7 @@ var annotated =
     [ "jaeger_key_value", "structjaeger__key__value.html", "structjaeger__key__value" ],
     [ "jaeger_log_record", "structjaeger__log__record.html", "structjaeger__log__record" ],
     [ "jaeger_logger", "structjaeger__logger.html", "structjaeger__logger" ],
-    [ "jaeger_metrics", "structjaeger__metrics.html", null ],
+    [ "jaeger_metrics", "structjaeger__metrics.html", "structjaeger__metrics" ],
     [ "jaeger_operation_sampler", "structjaeger__operation__sampler.html", "structjaeger__operation__sampler" ],
     [ "jaeger_probabilistic_sampler", "structjaeger__probabilistic__sampler.html", "structjaeger__probabilistic__sampler" ],
     [ "jaeger_rate_limiting_sampler", "structjaeger__rate__limiting__sampler.html", "structjaeger__rate__limiting__sampler" ],

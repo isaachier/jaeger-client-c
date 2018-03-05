@@ -116,13 +116,89 @@ $(document).ready(function(){initNavTree('structjaeger__logger.html','');});
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Data Fields</h2></td></tr>
-<tr class="memitem:a004e79e1eea909bf77ffec0b89da91c9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a004e79e1eea909bf77ffec0b89da91c9"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>JAEGERTRACINGC_LOGGER_SUBCLASS</b></td></tr>
-<tr class="separator:a004e79e1eea909bf77ffec0b89da91c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a89ed4f4a532e4e3fe5da9072d108ba69"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structjaeger__logger.html#a89ed4f4a532e4e3fe5da9072d108ba69">error</a> )(struct <a class="el" href="structjaeger__logger.html">jaeger_logger</a> *logger, const char *format, va_list args)</td></tr>
+<tr class="memdesc:a89ed4f4a532e4e3fe5da9072d108ba69"><td class="mdescLeft">&#160;</td><td class="mdescRight">Error log function.  <a href="#a89ed4f4a532e4e3fe5da9072d108ba69">More...</a><br/></td></tr>
+<tr class="separator:a89ed4f4a532e4e3fe5da9072d108ba69"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af79cf51abda3dc508512c0b147500321"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structjaeger__logger.html#af79cf51abda3dc508512c0b147500321">warn</a> )(struct <a class="el" href="structjaeger__logger.html">jaeger_logger</a> *logger, const char *format, va_list args)</td></tr>
+<tr class="memdesc:af79cf51abda3dc508512c0b147500321"><td class="mdescLeft">&#160;</td><td class="mdescRight">Warn log function.  <a href="#af79cf51abda3dc508512c0b147500321">More...</a><br/></td></tr>
+<tr class="separator:af79cf51abda3dc508512c0b147500321"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0d2c7e457797539c056d9b242088c4cd"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structjaeger__logger.html#a0d2c7e457797539c056d9b242088c4cd">info</a> )(struct <a class="el" href="structjaeger__logger.html">jaeger_logger</a> *logger, const char *format, va_list args)</td></tr>
+<tr class="memdesc:a0d2c7e457797539c056d9b242088c4cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Info log function.  <a href="#a0d2c7e457797539c056d9b242088c4cd">More...</a><br/></td></tr>
+<tr class="separator:a0d2c7e457797539c056d9b242088c4cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Logger interface to customize log output. </p>
-</div><hr/>The documentation for this struct was generated from the following file:<ul>
+</div><h2 class="groupheader">Field Documentation</h2>
+<a class="anchor" id="a89ed4f4a532e4e3fe5da9072d108ba69"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* jaeger_logger::error)(struct <a class="el" href="structjaeger__logger.html">jaeger_logger</a> *logger, const char *format, va_list args)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Error log function. </p>
+<p>\ * </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir"></td><td class="paramname">logger</td><td>Logger instance. \ * </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">format</td><td>Format string of the message. \ * </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">...</td><td>Arguments to format. \ </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a0d2c7e457797539c056d9b242088c4cd"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* jaeger_logger::info)(struct <a class="el" href="structjaeger__logger.html">jaeger_logger</a> *logger, const char *format, va_list args)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Info log function. </p>
+<p>\ * </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir"></td><td class="paramname">logger</td><td>Logger instance. \ * </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">format</td><td>Format string of the message. \ * </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">...</td><td>Arguments to format. \ </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="af79cf51abda3dc508512c0b147500321"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* jaeger_logger::warn)(struct <a class="el" href="structjaeger__logger.html">jaeger_logger</a> *logger, const char *format, va_list args)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Warn log function. </p>
+<p>\ * </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir"></td><td class="paramname">logger</td><td>Logger instance. \ * </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">format</td><td>Format string of the message. \ * </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">...</td><td>Arguments to format. \ </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<hr/>The documentation for this struct was generated from the following file:<ul>
 <li>jaegertracingc/<a class="el" href="logging_8h_source.html">logging.h</a></li>
 </ul>
 </div><!-- contents -->

@@ -1,5 +1,6 @@
 var structjaeger__default__counter =
 [
-    [ "JAEGERTRACINGC_COUNTER_SUBCLASS", "structjaeger__default__counter.html#a55ab2cda6930b529845dce879b2e50f6", null ],
+    [ "inc", "structjaeger__default__counter.html#a481cd0e1758f7fea604810cc14ccdcb1", null ],
+    [ "JAEGERTRACINGC_DESTRUCTIBLE_SUBCLASS", "structjaeger__default__counter.html#a32993de318c17c4a477703a12337afe8", null ],
     [ "total", "structjaeger__default__counter.html#aaa90f254bc0b9720567642d2bb0422e8", null ]
 ];

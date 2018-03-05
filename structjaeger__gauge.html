@@ -116,14 +116,40 @@ $(document).ready(function(){initNavTree('structjaeger__gauge.html','');});
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Data Fields</h2></td></tr>
-<tr class="memitem:a17d2eb3f915e42dd1871034036e158f3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a17d2eb3f915e42dd1871034036e158f3"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>JAEGERTRACINGC_GAUGE_SUBCLASS</b></td></tr>
-<tr class="separator:a17d2eb3f915e42dd1871034036e158f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2c6e9edd0fe17c0fccb8ce5f029214f5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2c6e9edd0fe17c0fccb8ce5f029214f5"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>JAEGERTRACINGC_DESTRUCTIBLE_SUBCLASS</b></td></tr>
+<tr class="separator:a2c6e9edd0fe17c0fccb8ce5f029214f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aac2edea6f9863cc34ed363809e5e335b"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structjaeger__gauge.html#aac2edea6f9863cc34ed363809e5e335b">update</a> )(struct <a class="el" href="structjaeger__gauge.html">jaeger_gauge</a> *gauge, int64_t amount)</td></tr>
+<tr class="memdesc:aac2edea6f9863cc34ed363809e5e335b"><td class="mdescLeft">&#160;</td><td class="mdescRight">\ * Update current value of gauge.  <a href="#aac2edea6f9863cc34ed363809e5e335b">More...</a><br/></td></tr>
+<tr class="separator:aac2edea6f9863cc34ed363809e5e335b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Gauge metric interface. </p>
 <p>Gauges are used to keep track of a changing number (i.e. number of items currently in a queue). </p>
-</div><hr/>The documentation for this struct was generated from the following file:<ul>
+</div><h2 class="groupheader">Field Documentation</h2>
+<a class="anchor" id="aac2edea6f9863cc34ed363809e5e335b"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* jaeger_gauge::update)(struct <a class="el" href="structjaeger__gauge.html">jaeger_gauge</a> *gauge, int64_t amount)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>\ * Update current value of gauge. </p>
+<p>\ * </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">gauge</td><td>Gauge to update. \ * </td></tr>
+    <tr><td class="paramname">amount</td><td>New amount. \ </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<hr/>The documentation for this struct was generated from the following file:<ul>
 <li>jaegertracingc/<a class="el" href="metrics_8h_source.html">metrics.h</a></li>
 </ul>
 </div><!-- contents -->

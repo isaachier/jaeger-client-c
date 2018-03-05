@@ -4,7 +4,7 @@ var metrics_8h =
     [ "jaeger_default_counter", "structjaeger__default__counter.html", "structjaeger__default__counter" ],
     [ "jaeger_gauge", "structjaeger__gauge.html", "structjaeger__gauge" ],
     [ "jaeger_default_gauge", "structjaeger__default__gauge.html", "structjaeger__default__gauge" ],
-    [ "jaeger_metrics", "structjaeger__metrics.html", null ],
+    [ "jaeger_metrics", "structjaeger__metrics.html", "structjaeger__metrics" ],
     [ "JAEGERTRACINGC_COUNTER_DECL", "metrics_8h.html#abec076aa9510952afeeb94960e3aa6c6", null ],
     [ "JAEGERTRACINGC_COUNTER_SUBCLASS", "metrics_8h.html#a0590b7ed29b6d0103a6b3f2574af8a09", null ],
     [ "JAEGERTRACINGC_DEFAULT_COUNTER_ALLOC_INIT", "metrics_8h.html#a4ea884496d18bcf4f34ae96a76b16a0e", null ],

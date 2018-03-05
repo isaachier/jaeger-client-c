@@ -2,7 +2,7 @@ var structjaeger__http__sampling__manager =
 [
     [ "fd", "structjaeger__http__sampling__manager.html#a5831094db16cbb7f08ee0733ce5861cf", null ],
     [ "parser", "structjaeger__http__sampling__manager.html#a0393fb1be95b7a6f9c42bd426855c96b", null ],
-    [ "request_buffer", "structjaeger__http__sampling__manager.html#a534eb5dacb09a9d3282997fce7354203", null ],
+    [ "request_buffer", "structjaeger__http__sampling__manager.html#a342eb6eab82e1383e540f246642c2872", null ],
     [ "request_length", "structjaeger__http__sampling__manager.html#a199ab3b2a3f1e32295093771dfafa634", null ],
     [ "response", "structjaeger__http__sampling__manager.html#a561df2066ae877b36bfd21e5caab2e38", null ],
     [ "sampling_server_url", "structjaeger__http__sampling__manager.html#a5c107ffae64e23dfc4e6d5d89ae8920e", null ],

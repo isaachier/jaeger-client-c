@@ -1,0 +1,25 @@
+var structjaeger__metrics =
+[
+    [ "baggage_restrictions_update_failure", "structjaeger__metrics.html#a895f9cd11eee0df58aa10b2fb0421437", null ],
+    [ "baggage_restrictions_update_success", "structjaeger__metrics.html#a652fdb1f98db15c1d98c7d2e3de1a0c6", null ],
+    [ "baggage_truncate", "structjaeger__metrics.html#a70ef423c8ce797bb347e23d6126d7460", null ],
+    [ "baggage_update_failure", "structjaeger__metrics.html#abfead10276cee847a51ebe876f046f4c", null ],
+    [ "baggage_update_success", "structjaeger__metrics.html#ae9f7664f76bb72d71096561b4e8d364f", null ],
+    [ "decoding_errors", "structjaeger__metrics.html#a195d345d105050793bde0f54bb324065", null ],
+    [ "reporter_dropped", "structjaeger__metrics.html#a96f65c9e581b1ec471ab6ba7be4166f5", null ],
+    [ "reporter_failure", "structjaeger__metrics.html#a6e083d07098a4d4ea88f6104d489da93", null ],
+    [ "reporter_queue_length", "structjaeger__metrics.html#a44956023a02fb10ed14d96aa00790cc7", null ],
+    [ "reporter_success", "structjaeger__metrics.html#a126218eb9288429de226499c665335ed", null ],
+    [ "sampler_query_failure", "structjaeger__metrics.html#a78f0ae16f0d8ff37708ff71bce605c04", null ],
+    [ "sampler_retrieved", "structjaeger__metrics.html#a55c15e5e17671e5189f283be515398fc", null ],
+    [ "sampler_update_failure", "structjaeger__metrics.html#acc3cd037b603db5ce35b6671aa7394f8", null ],
+    [ "sampler_updated", "structjaeger__metrics.html#a41d77edff148e36ed6346d18c72222dc", null ],
+    [ "spans_finished", "structjaeger__metrics.html#ae1d08e8f7978b3007bd918e089aafb1e", null ],
+    [ "spans_not_sampled", "structjaeger__metrics.html#a3ddaffc27eef9908996e3fc3012f252c", null ],
+    [ "spans_sampled", "structjaeger__metrics.html#a717a3241ce74f1de6a978e4ecad2454c", null ],
+    [ "spans_started", "structjaeger__metrics.html#a7bdd0ea8c240c8b0891c36bb0372525b", null ],
+    [ "traces_joined_not_sampled", "structjaeger__metrics.html#a27d29942ffffda19a4837446eb66ab71", null ],
+    [ "traces_joined_sampled", "structjaeger__metrics.html#a5662180018d2ad04cb5b8b5dc837d3f2", null ],
+    [ "traces_started_not_sampled", "structjaeger__metrics.html#afec1c6ec9640195dc84142740ab7e50c", null ],
+    [ "traces_started_sampled", "structjaeger__metrics.html#a6aec22e6be01c7926b9c97a9abe6b48f", null ]
+];
