@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 static void my_printf(const void* arg, const char* format, ...)
-    __attribute__((format(printf, 2, 3)));
+    ATTRIBUTE((format(printf, 2, 3)));
 
 static void my_printf(const void* arg, const char* format, ...)
 {

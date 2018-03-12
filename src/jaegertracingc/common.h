@@ -22,6 +22,8 @@
 #ifndef JAEGERTRACINGC_COMMON_H
 #define JAEGERTRACINGC_COMMON_H
 
+#include "jaegertracingc/config.h"
+
 #include <assert.h>
 #include <ctype.h>
 #include <inttypes.h>

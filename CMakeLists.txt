@@ -20,6 +20,12 @@ set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/toolchain.cmake"
     CACHE FILEPATH
     "Toolchain to use for building this package and dependencies")
 
+include(HunterGate)
+HunterGate(
+    URL "https://github.com/ruslo/hunter/archive/v0.20.15.tar.gz"
+    SHA1 "bcdc0b23f0428187a5dadd99b2ac3a47b2274c2d"
+)
+
 project(jaegertracingc VERSION 0.0.1 LANGUAGES C)
 
 include(CheckCCompilerFlag)
@@ -28,9 +34,9 @@ include(CheckStructHasMember)
 include(CMakeDependentOption)
 include(CTest)
 
-include(GenerateDocumentation)
-include(CheckFormatAttribute)
 include(CheckAtomics)
+include(CheckAttributes)
+include(GenerateDocumentation)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -70,6 +76,7 @@ cmake_dependent_option(JAEGERTRACINGC_VERBOSE_ALLOC "Print all allocations" OFF
                        "BUILD_TESTING;debug_build" OFF)
 mark_as_advanced(JAEGERTRACINGC_VERBOSE_ALLOC)
 
+#find_package(opentracing-c CONFIG REQUIRED)
 find_package(http-parser REQUIRED)
 find_package(Jansson REQUIRED)
 find_package(ProtobufC REQUIRED)
@@ -198,6 +205,10 @@ configure_file(
   "src/jaegertracingc/constants.h.in"
   "${generated_src_dir}/constants.h"
   @ONLY)
+configure_file(
+  "src/jaegertracingc/config.h.in"
+  "${generated_src_dir}/config.h"
+  @ONLY)
 target_include_directories(jaegertracingc PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/src>
@@ -233,11 +244,7 @@ else()
   endif()
 endif()
 
-check_format_attribute(have_format_attribute)
-if(have_format_attribute)
-  target_compile_definitions(
-    jaegertracingc PUBLIC "-DJAEGERTRACINGC_HAVE_FORMAT_ATTRIBUTE")
-endif()
+check_attributes()
 
 if(JAEGERTRACINGC_VERBOSE_ALLOC)
   target_compile_definitions(
