@@ -22,11 +22,11 @@ set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/toolchain.cmake"
 
 include(HunterGate)
 HunterGate(
-    URL "https://github.com/ruslo/hunter/archive/v0.20.15.tar.gz"
-    SHA1 "bcdc0b23f0428187a5dadd99b2ac3a47b2274c2d"
+    URL "https://github.com/ruslo/hunter/archive/v0.20.24.tar.gz"
+    SHA1 "3e2037a462bcf2ec3440f60298d933e74ffd4df3"
 )
 
-project(jaegertracingc VERSION 0.0.1 LANGUAGES C)
+project(jaegertracingc VERSION 0.0.1)
 
 include(CheckCCompilerFlag)
 include(CheckSymbolExists)
@@ -67,8 +67,6 @@ if(JAEGERTRACINGC_COVERAGE)
     "${CMAKE_CURRENT_SOURCE_DIR}/src/jaegertracingc/*_test_driver.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/jaegertracingc/*_test_driver.h"
     "${CMAKE_CURRENT_BINARY_DIR}/src/jaegertracingc/protoc-gen/*"
-		"${CMAKE_CURRENT_SOURCE_DIR}/third_party/pcg-c/include/*"
-		"${CMAKE_CURRENT_SOURCE_DIR}/third_party/pcg-c/src/*"
     "${CMAKE_CURRENT_SOURCE_DIR}/third_party/unity/src/*")
 endif()
 
@@ -76,32 +74,22 @@ cmake_dependent_option(JAEGERTRACINGC_VERBOSE_ALLOC "Print all allocations" OFF
                        "BUILD_TESTING;debug_build" OFF)
 mark_as_advanced(JAEGERTRACINGC_VERBOSE_ALLOC)
 
-#find_package(opentracing-c CONFIG REQUIRED)
-find_package(http-parser REQUIRED)
-find_package(Jansson REQUIRED)
-find_package(ProtobufC REQUIRED)
+# TODO: find_package(opentracing-c CONFIG REQUIRED)
 
-add_library(pcg
-	"third_party/pcg-c/src/pcg-advance-128.c"
-	"third_party/pcg-c/src/pcg-advance-16.c"
-	"third_party/pcg-c/src/pcg-advance-32.c"
-	"third_party/pcg-c/src/pcg-advance-64.c"
-	"third_party/pcg-c/src/pcg-advance-8.c"
-	"third_party/pcg-c/src/pcg-global-32.c"
-	"third_party/pcg-c/src/pcg-global-64.c"
-	"third_party/pcg-c/src/pcg-output-128.c"
-	"third_party/pcg-c/src/pcg-output-16.c"
-	"third_party/pcg-c/src/pcg-output-32.c"
-	"third_party/pcg-c/src/pcg-output-64.c"
-	"third_party/pcg-c/src/pcg-output-8.c"
-	"third_party/pcg-c/src/pcg-rngs-128.c"
-	"third_party/pcg-c/src/pcg-rngs-16.c"
-	"third_party/pcg-c/src/pcg-rngs-32.c"
-	"third_party/pcg-c/src/pcg-rngs-64.c"
-	"third_party/pcg-c/src/pcg-rngs-8.c")
+hunter_add_package(http-parser)
+find_package(http-parser CONFIG REQUIRED)
 
-target_include_directories(pcg PUBLIC "third_party/pcg-c/include")
-target_compile_definitions(pcg PUBLIC PCG_USE_INLINE_ASM)
+hunter_add_package(jansson)
+find_package(jansson CONFIG REQUIRED)
+
+hunter_add_package(Protobuf)
+find_package(Protobuf CONFIG REQUIRED)
+
+hunter_add_package(protobuf-c)
+find_package(protobuf-c CONFIG REQUIRED)
+
+hunter_add_package(pcg)
+find_package(pcg CONFIG REQUIRED)
 
 option(JAEGERTRACINGC_MT "Enable multithreading support" ON)
 if(JAEGERTRACINGC_MT)
@@ -154,10 +142,6 @@ set(core_src
 
 set(generated_src_dir "${CMAKE_CURRENT_BINARY_DIR}/src/jaegertracingc")
 
-if(NOT PROTOC_C_EXECUTABLE)
-  message(FATAL_ERROR "Cannot find protoc-c executable")
-endif()
-
 file(MAKE_DIRECTORY "${generated_src_dir}/protoc-gen")
 function(generate_protobuf_c gen_src)
   foreach(proto_src ${ARGN})
@@ -168,10 +152,11 @@ function(generate_protobuf_c gen_src)
         "${generated_src_dir}/protoc-gen/${component}.pb-c.c")
     add_custom_command(
       OUTPUT ${protoc_out_files}
-      COMMAND ${PROTOC_C_EXECUTABLE} --c_out "${generated_src_dir}/protoc-gen"
-              -I. "${component}.proto"
+      COMMAND protobuf::protoc
+      ARGS --plugin=$<TARGET_FILE:protobuf-c::protoc-gen-c>
+           --c_out "${generated_src_dir}/protoc-gen"
+           -I. "${component}.proto"
       MAIN_DEPENDENCY ${proto_src}
-      DEPENDENCIES ${PROTOC_C_EXECUTABLE}
       WORKING_DIRECTORY ${dir}
       VERBATIM
       USES_TERMINAL)
@@ -190,17 +175,6 @@ generate_protobuf_c(
 add_library(jaegertracingc ${core_src} ${protoc_gen_src})
 target_compile_options(jaegertracingc PRIVATE ${jaegertracingc_flags})
 
-if(NOT DEFINED protobuf_has_optional_field)
-  try_compile(protobuf_has_optional_field
-    "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/protobuf_test_project"
-    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/protobuf_test_project"
-    protobuf_test_project)
-endif()
-if(protobuf_has_optional_field)
-  target_compile_definitions(jaegertracingc PUBLIC
-    JAEGERTRACINGC_HAVE_PROTOBUF_OPTIONAL_FIELDS)
-endif()
-
 configure_file(
   "src/jaegertracingc/constants.h.in"
   "${generated_src_dir}/constants.h"
@@ -214,13 +188,11 @@ target_include_directories(jaegertracingc PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/src>
   $<INSTALL_INTERFACE:include>)
 
-target_include_directories(jaegertracingc PUBLIC
-  $<TARGET_PROPERTY:pcg,INTERFACE_INCLUDE_DIRECTORIES>)
 target_link_libraries(jaegertracingc PUBLIC
-	pcg
-  http-parser::http-parser
-  Jansson::Jansson
-  ProtobufC::ProtobufC)
+	pcg::pcg_random
+  http-parser::http_parser
+  jansson::jansson
+  protobuf-c::protobuf-c)
 if(JAEGERTRACINGC_MT)
   target_link_libraries(jaegertracingc PUBLIC Threads::Threads)
   target_compile_definitions(jaegertracingc PUBLIC JAEGERTRACINGC_MT)
