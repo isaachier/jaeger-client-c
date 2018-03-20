@@ -133,6 +133,9 @@ script:
 after_success:
 - ./scripts/upload-coverage.sh
 - ./scripts/generate-doc.sh && touch build/doc/Debug/html/.nojekyll
+cache:
+  directories:
+    - "$HOME/.hunter/_Base/Cache"
 deploy:
   provider: pages
   skip-cleanup: true
