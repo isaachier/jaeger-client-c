@@ -4,3 +4,6 @@
 [submodule "third_party/unity"]
 	path = third_party/unity
 	url = https://github.com/ThrowTheSwitch/Unity.git
+[submodule "third_party/opentracing-c"]
+	path = third_party/opentracing-c
+	url = https://github.com/isaachier/opentracing-c.git

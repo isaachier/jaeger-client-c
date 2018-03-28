@@ -20,10 +20,13 @@ set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/toolchain.cmake"
     CACHE FILEPATH
     "Toolchain to use for building this package and dependencies")
 
+set(HUNTER_KEEP_PACKAGE_SOURCES ON)
+
 include(HunterGate)
 HunterGate(
     URL "https://github.com/ruslo/hunter/archive/v0.20.24.tar.gz"
     SHA1 "3e2037a462bcf2ec3440f60298d933e74ffd4df3"
+    LOCAL
 )
 
 project(jaegertracingc VERSION 0.0.1)
@@ -74,7 +77,8 @@ cmake_dependent_option(JAEGERTRACINGC_VERBOSE_ALLOC "Print all allocations" OFF
                        "BUILD_TESTING;debug_build" OFF)
 mark_as_advanced(JAEGERTRACINGC_VERBOSE_ALLOC)
 
-# TODO: find_package(opentracing-c CONFIG REQUIRED)
+hunter_add_package(opentracing-c)
+find_package(opentracing-c CONFIG REQUIRED)
 
 hunter_add_package(http-parser)
 find_package(http-parser CONFIG REQUIRED)
