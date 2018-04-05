@@ -24,8 +24,8 @@ set(HUNTER_KEEP_PACKAGE_SOURCES ON)
 
 include(HunterGate)
 HunterGate(
-    URL "https://github.com/ruslo/hunter/archive/v0.20.24.tar.gz"
-    SHA1 "3e2037a462bcf2ec3440f60298d933e74ffd4df3"
+    URL "https://github.com/ruslo/hunter/archive/v0.20.35.tar.gz"
+    SHA1 "6e3cb4c333b76803a83c56fcbca3b0bfd9f96f27"
     LOCAL
 )
 
