@@ -36,7 +36,7 @@ typedef int (*jaeger_comparator)(const void*, const void*);
 typedef struct jaeger_vector {
     int len;
     int capacity;
-    void* data;
+    char* data;
     int type_size;
 } jaeger_vector;
 
@@ -56,7 +56,7 @@ static inline bool jaeger_vector_init(jaeger_vector* vec, int type_size)
     assert(vec != NULL);
     assert(type_size > 0);
     const int allocated_size = type_size * JAEGERTRACINGC_VECTOR_INIT_CAPACITY;
-    void* data = jaeger_malloc(allocated_size);
+    char* data = jaeger_malloc(allocated_size);
     if (data == NULL) {
         jaeger_log_error("Failed to initialize vector because initial memory "
                          "could not be allocated");
@@ -100,7 +100,7 @@ static inline bool jaeger_vector_reserve(jaeger_vector* vec, int new_capacity)
         aligned_capacity *= JAEGERTRACINGC_VECTOR_RESIZE_FACTOR;
     }
 
-    void* new_data =
+    char* new_data =
         jaeger_realloc(vec->data, vec->type_size * aligned_capacity);
     if (new_data == NULL) {
         jaeger_log_error("Failed to allocate memory for vector resize, "
@@ -109,8 +109,8 @@ static inline bool jaeger_vector_reserve(jaeger_vector* vec, int new_capacity)
                          vec->type_size * aligned_capacity);
         return false;
     }
-    void* old_end = new_data + vec->type_size * vec->capacity;
-    void* new_end = new_data + vec->type_size * aligned_capacity;
+    char* old_end = new_data + vec->type_size * vec->capacity;
+    char* new_end = new_data + vec->type_size * aligned_capacity;
     memset(old_end, 0, new_end - old_end);
     vec->data = new_data;
     vec->capacity = aligned_capacity;

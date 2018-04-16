@@ -134,8 +134,44 @@ static inline bool jaeger_tag_copy(jaeger_tag* dst, const jaeger_tag* src)
 
 cleanup:
     jaeger_tag_destroy(dst);
-    *dst = (jaeger_tag) JAEGERTRACING__PROTOBUF__TAG__INIT;
+    *dst = (jaeger_tag) JAEGERTRACINGC_TAG_INIT;
     return false;
+}
+
+static inline bool jaeger_tag_from_key_value(jaeger_tag* restrict dst,
+                                             const char* key,
+                                             const opentracing_value* value)
+{
+    jaeger_tag src = JAEGERTRACINGC_TAG_INIT;
+    src.key = (char*) key;
+    switch (value->type) {
+    case opentracing_value_null:
+        break;
+    case opentracing_value_bool:
+        src.value_case = JAEGERTRACINGC_TAG_TYPE(BOOL);
+        src.bool_value = (value->value.bool_value == opentracing_true);
+        break;
+    case opentracing_value_uint64:
+        src.value_case = JAEGERTRACINGC_TAG_TYPE(LONG);
+        src.long_value = value->value.uint64_value;
+        break;
+    case opentracing_value_int64:
+        src.value_case = JAEGERTRACINGC_TAG_TYPE(LONG);
+        src.long_value = value->value.int64_value;
+        break;
+    case opentracing_value_double:
+        src.value_case = JAEGERTRACINGC_TAG_TYPE(DOUBLE);
+        src.double_value = value->value.double_value;
+        break;
+    case opentracing_value_string:
+        src.value_case = JAEGERTRACINGC_TAG_TYPE(STR);
+        src.str_value = value->value.string_value;
+        break;
+    default:
+        return false;
+    }
+
+    return jaeger_tag_copy(dst, &src);
 }
 
 JAEGERTRACINGC_WRAP_COPY(jaeger_tag_copy, jaeger_tag, jaeger_tag)

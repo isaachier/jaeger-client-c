@@ -32,9 +32,22 @@ extern "C" {
 #define JAEGERTRACINGC_MICROSECONDS_PER_SECOND 1000000
 #define JAEGERTRACINGC_NANOSECONDS_PER_MICROSECOND 1000
 
-typedef struct jaeger_timestamp {
-    struct timespec value;
-} jaeger_timestamp;
+typedef opentracing_duration jaeger_duration;
+typedef opentracing_timestamp jaeger_timestamp;
+
+#ifdef OPENTRACINGC_USE_TIMESPEC
+
+#define JAEGERTRACINGC_TIME_CAST(x, type) (x)
+
+#else
+
+#define JAEGERTRACINGC_TIME_CAST(x, type)            \
+    (type)                                           \
+    {                                                \
+        .tv_sec = (x).tv_sec, .tv_nsec = (x).tv_nsec \
+    }
+
+#endif /* OPENTRACINGC_USE_TIMESPEC */
 
 #define JAEGERTRACINGC_TIMESTAMP_INIT         \
     {                                         \
@@ -44,7 +57,10 @@ typedef struct jaeger_timestamp {
 static inline void jaeger_timestamp_now(jaeger_timestamp* timestamp)
 {
     assert(timestamp != NULL);
-    clock_gettime(CLOCK_REALTIME, &timestamp->value);
+    struct timespec t;
+    clock_gettime(CLOCK_REALTIME, &t);
+    timestamp->value.tv_sec = t.tv_sec;
+    timestamp->value.tv_nsec = t.tv_nsec;
 }
 
 static inline int64_t
@@ -56,49 +72,43 @@ jaeger_timestamp_microseconds(const jaeger_timestamp* const timestamp)
                JAEGERTRACINGC_NANOSECONDS_PER_MICROSECOND;
 }
 
-typedef struct jaeger_duration {
-    struct timespec value;
-} jaeger_duration;
-
 #define JAEGERTRACINGC_DURATION_INIT JAEGERTRACINGC_TIMESTAMP_INIT
 
 static inline void jaeger_duration_now(jaeger_duration* duration)
 {
     assert(duration != NULL);
-    clock_gettime(CLOCK_MONOTONIC, &duration->value);
+    struct timespec t;
+    clock_gettime(CLOCK_MONOTONIC, &t);
+    duration->value.tv_sec = t.tv_sec;
+    duration->value.tv_nsec = t.tv_nsec;
 }
 
 // Algorithm based on
 // http://www.gnu.org/software/libc/manual/html_node/Elapsed-Time.html.
-static inline bool
-jaeger_duration_subtract(const jaeger_duration* restrict const lhs,
-                         const jaeger_duration* restrict const rhs,
-                         jaeger_duration* restrict result)
+static inline bool jaeger_time_subtract(opentracing_time_value lhs,
+                                        opentracing_time_value rhs,
+                                        opentracing_time_value* result)
 {
-    assert(lhs != NULL);
-    assert(rhs != NULL);
     assert(result != NULL);
 
-    struct timespec x = lhs->value;
-    struct timespec y = rhs->value;
-
-    if (x.tv_nsec < y.tv_nsec) {
-        const int64_t nsec =
-            (y.tv_nsec - x.tv_nsec) / JAEGERTRACINGC_NANOSECONDS_PER_SECOND + 1;
-        y.tv_nsec -= JAEGERTRACINGC_NANOSECONDS_PER_SECOND * nsec;
-        y.tv_sec += nsec;
+    if (lhs.tv_nsec < rhs.tv_nsec) {
+        const int64_t nsec = (rhs.tv_nsec - lhs.tv_nsec) /
+                                 JAEGERTRACINGC_NANOSECONDS_PER_SECOND +
+                             1;
+        rhs.tv_nsec -= JAEGERTRACINGC_NANOSECONDS_PER_SECOND * nsec;
+        rhs.tv_sec += nsec;
     }
 
-    if (x.tv_nsec - y.tv_nsec > JAEGERTRACINGC_NANOSECONDS_PER_SECOND) {
+    if (lhs.tv_nsec - rhs.tv_nsec > JAEGERTRACINGC_NANOSECONDS_PER_SECOND) {
         const int64_t nsec =
-            (x.tv_nsec - y.tv_nsec) / JAEGERTRACINGC_NANOSECONDS_PER_SECOND;
-        y.tv_nsec += JAEGERTRACINGC_NANOSECONDS_PER_SECOND * nsec;
-        y.tv_sec -= nsec;
+            (lhs.tv_nsec - rhs.tv_nsec) / JAEGERTRACINGC_NANOSECONDS_PER_SECOND;
+        rhs.tv_nsec += JAEGERTRACINGC_NANOSECONDS_PER_SECOND * nsec;
+        rhs.tv_sec -= nsec;
     }
 
-    result->value.tv_sec = x.tv_sec - y.tv_sec;
-    result->value.tv_nsec = x.tv_nsec - y.tv_nsec;
-    return x.tv_sec >= y.tv_sec;
+    result->tv_sec = lhs.tv_sec - rhs.tv_sec;
+    result->tv_nsec = lhs.tv_nsec - rhs.tv_nsec;
+    return lhs.tv_sec >= rhs.tv_sec;
 }
 
 #ifdef __cplusplus

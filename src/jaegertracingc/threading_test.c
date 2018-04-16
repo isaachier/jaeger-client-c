@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include "jaegertracingc/threading.h"
 #include "jaegertracingc/clock.h"
 #include "jaegertracingc/logging.h"
+#include "jaegertracingc/threading.h"
 #include "unity.h"
 
 static void* lock_func(void* arg)
@@ -42,14 +42,13 @@ void test_threading()
     jaeger_thread_init(&thread, &lock_func, locks);
 
     jaeger_mutex_unlock(&locks[0]);
-    jaeger_duration sleep_duration = {
-        .value = {.tv_sec = 0,
-                  .tv_nsec = 0.01 * JAEGERTRACINGC_NANOSECONDS_PER_SECOND}};
-    nanosleep(&sleep_duration.value, NULL);
+    struct timespec sleep_duration = {
+        .tv_sec = 0, .tv_nsec = 0.01 * JAEGERTRACINGC_NANOSECONDS_PER_SECOND};
+    nanosleep(&sleep_duration, NULL);
 
     jaeger_mutex_unlock(&locks[1]);
-    sleep_duration.value.tv_nsec = 0.1 * JAEGERTRACINGC_NANOSECONDS_PER_SECOND;
-    nanosleep(&sleep_duration.value, NULL);
+    sleep_duration.tv_nsec = 0.1 * JAEGERTRACINGC_NANOSECONDS_PER_SECOND;
+    nanosleep(&sleep_duration, NULL);
 
     jaeger_thread_join(thread, NULL);
     jaeger_mutex_destroy(&locks[0]);

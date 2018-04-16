@@ -80,6 +80,31 @@ static inline bool jaeger_log_record_copy(jaeger_log_record* restrict dst,
     return true;
 }
 
+static inline bool
+jaeger_log_record_from_opentracing(jaeger_log_record* restrict dst,
+                                   const opentracing_log_record* restrict src)
+{
+    if (!jaeger_log_record_init(dst)) {
+        return false;
+    }
+    if (!jaeger_vector_reserve(&dst->fields, src->num_fields)) {
+        goto cleanup;
+    }
+    for (int i = 0; i < src->num_fields; i++) {
+        jaeger_tag* tag = jaeger_vector_append(&dst->fields);
+        if (!jaeger_tag_from_key_value(
+                tag, src->fields[i].key, &src->fields[i].value)) {
+            dst->fields.len--;
+        }
+    }
+    dst->timestamp = src->timestamp;
+    return true;
+
+cleanup:
+    jaeger_log_record_destroy(dst);
+    return false;
+}
+
 JAEGERTRACINGC_WRAP_COPY(jaeger_log_record_copy,
                          jaeger_log_record,
                          jaeger_log_record)

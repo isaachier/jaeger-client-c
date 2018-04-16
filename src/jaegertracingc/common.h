@@ -37,6 +37,8 @@
 #include <string.h>
 #include <time.h>
 
+#include <opentracing-c/tracer.h>
+
 #include "jaegertracingc/alloc.h"
 #include "jaegertracingc/logging.h"
 
@@ -51,9 +53,7 @@ extern "C" {
 #define JAEGERTRACINGC_CLAMP(x, low, high) \
     JAEGERTRACINGC_MIN(JAEGERTRACINGC_MAX((x), (low)), (high))
 
-typedef struct jaeger_destructible {
-    void (*destroy)(struct jaeger_destructible* destructible);
-} jaeger_destructible;
+typedef opentracing_destructible jaeger_destructible;
 
 static inline void jaeger_destructible_destroy(jaeger_destructible* d)
 {

@@ -55,8 +55,8 @@ static inline bool jaeger_token_bucket_check_credit(jaeger_token_bucket* tok,
     jaeger_duration current_time;
     jaeger_duration_now(&current_time);
     jaeger_duration interval;
-    const bool result =
-        jaeger_duration_subtract(&current_time, &tok->last_tick, &interval);
+    const bool result = jaeger_time_subtract(
+        current_time.value, tok->last_tick.value, &interval.value);
     (void) result;
     assert(result);
     const double diff = (((double) interval.value.tv_nsec) /

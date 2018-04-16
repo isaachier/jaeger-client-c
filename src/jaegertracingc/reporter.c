@@ -81,7 +81,8 @@ static void in_memory_reporter_destroy(jaeger_destructible* destructible)
 
     jaeger_in_memory_reporter* r = (jaeger_in_memory_reporter*) destructible;
 
-    JAEGERTRACINGC_VECTOR_FOR_EACH(&r->spans, jaeger_span_destroy, jaeger_span);
+    JAEGERTRACINGC_VECTOR_FOR_EACH(
+        &r->spans, jaeger_span_destroy, jaeger_destructible);
 
     jaeger_vector_destroy(&r->spans);
     jaeger_mutex_destroy(&r->mutex);
@@ -287,7 +288,7 @@ static inline void large_batch_error(Jaegertracing__Protobuf__Batch* batch,
 
     jaeger_log_error("Dropping first span to avoid repeated failures");
 
-    spans->data = batch->spans;
+    spans->data = (char*) batch->spans;
     spans->len = initial_num_spans;
     *batch =
         (Jaegertracing__Protobuf__Batch) JAEGERTRACING__PROTOBUF__BATCH__INIT;
@@ -316,7 +317,7 @@ static inline bool build_batch(Jaegertracing__Protobuf__Batch* batch,
 
     const int num_spans = jaeger_vector_length(spans);
     batch->n_spans = num_spans;
-    batch->spans = spans->data;
+    batch->spans = (Jaegertracing__Protobuf__Span**) spans->data;
     spans->len = 0;
     spans->data = NULL;
 
@@ -564,7 +565,7 @@ cleanup:
         jaeger_free(reporter->spans.data);
         reporter->spans.data = NULL;
     }
-    reporter->spans.data = batch.spans;
+    reporter->spans.data = (char*) batch.spans;
     reporter->spans.len = num_spans;
     remote_reporter_update_queue_length(reporter);
     return false;

@@ -122,7 +122,7 @@ typedef struct jaeger_tracer {
  * Close and free resources associated with the tracer.
  * @param tracer Tracer to destroy
  */
-void jaeger_tracer_destroy(jaeger_tracer* tracer);
+void jaeger_tracer_destroy(jaeger_destructible* tracer);
 
 /**
  * Initialize a new tracer.

@@ -198,12 +198,13 @@ static inline jaeger_reporter* default_reporter(jaeger_metrics* metrics)
     return (jaeger_reporter*) reporter;
 }
 
-void jaeger_tracer_destroy(jaeger_tracer* tracer)
+void jaeger_tracer_destroy(jaeger_destructible* d)
 {
-    if (tracer == NULL) {
+    if (d == NULL) {
         return;
     }
 
+    jaeger_tracer* tracer = (jaeger_tracer*) d;
     if (tracer->service_name != NULL) {
         jaeger_free(tracer->service_name);
         tracer->service_name = NULL;
@@ -328,7 +329,7 @@ finish:
     return true;
 
 cleanup:
-    jaeger_tracer_destroy(tracer);
+    jaeger_tracer_destroy((jaeger_destructible*) tracer);
     return false;
 }
 
@@ -360,8 +361,8 @@ static inline bool span_inherit_from_parent(jaeger_tracer* tracer,
         }
         if (parent == NULL) {
             parent = &span_ref->context;
-            has_parent = (span_ref->type ==
-                          JAEGERTRACING__PROTOBUF__SPAN_REF__TYPE__CHILD_OF);
+            has_parent =
+                (span_ref->type == opentracing_span_reference_child_of);
         }
     }
 
@@ -490,7 +491,7 @@ jaeger_span* jaeger_tracer_start_span(jaeger_tracer* tracer,
     return span;
 
 cleanup:
-    jaeger_span_destroy(span);
+    jaeger_span_destroy((jaeger_destructible*) span);
     jaeger_free(span);
     return NULL;
 }

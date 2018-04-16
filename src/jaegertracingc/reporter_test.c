@@ -69,21 +69,25 @@ void test_reporter()
     span.tracer = &tracer;
 
     TEST_ASSERT_NULL(span.operation_name);
-    TEST_ASSERT_TRUE(jaeger_span_set_operation_name(&span, "test-operation"));
+    TEST_ASSERT_TRUE(jaeger_span_set_operation_name((opentracing_span*) &span,
+                                                    "test-operation"));
     TEST_ASSERT_NOT_NULL(span.operation_name);
 
-    jaeger_log_record log = JAEGERTRACINGC_LOG_RECORD_INIT;
-    TEST_ASSERT_TRUE(jaeger_log_record_init(&log));
-    jaeger_tag* field = jaeger_vector_append(&log.fields);
-    TEST_ASSERT_NOT_NULL(field);
-    *field = (jaeger_tag) JAEGERTRACINGC_TAG_INIT;
-    TEST_ASSERT_TRUE(jaeger_tag_init(field, "key"));
-    field->value_case = JAEGERTRACINGC_TAG_TYPE(STR);
-    field->str_value = jaeger_strdup("value");
-    TEST_ASSERT_NOT_NULL(field->str_value);
-
+    opentracing_log_field fields[2] = {
+        {
+            .key = "key1",
+            .value = {.type = opentracing_value_string,
+                      .value = {.string_value = "value"}},
+        },
+        {
+            .key = "key2",
+            .value = {.type = opentracing_value_bool,
+                      .value = {.bool_value = true}},
+        }};
+    opentracing_log_record log = {
+        .fields = fields, .num_fields = sizeof(fields[0]) / sizeof(fields)};
+    jaeger_timestamp_now(&log.timestamp);
     TEST_ASSERT_TRUE(jaeger_span_log(&span, &log));
-    jaeger_log_record_destroy(&log);
 
     jaeger_span_ref* span_ref_ptr = jaeger_vector_append(&span.refs);
     TEST_ASSERT_NOT_NULL(span_ref_ptr);
@@ -92,7 +96,7 @@ void test_reporter()
                               .span_id = 0xCAFE,
                               .parent_id = 0,
                               .flags = 0};
-    span_ref_ptr->type = JAEGERTRACING__PROTOBUF__SPAN_REF__TYPE__CHILD_OF;
+    span_ref_ptr->type = opentracing_span_reference_child_of;
 
     jaeger_key_value* kv = jaeger_vector_append(&span.context.baggage);
     TEST_ASSERT_NOT_NULL(kv);
@@ -178,9 +182,9 @@ void test_reporter()
     ((jaeger_destructible*) r)->destroy((jaeger_destructible*) r);
 
     close(server_fd);
-    jaeger_span_destroy(&span);
+    jaeger_span_destroy((jaeger_destructible*) &span);
 
-    jaeger_tracer_destroy(&tracer);
+    jaeger_tracer_destroy((jaeger_destructible*) &tracer);
 
     ((jaeger_destructible*) &const_sampler)
         ->destroy((jaeger_destructible*) &const_sampler);
