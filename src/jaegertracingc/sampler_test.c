@@ -276,7 +276,8 @@ static inline void test_remotely_controlled_sampler()
     const int port = ntohs(server.addr.sin_port);
 
 #define URL_PREFIX "http://localhost:"
-    char buffer[sizeof(URL_PREFIX) + 5];
+#define PORT_LEN (sizeof("65535") - 1)
+    char buffer[sizeof(URL_PREFIX) + PORT_LEN];
     const int result = snprintf(buffer, sizeof(buffer), URL_PREFIX "%d", port);
     TEST_ASSERT_LESS_OR_EQUAL(sizeof(buffer) - 1, result);
     jaeger_remotely_controlled_sampler r;

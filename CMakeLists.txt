@@ -232,9 +232,6 @@ if(BUILD_TESTING)
   add_library(unity "third_party/unity/src/unity.c")
   target_include_directories(unity PUBLIC "third_party/unity/src")
 
-  # TODO: Fix test cases
-  # 
-  # "src/jaegertracingc/sampler_test.c"
   set(test_src
     "src/jaegertracingc/alloc_test.c"
     "src/jaegertracingc/clock_test.c"
@@ -243,6 +240,7 @@ if(BUILD_TESTING)
     "src/jaegertracingc/net_test.c"
     "src/jaegertracingc/random_test.c"
     "src/jaegertracingc/reporter_test.c"
+    "src/jaegertracingc/sampler_test.c"
     "src/jaegertracingc/span_test.c"
     "src/jaegertracingc/tag_test.c"
     "src/jaegertracingc/threading_test.c"

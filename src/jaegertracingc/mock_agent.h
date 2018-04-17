@@ -140,16 +140,17 @@ static inline void* mock_http_server_run_loop(void* context)
     server->client_fd = client_fd;
     jaeger_mutex_unlock(&server->mutex);
 
-    http_parser parser;
-    http_parser_init(&parser, HTTP_REQUEST);
-    parser.data = server;
-    http_parser_settings settings;
-    memset(&settings, 0, sizeof(settings));
-    settings.on_url = &mock_http_server_on_url;
-
     while (true) {
+        http_parser parser;
+        http_parser_init(&parser, HTTP_REQUEST);
+        parser.data = server;
+        http_parser_settings settings;
+        memset(&settings, 0, sizeof(settings));
+        settings.on_url = &mock_http_server_on_url;
+
         server->url_len = 0;
-        char buffer[JAEGERTRACINGC_HTTP_SAMPLING_MANAGER_REQUEST_MAX_LEN];
+        char buffer[JAEGERTRACINGC_HTTP_SAMPLING_MANAGER_REQUEST_MAX_LEN] = {
+            '\0'};
         int buffer_len = 0;
         if (!read_client_request(server->client_fd, buffer, &buffer_len) ||
             buffer_len == 0) {

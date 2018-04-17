@@ -154,7 +154,7 @@ jaeger_sampler_choice_get_sampler(jaeger_sampler_choice* sampler)
 {
 #define JAEGERTRACINGC_SAMPLER_TYPE_CASE(type) \
     case jaeger_##type##_sampler_type:         \
-        return (jaeger_sampler*) &sampler->type##_sampler;
+        return (jaeger_sampler*) &sampler->type##_sampler
 
     switch (sampler->type) {
         JAEGERTRACINGC_SAMPLER_TYPE_CASE(const);
