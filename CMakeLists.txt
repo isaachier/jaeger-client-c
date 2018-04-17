@@ -20,8 +20,8 @@ set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/toolchain.cmake"
     CACHE FILEPATH
     "Toolchain to use for building this package and dependencies")
 
-# TODO: Get rid of this when not debugging
-set(HUNTER_KEEP_PACKAGE_SOURCES ON)
+# TODO: Change to OFF once not debugging.
+option(HUNTER_KEEP_PACKAGE_SOURCES "Keep source code for dependencies" ON)
 
 include(HunterGate)
 HunterGate(
