@@ -82,6 +82,12 @@ typedef struct jaeger_span_context {
      * @see JAEGERTRACINGC_DEBUG_HEADER
      */
     char* debug_id;
+
+    /**
+     * Lock to protect baggage member.
+     * @see baggage
+     */
+    jaeger_mutex mutex;
 } jaeger_span_context;
 
 #define JAEGERTRACINGC_SPAN_CONTEXT_INIT                                   \
@@ -91,7 +97,7 @@ typedef struct jaeger_span_context {
                      &jaeger_span_context_foreach_baggage_item},           \
         .trace_id = JAEGERTRACINGC_TRACE_ID_INIT, .span_id = 0,            \
         .parent_id = 0, .flags = 0, .baggage = JAEGERTRACINGC_VECTOR_INIT, \
-        .debug_id = NULL                                                   \
+        .debug_id = NULL, .mutex = JAEGERTRACINGC_MUTEX_INIT               \
     }
 
 static inline void jaeger_span_context_destroy(jaeger_destructible* d)
@@ -107,6 +113,7 @@ static inline void jaeger_span_context_destroy(jaeger_destructible* d)
         jaeger_free(ctx->debug_id);
         ctx->debug_id = NULL;
     }
+    jaeger_mutex_destroy(&ctx->mutex);
 }
 
 static inline void jaeger_span_context_foreach_baggage_item(
@@ -115,12 +122,14 @@ static inline void jaeger_span_context_foreach_baggage_item(
     void* arg)
 {
     jaeger_span_context* ctx = (jaeger_span_context*) span_context;
+    jaeger_mutex_lock(&ctx->mutex);
     for (int i = 0, len = jaeger_vector_length(&ctx->baggage); i < len; i++) {
         const jaeger_key_value* kv = jaeger_vector_get(&ctx->baggage, i);
         if (!f(arg, kv->key, kv->value)) {
-            return;
+            break;
         }
     }
+    jaeger_mutex_unlock(&ctx->mutex);
 }
 
 static inline bool jaeger_span_context_init(jaeger_span_context* ctx)
