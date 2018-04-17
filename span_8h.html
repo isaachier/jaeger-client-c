@@ -135,9 +135,6 @@ Data Structures</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structjaeger__span.html">jaeger_span</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structjaeger__span__finish__options.html">jaeger_span_finish_options</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Options caller may set for span finish.  <a href="structjaeger__span__finish__options.html#details">More...</a><br/></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
 Macros</h2></td></tr>
@@ -153,9 +150,9 @@ Macros</h2></td></tr>
 <tr class="separator:aa5ae38bf3a9077388a76d4a93e023fe5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa85edf4f8ec8167968b6b7c9d6426059"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><b>JAEGERTRACINGC_SPAN_INIT</b></td></tr>
 <tr class="separator:aa85edf4f8ec8167968b6b7c9d6426059"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5dfa867871567eb8938ac19e636d92ed"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="span_8h.html#a5dfa867871567eb8938ac19e636d92ed">JAEGERTRACINGC_SPAN_FINISH_OPTIONS_INIT</a></td></tr>
-<tr class="memdesc:a5dfa867871567eb8938ac19e636d92ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Static initializer for jaeger_span_finish_with_options.  <a href="#a5dfa867871567eb8938ac19e636d92ed">More...</a><br/></td></tr>
-<tr class="separator:a5dfa867871567eb8938ac19e636d92ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a513ef5c88a082087b25c2d5ac77cf276"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="span_8h.html#a513ef5c88a082087b25c2d5ac77cf276">JAEGERTRACINGC_FINISH_SPAN_OPTIONS_INIT</a></td></tr>
+<tr class="memdesc:a513ef5c88a082087b25c2d5ac77cf276"><td class="mdescLeft">&#160;</td><td class="mdescRight">Static initializer for opentracing_finish_span_options.  <a href="#a513ef5c88a082087b25c2d5ac77cf276">More...</a><br/></td></tr>
+<tr class="separator:a513ef5c88a082087b25c2d5ac77cf276"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
@@ -163,20 +160,16 @@ Typedefs</h2></td></tr>
 typedef struct <a class="el" href="structjaeger__span__context.html">jaeger_span_context</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="span_8h.html#ae413911b9fc5d9af9e9895c90d3a34d7">jaeger_span_context</a></td></tr>
 <tr class="memdesc:ae413911b9fc5d9af9e9895c90d3a34d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Span context represents propagated span identity and state. <br/></td></tr>
 <tr class="separator:ae413911b9fc5d9af9e9895c90d3a34d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a26aee09011ff3b3efb33a62fa8cd780b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a26aee09011ff3b3efb33a62fa8cd780b"></a>
+<tr class="memitem:a5c9c7d841ccf460403c10f18e7f6e4cf"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5c9c7d841ccf460403c10f18e7f6e4cf"></a>
 typedef <br class="typebreak"/>
-Jaegertracing__Protobuf__SpanRef__Type&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_span_ref_type</b></td></tr>
-<tr class="separator:a26aee09011ff3b3efb33a62fa8cd780b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+opentracing_span_reference_type&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_span_ref_type</b></td></tr>
+<tr class="separator:a5c9c7d841ccf460403c10f18e7f6e4cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9161c570f94bae081c26ad55f4a54dec"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9161c570f94bae081c26ad55f4a54dec"></a>
 typedef struct <a class="el" href="structjaeger__span__ref.html">jaeger_span_ref</a>&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_span_ref</b></td></tr>
 <tr class="separator:a9161c570f94bae081c26ad55f4a54dec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad34206836cd70ef2da90aad72bc4402b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad34206836cd70ef2da90aad72bc4402b"></a>
 typedef struct <a class="el" href="structjaeger__span.html">jaeger_span</a>&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_span</b></td></tr>
 <tr class="separator:ad34206836cd70ef2da90aad72bc4402b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aac4d326f6443024d956a138a6ecc574f"><td class="memItemLeft" align="right" valign="top">typedef struct <br class="typebreak"/>
-<a class="el" href="structjaeger__span__finish__options.html">jaeger_span_finish_options</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="span_8h.html#aac4d326f6443024d956a138a6ecc574f">jaeger_span_finish_options</a></td></tr>
-<tr class="memdesc:aac4d326f6443024d956a138a6ecc574f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Options caller may set for span finish.  <a href="#aac4d326f6443024d956a138a6ecc574f">More...</a><br/></td></tr>
-<tr class="separator:aac4d326f6443024d956a138a6ecc574f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
 Enumerations</h2></td></tr>
@@ -215,7 +208,7 @@ Variables</h2></td></tr>
 <tr class="memitem:a530d962454b3b6d0ccec26743f67c7ab"><td class="memItemLeft" align="right" valign="top">dst&#160;</td><td class="memItemRight" valign="bottom"><b>trace_id</b></td></tr>
 <tr class="separator:a530d962454b3b6d0ccec26743f67c7ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7d917b3d27271d47a6f94e25bc79f1a7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7d917b3d27271d47a6f94e25bc79f1a7"></a>
-dst&#160;</td><td class="memItemRight" valign="bottom"><b>type</b> = src-&gt;type</td></tr>
+dst&#160;</td><td class="memItemRight" valign="bottom"><b>type</b> = (Jaegertracing__Protobuf__SpanRef__Type) src-&gt;type</td></tr>
 <tr class="separator:a7d917b3d27271d47a6f94e25bc79f1a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af87d22acd4bc66953aa36c4e0e0d0e04"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af87d22acd4bc66953aa36c4e0e0d0e04"></a>
 dst&#160;</td><td class="memItemRight" valign="bottom"><b>span_id</b> = src-&gt;context.span_id</td></tr>
@@ -227,6 +220,24 @@ return&#160;</td><td class="memItemRight" valign="bottom"><b>true</b></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Span, span context, and span ref representations and functions. </p>
 </div><h2 class="groupheader">Macro Definition Documentation</h2>
+<a class="anchor" id="a513ef5c88a082087b25c2d5ac77cf276"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define JAEGERTRACINGC_FINISH_SPAN_OPTIONS_INIT</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">{                                                                      \</div>
+<div class="line">        .finish_time = JAEGERTRACINGC_TIMESTAMP_INIT, .log_records = NULL, \</div>
+<div class="line">        .num_log_records = 0                                               \</div>
+<div class="line">    }</div>
+</div><!-- fragment -->
+<p>Static initializer for opentracing_finish_span_options. </p>
+
+</div>
+</div>
 <a class="anchor" id="a4e4e850b29eb98dddb15efe24af54be7"></a>
 <div class="memitem">
 <div class="memproto">
@@ -237,6 +248,9 @@ return&#160;</td><td class="memItemRight" valign="bottom"><b>true</b></td></tr>
       </table>
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line">{                                                                      \</div>
+<div class="line">        .base = {.base = {.destroy = jaeger_span_context_destroy},         \</div>
+<div class="line">                 .foreach_baggage_item =                                   \</div>
+<div class="line">                     &amp;jaeger_span_context_foreach_baggage_item},           \</div>
 <div class="line">        .trace_id = <a class="code" href="trace__id_8h.html#a732f892ef9f04a3fe2e71c1acdd532d0">JAEGERTRACINGC_TRACE_ID_INIT</a>, .span_id = 0,            \</div>
 <div class="line">        .parent_id = 0, .flags = 0, .baggage = JAEGERTRACINGC_VECTOR_INIT, \</div>
 <div class="line">        .debug_id = NULL                                                   \</div>
@@ -260,24 +274,6 @@ return&#160;</td><td class="memItemRight" valign="bottom"><b>true</b></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a5dfa867871567eb8938ac19e636d92ed"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define JAEGERTRACINGC_SPAN_FINISH_OPTIONS_INIT</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">{                                                               \</div>
-<div class="line">        .finish_time = JAEGERTRACINGC_TIMESTAMP_INIT, .logs = NULL, \</div>
-<div class="line">        .num_logs = 0                                               \</div>
-<div class="line">    }</div>
-</div><!-- fragment -->
-<p>Static initializer for jaeger_span_finish_with_options. </p>
-
-</div>
-</div>
 <a class="anchor" id="aa85edf4f8ec8167968b6b7c9d6426059"></a>
 <div class="memitem">
 <div class="memproto">
@@ -288,6 +284,9 @@ return&#160;</td><td class="memItemRight" valign="bottom"><b>true</b></td></tr>
       </table>
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line">{                                                                          \</div>
+<div class="line">        .base = {.base = {.destroy = &amp;jaeger_span_destroy},                    \</div>
+<div class="line">                 .finish = &amp;jaeger_span_finish,                                \</div>
+<div class="line">                 .finish_with_options = &amp;jaeger_span_finish_with_options},     \</div>
 <div class="line">        .tracer = NULL, .context = JAEGERTRACINGC_SPAN_CONTEXT_INIT,           \</div>
 <div class="line">        .operation_name = NULL,                                                \</div>
 <div class="line">        .start_time_system = JAEGERTRACINGC_TIMESTAMP_INIT,                    \</div>
@@ -314,21 +313,6 @@ return&#160;</td><td class="memItemRight" valign="bottom"><b>true</b></td></tr>
 <div class="line">        .type = (jaeger_span_ref_type) -1            \</div>
 <div class="line">    }</div>
 </div><!-- fragment -->
-</div>
-</div>
-<h2 class="groupheader">Typedef Documentation</h2>
-<a class="anchor" id="aac4d326f6443024d956a138a6ecc574f"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef struct <a class="el" href="structjaeger__span__finish__options.html">jaeger_span_finish_options</a>  <a class="el" href="structjaeger__span__finish__options.html">jaeger_span_finish_options</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Options caller may set for span finish. </p>
-
 </div>
 </div>
 <h2 class="groupheader">Variable Documentation</h2>

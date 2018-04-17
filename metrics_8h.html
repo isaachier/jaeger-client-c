@@ -349,14 +349,13 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line"><span class="keywordflow">do</span> {                                                                     \</div>
 <div class="line">        if (metrics-&gt;member != NULL) {                                       \</div>
-<div class="line">            jaeger_destructible* d = (<a class="code" href="structjaeger__destructible.html">jaeger_destructible</a>*) metrics-&gt;member; \</div>
+<div class="line">            jaeger_destructible* d = (jaeger_destructible*) metrics-&gt;member; \</div>
 <div class="line">            d-&gt;destroy(d);                                                   <a class="code" href="alloc_8h.html#ad094b3d57aa0ee6af7b5d3d347a578e5">\</a></div>
 <div class="line"><a class="code" href="alloc_8h.html#ad094b3d57aa0ee6af7b5d3d347a578e5">            jaeger_free</a>(metrics-&gt;member);                                    \</div>
 <div class="line">            metrics-&gt;member = NULL;                                          \</div>
 <div class="line">        }                                                                    \</div>
 <div class="line">    } <span class="keywordflow">while</span> (0);</div>
 <div class="ttc" id="alloc_8h_html_ad094b3d57aa0ee6af7b5d3d347a578e5"><div class="ttname"><a href="alloc_8h.html#ad094b3d57aa0ee6af7b5d3d347a578e5">jaeger_free</a></div><div class="ttdeci">void jaeger_free(void *ptr)</div><div class="ttdoc">Calls free using installed allocator. </div><div class="ttdef"><b>Definition:</b> alloc.c:132</div></div>
-<div class="ttc" id="structjaeger__destructible_html"><div class="ttname"><a href="structjaeger__destructible.html">jaeger_destructible</a></div><div class="ttdef"><b>Definition:</b> common.h:52</div></div>
 </div><!-- fragment -->
 </div>
 </div>

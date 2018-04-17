@@ -156,7 +156,7 @@ $(document).ready(function(){initNavTree('internal_2random_8h_source.html','');}
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="keyword">extern</span> <a class="code" href="structjaeger__thread__local.html">jaeger_thread_local</a> rng_storage;</div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;</div>
 <div class="line"><a name="l00051"></a><span class="lineno"><a class="line" href="structjaeger__rng.html">   51</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structjaeger__rng.html">jaeger_rng</a> {</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <a class="code" href="structjaeger__destructible.html">jaeger_destructible</a> base;</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    jaeger_destructible base;</div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="keyword">struct </span>pcg_state_setseq_64 state;</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;} <a class="code" href="structjaeger__rng.html">jaeger_rng</a>;</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;</div>
@@ -187,7 +187,7 @@ $(document).ready(function(){initNavTree('internal_2random_8h_source.html','');}
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    }</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;}</div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;<span class="keyword">static</span> <span class="keywordtype">void</span> rng_destroy(<a class="code" href="structjaeger__destructible.html">jaeger_destructible</a>* d)</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;<span class="keyword">static</span> <span class="keywordtype">void</span> rng_destroy(jaeger_destructible* d)</div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;{</div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="keywordflow">if</span> (d == NULL) {</div>
 <div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;        <span class="keywordflow">return</span>;</div>
@@ -199,7 +199,7 @@ $(document).ready(function(){initNavTree('internal_2random_8h_source.html','');}
 <div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">void</span> jaeger_rng_init(<a class="code" href="structjaeger__rng.html">jaeger_rng</a>* rng)</div>
 <div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;{</div>
 <div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    assert(rng != NULL);</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    ((<a class="code" href="structjaeger__destructible.html">jaeger_destructible</a>*) rng)-&gt;destroy = &amp;rng_destroy;</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    ((jaeger_destructible*) rng)-&gt;destroy = &amp;rng_destroy;</div>
 <div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    uint64_t seed[NUM_UINT64_IN_SEED];</div>
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    memset(seed, 0, <span class="keyword">sizeof</span>(seed));</div>
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    RANDOM_SEED(seed);</div>
@@ -219,7 +219,6 @@ $(document).ready(function(){initNavTree('internal_2random_8h_source.html','');}
 <div class="ttc" id="alloc_8h_html_a8bf91f5b7b45e1e602d5a4079420bcd3"><div class="ttname"><a href="alloc_8h.html#a8bf91f5b7b45e1e602d5a4079420bcd3">jaeger_malloc</a></div><div class="ttdeci">void * jaeger_malloc(size_t sz)</div><div class="ttdoc">Returns result of call to malloc using installed allocator. </div><div class="ttdef"><b>Definition:</b> alloc.c:120</div></div>
 <div class="ttc" id="alloc_8h_html_ad094b3d57aa0ee6af7b5d3d347a578e5"><div class="ttname"><a href="alloc_8h.html#ad094b3d57aa0ee6af7b5d3d347a578e5">jaeger_free</a></div><div class="ttdeci">void jaeger_free(void *ptr)</div><div class="ttdoc">Calls free using installed allocator. </div><div class="ttdef"><b>Definition:</b> alloc.c:132</div></div>
 <div class="ttc" id="threading_8h_html"><div class="ttname"><a href="threading_8h.html">threading.h</a></div><div class="ttdoc">Threading utilities. </div></div>
-<div class="ttc" id="structjaeger__destructible_html"><div class="ttname"><a href="structjaeger__destructible.html">jaeger_destructible</a></div><div class="ttdef"><b>Definition:</b> common.h:52</div></div>
 <div class="ttc" id="common_8h_html"><div class="ttname"><a href="common_8h.html">common.h</a></div><div class="ttdoc">Common headers, struct definitions, and macros. </div></div>
 <div class="ttc" id="random_8h_html"><div class="ttname"><a href="random_8h.html">random.h</a></div><div class="ttdoc">Random number generation. </div></div>
 <div class="ttc" id="structjaeger__thread__local_html"><div class="ttname"><a href="structjaeger__thread__local.html">jaeger_thread_local</a></div><div class="ttdef"><b>Definition:</b> threading.h:104</div></div>

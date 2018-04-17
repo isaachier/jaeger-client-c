@@ -143,7 +143,7 @@ $(document).ready(function(){initNavTree('sampler_8h_source.html','');});
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="preprocessor">#define JAEGERTRACINGC_DOUBLE_STR_SIZE 16</span></div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="preprocessor"></span></div>
 <div class="line"><a name="l00043"></a><span class="lineno"><a class="line" href="structjaeger__sampler.html">   43</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structjaeger__sampler.html">jaeger_sampler</a> {</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <a class="code" href="structjaeger__destructible.html">jaeger_destructible</a> base;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    jaeger_destructible base;</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    bool (*is_sampled)(<span class="keyword">struct </span><a class="code" href="structjaeger__sampler.html">jaeger_sampler</a>* sampler,</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;                       <span class="keyword">const</span> <a class="code" href="structjaeger__trace__id.html">jaeger_trace_id</a>* trace_id,</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;                       <span class="keyword">const</span> <span class="keywordtype">char</span>* operation,</div>
@@ -279,7 +279,7 @@ $(document).ready(function(){initNavTree('sampler_8h_source.html','');});
 <div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;    assert(sampler != NULL);</div>
 <div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;    <a class="code" href="structjaeger__sampler.html">jaeger_sampler</a>* s = jaeger_sampler_choice_get_sampler(sampler);</div>
 <div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;    <span class="keywordflow">if</span> (s != NULL) {</div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;        ((<a class="code" href="structjaeger__destructible.html">jaeger_destructible</a>*) s)-&gt;destroy((<a class="code" href="structjaeger__destructible.html">jaeger_destructible</a>*) s);</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;        ((jaeger_destructible*) s)-&gt;destroy((jaeger_destructible*) s);</div>
 <div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;    }</div>
 <div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;}</div>
 <div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;</div>
@@ -343,7 +343,6 @@ $(document).ready(function(){initNavTree('sampler_8h_source.html','');});
 <div class="ttc" id="structjaeger__adaptive__sampler_html"><div class="ttname"><a href="structjaeger__adaptive__sampler.html">jaeger_adaptive_sampler</a></div><div class="ttdef"><b>Definition:</b> sampler.h:110</div></div>
 <div class="ttc" id="structjaeger__rate__limiting__sampler_html"><div class="ttname"><a href="structjaeger__rate__limiting__sampler.html">jaeger_rate_limiting_sampler</a></div><div class="ttdef"><b>Definition:</b> sampler.h:66</div></div>
 <div class="ttc" id="structjaeger__guaranteed__throughput__probabilistic__sampler_html"><div class="ttname"><a href="structjaeger__guaranteed__throughput__probabilistic__sampler.html">jaeger_guaranteed_throughput_probabilistic_sampler</a></div><div class="ttdef"><b>Definition:</b> sampler.h:75</div></div>
-<div class="ttc" id="structjaeger__destructible_html"><div class="ttname"><a href="structjaeger__destructible.html">jaeger_destructible</a></div><div class="ttdef"><b>Definition:</b> common.h:52</div></div>
 <div class="ttc" id="token__bucket_8h_html"><div class="ttname"><a href="token__bucket_8h.html">token_bucket.h</a></div><div class="ttdoc">Token bucket implementation. </div></div>
 <div class="ttc" id="structjaeger__http__sampling__manager_html"><div class="ttname"><a href="structjaeger__http__sampling__manager.html">jaeger_http_sampling_manager</a></div><div class="ttdef"><b>Definition:</b> sampler.h:186</div></div>
 <div class="ttc" id="structjaeger__const__sampler_html"><div class="ttname"><a href="structjaeger__const__sampler.html">jaeger_const_sampler</a></div><div class="ttdef"><b>Definition:</b> sampler.h:51</div></div>

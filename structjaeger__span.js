@@ -1,5 +1,6 @@
 var structjaeger__span =
 [
+    [ "base", "structjaeger__span.html#a4d784dc9f217e068159cccc5f0f480e9", null ],
     [ "context", "structjaeger__span.html#a2c2ee45174f03b8453d60accd018a001", null ],
     [ "duration", "structjaeger__span.html#a4486fea569d2256c8e33a8b445c3f4fc", null ],
     [ "logs", "structjaeger__span.html#ab5b68679359d40f6821fffdbbb9cce01", null ],

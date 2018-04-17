@@ -14,7 +14,7 @@ var searchData=
   ['jaeger_5fset_5fallocator',['jaeger_set_allocator',['../alloc_8h.html#a028e4a5c56db3be5bd20496b1a64f920',1,'alloc.c']]],
   ['jaeger_5fset_5flogger',['jaeger_set_logger',['../logging_8h.html#ab67748c4ba5d8b37d6ba8b48dd5e61c0',1,'logging.c']]],
   ['jaeger_5fstd_5flogger_5finit',['jaeger_std_logger_init',['../logging_8h.html#ac01da6c9df20fe92039d247c05bfdbef',1,'logging.c']]],
-  ['jaeger_5ftracer_5fdestroy',['jaeger_tracer_destroy',['../tracer_8h.html#a422fc08b0041b743d48bf1bd0489f0ca',1,'tracer.c']]],
+  ['jaeger_5ftracer_5fdestroy',['jaeger_tracer_destroy',['../tracer_8h.html#ac15d87245dc7a76a6d630c08499f4dde',1,'tracer.c']]],
   ['jaeger_5ftracer_5fflush',['jaeger_tracer_flush',['../tracer_8h.html#ad5de5e280e85d209bccef344280481f5',1,'tracer.c']]],
   ['jaeger_5ftracer_5finit',['jaeger_tracer_init',['../tracer_8h.html#aa07dbdbe42478395d2ee98572826eea2',1,'tracer.c']]],
   ['jaeger_5ftracer_5fstart_5fspan',['jaeger_tracer_start_span',['../tracer_8h.html#ac63703df0d8ab978f8e1327daa16fc69',1,'tracer.c']]]

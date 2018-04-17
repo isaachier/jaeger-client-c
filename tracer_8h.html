@@ -163,9 +163,9 @@ typedef struct <a class="el" href="structjaeger__tracer.html">jaeger_tracer</a>&
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a422fc08b0041b743d48bf1bd0489f0ca"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tracer_8h.html#a422fc08b0041b743d48bf1bd0489f0ca">jaeger_tracer_destroy</a> (<a class="el" href="structjaeger__tracer.html">jaeger_tracer</a> *tracer)</td></tr>
-<tr class="memdesc:a422fc08b0041b743d48bf1bd0489f0ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Close and free resources associated with the tracer.  <a href="#a422fc08b0041b743d48bf1bd0489f0ca">More...</a><br/></td></tr>
-<tr class="separator:a422fc08b0041b743d48bf1bd0489f0ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac15d87245dc7a76a6d630c08499f4dde"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tracer_8h.html#ac15d87245dc7a76a6d630c08499f4dde">jaeger_tracer_destroy</a> (jaeger_destructible *tracer)</td></tr>
+<tr class="memdesc:ac15d87245dc7a76a6d630c08499f4dde"><td class="mdescLeft">&#160;</td><td class="mdescRight">Close and free resources associated with the tracer.  <a href="#ac15d87245dc7a76a6d630c08499f4dde">More...</a><br/></td></tr>
+<tr class="separator:ac15d87245dc7a76a6d630c08499f4dde"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa07dbdbe42478395d2ee98572826eea2"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tracer_8h.html#aa07dbdbe42478395d2ee98572826eea2">jaeger_tracer_init</a> (<a class="el" href="structjaeger__tracer.html">jaeger_tracer</a> *tracer, const char *service_name, <a class="el" href="structjaeger__sampler.html">jaeger_sampler</a> *sampler, <a class="el" href="structjaeger__reporter.html">jaeger_reporter</a> *reporter, <a class="el" href="structjaeger__metrics.html">jaeger_metrics</a> *metrics, const <a class="el" href="structjaeger__tracer__options.html">jaeger_tracer_options</a> *options)</td></tr>
 <tr class="memdesc:aa07dbdbe42478395d2ee98572826eea2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize a new tracer.  <a href="#aa07dbdbe42478395d2ee98572826eea2">More...</a><br/></td></tr>
 <tr class="separator:aa07dbdbe42478395d2ee98572826eea2"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -258,14 +258,14 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_tracer_report_
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
-<a class="anchor" id="a422fc08b0041b743d48bf1bd0489f0ca"></a>
+<a class="anchor" id="ac15d87245dc7a76a6d630c08499f4dde"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void jaeger_tracer_destroy </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structjaeger__tracer.html">jaeger_tracer</a> *&#160;</td>
+          <td class="paramtype">jaeger_destructible *&#160;</td>
           <td class="paramname"><em>tracer</em></td><td>)</td>
           <td></td>
         </tr>

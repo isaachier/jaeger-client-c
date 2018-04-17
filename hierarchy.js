@@ -28,11 +28,10 @@ var hierarchy =
     [ "jaeger_const_sampler", "structjaeger__const__sampler.html", null ],
     [ "jaeger_default_counter", "structjaeger__default__counter.html", null ],
     [ "jaeger_default_gauge", "structjaeger__default__gauge.html", null ],
-    [ "jaeger_destructible", "structjaeger__destructible.html", [
+    [ "jaeger_destructible", null, [
       [ "jaeger_counter", "structjaeger__counter.html", null ],
       [ "jaeger_gauge", "structjaeger__gauge.html", null ]
     ] ],
-    [ "jaeger_duration", "structjaeger__duration.html", null ],
     [ "jaeger_guaranteed_throughput_probabilistic_sampler", "structjaeger__guaranteed__throughput__probabilistic__sampler.html", null ],
     [ "jaeger_host_port", "structjaeger__host__port.html", null ],
     [ "jaeger_http_sampling_manager", "structjaeger__http__sampling__manager.html", null ],
@@ -52,11 +51,9 @@ var hierarchy =
     [ "jaeger_sampler_choice", "structjaeger__sampler__choice.html", null ],
     [ "jaeger_span", "structjaeger__span.html", null ],
     [ "jaeger_span_context", "structjaeger__span__context.html", null ],
-    [ "jaeger_span_finish_options", "structjaeger__span__finish__options.html", null ],
     [ "jaeger_span_ref", "structjaeger__span__ref.html", null ],
     [ "jaeger_start_span_options", "structjaeger__start__span__options.html", null ],
     [ "jaeger_thread_local", "structjaeger__thread__local.html", null ],
-    [ "jaeger_timestamp", "structjaeger__timestamp.html", null ],
     [ "jaeger_token_bucket", "structjaeger__token__bucket.html", null ],
     [ "jaeger_trace_id", "structjaeger__trace__id.html", null ],
     [ "jaeger_tracer", "structjaeger__tracer.html", null ],
