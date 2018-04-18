@@ -453,6 +453,7 @@ jaeger_span* jaeger_tracer_start_span(jaeger_tracer* tracer,
     }
     for (int i = 0; i < options->num_tags; i++) {
         const jaeger_tag* src_tag = &options->tags[i];
+        assert(src_tag != NULL);
         assert(src_tag->key != NULL);
         if (strcmp(src_tag->key, SAMPLING_PRIORITY_TAG_KEY) == 0 &&
             jaeger_span_set_sampling_priority(span, src_tag)) {
