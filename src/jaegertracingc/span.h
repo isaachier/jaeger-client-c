@@ -473,7 +473,6 @@ static inline void jaeger_span_set_operation_name(opentracing_span* s,
     assert(s != NULL);
     assert(operation_name != NULL);
     jaeger_span* span = (jaeger_span*) s;
-    bool success = true;
     jaeger_mutex_lock(&span->mutex);
     if (!jaeger_span_is_sampled_no_locking(span)) {
         goto cleanup;
@@ -481,7 +480,6 @@ static inline void jaeger_span_set_operation_name(opentracing_span* s,
 
     char* operation_name_copy = jaeger_strdup(operation_name);
     if (operation_name_copy == NULL) {
-        success = false;
         goto cleanup;
     }
 
@@ -576,6 +574,7 @@ static inline void jaeger_span_set_tag_no_locking(
 
 /**
  * Set sampling flag on span.
+ * @internal
  * @param span The span instance.
  * @param tag The tag value to consider for sampling.
  * @return True on success, false otherwise.
@@ -586,22 +585,23 @@ static inline bool jaeger_span_set_sampling_priority(
     assert(span != NULL);
     assert(key != NULL);
     assert(value != NULL);
-    bool success = false;
     switch (value->type) {
     case opentracing_value_int64:
-        success = (value->value.int64_value != 0);
         break;
     case opentracing_value_uint64:
-        success = (value->value.uint64_value != 0);
         break;
     default:
         return false;
     }
 
     jaeger_mutex_lock(&span->mutex);
-    if (success) {
+    bool success = false;
+    if ((value->type == opentracing_value_int64 && value->value.int64_value) ||
+        (value->type == opentracing_value_uint64 &&
+         value->value.uint64_value)) {
         span->context.flags = span->context.flags | jaeger_sampling_flag_debug |
                               jaeger_sampling_flag_sampled;
+        success = true;
     }
     else {
         span->context.flags =
@@ -640,20 +640,17 @@ static inline void jaeger_span_set_tag(opentracing_span* span,
  * Append to span logs.
  * @param span The span instance.
  * @param log_record The log record to append.
- * @return True on success, false otherwise.
  */
-static inline bool jaeger_span_log(jaeger_span* span,
+static inline void jaeger_span_log(jaeger_span* span,
                                    const opentracing_log_record* log_record)
 {
     assert(span != NULL);
     assert(log_record != NULL);
-    bool success = true;
     jaeger_mutex_lock(&span->mutex);
     if (jaeger_span_is_sampled_no_locking(span)) {
-        success = jaeger_span_log_no_locking(span, log_record);
+        jaeger_span_log_no_locking(span, log_record);
     }
     jaeger_mutex_unlock(&span->mutex);
-    return success;
 }
 
 /* Static initializer for span. */

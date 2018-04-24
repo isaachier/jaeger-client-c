@@ -86,7 +86,7 @@ void test_reporter()
     opentracing_log_record log = {
         .fields = fields, .num_fields = sizeof(fields[0]) / sizeof(fields)};
     jaeger_timestamp_now(&log.timestamp);
-    TEST_ASSERT_TRUE(jaeger_span_log(&span, &log));
+    jaeger_span_log(&span, &log);
 
     jaeger_span_ref* span_ref_ptr = jaeger_vector_append(&span.refs);
     TEST_ASSERT_NOT_NULL(span_ref_ptr);
