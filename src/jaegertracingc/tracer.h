@@ -112,15 +112,29 @@ typedef struct jaeger_tracer {
  * the tracer.
  * @see jaeger_tracer_init
  */
-#define JAEGERTRACINGC_TRACER_INIT                               \
-    {                                                            \
-        .service_name = NULL, .metrics = NULL, .sampler = NULL,  \
-        .reporter = NULL, .options = JAEGER_TRACER_OPTIONS_INIT, \
-        .tags = JAEGERTRACINGC_VECTOR_INIT, .allocated = {       \
-            .metrics = false,                                    \
-            .sampler = false,                                    \
-            .reporter = false                                    \
-        }                                                        \
+#define JAEGERTRACINGC_TRACER_INIT                                            \
+    {                                                                         \
+                                                                              \
+        .base = {.base = {.destroy = &jaeger_tracer_destroy},                 \
+                 .close = &jaeger_tracer_close,                               \
+                 .start_span = &jaeger_tracer_start_span,                     \
+                 .start_span_with_options =                                   \
+                     &jaeger_tracer_start_span_with_options,                  \
+                 .inject_text_map = &jaeger_tracer_inject_text_map,           \
+                 .inject_http_headers = &jaeger_tracer_inject_http_headers,   \
+                 .inject_binary = &jaeger_tracer_inject_binary,               \
+                 .inject_custom = &jaeger_tracer_inject_custom,               \
+                 .extract_text_map = &jaeger_tracer_extract_text_map,         \
+                 .extract_http_headers = &jaeger_tracer_extract_http_headers, \
+                 .extract_binary = &jaeger_tracer_extract_binary,             \
+                 .extract_custom = &jaeger_tracer_extract_custom},            \
+        .service_name = NULL, .metrics = NULL, .sampler = NULL,               \
+        .reporter = NULL, .options = JAEGER_TRACER_OPTIONS_INIT,              \
+        .tags = JAEGERTRACINGC_VECTOR_INIT, .allocated = {                    \
+            .metrics = false,                                                 \
+            .sampler = false,                                                 \
+            .reporter = false                                                 \
+        }                                                                     \
     }
 
 /**
@@ -156,10 +170,23 @@ bool jaeger_tracer_init(jaeger_tracer* tracer,
  * @param options Additional options for starting span. May be NULL.
  * @return New span on success, NULL otherwise.
  */
-jaeger_span*
-jaeger_tracer_start_span(opentracing_tracer* tracer,
-                         const char* operation_name,
-                         const opentracing_start_span_options* options);
+opentracing_span* jaeger_tracer_start_span_with_options(
+    opentracing_tracer* tracer,
+    const char* operation_name,
+    const opentracing_start_span_options* options);
+
+/**
+ * Start a new span with default options.
+ * @param span Span instance.
+ * @param operation_name Operation name associated with this span.
+ *                       May not be NULL.
+ * @return New span on success, NULL otherwise.
+ */
+static inline opentracing_span*
+jaeger_tracer_start_span(opentracing_tracer* tracer, const char* operation_name)
+{
+    return jaeger_tracer_start_span_with_options(tracer, operation_name, NULL);
+}
 
 /**
  * Flush any pending spans in tracer. Only effective when using remote reporter,
@@ -170,12 +197,84 @@ jaeger_tracer_start_span(opentracing_tracer* tracer,
 bool jaeger_tracer_flush(jaeger_tracer* tracer);
 
 /**
+ * Implements opentracing-c tracer close method.
+ */
+static inline void jaeger_tracer_close(opentracing_tracer* tracer)
+{
+    jaeger_tracer_flush((jaeger_tracer*) tracer);
+}
+
+/**
  * @internal
  * Report completed span.
  * @param tracer Tracer instance.
  * @param span Span to report.
  */
 void jaeger_tracer_report_span(jaeger_tracer* tracer, jaeger_span* span);
+
+/**
+ * Implements opentracing-c tracer inject_text_map method.
+ */
+opentracing_propagation_error_code
+jaeger_tracer_inject_text_map(opentracing_tracer* tracer,
+                              opentracing_text_map_writer* writer,
+                              const opentracing_span_context* span_context);
+
+/**
+ * Implements opentracing-c tracer inject_http_headers method.
+ */
+opentracing_propagation_error_code
+jaeger_tracer_inject_http_headers(opentracing_tracer* tracer,
+                                  opentracing_http_headers_writer* writer,
+                                  const opentracing_span_context* span_context);
+
+/**
+ * Implements opentracing-c tracer inject_binary method.
+ */
+opentracing_propagation_error_code
+jaeger_tracer_inject_binary(opentracing_tracer* tracer,
+                            int (*callback)(void*, const char*, size_t),
+                            void* arg,
+                            const opentracing_span_context* span_context);
+
+/**
+ * Implements opentracing-c tracer inject_custom method.
+ */
+opentracing_propagation_error_code
+jaeger_tracer_inject_custom(opentracing_tracer* tracer,
+                            opentracing_custom_carrier_writer* carrier,
+                            const opentracing_span_context* span_context);
+/**
+ * Implements opentracing-c tracer extract_text_map method.
+ */
+opentracing_propagation_error_code
+jaeger_tracer_extract_text_map(struct opentracing_tracer* tracer,
+                               opentracing_text_map_reader* carrier,
+                               opentracing_span_context** span_context);
+/**
+ * Implements opentracing-c tracer extract_http_headers method.
+ */
+opentracing_propagation_error_code
+jaeger_tracer_extract_http_headers(opentracing_tracer* tracer,
+                                   opentracing_http_headers_reader* carrier,
+                                   opentracing_span_context** span_context);
+
+/**
+ * Implements opentracing-c tracer extract_binary method.
+ */
+opentracing_propagation_error_code
+jaeger_tracer_extract_binary(opentracing_tracer* tracer,
+                             int (*callback)(void*, char*, size_t),
+                             void* arg,
+                             opentracing_span_context** span_context);
+
+/**
+ * Implements opentracing-c tracer extract_custom method.
+ */
+opentracing_propagation_error_code
+jaeger_tracer_extract_custom(opentracing_tracer* tracer,
+                             opentracing_custom_carrier_reader* carrier,
+                             opentracing_span_context** span_context);
 
 #ifdef __cplusplus
 } /* extern C */

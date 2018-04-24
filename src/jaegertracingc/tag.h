@@ -165,7 +165,10 @@ static inline bool jaeger_tag_from_key_value(jaeger_tag* restrict dst,
         break;
     case opentracing_value_string:
         src.value_case = JAEGERTRACINGC_TAG_TYPE(STR);
-        src.str_value = value->value.string_value;
+        src.str_value = jaeger_strdup(value->value.string_value);
+        if (src.str_value == NULL) {
+            return false;
+        }
         break;
     default:
         return false;

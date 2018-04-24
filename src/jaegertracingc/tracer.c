@@ -426,10 +426,10 @@ static inline void update_metrics_for_new_span(jaeger_metrics* metrics,
     (void) span;
 }
 
-jaeger_span*
-jaeger_tracer_start_span(opentracing_tracer* tracer,
-                         const char* operation_name,
-                         const opentracing_start_span_options* options)
+opentracing_span* jaeger_tracer_start_span_with_options(
+    opentracing_tracer* tracer,
+    const char* operation_name,
+    const opentracing_start_span_options* options)
 {
     assert(tracer != NULL);
     assert(operation_name != NULL);
@@ -441,7 +441,8 @@ jaeger_tracer_start_span(opentracing_tracer* tracer,
                                                .num_tags = 0};
         jaeger_duration_now(&opts.start_time_steady);
         jaeger_timestamp_now(&opts.start_time_system);
-        return jaeger_tracer_start_span(tracer, operation_name, &opts);
+        return jaeger_tracer_start_span_with_options(
+            tracer, operation_name, &opts);
     }
 
     assert(options != NULL);
@@ -504,7 +505,7 @@ jaeger_tracer_start_span(opentracing_tracer* tracer,
 
     update_metrics_for_new_span(t->metrics, span);
 
-    return span;
+    return (opentracing_span*) span;
 
 cleanup:
     jaeger_span_destroy((jaeger_destructible*) span);
@@ -526,4 +527,87 @@ void jaeger_tracer_report_span(jaeger_tracer* tracer, jaeger_span* span)
         tracer->reporter->report(tracer->reporter, span);
     }
     /* TODO: pooling? */
+}
+
+#define CHECK_SPAN_CONTEXT(ctx)                                         \
+    if ((ctx)->type_descriptor_length !=                                \
+            jaeger_span_context_type_descriptor_length ||               \
+        memcmp((ctx)->type_descriptor,                                  \
+               jaeger_span_context_type_descriptor,                     \
+               jaeger_span_context_type_descriptor_length) != 0) {      \
+        return opentracing_propagation_error_code_invalid_span_context; \
+    }
+
+opentracing_propagation_error_code
+jaeger_tracer_inject_text_map(opentracing_tracer* tracer,
+                              opentracing_text_map_writer* writer,
+                              const opentracing_span_context* span_context)
+{
+    CHECK_SPAN_CONTEXT(span_context);
+    return opentracing_propagation_error_code_success;
+}
+
+opentracing_propagation_error_code
+jaeger_tracer_inject_http_headers(opentracing_tracer* tracer,
+                                  opentracing_http_headers_writer* writer,
+                                  const opentracing_span_context* span_context)
+{
+    /* TODO */
+    return opentracing_propagation_error_code_success;
+}
+
+opentracing_propagation_error_code
+jaeger_tracer_inject_binary(opentracing_tracer* tracer,
+                            int (*callback)(void*, const char*, size_t),
+                            void* arg,
+                            const opentracing_span_context* span_context)
+{
+    /* TODO */
+    return opentracing_propagation_error_code_success;
+}
+
+opentracing_propagation_error_code
+jaeger_tracer_inject_custom(opentracing_tracer* tracer,
+                            opentracing_custom_carrier_writer* carrier,
+                            const opentracing_span_context* span_context)
+{
+    /* TODO */
+    return opentracing_propagation_error_code_success;
+}
+
+opentracing_propagation_error_code
+jaeger_tracer_extract_text_map(struct opentracing_tracer* tracer,
+                               opentracing_text_map_reader* carrier,
+                               opentracing_span_context** span_context)
+{
+    /* TODO */
+    return opentracing_propagation_error_code_success;
+}
+
+opentracing_propagation_error_code
+jaeger_tracer_extract_http_headers(opentracing_tracer* tracer,
+                                   opentracing_http_headers_reader* carrier,
+                                   opentracing_span_context** span_context)
+{
+    /* TODO */
+    return opentracing_propagation_error_code_success;
+}
+
+opentracing_propagation_error_code
+jaeger_tracer_extract_binary(opentracing_tracer* tracer,
+                             int (*callback)(void*, char*, size_t),
+                             void* arg,
+                             opentracing_span_context** span_context)
+{
+    /* TODO */
+    return opentracing_propagation_error_code_success;
+}
+
+opentracing_propagation_error_code
+jaeger_tracer_extract_custom(opentracing_tracer* tracer,
+                             opentracing_custom_carrier_reader* carrier,
+                             opentracing_span_context** span_context)
+{
+    /* TODO */
+    return opentracing_propagation_error_code_success;
 }
