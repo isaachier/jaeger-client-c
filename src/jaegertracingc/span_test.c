@@ -72,4 +72,6 @@ void test_span()
     ((opentracing_span_context*) &span.context)
         ->foreach_baggage_item(
             ((opentracing_span_context*) &span.context), &visit_baggage, &arg);
+    ((opentracing_destructible*) &span)
+        ->destroy((opentracing_destructible*) &span);
 }
