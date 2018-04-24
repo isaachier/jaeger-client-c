@@ -185,12 +185,9 @@ static inline bool jaeger_span_context_is_valid(const jaeger_span_context* ctx)
  * debug/correlation ID from extract() method. This happens in the situation
  * when "jaeger-debug-id" header is passed in the carrier to the extract()
  * method, but the request otherwise has no span context in it. Previously
- * this
- * would have returned an error (opentracing_propagation_error_code) from
- * the
- * extract method, but now it returns a dummy context with only debug_id
- * filled
- * in.
+ * this would have returned an error (opentracing_propagation_error_code) from
+ * the extract method, but now it returns a dummy context with only debug_id
+ * filled in.
  * @param ctx Span context instance. May not be NULL.
  * @return True if just debug container, false otherwise.
  */
@@ -294,15 +291,25 @@ struct jaeger_tracer;
 typedef struct jaeger_span {
     /** Base class member. */
     opentracing_span base;
+    /** Tracer that creates this span. */
     struct jaeger_tracer* tracer;
+    /** Span context. */
     jaeger_span_context context;
+    /** Operation represented by this span. */
     char* operation_name;
+    /** Start time using system clock. */
     jaeger_timestamp start_time_system;
+    /** Start time using monotonic/steady clock. */
     jaeger_duration start_time_steady;
+    /** Overall duration of span (set on span finish). */
     jaeger_duration duration;
+    /** Span tags. */
     jaeger_vector tags;
+    /** Span log records. */
     jaeger_vector logs;
+    /** Span context references (i.e. CHILD_OF and/or FOLLOWS_FROM). */
     jaeger_vector refs;
+    /** Mutex to guard mutable members. */
     jaeger_mutex mutex;
 } jaeger_span;
 
@@ -371,27 +378,25 @@ static inline bool jaeger_span_is_sampled_no_locking(const jaeger_span* span)
  * Append to span logs without locking.
  * @param span The span instance.
  * @param log_record The log record to append.
- * @return True on success, false otherwise.
  * @see jaeger_span_log()
  */
-static inline bool
+static inline void
 jaeger_span_log_no_locking(jaeger_span* span,
                            const opentracing_log_record* log_record)
 {
     jaeger_log_record* log_record_copy =
         (jaeger_log_record*) jaeger_vector_append(&span->logs);
     if (log_record_copy == NULL) {
-        return false;
+        return;
     }
     *log_record_copy = (jaeger_log_record) JAEGERTRACINGC_LOG_RECORD_INIT;
     if (!jaeger_log_record_from_opentracing(log_record_copy, log_record)) {
         goto cleanup;
     }
-    return true;
+    return;
 
 cleanup:
     span->logs.len--;
-    return false;
 }
 
 /**
@@ -641,16 +646,24 @@ static inline void jaeger_span_set_tag(opentracing_span* span,
  * @param span The span instance.
  * @param log_record The log record to append.
  */
-static inline void jaeger_span_log(jaeger_span* span,
-                                   const opentracing_log_record* log_record)
+static inline void jaeger_span_log(opentracing_span* span,
+                                   const opentracing_log_field* fields,
+                                   int num_fields)
 {
     assert(span != NULL);
-    assert(log_record != NULL);
-    jaeger_mutex_lock(&span->mutex);
-    if (jaeger_span_is_sampled_no_locking(span)) {
-        jaeger_span_log_no_locking(span, log_record);
+    assert(fields != NULL || num_fields == 0);
+    jaeger_timestamp timestamp;
+    jaeger_timestamp_now(&timestamp);
+    const opentracing_log_record log_record = {
+        .fields = (opentracing_log_field*) fields,
+        .num_fields = num_fields,
+        .timestamp = timestamp};
+    jaeger_span* s = (jaeger_span*) span;
+    jaeger_mutex_lock(&s->mutex);
+    if (jaeger_span_is_sampled_no_locking(s)) {
+        jaeger_span_log_no_locking(s, &log_record);
     }
-    jaeger_mutex_unlock(&span->mutex);
+    jaeger_mutex_unlock(&s->mutex);
 }
 
 /* Static initializer for span. */
@@ -661,6 +674,7 @@ static inline void jaeger_span_log(jaeger_span* span,
                  .finish_with_options = &jaeger_span_finish_with_options,      \
                  .set_operation_name = &jaeger_span_set_operation_name,        \
                  .set_tag = &jaeger_span_set_tag,                              \
+                 .log_fields = &jaeger_span_log,                               \
                  .set_baggage_item = &jaeger_span_set_baggage_item,            \
                  .baggage_item = &jaeger_span_baggage_item},                   \
         .tracer = NULL, .context = JAEGERTRACINGC_SPAN_CONTEXT_INIT,           \
