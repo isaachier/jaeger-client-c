@@ -17,6 +17,22 @@
 #include "jaegertracingc/span.h"
 #include "unity.h"
 
+static const jaeger_key_value baggage[] = {
+    {.key = "key1", .value = "value1"},
+    {.key = "key2", .value = "value2"},
+    {.key = "key3", .value = "value3"},
+};
+
+static opentracing_bool
+visit_baggage(void* arg, const char* key, const char* value)
+{
+    const jaeger_key_value* kv = &baggage[*(int*) arg];
+    TEST_ASSERT_EQUAL_STRING(kv->key, key);
+    TEST_ASSERT_EQUAL_STRING(kv->value, value);
+    (*(int*) arg)++;
+    return opentracing_true;
+}
+
 void test_span()
 {
     typedef struct test_case {
@@ -44,4 +60,16 @@ void test_span()
     jaeger_span_ref_destroy(NULL);
     jaeger_span_context_destroy(NULL);
     jaeger_span_destroy(NULL);
+
+    jaeger_span span = JAEGERTRACINGC_SPAN_INIT;
+    TEST_ASSERT_TRUE(jaeger_span_init(&span));
+    for (int i = 0, len = sizeof(baggage) / sizeof(baggage[0]); i < len; i++) {
+        ((opentracing_span*) &span)
+            ->set_baggage_item(
+                ((opentracing_span*) &span), baggage[i].key, baggage[i].value);
+    }
+    int arg = 0;
+    ((opentracing_span_context*) &span.context)
+        ->foreach_baggage_item(
+            ((opentracing_span_context*) &span.context), &visit_baggage, &arg);
 }

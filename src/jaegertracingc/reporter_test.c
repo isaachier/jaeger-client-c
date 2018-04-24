@@ -69,8 +69,7 @@ void test_reporter()
     span.tracer = &tracer;
 
     TEST_ASSERT_NULL(span.operation_name);
-    TEST_ASSERT_TRUE(jaeger_span_set_operation_name((opentracing_span*) &span,
-                                                    "test-operation"));
+    jaeger_span_set_operation_name((opentracing_span*) &span, "test-operation");
     TEST_ASSERT_NOT_NULL(span.operation_name);
 
     opentracing_log_field fields[2] = {
