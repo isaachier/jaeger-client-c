@@ -22,6 +22,8 @@
 #ifndef JAEGERTRACINGC_TRACER_H
 #define JAEGERTRACINGC_TRACER_H
 
+#include <opentracing-c/tracer.h>
+
 #include "jaegertracingc/common.h"
 #include "jaegertracingc/reporter.h"
 #include "jaegertracingc/sampler.h"
@@ -53,6 +55,9 @@ typedef struct jaeger_tracer_options {
  * Tracer implementation.
  */
 typedef struct jaeger_tracer {
+    /** Base class instance. */
+    opentracing_tracer base;
+
     /** Name of the current service. */
     char* service_name;
 
