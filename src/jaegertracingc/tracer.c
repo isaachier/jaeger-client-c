@@ -529,14 +529,16 @@ void jaeger_tracer_report_span(jaeger_tracer* tracer, jaeger_span* span)
     /* TODO: pooling? */
 }
 
-#define CHECK_SPAN_CONTEXT(ctx)                                         \
-    if ((ctx)->type_descriptor_length !=                                \
-            jaeger_span_context_type_descriptor_length ||               \
-        memcmp((ctx)->type_descriptor,                                  \
-               jaeger_span_context_type_descriptor,                     \
-               jaeger_span_context_type_descriptor_length) != 0) {      \
-        return opentracing_propagation_error_code_invalid_span_context; \
-    }
+#define CHECK_SPAN_CONTEXT(ctx)                                             \
+    do {                                                                    \
+        if (((int) (ctx)->type_descriptor_length) !=                        \
+                ((int) jaeger_span_context_type_descriptor_length) ||       \
+            memcmp((ctx)->type_descriptor,                                  \
+                   jaeger_span_context_type_descriptor,                     \
+                   jaeger_span_context_type_descriptor_length) != 0) {      \
+            return opentracing_propagation_error_code_invalid_span_context; \
+        }                                                                   \
+    } while (0)
 
 opentracing_propagation_error_code
 jaeger_tracer_inject_text_map(opentracing_tracer* tracer,
@@ -544,6 +546,9 @@ jaeger_tracer_inject_text_map(opentracing_tracer* tracer,
                               const opentracing_span_context* span_context)
 {
     CHECK_SPAN_CONTEXT(span_context);
+    /* TODO */
+    (void) tracer;
+    (void) writer;
     return opentracing_propagation_error_code_success;
 }
 
@@ -552,7 +557,10 @@ jaeger_tracer_inject_http_headers(opentracing_tracer* tracer,
                                   opentracing_http_headers_writer* writer,
                                   const opentracing_span_context* span_context)
 {
+    CHECK_SPAN_CONTEXT(span_context);
     /* TODO */
+    (void) tracer;
+    (void) writer;
     return opentracing_propagation_error_code_success;
 }
 
@@ -562,7 +570,11 @@ jaeger_tracer_inject_binary(opentracing_tracer* tracer,
                             void* arg,
                             const opentracing_span_context* span_context)
 {
+    CHECK_SPAN_CONTEXT(span_context);
     /* TODO */
+    (void) tracer;
+    (void) callback;
+    (void) arg;
     return opentracing_propagation_error_code_success;
 }
 
@@ -571,9 +583,14 @@ jaeger_tracer_inject_custom(opentracing_tracer* tracer,
                             opentracing_custom_carrier_writer* carrier,
                             const opentracing_span_context* span_context)
 {
+    CHECK_SPAN_CONTEXT(span_context);
     /* TODO */
+    (void) tracer;
+    (void) carrier;
     return opentracing_propagation_error_code_success;
 }
+
+#undef CHECK_SPAN_CONTEXT
 
 opentracing_propagation_error_code
 jaeger_tracer_extract_text_map(struct opentracing_tracer* tracer,
@@ -581,6 +598,9 @@ jaeger_tracer_extract_text_map(struct opentracing_tracer* tracer,
                                opentracing_span_context** span_context)
 {
     /* TODO */
+    (void) tracer;
+    (void) carrier;
+    (void) span_context;
     return opentracing_propagation_error_code_success;
 }
 
@@ -590,6 +610,9 @@ jaeger_tracer_extract_http_headers(opentracing_tracer* tracer,
                                    opentracing_span_context** span_context)
 {
     /* TODO */
+    (void) tracer;
+    (void) carrier;
+    (void) span_context;
     return opentracing_propagation_error_code_success;
 }
 
@@ -600,6 +623,10 @@ jaeger_tracer_extract_binary(opentracing_tracer* tracer,
                              opentracing_span_context** span_context)
 {
     /* TODO */
+    (void) tracer;
+    (void) callback;
+    (void) arg;
+    (void) span_context;
     return opentracing_propagation_error_code_success;
 }
 
@@ -609,5 +636,8 @@ jaeger_tracer_extract_custom(opentracing_tracer* tracer,
                              opentracing_span_context** span_context)
 {
     /* TODO */
+    (void) tracer;
+    (void) carrier;
+    (void) span_context;
     return opentracing_propagation_error_code_success;
 }
