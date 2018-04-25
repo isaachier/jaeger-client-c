@@ -60,6 +60,7 @@ void test_reporter()
                                         (jaeger_sampler*) &const_sampler,
                                         NULL,
                                         NULL,
+                                        NULL,
                                         NULL));
     TEST_ASSERT_NOT_NULL(tracer.service_name);
 

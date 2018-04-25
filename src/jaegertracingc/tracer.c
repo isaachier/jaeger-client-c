@@ -24,6 +24,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include "jaegertracingc/propagation.h"
 #include "jaegertracingc/random.h"
 
 #ifdef HOST_NAME_MAX
@@ -41,7 +42,7 @@ static inline char* hostname()
         jaeger_log_warn("Cannot get hostname, errno = %d", errno);
         return NULL;
     }
-    return strdup(hostname);
+    return jaeger_strdup(hostname);
 }
 
 static inline int score_addr(const struct ifaddrs* addr)
@@ -249,7 +250,8 @@ bool jaeger_tracer_init(jaeger_tracer* tracer,
                         jaeger_sampler* sampler,
                         jaeger_reporter* reporter,
                         jaeger_metrics* metrics,
-                        const jaeger_tracer_options* options)
+                        const jaeger_tracer_options* options,
+                        const jaeger_headers_config* headers)
 {
     assert(tracer != NULL);
 
@@ -296,6 +298,10 @@ bool jaeger_tracer_init(jaeger_tracer* tracer,
 
     if (options != NULL) {
         tracer->options = *options;
+    }
+
+    if (headers != NULL) {
+        tracer->headers = *headers;
     }
 
     if (!jaeger_vector_init(&tracer->tags, sizeof(jaeger_tag))) {
@@ -620,11 +626,17 @@ jaeger_tracer_extract_text_map(struct opentracing_tracer* tracer,
                                opentracing_text_map_reader* carrier,
                                opentracing_span_context** span_context)
 {
-    /* TODO */
-    (void) tracer;
-    (void) carrier;
-    (void) span_context;
-    return opentracing_propagation_error_code_success;
+    jaeger_tracer* t = (jaeger_tracer*) tracer;
+    jaeger_span_context* ctx = (jaeger_span_context*) *span_context;
+    opentracing_propagation_error_code return_code =
+        jaeger_extract_from_text_map(carrier,
+                                     (jaeger_span_context**) span_context,
+                                     t->metrics,
+                                     &t->headers);
+    if (return_code == opentracing_propagation_error_code_success) {
+        *span_context = (opentracing_span_context*) ctx;
+    }
+    return return_code;
 }
 
 opentracing_propagation_error_code

@@ -25,6 +25,7 @@
 #include <opentracing-c/tracer.h>
 
 #include "jaegertracingc/common.h"
+#include "jaegertracingc/options.h"
 #include "jaegertracingc/reporter.h"
 #include "jaegertracingc/sampler.h"
 #include "jaegertracingc/span.h"
@@ -87,6 +88,12 @@ typedef struct jaeger_tracer {
     jaeger_tracer_options options;
 
     /**
+     * Headers config for span propagation.
+     * @see jaeger_headers_config
+     */
+    jaeger_headers_config headers;
+
+    /**
      * Tags to store metadata about the current process (i.e. hostname,
      * client version, etc.).
      */
@@ -98,11 +105,11 @@ typedef struct jaeger_tracer {
      */
     struct {
         /** True if metrics is heap-allocated, false otherwise. */
-        bool metrics : 1;
+        bool metrics;
         /** True if sampler is heap-allocated, false otherwise. */
-        bool sampler : 1;
+        bool sampler;
         /** True if reporter is heap-allocated, false otherwise. */
-        bool reporter : 1;
+        bool reporter;
     } allocated;
 } jaeger_tracer;
 
@@ -130,6 +137,7 @@ typedef struct jaeger_tracer {
                  .extract_custom = &jaeger_tracer_extract_custom},            \
         .service_name = NULL, .metrics = NULL, .sampler = NULL,               \
         .reporter = NULL, .options = JAEGER_TRACER_OPTIONS_INIT,              \
+        .headers = JAEGERTRACINGC_HEADER_CONFIG_INIT,                         \
         .tags = JAEGERTRACINGC_VECTOR_INIT, .allocated = {                    \
             .metrics = false,                                                 \
             .sampler = false,                                                 \
@@ -153,6 +161,7 @@ void jaeger_tracer_destroy(jaeger_destructible* tracer);
  * @param reporter Reporter for tracer to use. May be NULL.
  * @param metrics Metrics object to use. May be NULL.
  * @param options Options for tracer to use. May be NULL.
+ * @param headers Headers config for span context propagation. May be NULL.
  * @return True on success, false otherwise.
  */
 bool jaeger_tracer_init(jaeger_tracer* tracer,
@@ -160,7 +169,8 @@ bool jaeger_tracer_init(jaeger_tracer* tracer,
                         jaeger_sampler* sampler,
                         jaeger_reporter* reporter,
                         jaeger_metrics* metrics,
-                        const jaeger_tracer_options* options);
+                        const jaeger_tracer_options* options,
+                        const jaeger_headers_config* headers);
 
 /**
  * Start a new span.
