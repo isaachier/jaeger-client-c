@@ -194,6 +194,7 @@ jaeger_extract_from_text_map(opentracing_text_map_reader* reader,
         reader,
         &(extract_text_map_arg){.ctx = *ctx,
                                 .config = config,
+                                .metrics = metrics,
                                 .normalize_key = &copy_str,
                                 .decode_value = &copy_str});
 }
@@ -209,6 +210,7 @@ jaeger_extract_from_http_headers(opentracing_http_headers_reader* reader,
         (opentracing_text_map_reader*) reader,
         &(extract_text_map_arg){.ctx = *ctx,
                                 .config = config,
+                                .metrics = metrics,
                                 .normalize_key = &to_lowercase,
                                 .decode_value = &decode_uri_value});
 }
