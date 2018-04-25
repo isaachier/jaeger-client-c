@@ -23,6 +23,7 @@
 #define JAEGERTRACINGC_OPTIONS_H
 
 #include "jaegertracingc/common.h"
+#include "jaegertracingc/constants.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -42,7 +43,7 @@ typedef struct jaeger_headers_config {
     const char* trace_baggage_header_prefix;
 } jaeger_headers_config;
 
-#define JAEGERTRACINGC_HEADER_CONFIG_INIT                                      \
+#define JAEGERTRACINGC_HEADERS_CONFIG_INIT                                     \
     {                                                                          \
         .debug_header = JAEGERTRACINGC_DEBUG_HEADER,                           \
         .baggage_header = JAEGERTRACINGC_BAGGAGE_HEADER,                       \

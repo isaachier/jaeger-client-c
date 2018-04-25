@@ -137,7 +137,7 @@ typedef struct jaeger_tracer {
                  .extract_custom = &jaeger_tracer_extract_custom},            \
         .service_name = NULL, .metrics = NULL, .sampler = NULL,               \
         .reporter = NULL, .options = JAEGER_TRACER_OPTIONS_INIT,              \
-        .headers = JAEGERTRACINGC_HEADER_CONFIG_INIT,                         \
+        .headers = JAEGERTRACINGC_HEADERS_CONFIG_INIT,                        \
         .tags = JAEGERTRACINGC_VECTOR_INIT, .allocated = {                    \
             .metrics = false,                                                 \
             .sampler = false,                                                 \
