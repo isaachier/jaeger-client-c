@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['warn',['warn',['../structjaeger__logger.html#af79cf51abda3dc508512c0b147500321',1,'jaeger_logger']]]
+  ['warn',['warn',['../structjaeger__logger.html#a92ed10ab8a9826819eca22027258ae16',1,'jaeger_logger']]]
 ];

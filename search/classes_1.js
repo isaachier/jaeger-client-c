@@ -28,7 +28,6 @@ var searchData=
   ['jaeger_5fspan',['jaeger_span',['../structjaeger__span.html',1,'']]],
   ['jaeger_5fspan_5fcontext',['jaeger_span_context',['../structjaeger__span__context.html',1,'']]],
   ['jaeger_5fspan_5fref',['jaeger_span_ref',['../structjaeger__span__ref.html',1,'']]],
-  ['jaeger_5fstart_5fspan_5foptions',['jaeger_start_span_options',['../structjaeger__start__span__options.html',1,'']]],
   ['jaeger_5fthread_5flocal',['jaeger_thread_local',['../structjaeger__thread__local.html',1,'']]],
   ['jaeger_5ftoken_5fbucket',['jaeger_token_bucket',['../structjaeger__token__bucket.html',1,'']]],
   ['jaeger_5ftrace_5fid',['jaeger_trace_id',['../structjaeger__trace__id.html',1,'']]],

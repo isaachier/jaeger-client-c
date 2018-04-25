@@ -15,7 +15,15 @@ var searchData=
   ['jaeger_5fset_5flogger',['jaeger_set_logger',['../logging_8h.html#ab67748c4ba5d8b37d6ba8b48dd5e61c0',1,'logging.c']]],
   ['jaeger_5fstd_5flogger_5finit',['jaeger_std_logger_init',['../logging_8h.html#ac01da6c9df20fe92039d247c05bfdbef',1,'logging.c']]],
   ['jaeger_5ftracer_5fdestroy',['jaeger_tracer_destroy',['../tracer_8h.html#ac15d87245dc7a76a6d630c08499f4dde',1,'tracer.c']]],
+  ['jaeger_5ftracer_5fextract_5fbinary',['jaeger_tracer_extract_binary',['../tracer_8h.html#a33faeb0e6c4e1598bf2219bcdfa6683a',1,'tracer.c']]],
+  ['jaeger_5ftracer_5fextract_5fcustom',['jaeger_tracer_extract_custom',['../tracer_8h.html#a3060407ee98c7f144ce4976230b33654',1,'tracer.c']]],
+  ['jaeger_5ftracer_5fextract_5fhttp_5fheaders',['jaeger_tracer_extract_http_headers',['../tracer_8h.html#a654a7cc799997eda2fed3d981f15851d',1,'tracer.c']]],
+  ['jaeger_5ftracer_5fextract_5ftext_5fmap',['jaeger_tracer_extract_text_map',['../tracer_8h.html#a47c41c5e366ca03ec8296dc56fe283f7',1,'tracer.c']]],
   ['jaeger_5ftracer_5fflush',['jaeger_tracer_flush',['../tracer_8h.html#ad5de5e280e85d209bccef344280481f5',1,'tracer.c']]],
   ['jaeger_5ftracer_5finit',['jaeger_tracer_init',['../tracer_8h.html#aa07dbdbe42478395d2ee98572826eea2',1,'tracer.c']]],
-  ['jaeger_5ftracer_5fstart_5fspan',['jaeger_tracer_start_span',['../tracer_8h.html#ac63703df0d8ab978f8e1327daa16fc69',1,'tracer.c']]]
+  ['jaeger_5ftracer_5finject_5fbinary',['jaeger_tracer_inject_binary',['../tracer_8h.html#a8b2cb7d9622f0b220f742d1b9a1900b1',1,'tracer.c']]],
+  ['jaeger_5ftracer_5finject_5fcustom',['jaeger_tracer_inject_custom',['../tracer_8h.html#a7fcd9f490af3c586b989ec18d1e3dadb',1,'tracer.c']]],
+  ['jaeger_5ftracer_5finject_5fhttp_5fheaders',['jaeger_tracer_inject_http_headers',['../tracer_8h.html#ac0c9d6b85def099fdac61ee188e0c728',1,'tracer.c']]],
+  ['jaeger_5ftracer_5finject_5ftext_5fmap',['jaeger_tracer_inject_text_map',['../tracer_8h.html#aded521244264c0a2d6aa88b5270f6941',1,'tracer.c']]],
+  ['jaeger_5ftracer_5fstart_5fspan_5fwith_5foptions',['jaeger_tracer_start_span_with_options',['../tracer_8h.html#a09d9489c006a43c9e95bd353fe9a3c3d',1,'tracer.c']]]
 ];

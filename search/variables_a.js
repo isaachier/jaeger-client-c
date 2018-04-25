@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['num_5fspan_5frefs',['num_span_refs',['../structjaeger__start__span__options.html#a7f7a0ec54858f143334777e2d4b05d77',1,'jaeger_start_span_options']]],
-  ['num_5ftags',['num_tags',['../structjaeger__start__span__options.html#ae8051a6d24d85c7dbc6916721b5e69cf',1,'jaeger_start_span_options']]]
+  ['malloc',['malloc',['../structjaeger__allocator.html#a235caded5cb561736c69c28b47169864',1,'jaeger_allocator']]],
+  ['metrics',['metrics',['../structjaeger__tracer.html#a1dd0f33dd401acec1affee5e74e4ce1a',1,'jaeger_tracer::metrics()'],['../structjaeger__tracer.html#ad829501be0454a1ede7de6448d923705',1,'jaeger_tracer::metrics()']]],
+  ['mutex',['mutex',['../structjaeger__span__context.html#a56712a12a4461df451f26c91cad7a3e9',1,'jaeger_span_context::mutex()'],['../structjaeger__span.html#a84d3f190ba0bb7106efdfe9d8e47beeb',1,'jaeger_span::mutex()']]]
 ];

@@ -1,6 +1,7 @@
 var structjaeger__tracer =
 [
-    [ "allocated", "structjaeger__tracer.html#a1641ebc0d544d288c89eb1e1e95fce08", null ],
+    [ "allocated", "structjaeger__tracer.html#a61b99abb9c413a2a36c3d8b77050c3e6", null ],
+    [ "base", "structjaeger__tracer.html#a0cb44e6988002ef749df0f3a44a8c6fc", null ],
     [ "metrics", "structjaeger__tracer.html#a1dd0f33dd401acec1affee5e74e4ce1a", null ],
     [ "metrics", "structjaeger__tracer.html#ad829501be0454a1ede7de6448d923705", null ],
     [ "options", "structjaeger__tracer.html#ac75ef3b2257e8ba0eea1dfb8828ec193", null ],

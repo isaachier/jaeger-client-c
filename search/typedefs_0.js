@@ -7,7 +7,6 @@ var searchData=
   ['jaeger_5fgauge',['jaeger_gauge',['../metrics_8h.html#a4e6ae6a29bd2e7d4a41aa1968e15a13a',1,'metrics.h']]],
   ['jaeger_5flogger',['jaeger_logger',['../logging_8h.html#ad1d12d8cc063a770d4feea4dfec02785',1,'logging.h']]],
   ['jaeger_5fspan_5fcontext',['jaeger_span_context',['../span_8h.html#ae413911b9fc5d9af9e9895c90d3a34d7',1,'span.h']]],
-  ['jaeger_5fstart_5fspan_5foptions',['jaeger_start_span_options',['../tracer_8h.html#affbaeb3e3b2bc49401b0d365eb91b4b8',1,'tracer.h']]],
   ['jaeger_5ftrace_5fid',['jaeger_trace_id',['../trace__id_8h.html#a52559bed65fca78dcba42ff2388a6a85',1,'trace_id.h']]],
   ['jaeger_5ftracer',['jaeger_tracer',['../tracer_8h.html#aecb3ad27e5f06cfdc881d96ebec29783',1,'tracer.h']]],
   ['jaeger_5ftracer_5foptions',['jaeger_tracer_options',['../tracer_8h.html#abe813aa7689a8224a1545960d0efce71',1,'tracer.h']]]

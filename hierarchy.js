@@ -52,7 +52,6 @@ var hierarchy =
     [ "jaeger_span", "structjaeger__span.html", null ],
     [ "jaeger_span_context", "structjaeger__span__context.html", null ],
     [ "jaeger_span_ref", "structjaeger__span__ref.html", null ],
-    [ "jaeger_start_span_options", "structjaeger__start__span__options.html", null ],
     [ "jaeger_thread_local", "structjaeger__thread__local.html", null ],
     [ "jaeger_token_bucket", "structjaeger__token__bucket.html", null ],
     [ "jaeger_trace_id", "structjaeger__trace__id.html", null ],

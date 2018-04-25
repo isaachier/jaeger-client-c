@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['error',['error',['../structjaeger__logger.html#a89ed4f4a532e4e3fe5da9072d108ba69',1,'jaeger_logger']]]
+  ['error',['error',['../structjaeger__logger.html#a41a2e4729ee8379193fe61dd5113bda6',1,'jaeger_logger']]]
 ];

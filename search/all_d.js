@@ -1,10 +1,11 @@
 var searchData=
 [
-  ['malloc',['malloc',['../structjaeger__allocator.html#ab89e0bce9f7223d60b7788b51dcceaa6',1,'jaeger_allocator']]],
+  ['malloc',['malloc',['../structjaeger__allocator.html#a235caded5cb561736c69c28b47169864',1,'jaeger_allocator']]],
   ['metrics',['metrics',['../structjaeger__tracer.html#a1dd0f33dd401acec1affee5e74e4ce1a',1,'jaeger_tracer::metrics()'],['../structjaeger__tracer.html#ad829501be0454a1ede7de6448d923705',1,'jaeger_tracer::metrics()']]],
   ['metrics_2eh',['metrics.h',['../metrics_8h.html',1,'']]],
   ['mock_5fagent_2eh',['mock_agent.h',['../mock__agent_8h.html',1,'']]],
   ['mock_5fhttp_5fresponse',['mock_http_response',['../structmock__http__response.html',1,'']]],
   ['mock_5fhttp_5fserver',['mock_http_server',['../structmock__http__server.html',1,'']]],
-  ['mock_5fhttp_5fserver_5fcontext',['mock_http_server_context',['../structmock__http__server__context.html',1,'']]]
+  ['mock_5fhttp_5fserver_5fcontext',['mock_http_server_context',['../structmock__http__server__context.html',1,'']]],
+  ['mutex',['mutex',['../structjaeger__span__context.html#a56712a12a4461df451f26c91cad7a3e9',1,'jaeger_span_context::mutex()'],['../structjaeger__span.html#a84d3f190ba0bb7106efdfe9d8e47beeb',1,'jaeger_span::mutex()']]]
 ];

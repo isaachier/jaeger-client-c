@@ -9,7 +9,7 @@ var vector_8h =
     [ "JAEGERTRACINGC_VECTOR_RESIZE_FACTOR", "vector_8h.html#a78e2776e34339aed0e7837869197f7e7", null ],
     [ "JAEGERTRACINGC_WRAP_COPY", "vector_8h.html#aac3189a37050bee32a769aa1c469c2a4", null ],
     [ "JAEGERTRACINGC_WRAP_DESTROY", "vector_8h.html#ac370ae89b3abdc9f81910a3bd2f8347a", null ],
-    [ "jaeger_comparator", "vector_8h.html#a3dd61f344e74f2d63180b32111cc5a21", null ],
+    [ "jaeger_comparator", "vector_8h.html#a8885c767fb743756cda2d72a65e46c8d", null ],
     [ "jaeger_vector", "vector_8h.html#af10da7fdb37d0a573e24c3d0a48d15f2", null ],
     [ "jaeger_vector_ptr_copy_arg", "vector_8h.html#a5b9f549cbcf76e64554c3a57f6bbfa9c", null ]
 ];
