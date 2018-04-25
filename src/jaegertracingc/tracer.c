@@ -421,9 +421,32 @@ span_inherit_from_parent(jaeger_tracer* tracer,
 static inline void update_metrics_for_new_span(jaeger_metrics* metrics,
                                                const jaeger_span* span)
 {
-    /* TODO */
-    (void) metrics;
-    (void) span;
+#define COUNTER_INCREMENT(counter) (counter)->inc((counter), 1)
+
+    assert(metrics != NULL);
+    assert(span != NULL);
+
+    jaeger_counter* spans_started = metrics->spans_started;
+    spans_started->inc(spans_started, 1);
+
+    jaeger_mutex_lock((jaeger_mutex*) &span->mutex);
+    const bool is_sampled = jaeger_span_is_sampled(span);
+    const bool is_new_trace = (span->context.parent_id == 0);
+    jaeger_mutex_unlock((jaeger_mutex*) &span->mutex);
+    if (is_sampled) {
+        COUNTER_INCREMENT(metrics->spans_sampled);
+        if (is_new_trace) {
+            COUNTER_INCREMENT(metrics->traces_started_sampled);
+        }
+    }
+    else {
+        COUNTER_INCREMENT(metrics->spans_sampled);
+        if (is_new_trace) {
+            COUNTER_INCREMENT(metrics->traces_started_not_sampled);
+        }
+    }
+
+#undef COUNTER_INCREMENT
 }
 
 opentracing_span* jaeger_tracer_start_span_with_options(
