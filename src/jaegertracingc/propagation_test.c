@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include "jaegertracingc/internal/strings.h"
 #include "jaegertracingc/propagation.h"
 
 #include "unity.h"
@@ -46,6 +47,10 @@ mock_reader_foreach_key(opentracing_text_map_reader* reader,
 
 void test_propagation()
 {
+    TEST_ASSERT_EQUAL(-1, decode_hex('Z'));
+    TEST_ASSERT_EQUAL(0xf, decode_hex('f'));
+    TEST_ASSERT_EQUAL(9, decode_hex('9'));
+
     mock_reader reader = {.base = {.foreach_key = &mock_reader_foreach_key}};
     jaeger_span_context* ctx = NULL;
     jaeger_headers_config headers = JAEGERTRACINGC_HEADERS_CONFIG_INIT;
