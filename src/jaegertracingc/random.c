@@ -21,9 +21,15 @@ jaeger_thread_local rng_storage = {.initialized = false};
 
 static jaeger_once once = JAEGERTRACINGC_ONCE_INIT;
 
+void cleanup_rng(void)
+{
+    jaeger_thread_local_destroy(&rng_storage);
+}
+
 void init_rng(void)
 {
     jaeger_thread_local_init(&rng_storage);
+    atexit(&cleanup_rng);
 }
 
 int64_t random64(void)
