@@ -51,6 +51,17 @@ static inline int decode_hex(char ch)
     return -1;
 }
 
+static inline char hex_as_char(int num)
+{
+    assert(num >= 0 && num < 16);
+    if (num < 10) {
+        return '0' + num;
+    }
+    else {
+        return 'a' + (num - 10);
+    }
+}
+
 static inline void decode_uri_value(char* restrict dst,
                                     const char* restrict src)
 {
@@ -97,7 +108,7 @@ static inline void decode_uri_value(char* restrict dst,
             second_nibble = decode_hex(ch);
             if (second_nibble == -1) {
                 APPEND_CHAR('%');
-                APPEND_CHAR((char) first_nibble);
+                APPEND_CHAR(hex_as_char(first_nibble));
                 APPEND_CHAR(ch);
             }
             else {
@@ -114,7 +125,7 @@ static inline void decode_uri_value(char* restrict dst,
         break;
     case first_hex_state:
         APPEND_CHAR('%');
-        APPEND_CHAR((char) first_nibble);
+        APPEND_CHAR(hex_as_char(first_nibble));
         break;
     default:
         break;
