@@ -347,6 +347,7 @@ span_inherit_from_parent(jaeger_tracer* tracer,
 {
     assert(tracer != NULL);
     assert(span != NULL);
+    assert(span_refs != NULL);
     const jaeger_span_context* parent = NULL;
     bool has_parent = false;
     for (int i = 0; i < num_span_refs; i++) {
@@ -492,7 +493,9 @@ opentracing_span* jaeger_tracer_start_span_with_options(
             t, span, options->references, options->num_references)) {
         goto cleanup;
     }
+
     for (int i = 0; i < options->num_tags; i++) {
+        assert(options->tags != NULL);
         jaeger_tag src_tag = JAEGERTRACINGC_TAG_INIT;
         jaeger_tag_from_key_value(
             &src_tag, options->tags[i].key, &options->tags[i].value);
