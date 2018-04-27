@@ -105,49 +105,49 @@ endif()
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(core_src
-  "src/jaegertracingc/alloc.c"
-  "src/jaegertracingc/alloc.h"
-  "src/jaegertracingc/clock.c"
-  "src/jaegertracingc/clock.h"
-  "src/jaegertracingc/common.c"
-  "src/jaegertracingc/common.h"
-  "src/jaegertracingc/constants.c"
-  "src/jaegertracingc/key_value.c"
-  "src/jaegertracingc/key_value.h"
-  "src/jaegertracingc/log_record.c"
-  "src/jaegertracingc/log_record.h"
-  "src/jaegertracingc/logging.c"
-  "src/jaegertracingc/logging.h"
-  "src/jaegertracingc/metrics.c"
-  "src/jaegertracingc/metrics.h"
-  "src/jaegertracingc/net.c"
-  "src/jaegertracingc/net.h"
-  "src/jaegertracingc/options.c"
-  "src/jaegertracingc/options.h"
-  "src/jaegertracingc/propagation.c"
-  "src/jaegertracingc/propagation.h"
-  "src/jaegertracingc/random.c"
-  "src/jaegertracingc/random.h"
-  "src/jaegertracingc/reporter.c"
-  "src/jaegertracingc/reporter.h"
-  "src/jaegertracingc/sampler.c"
-  "src/jaegertracingc/sampler.h"
-  "src/jaegertracingc/sampling_strategy.c"
-  "src/jaegertracingc/sampling_strategy.h"
-  "src/jaegertracingc/span.c"
-  "src/jaegertracingc/span.h"
-  "src/jaegertracingc/tag.c"
-  "src/jaegertracingc/tag.h"
-  "src/jaegertracingc/threading.c"
-  "src/jaegertracingc/threading.h"
-  "src/jaegertracingc/token_bucket.c"
-  "src/jaegertracingc/token_bucket.h"
-  "src/jaegertracingc/trace_id.c"
-  "src/jaegertracingc/trace_id.h"
-  "src/jaegertracingc/tracer.c"
-  "src/jaegertracingc/tracer.h"
-  "src/jaegertracingc/vector.c"
-  "src/jaegertracingc/vector.h")
+  src/jaegertracingc/alloc.c
+  src/jaegertracingc/alloc.h
+  src/jaegertracingc/clock.c
+  src/jaegertracingc/clock.h
+  src/jaegertracingc/common.c
+  src/jaegertracingc/common.h
+  src/jaegertracingc/constants.c
+  src/jaegertracingc/key_value.c
+  src/jaegertracingc/key_value.h
+  src/jaegertracingc/log_record.c
+  src/jaegertracingc/log_record.h
+  src/jaegertracingc/logging.c
+  src/jaegertracingc/logging.h
+  src/jaegertracingc/metrics.c
+  src/jaegertracingc/metrics.h
+  src/jaegertracingc/net.c
+  src/jaegertracingc/net.h
+  src/jaegertracingc/options.c
+  src/jaegertracingc/options.h
+  src/jaegertracingc/propagation.c
+  src/jaegertracingc/propagation.h
+  src/jaegertracingc/random.c
+  src/jaegertracingc/random.h
+  src/jaegertracingc/reporter.c
+  src/jaegertracingc/reporter.h
+  src/jaegertracingc/sampler.c
+  src/jaegertracingc/sampler.h
+  src/jaegertracingc/sampling_strategy.c
+  src/jaegertracingc/sampling_strategy.h
+  src/jaegertracingc/span.c
+  src/jaegertracingc/span.h
+  src/jaegertracingc/tag.c
+  src/jaegertracingc/tag.h
+  src/jaegertracingc/threading.c
+  src/jaegertracingc/threading.h
+  src/jaegertracingc/token_bucket.c
+  src/jaegertracingc/token_bucket.h
+  src/jaegertracingc/trace_id.c
+  src/jaegertracingc/trace_id.h
+  src/jaegertracingc/tracer.c
+  src/jaegertracingc/tracer.h
+  src/jaegertracingc/vector.c
+  src/jaegertracingc/vector.h)
 
 set(generated_src_dir "${CMAKE_CURRENT_BINARY_DIR}/src/jaegertracingc")
 
@@ -185,11 +185,11 @@ add_library(jaegertracingc ${core_src} ${protoc_gen_src})
 target_compile_options(jaegertracingc PRIVATE ${jaegertracingc_flags})
 
 configure_file(
-  "src/jaegertracingc/constants.h.in"
+  src/jaegertracingc/constants.h.in
   "${generated_src_dir}/constants.h"
   @ONLY)
 configure_file(
-  "src/jaegertracingc/config.h.in"
+  src/jaegertracingc/config.h.in
   "${generated_src_dir}/config.h"
   @ONLY)
 target_include_directories(jaegertracingc PUBLIC
@@ -237,27 +237,28 @@ if(BUILD_TESTING)
   target_include_directories(unity PUBLIC "third_party/unity/src")
 
   set(test_src
-    "src/jaegertracingc/alloc_test.c"
-    "src/jaegertracingc/clock_test.c"
-    "src/jaegertracingc/logging_test.c"
-    "src/jaegertracingc/metrics_test.c"
-    "src/jaegertracingc/net_test.c"
-    "src/jaegertracingc/propagation_test.c"
-    "src/jaegertracingc/random_test.c"
-    "src/jaegertracingc/reporter_test.c"
-    "src/jaegertracingc/sampler_test.c"
-    "src/jaegertracingc/span_test.c"
-    "src/jaegertracingc/tag_test.c"
-    "src/jaegertracingc/threading_test.c"
-    "src/jaegertracingc/trace_id_test.c"
-    "src/jaegertracingc/token_bucket_test.c"
-    "src/jaegertracingc/vector_test.c")
+    src/jaegertracingc/alloc_test.c
+    src/jaegertracingc/clock_test.c
+    src/jaegertracingc/logging_test.c
+    src/jaegertracingc/log_record_test.c
+    src/jaegertracingc/metrics_test.c
+    src/jaegertracingc/net_test.c
+    src/jaegertracingc/propagation_test.c
+    src/jaegertracingc/random_test.c
+    src/jaegertracingc/reporter_test.c
+    src/jaegertracingc/sampler_test.c
+    src/jaegertracingc/span_test.c
+    src/jaegertracingc/tag_test.c
+    src/jaegertracingc/threading_test.c
+    src/jaegertracingc/trace_id_test.c
+    src/jaegertracingc/token_bucket_test.c
+    src/jaegertracingc/vector_test.c)
   foreach(test_file ${test_src})
     get_filename_component(test_component ${test_file} NAME_WE)
     string(REPLACE "_test" "" test_component "${test_component}")
     string(TOUPPER "${test_component}" test_component_upper)
     configure_file(
-      "src/jaegertracingc/test.h.in"
+      src/jaegertracingc/test.h.in
       "${generated_src_dir}/${test_component}_test.h"
       @ONLY)
 
@@ -267,7 +268,7 @@ if(BUILD_TESTING)
         "${unit_test_driver_impl}\n    RUN_TEST(test_${test_component});")
   endforeach()
   configure_file(
-    "src/jaegertracingc/unit_test_driver.h.in"
+    src/jaegertracingc/unit_test_driver.h.in
     "${generated_src_dir}/unit_test_driver.h"
     @ONLY)
   add_library(jaegertracingc_test ${test_src} "src/jaegertracingc/mock_agent.c")

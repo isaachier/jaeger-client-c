@@ -143,7 +143,12 @@ static inline bool jaeger_tag_from_key_value(jaeger_tag* restrict dst,
                                              const opentracing_value* value)
 {
     jaeger_tag src = JAEGERTRACINGC_TAG_INIT;
-    src.key = (char*) key;
+    char key_copy[strlen(key) + 1];
+    strncpy(key_copy, key, sizeof(key_copy));
+    src.key = key_copy;
+    if (src.key == NULL) {
+        return false;
+    }
     switch (value->type) {
     case opentracing_value_null:
         break;
