@@ -84,7 +84,7 @@ typedef struct jaeger_span_context {
     char* debug_id;
 
     /**
-     * Lock to protect baggage member.
+     * Lock to protect mutable members.
      * @see baggage
      */
     jaeger_mutex mutex;
@@ -279,12 +279,14 @@ jaeger_span_ref_to_protobuf(Jaegertracing__Protobuf__SpanRef* restrict dst,
     }
     *dst->trace_id = (Jaegertracing__Protobuf__TraceID)
         JAEGERTRACING__PROTOBUF__TRACE_ID__INIT;
+    jaeger_mutex_lock((jaeger_mutex*) &src->context.mutex);
     jaeger_trace_id_to_protobuf(dst->trace_id, &src->context.trace_id);
+    dst->span_id = src->context.span_id;
+    jaeger_mutex_unlock((jaeger_mutex*) &src->context.mutex);
 #ifdef JAEGERTRACINGC_HAVE_PROTOBUF_OPTIONAL_FIELDS
     dst->has_type = true;
 #endif /* JAEGERTRACINGC_HAVE_PROTOBUF_OPTIONAL_FIELDS */
     dst->type = (Jaegertracing__Protobuf__SpanRef__Type) src->type;
-    dst->span_id = src->context.span_id;
     return true;
 }
 
@@ -606,8 +608,8 @@ static inline bool jaeger_span_set_sampling_priority(
         return false;
     }
 
-    jaeger_mutex_lock(&span->mutex);
     bool success = false;
+    jaeger_lock(&span->mutex, &span->context.mutex);
     if ((value->type == opentracing_value_int64 && value->value.int64_value) ||
         (value->type == opentracing_value_uint64 &&
          value->value.uint64_value)) {
@@ -620,6 +622,7 @@ static inline bool jaeger_span_set_sampling_priority(
             span->context.flags & (~jaeger_sampling_flag_sampled);
     }
     jaeger_mutex_unlock(&span->mutex);
+    jaeger_mutex_unlock(&span->context.mutex);
     return success;
 }
 
@@ -839,7 +842,8 @@ jaeger_span_to_protobuf(Jaegertracing__Protobuf__Span* restrict dst,
     dst->has_span_id = true;
     dst->has_parent_span_id = true;
 #endif /* JAEGERTRACINGC_HAVE_PROTOBUF_OPTIONAL_FIELDS */
-    jaeger_mutex_lock((jaeger_mutex*) &src->mutex);
+    jaeger_lock((jaeger_mutex*) &src->mutex,
+                (jaeger_mutex*) &src->context.mutex);
     jaeger_trace_id_to_protobuf(dst->trace_id, &src->context.trace_id);
     dst->span_id = src->context.span_id;
     dst->parent_span_id = src->context.parent_id;
@@ -877,10 +881,12 @@ jaeger_span_to_protobuf(Jaegertracing__Protobuf__Span* restrict dst,
         goto cleanup;
     }
     jaeger_mutex_unlock((jaeger_mutex*) &src->mutex);
+    jaeger_mutex_unlock((jaeger_mutex*) &src->context.mutex);
     return true;
 
 cleanup:
     jaeger_mutex_unlock((jaeger_mutex*) &src->mutex);
+    jaeger_mutex_unlock((jaeger_mutex*) &src->context.mutex);
     jaeger_span_protobuf_destroy(dst);
     *dst = (Jaegertracing__Protobuf__Span) JAEGERTRACING__PROTOBUF__SPAN__INIT;
     return false;
@@ -960,10 +966,12 @@ static inline bool jaeger_span_context_scan(jaeger_span_context* ctx,
         }
     }
 
-    *ctx = (jaeger_span_context){.trace_id = trace_id,
-                                 .span_id = span_id,
-                                 .parent_id = parent_id,
-                                 .flags = flags};
+    jaeger_mutex_lock(&ctx->mutex);
+    ctx->trace_id = trace_id;
+    ctx->span_id = span_id;
+    ctx->parent_id = parent_id;
+    ctx->flags = flags;
+    jaeger_mutex_unlock(&ctx->mutex);
     return true;
 }
 

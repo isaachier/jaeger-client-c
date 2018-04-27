@@ -26,6 +26,10 @@ typedef struct mock_reader {
     opentracing_text_map_reader base;
 } mock_reader;
 
+typedef struct mock_http_reader {
+    opentracing_http_headers_reader base;
+} mock_http_reader;
+
 opentracing_propagation_error_code
 mock_reader_foreach_key(opentracing_text_map_reader* reader,
                         opentracing_propagation_error_code (*handler)(
@@ -33,8 +37,29 @@ mock_reader_foreach_key(opentracing_text_map_reader* reader,
                         void* arg)
 {
     (void) reader;
-    const char* keys[] = {"key%%1", "key%E02", "key3%"};
-    const char* values[] = {"value1", "VALUE2", "VaLuE"};
+    const char* keys[] = {
+        "key%%1", "key%E02", "key3%", JAEGERTRACINGC_TRACE_CONTEXT_HEADER_NAME};
+    const char* values[] = {"value1", "VALUE2", "VaLuE", "ab:cd:0:0"};
+    for (int i = 0, len = sizeof(keys) / sizeof(keys[0]); i < len; i++) {
+        opentracing_propagation_error_code return_code =
+            handler(arg, keys[i], values[i]);
+        if (return_code != opentracing_propagation_error_code_success) {
+            return return_code;
+        }
+    }
+    return opentracing_propagation_error_code_success;
+}
+
+opentracing_propagation_error_code
+mock_reader_foreach_key_fail(opentracing_text_map_reader* reader,
+                             opentracing_propagation_error_code (*handler)(
+                                 void*, const char*, const char*),
+                             void* arg)
+{
+    (void) reader;
+    const char* keys[] = {
+        "key%%1", "key%E02", "key3%", JAEGERTRACINGC_TRACE_CONTEXT_HEADER_NAME};
+    const char* values[] = {"value1", "VALUE2", "VaLuE", "xy:z-:0:0"};
     for (int i = 0, len = sizeof(keys) / sizeof(keys[0]); i < len; i++) {
         opentracing_propagation_error_code return_code =
             handler(arg, keys[i], values[i]);
@@ -86,8 +111,51 @@ static inline void test_extract_from_text_map()
     mock_reader reader = {.base = {.foreach_key = &mock_reader_foreach_key}};
     jaeger_span_context* ctx = NULL;
     jaeger_headers_config headers = JAEGERTRACINGC_HEADERS_CONFIG_INIT;
-    jaeger_extract_from_text_map(
-        (opentracing_text_map_reader*) &reader, &ctx, NULL, &headers);
+    TEST_ASSERT_EQUAL(
+        opentracing_propagation_error_code_success,
+        jaeger_extract_from_text_map(
+            (opentracing_text_map_reader*) &reader, &ctx, NULL, &headers));
+    TEST_ASSERT_NOT_NULL(ctx);
+    TEST_ASSERT_EQUAL(0xab, ctx->trace_id.low);
+    TEST_ASSERT_EQUAL(0xcd, ctx->span_id);
+    TEST_ASSERT_EQUAL(0, ctx->parent_id);
+    TEST_ASSERT_EQUAL(0, ctx->flags);
+    ((jaeger_destructible*) ctx)->destroy((jaeger_destructible*) ctx);
+    jaeger_free(ctx);
+
+    reader.base.foreach_key = &mock_reader_foreach_key_fail;
+    ctx = NULL;
+    TEST_ASSERT_EQUAL(
+        opentracing_propagation_error_code_span_context_corrupted,
+        jaeger_extract_from_text_map(
+            (opentracing_text_map_reader*) &reader, &ctx, NULL, &headers));
+    TEST_ASSERT_NULL(ctx);
+}
+
+static inline void test_extract_from_http_headers()
+{
+    mock_http_reader reader = {
+        .base = {.base = {.foreach_key = &mock_reader_foreach_key}}};
+    jaeger_span_context* ctx = NULL;
+    jaeger_headers_config headers = JAEGERTRACINGC_HEADERS_CONFIG_INIT;
+    TEST_ASSERT_EQUAL(
+        opentracing_propagation_error_code_success,
+        jaeger_extract_from_http_headers(
+            (opentracing_http_headers_reader*) &reader, &ctx, NULL, &headers));
+    TEST_ASSERT_NOT_NULL(ctx);
+    TEST_ASSERT_EQUAL(0xab, ctx->trace_id.low);
+    TEST_ASSERT_EQUAL(0xcd, ctx->span_id);
+    TEST_ASSERT_EQUAL(0, ctx->parent_id);
+    TEST_ASSERT_EQUAL(0, ctx->flags);
+    ((jaeger_destructible*) ctx)->destroy((jaeger_destructible*) ctx);
+    jaeger_free(ctx);
+
+    reader.base.base.foreach_key = &mock_reader_foreach_key_fail;
+    ctx = NULL;
+    TEST_ASSERT_EQUAL(
+        opentracing_propagation_error_code_span_context_corrupted,
+        jaeger_extract_from_http_headers(
+            (opentracing_http_headers_reader*) &reader, &ctx, NULL, &headers));
     TEST_ASSERT_NULL(ctx);
 }
 
@@ -97,4 +165,5 @@ void test_propagation()
     test_decode_uri_value();
     test_to_lowercase();
     test_extract_from_text_map();
+    test_extract_from_http_headers();
 }

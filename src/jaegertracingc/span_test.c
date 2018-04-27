@@ -63,6 +63,11 @@ void test_span()
 
     jaeger_span span = JAEGERTRACINGC_SPAN_INIT;
     TEST_ASSERT_TRUE(jaeger_span_init(&span));
+
+    TEST_ASSERT_FALSE(jaeger_span_context_is_valid(&span.context));
+    TEST_ASSERT_FALSE(
+        jaeger_span_context_is_debug_id_container_only(&span.context));
+
     for (int i = 0, len = sizeof(baggage) / sizeof(baggage[0]); i < len; i++) {
         ((opentracing_span*) &span)
             ->set_baggage_item(

@@ -54,14 +54,16 @@ extract_text_map_callback(void* arg, const char* key, const char* value)
             return opentracing_propagation_error_code_span_context_corrupted;
         }
     }
-    jaeger_key_value* kv = jaeger_vector_append(&ctx->baggage);
-    if (kv == NULL) {
-        return opentracing_propagation_error_code_unknown;
-    }
-    if (!jaeger_key_value_init(kv, key_buffer, value)) {
-        ctx->baggage.len--;
-        return opentracing_propagation_error_code_unknown;
-    }
+    /* TODO
+        jaeger_key_value* kv = jaeger_vector_append(&ctx->baggage);
+        if (kv == NULL) {
+            return opentracing_propagation_error_code_unknown;
+        }
+        if (!jaeger_key_value_init(kv, key_buffer, value)) {
+            ctx->baggage.len--;
+            return opentracing_propagation_error_code_unknown;
+        }
+    */
     return opentracing_propagation_error_code_success;
 }
 
@@ -71,15 +73,18 @@ extract_from_text_map_helper(opentracing_text_map_reader* reader,
 {
     arg->ctx = jaeger_malloc(sizeof(*arg->ctx));
     if (arg->ctx == NULL || !jaeger_span_context_init(arg->ctx)) {
-        goto cleanup;
+        jaeger_span_context_destroy((jaeger_destructible*) arg->ctx);
+        jaeger_free(arg->ctx);
+        arg->ctx = NULL;
+        return opentracing_propagation_error_code_unknown;
     }
-    reader->foreach_key(reader, &extract_text_map_callback, arg);
-
-cleanup:
-    jaeger_span_context_destroy((jaeger_destructible*) arg->ctx);
-    jaeger_free(arg->ctx);
-    arg->ctx = NULL;
-    return opentracing_propagation_error_code_unknown;
+    const opentracing_propagation_error_code result =
+        reader->foreach_key(reader, &extract_text_map_callback, arg);
+    if (result != opentracing_propagation_error_code_success) {
+        jaeger_free(arg->ctx);
+        arg->ctx = NULL;
+    }
+    return result;
 }
 
 opentracing_propagation_error_code
@@ -89,13 +94,15 @@ jaeger_extract_from_text_map(opentracing_text_map_reader* reader,
                              const jaeger_headers_config* config)
 {
     assert(ctx != NULL);
-    return extract_from_text_map_helper(
-        reader,
-        &(extract_text_map_arg){.ctx = *ctx,
+    extract_text_map_arg arg = {.ctx = NULL,
                                 .config = config,
                                 .metrics = metrics,
                                 .normalize_key = &copy_str,
-                                .decode_value = &copy_str});
+                                .decode_value = &copy_str};
+    const opentracing_propagation_error_code result =
+        extract_from_text_map_helper(reader, &arg);
+    *ctx = arg.ctx;
+    return result;
 }
 
 opentracing_propagation_error_code
@@ -105,13 +112,16 @@ jaeger_extract_from_http_headers(opentracing_http_headers_reader* reader,
                                  const jaeger_headers_config* config)
 {
     assert(ctx != NULL);
-    return extract_from_text_map_helper(
-        (opentracing_text_map_reader*) reader,
-        &(extract_text_map_arg){.ctx = *ctx,
+    extract_text_map_arg arg = {.ctx = NULL,
                                 .config = config,
                                 .metrics = metrics,
                                 .normalize_key = &to_lowercase,
-                                .decode_value = &decode_uri_value});
+                                .decode_value = &decode_uri_value};
+    const opentracing_propagation_error_code result =
+        extract_from_text_map_helper((opentracing_text_map_reader*) reader,
+                                     &arg);
+    *ctx = arg.ctx;
+    return result;
 }
 
 opentracing_propagation_error_code
