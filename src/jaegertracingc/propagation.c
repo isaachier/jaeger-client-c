@@ -35,6 +35,50 @@ typedef struct extract_text_map_arg {
 } extract_text_map_arg;
 
 static opentracing_propagation_error_code
+parse_key_value(jaeger_vector* baggage, char* str)
+{
+    char* eq_context;
+    const char* key = strtok_r(str, "=", &eq_context);
+    if (key == NULL) {
+        return opentracing_propagation_error_code_span_context_corrupted;
+    }
+    const char* value = strtok_r(NULL, "=", &eq_context);
+    if (value == NULL) {
+        return opentracing_propagation_error_code_span_context_corrupted;
+    }
+
+    jaeger_key_value* kv = jaeger_vector_append(baggage);
+    if (kv == NULL) {
+        return opentracing_propagation_error_code_unknown;
+    }
+    if (!jaeger_key_value_init(kv, key, value)) {
+        baggage->len--;
+        return opentracing_propagation_error_code_unknown;
+    }
+
+    return opentracing_propagation_error_code_success;
+}
+
+static opentracing_propagation_error_code
+parse_comma_separated_map(jaeger_vector* baggage, char* str)
+{
+    assert(baggage != NULL);
+    assert(str != NULL);
+
+    char* comma_context;
+    char* kv_str = strtok_r(str, ",", &comma_context);
+    while (kv_str != NULL) {
+        const opentracing_propagation_error_code return_code =
+            parse_key_value(baggage, kv_str);
+        if (return_code != opentracing_propagation_error_code_success) {
+            return return_code;
+        }
+        kv_str = strtok_r(NULL, ",", &comma_context);
+    }
+    return opentracing_propagation_error_code_success;
+}
+
+static opentracing_propagation_error_code
 extract_text_map_callback(void* arg, const char* key, const char* value)
 {
     jaeger_span_context* ctx = ((extract_text_map_arg*) arg)->ctx;
@@ -47,23 +91,53 @@ extract_text_map_callback(void* arg, const char* key, const char* value)
 
     normalize_key(key_buffer, key);
     assert(ctx != NULL);
-    if (strcmp(key_buffer, config->trace_context_header_name) == 0) {
+    if (strcmp(key_buffer, config->trace_context_header) == 0) {
         char value_buffer[strlen(value) + 1];
         decode_value(value_buffer, value);
         if (!jaeger_span_context_scan(ctx, value_buffer)) {
             return opentracing_propagation_error_code_span_context_corrupted;
         }
     }
-    /* TODO
-        jaeger_key_value* kv = jaeger_vector_append(&ctx->baggage);
-        if (kv == NULL) {
+    else if (strcmp(key_buffer, config->debug_header) == 0) {
+        char value_buffer[strlen(value) + 1];
+        decode_value(value_buffer, value);
+        ctx->debug_id = jaeger_strdup(value_buffer);
+        if (ctx->debug_id == NULL) {
             return opentracing_propagation_error_code_unknown;
         }
-        if (!jaeger_key_value_init(kv, key_buffer, value)) {
-            ctx->baggage.len--;
-            return opentracing_propagation_error_code_unknown;
+        ctx->flags |= jaeger_sampling_flag_debug | jaeger_sampling_flag_sampled;
+    }
+    else if (strcmp(key_buffer, config->baggage_header) == 0) {
+        char value_buffer[strlen(value) + 1];
+        decode_value(value_buffer, value);
+        const opentracing_propagation_error_code return_code =
+            parse_comma_separated_map(&ctx->baggage, value_buffer);
+        if (return_code != opentracing_propagation_error_code_success) {
+            return return_code;
         }
-    */
+    }
+    else {
+        const int prefix_len = strlen(config->trace_baggage_header_prefix);
+        const int key_len = strlen(key_buffer);
+        if (key_len > prefix_len && memcmp(key_buffer,
+                                           config->trace_baggage_header_prefix,
+                                           prefix_len) == 0) {
+            char suffix[key_len - prefix_len + 1];
+            strncpy(suffix, key_buffer + prefix_len, sizeof(suffix));
+
+            char value_buffer[strlen(value) + 1];
+            decode_value(value_buffer, value);
+
+            jaeger_key_value* kv = jaeger_vector_append(&ctx->baggage);
+            if (kv == NULL) {
+                return opentracing_propagation_error_code_unknown;
+            }
+            if (!jaeger_key_value_init(kv, suffix, value_buffer)) {
+                ctx->baggage.len--;
+                return opentracing_propagation_error_code_unknown;
+            }
+        }
+    }
     return opentracing_propagation_error_code_success;
 }
 
@@ -78,12 +152,23 @@ extract_from_text_map_helper(opentracing_text_map_reader* reader,
         arg->ctx = NULL;
         return opentracing_propagation_error_code_unknown;
     }
-    const opentracing_propagation_error_code result =
+    opentracing_propagation_error_code result =
         reader->foreach_key(reader, &extract_text_map_callback, arg);
-    if (result != opentracing_propagation_error_code_success) {
-        jaeger_free(arg->ctx);
-        arg->ctx = NULL;
+    if (result == opentracing_propagation_error_code_span_context_corrupted) {
+        arg->metrics->decoding_errors->inc(arg->metrics->decoding_errors, 1);
+        goto cleanup;
     }
+    if (arg->ctx->trace_id.high == 0 && arg->ctx->trace_id.low == 0 &&
+        arg->ctx->debug_id == NULL &&
+        jaeger_vector_length(&arg->ctx->baggage) == 0) {
+        result = opentracing_propagation_error_code_success;
+        goto cleanup;
+    }
+    return opentracing_propagation_error_code_success;
+
+cleanup:
+    jaeger_free(arg->ctx);
+    arg->ctx = NULL;
     return result;
 }
 

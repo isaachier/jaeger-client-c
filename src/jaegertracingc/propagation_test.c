@@ -19,6 +19,7 @@
 
 #include "unity.h"
 
+#include "jaegertracingc/metrics.h"
 #include "jaegertracingc/options.h"
 #include "jaegertracingc/span.h"
 
@@ -30,16 +31,21 @@ typedef struct mock_http_reader {
     opentracing_http_headers_reader base;
 } mock_http_reader;
 
-opentracing_propagation_error_code
+static opentracing_propagation_error_code
 mock_reader_foreach_key(opentracing_text_map_reader* reader,
                         opentracing_propagation_error_code (*handler)(
                             void*, const char*, const char*),
                         void* arg)
 {
     (void) reader;
-    const char* keys[] = {
-        "key%%1", "key%E02", "key3%", JAEGERTRACINGC_TRACE_CONTEXT_HEADER_NAME};
-    const char* values[] = {"value1", "VALUE2", "VaLuE", "ab:cd:0:0"};
+    const char* keys[] = {"key%%1",
+                          "key%E02",
+                          "key3%",
+                          JAEGERTRACINGC_TRACE_CONTEXT_HEADER_NAME,
+                          JAEGERTRACINGC_TRACE_BAGGAGE_HEADER_PREFIX "k1",
+                          JAEGERTRACINGC_TRACE_BAGGAGE_HEADER_PREFIX "k2"};
+    const char* values[] = {
+        "value1", "VALUE2", "VaLuE", "ab:cd:0:0", "v1", "v2"};
     for (int i = 0, len = sizeof(keys) / sizeof(keys[0]); i < len; i++) {
         opentracing_propagation_error_code return_code =
             handler(arg, keys[i], values[i]);
@@ -50,7 +56,58 @@ mock_reader_foreach_key(opentracing_text_map_reader* reader,
     return opentracing_propagation_error_code_success;
 }
 
-opentracing_propagation_error_code
+static opentracing_propagation_error_code
+mock_reader_foreach_key_baggage_format(
+    opentracing_text_map_reader* reader,
+    opentracing_propagation_error_code (*handler)(void*,
+                                                  const char*,
+                                                  const char*),
+    void* arg)
+{
+    (void) reader;
+    const char* keys[] = {"key%%1",
+                          "key%E02",
+                          "key3%",
+                          JAEGERTRACINGC_TRACE_CONTEXT_HEADER_NAME,
+                          JAEGERTRACINGC_BAGGAGE_HEADER};
+    const char* values[] = {
+        "value1", "VALUE2", "VaLuE", "ab:cd:0:0", "k3=value3,key-4=value-x"};
+    for (int i = 0, len = sizeof(keys) / sizeof(keys[0]); i < len; i++) {
+        opentracing_propagation_error_code return_code =
+            handler(arg, keys[i], values[i]);
+        if (return_code != opentracing_propagation_error_code_success) {
+            return return_code;
+        }
+    }
+    return opentracing_propagation_error_code_success;
+}
+
+static opentracing_propagation_error_code mock_reader_foreach_key_debug_header(
+    opentracing_text_map_reader* reader,
+    opentracing_propagation_error_code (*handler)(void*,
+                                                  const char*,
+                                                  const char*),
+    void* arg)
+{
+    (void) reader;
+    const char* keys[] = {"key%%1",
+                          "key%E02",
+                          "key3%",
+                          JAEGERTRACINGC_TRACE_CONTEXT_HEADER_NAME,
+                          JAEGERTRACINGC_DEBUG_HEADER};
+    const char* values[] = {
+        "value1", "VALUE2", "VaLuE", "ab:cd:0:0", "test-debug-header"};
+    for (int i = 0, len = sizeof(keys) / sizeof(keys[0]); i < len; i++) {
+        opentracing_propagation_error_code return_code =
+            handler(arg, keys[i], values[i]);
+        if (return_code != opentracing_propagation_error_code_success) {
+            return return_code;
+        }
+    }
+    return opentracing_propagation_error_code_success;
+}
+
+static opentracing_propagation_error_code
 mock_reader_foreach_key_fail(opentracing_text_map_reader* reader,
                              opentracing_propagation_error_code (*handler)(
                                  void*, const char*, const char*),
@@ -67,6 +124,44 @@ mock_reader_foreach_key_fail(opentracing_text_map_reader* reader,
             return return_code;
         }
     }
+    return opentracing_propagation_error_code_success;
+}
+
+static opentracing_propagation_error_code
+mock_reader_foreach_key_corrupt_baggage(
+    opentracing_text_map_reader* reader,
+    opentracing_propagation_error_code (*handler)(void*,
+                                                  const char*,
+                                                  const char*),
+    void* arg)
+{
+    (void) reader;
+    const char* keys[] = {"key%%1",
+                          "key%E02",
+                          "key3%",
+                          JAEGERTRACINGC_TRACE_CONTEXT_HEADER_NAME,
+                          JAEGERTRACINGC_BAGGAGE_HEADER};
+    const char* values[] = {"value1", "VALUE2", "VaLuE", "ab:cd:0:0"};
+    for (int i = 0, len = sizeof(keys) / sizeof(keys[0]); i < len; i++) {
+        opentracing_propagation_error_code return_code =
+            handler(arg, keys[i], values[i]);
+        if (return_code != opentracing_propagation_error_code_success) {
+            return return_code;
+        }
+    }
+    return opentracing_propagation_error_code_success;
+}
+
+static opentracing_propagation_error_code mock_reader_foreach_key_empty_headers(
+    opentracing_text_map_reader* reader,
+    opentracing_propagation_error_code (*handler)(void*,
+                                                  const char*,
+                                                  const char*),
+    void* arg)
+{
+    (void) reader;
+    (void) handler;
+    (void) arg;
     return opentracing_propagation_error_code_success;
 }
 
@@ -108,55 +203,146 @@ static inline void test_to_lowercase()
 
 static inline void test_extract_from_text_map()
 {
+    jaeger_metrics metrics;
+    jaeger_default_metrics_init(&metrics);
+
+    /* Test standard key-value pairs. */
     mock_reader reader = {.base = {.foreach_key = &mock_reader_foreach_key}};
     jaeger_span_context* ctx = NULL;
     jaeger_headers_config headers = JAEGERTRACINGC_HEADERS_CONFIG_INIT;
     TEST_ASSERT_EQUAL(
         opentracing_propagation_error_code_success,
         jaeger_extract_from_text_map(
-            (opentracing_text_map_reader*) &reader, &ctx, NULL, &headers));
+            (opentracing_text_map_reader*) &reader, &ctx, &metrics, &headers));
     TEST_ASSERT_NOT_NULL(ctx);
     TEST_ASSERT_EQUAL(0xab, ctx->trace_id.low);
     TEST_ASSERT_EQUAL(0xcd, ctx->span_id);
     TEST_ASSERT_EQUAL(0, ctx->parent_id);
     TEST_ASSERT_EQUAL(0, ctx->flags);
+    TEST_ASSERT_EQUAL(2, jaeger_vector_length(&ctx->baggage));
+    const jaeger_key_value* kv = jaeger_vector_get(&ctx->baggage, 0);
+    TEST_ASSERT_NOT_NULL(kv);
+    TEST_ASSERT_EQUAL_STRING("k1", kv->key);
+    TEST_ASSERT_EQUAL_STRING("v1", kv->value);
+    kv = jaeger_vector_get(&ctx->baggage, 1);
+    TEST_ASSERT_NOT_NULL(kv);
+    TEST_ASSERT_EQUAL_STRING("k2", kv->key);
+    TEST_ASSERT_EQUAL_STRING("v2", kv->value);
     ((jaeger_destructible*) ctx)->destroy((jaeger_destructible*) ctx);
     jaeger_free(ctx);
-
-    reader.base.foreach_key = &mock_reader_foreach_key_fail;
-    ctx = NULL;
-    TEST_ASSERT_EQUAL(
-        opentracing_propagation_error_code_span_context_corrupted,
-        jaeger_extract_from_text_map(
-            (opentracing_text_map_reader*) &reader, &ctx, NULL, &headers));
-    TEST_ASSERT_NULL(ctx);
+    jaeger_metrics_destroy(&metrics);
 }
 
 static inline void test_extract_from_http_headers()
 {
+    jaeger_metrics metrics;
+    jaeger_default_metrics_init(&metrics);
+
+    /* Test standard headers. */
     mock_http_reader reader = {
         .base = {.base = {.foreach_key = &mock_reader_foreach_key}}};
     jaeger_span_context* ctx = NULL;
     jaeger_headers_config headers = JAEGERTRACINGC_HEADERS_CONFIG_INIT;
-    TEST_ASSERT_EQUAL(
-        opentracing_propagation_error_code_success,
-        jaeger_extract_from_http_headers(
-            (opentracing_http_headers_reader*) &reader, &ctx, NULL, &headers));
+    TEST_ASSERT_EQUAL(opentracing_propagation_error_code_success,
+                      jaeger_extract_from_http_headers(
+                          (opentracing_http_headers_reader*) &reader,
+                          &ctx,
+                          &metrics,
+                          &headers));
     TEST_ASSERT_NOT_NULL(ctx);
     TEST_ASSERT_EQUAL(0xab, ctx->trace_id.low);
     TEST_ASSERT_EQUAL(0xcd, ctx->span_id);
     TEST_ASSERT_EQUAL(0, ctx->parent_id);
     TEST_ASSERT_EQUAL(0, ctx->flags);
+    TEST_ASSERT_EQUAL(2, jaeger_vector_length(&ctx->baggage));
+    const jaeger_key_value* kv = jaeger_vector_get(&ctx->baggage, 0);
+    TEST_ASSERT_NOT_NULL(kv);
+    TEST_ASSERT_EQUAL_STRING("k1", kv->key);
+    TEST_ASSERT_EQUAL_STRING("v1", kv->value);
+    kv = jaeger_vector_get(&ctx->baggage, 1);
+    TEST_ASSERT_NOT_NULL(kv);
+    TEST_ASSERT_EQUAL_STRING("k2", kv->key);
+    TEST_ASSERT_EQUAL_STRING("v2", kv->value);
     ((jaeger_destructible*) ctx)->destroy((jaeger_destructible*) ctx);
     jaeger_free(ctx);
 
+    /* Test alternative baggage format. */
+    reader.base.base.foreach_key = &mock_reader_foreach_key_baggage_format;
+    TEST_ASSERT_EQUAL(opentracing_propagation_error_code_success,
+                      jaeger_extract_from_http_headers(
+                          (opentracing_http_headers_reader*) &reader,
+                          &ctx,
+                          &metrics,
+                          &headers));
+    TEST_ASSERT_NOT_NULL(ctx);
+    TEST_ASSERT_EQUAL(0xab, ctx->trace_id.low);
+    TEST_ASSERT_EQUAL(0xcd, ctx->span_id);
+    TEST_ASSERT_EQUAL(0, ctx->parent_id);
+    TEST_ASSERT_EQUAL(0, ctx->flags);
+    TEST_ASSERT_EQUAL(2, jaeger_vector_length(&ctx->baggage));
+    kv = jaeger_vector_get(&ctx->baggage, 0);
+    TEST_ASSERT_NOT_NULL(kv);
+    TEST_ASSERT_EQUAL_STRING("k3", kv->key);
+    TEST_ASSERT_EQUAL_STRING("value3", kv->value);
+    kv = jaeger_vector_get(&ctx->baggage, 1);
+    TEST_ASSERT_NOT_NULL(kv);
+    TEST_ASSERT_EQUAL_STRING("key-4", kv->key);
+    TEST_ASSERT_EQUAL_STRING("value-x", kv->value);
+    ((jaeger_destructible*) ctx)->destroy((jaeger_destructible*) ctx);
+    jaeger_free(ctx);
+
+    /* Test debug header. */
+    reader.base.base.foreach_key = &mock_reader_foreach_key_debug_header;
+    TEST_ASSERT_EQUAL(opentracing_propagation_error_code_success,
+                      jaeger_extract_from_http_headers(
+                          (opentracing_http_headers_reader*) &reader,
+                          &ctx,
+                          &metrics,
+                          &headers));
+    TEST_ASSERT_NOT_NULL(ctx);
+    TEST_ASSERT_EQUAL(0xab, ctx->trace_id.low);
+    TEST_ASSERT_EQUAL(0xcd, ctx->span_id);
+    TEST_ASSERT_EQUAL(0, ctx->parent_id);
+    TEST_ASSERT_EQUAL(jaeger_sampling_flag_debug | jaeger_sampling_flag_sampled,
+                      ctx->flags);
+    TEST_ASSERT_EQUAL_STRING(ctx->debug_id, "test-debug-header");
+    ((jaeger_destructible*) ctx)->destroy((jaeger_destructible*) ctx);
+    jaeger_free(ctx);
+
+    /* Test corrupt baggage. */
+    reader.base.base.foreach_key = &mock_reader_foreach_key_corrupt_baggage;
+    ctx = NULL;
+    TEST_ASSERT_EQUAL(opentracing_propagation_error_code_span_context_corrupted,
+                      jaeger_extract_from_http_headers(
+                          (opentracing_http_headers_reader*) &reader,
+                          &ctx,
+                          &metrics,
+                          &headers));
+    TEST_ASSERT_NULL(ctx);
+
+    /* Test empty headers. */
+    reader.base.base.foreach_key = &mock_reader_foreach_key_empty_headers;
+    ctx = NULL;
+    TEST_ASSERT_EQUAL(opentracing_propagation_error_code_success,
+                      jaeger_extract_from_http_headers(
+                          (opentracing_http_headers_reader*) &reader,
+                          &ctx,
+                          &metrics,
+                          &headers));
+    TEST_ASSERT_NULL(ctx);
+
+    /* Test parse failure. */
     reader.base.base.foreach_key = &mock_reader_foreach_key_fail;
     ctx = NULL;
-    TEST_ASSERT_EQUAL(
-        opentracing_propagation_error_code_span_context_corrupted,
-        jaeger_extract_from_http_headers(
-            (opentracing_http_headers_reader*) &reader, &ctx, NULL, &headers));
+    TEST_ASSERT_EQUAL(opentracing_propagation_error_code_span_context_corrupted,
+                      jaeger_extract_from_http_headers(
+                          (opentracing_http_headers_reader*) &reader,
+                          &ctx,
+                          &metrics,
+                          &headers));
     TEST_ASSERT_NULL(ctx);
+
+    jaeger_metrics_destroy(&metrics);
 }
 
 void test_propagation()

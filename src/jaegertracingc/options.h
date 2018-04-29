@@ -38,18 +38,18 @@ typedef struct jaeger_headers_config {
     /** Header used to propagate baggage. */
     const char* baggage_header;
     /** Header used to propagate a span context. */
-    const char* trace_context_header_name;
+    const char* trace_context_header;
     /** Header prefix to prepend to baggage keys. */
     const char* trace_baggage_header_prefix;
 } jaeger_headers_config;
 
-#define JAEGERTRACINGC_HEADERS_CONFIG_INIT                                     \
-    {                                                                          \
-        .debug_header = JAEGERTRACINGC_DEBUG_HEADER,                           \
-        .baggage_header = JAEGERTRACINGC_BAGGAGE_HEADER,                       \
-        .trace_context_header_name = JAEGERTRACINGC_TRACE_CONTEXT_HEADER_NAME, \
-        .trace_baggage_header_prefix =                                         \
-            JAEGERTRACINGC_TRACE_BAGGAGE_HEADER_PREFIX                         \
+#define JAEGERTRACINGC_HEADERS_CONFIG_INIT                                \
+    {                                                                     \
+        .debug_header = JAEGERTRACINGC_DEBUG_HEADER,                      \
+        .baggage_header = JAEGERTRACINGC_BAGGAGE_HEADER,                  \
+        .trace_context_header = JAEGERTRACINGC_TRACE_CONTEXT_HEADER_NAME, \
+        .trace_baggage_header_prefix =                                    \
+            JAEGERTRACINGC_TRACE_BAGGAGE_HEADER_PREFIX                    \
     }
 
 /** Sampler config. */
