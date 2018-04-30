@@ -231,14 +231,68 @@ static inline bool read_binary(int (*callback)(void*, char*, size_t),
     for (int i = 0; i < num_read; i++) {
         value |= (buffer[i] << (i * CHAR_BIT));
     }
-    if (result_size == sizeof(uint64_t)) {
+    switch (result_size) {
+    case sizeof(uint64_t):
         *(uint64_t*) result = be64toh(value);
-    }
-    else {
-        assert(result_size == sizeof(uint32_t));
+        break;
+    case sizeof(uint32_t):
         *(uint32_t*) result = be32toh(value);
+        break;
+    default:
+        assert(result_size == sizeof(uint8_t));
+        *(uint8_t*) result = (uint8_t) value;
+        break;
     }
     return true;
+}
+
+static opentracing_propagation_error_code parse_baggage_binary(
+    int (*callback)(void*, char*, size_t), void* arg, jaeger_vector* baggage)
+{
+#define READ_BINARY(x)                                                        \
+    do {                                                                      \
+        if (!read_binary(callback, arg, &(x), sizeof((x)))) {                 \
+            return opentracing_propagation_error_code_span_context_corrupted; \
+        }                                                                     \
+    } while (0)
+
+#define READ_BUFFER(buffer, len)                                              \
+    do {                                                                      \
+        if (callback(arg, (buffer), (len)) != (int) (len)) {                  \
+            return opentracing_propagation_error_code_span_context_corrupted; \
+        }                                                                     \
+        (buffer)[len] = '\0';                                                 \
+    } while (0)
+
+    uint32_t num_baggage_items;
+    READ_BINARY(num_baggage_items);
+    if (num_baggage_items > 0) {
+        if (!jaeger_vector_reserve(baggage, num_baggage_items)) {
+            return opentracing_propagation_error_code_unknown;
+        }
+        for (size_t i = 0; i < num_baggage_items; i++) {
+            uint32_t key_len;
+            READ_BINARY(key_len);
+            char key_buffer[key_len + 1];
+            READ_BUFFER(key_buffer, key_len);
+
+            uint32_t value_len;
+            READ_BINARY(value_len);
+            char value_buffer[value_len + 1];
+            READ_BUFFER(value_buffer, value_len);
+
+            jaeger_key_value* kv = jaeger_vector_append(baggage);
+            assert(kv != NULL); /* Should never be NULL if reserve succeeded. */
+            if (!jaeger_key_value_init(kv, key_buffer, value_buffer)) {
+                return opentracing_propagation_error_code_unknown;
+            }
+        }
+    }
+
+#undef READ_BINARY
+#undef READ_BUFFER
+
+    return opentracing_propagation_error_code_success;
 }
 
 opentracing_propagation_error_code
@@ -260,30 +314,27 @@ jaeger_extract_from_binary(int (*callback)(void*, char*, size_t),
         goto cleanup;
     }
 
-#define READ_BINARY(member)                                                \
+#define READ_BINARY(x)                                                     \
     do {                                                                   \
-        if (!read_binary(                                                  \
-                callback, arg, &(*ctx)->member, sizeof((*ctx)->member))) { \
+        if (!read_binary(callback, arg, &(x), sizeof((x)))) {              \
             result =                                                       \
                 opentracing_propagation_error_code_span_context_corrupted; \
             goto cleanup;                                                  \
         }                                                                  \
     } while (0)
 
-    READ_BINARY(trace_id.high);
-    READ_BINARY(trace_id.low);
-    READ_BINARY(span_id);
-    READ_BINARY(parent_id);
+    READ_BINARY((*ctx)->trace_id.high);
+    READ_BINARY((*ctx)->trace_id.low);
+    READ_BINARY((*ctx)->span_id);
+    READ_BINARY((*ctx)->parent_id);
+    READ_BINARY((*ctx)->flags);
 
 #undef READ_BINARY
 
-    char buffer[1];
-    const int num_read = callback(arg, buffer, sizeof(buffer));
-    if (num_read != (int) sizeof(buffer)) {
-        result = opentracing_propagation_error_code_span_context_corrupted;
+    result = parse_baggage_binary(callback, arg, &(*ctx)->baggage);
+    if (result != opentracing_propagation_error_code_success) {
         goto cleanup;
     }
-    (*ctx)->flags = (uint8_t) buffer[0];
 
     return opentracing_propagation_error_code_success;
 
