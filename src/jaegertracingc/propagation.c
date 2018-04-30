@@ -22,14 +22,18 @@
 #include "jaegertracingc/propagation.h"
 
 #ifdef LITTLE_ENDIAN
-#ifdef __APPLE__
+#ifdef _WIN32
+#define BIG_ENDIAN_64_TO_HOST(x) _byteswap_uint64((x))
+#define BIG_ENDIAN_32_TO_HOST(x) _byteswap_ulong((x))
+#elif defined(__APPLE__)
 #include <libkern/OSByteOrder.h>
 #define BIG_ENDIAN_64_TO_HOST(x) OSSwapConstInt64((x))
 #define BIG_ENDIAN_32_TO_HOST(x) OSSwapConstInt32((x))
 #else
-#define BIG_ENDIAN_64_TO_HOST(x) __builtin_bswap64((x))
-#define BIG_ENDIAN_32_TO_HOST(x) __builtin_bswap32((x))
-#endif /* __APPLE__ */
+#include <endian.h>
+#define BIG_ENDIAN_64_TO_HOST(x) be64toh((x))
+#define BIG_ENDIAN_32_TO_HOST(x) be32toh((x))
+#endif /* _WIN32 */
 #else
 #define BIG_ENDIAN_64_TO_HOST(x) (x)
 #define BIG_ENDIAN_32_TO_HOST(x) (x)
