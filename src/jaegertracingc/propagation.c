@@ -21,7 +21,19 @@
 
 #include "jaegertracingc/propagation.h"
 
-#include <endian.h>
+#ifdef LITTLE_ENDIAN
+#ifdef __APPLE__
+#include <libkern/OSByteOrder.h>
+#define BIG_ENDIAN_64_TO_HOST(x) OSSwapConstInt64((x))
+#define BIG_ENDIAN_32_TO_HOST(x) OSSwapConstInt32((x))
+#else
+#define BIG_ENDIAN_64_TO_HOST(x) __builtin_bswap64((x))
+#define BIG_ENDIAN_32_TO_HOST(x) __builtin_bswap32((x))
+#endif /* __APPLE__ */
+#else
+#define BIG_ENDIAN_64_TO_HOST(x) (x)
+#define BIG_ENDIAN_32_TO_HOST(x) (x)
+#endif /* LITTLE_ENDIAN */
 
 #include "jaegertracingc/internal/strings.h"
 #include "jaegertracingc/metrics.h"
@@ -234,10 +246,10 @@ static inline bool read_binary(int (*callback)(void*, char*, size_t),
     }
     switch (result_size) {
     case sizeof(uint64_t):
-        *(uint64_t*) result = be64toh(value);
+        *(uint64_t*) result = BIG_ENDIAN_64_TO_HOST(value);
         break;
     case sizeof(uint32_t):
-        *(uint32_t*) result = be32toh(value);
+        *(uint32_t*) result = BIG_ENDIAN_32_TO_HOST(value);
         break;
     default:
         assert(result_size == sizeof(uint8_t));
