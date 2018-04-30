@@ -27,6 +27,7 @@
 #include "jaegertracingc/metrics.h"
 #include "jaegertracingc/options.h"
 #include "jaegertracingc/span.h"
+#include "jaegertracingc/tracer.h"
 
 typedef struct extract_text_map_arg {
     jaeger_span_context* ctx;
@@ -70,10 +71,10 @@ parse_comma_separated_map(jaeger_vector* baggage, char* str)
     char* comma_context;
     char* kv_str = strtok_r(str, ",", &comma_context);
     while (kv_str != NULL) {
-        const opentracing_propagation_error_code return_code =
+        const opentracing_propagation_error_code result =
             parse_key_value(baggage, kv_str);
-        if (return_code != opentracing_propagation_error_code_success) {
-            return return_code;
+        if (result != opentracing_propagation_error_code_success) {
+            return result;
         }
         kv_str = strtok_r(NULL, ",", &comma_context);
     }
@@ -112,10 +113,10 @@ extract_text_map_callback(void* arg, const char* key, const char* value)
     else if (strcmp(key_buffer, config->baggage_header) == 0) {
         char value_buffer[strlen(value) + 1];
         decode_value(value_buffer, value);
-        const opentracing_propagation_error_code return_code =
+        const opentracing_propagation_error_code result =
             parse_comma_separated_map(&ctx->baggage, value_buffer);
-        if (return_code != opentracing_propagation_error_code_success) {
-            return return_code;
+        if (result != opentracing_propagation_error_code_success) {
+            return result;
         }
     }
     else {
@@ -351,30 +352,85 @@ cleanup:
 
 opentracing_propagation_error_code
 jaeger_extract_from_custom(opentracing_custom_carrier_reader* reader,
+                           jaeger_tracer* tracer,
                            jaeger_span_context** ctx,
-                           jaeger_metrics* metrics,
-                           const jaeger_headers_config* config);
+                           jaeger_metrics* metrics)
+{
+    assert(reader != NULL);
+    assert(tracer != NULL);
+    assert(ctx != NULL);
+    const opentracing_propagation_error_code result = reader->extract(
+        reader, (opentracing_tracer*) tracer, (opentracing_span_context**) ctx);
+    if (result == opentracing_propagation_error_code_span_context_corrupted &&
+        metrics != NULL) {
+        metrics->decoding_errors->inc(metrics->decoding_errors, 1);
+    }
+    return result;
+}
+
+static inline opentracing_propagation_error_code inject_text_map_helper(
+    opentracing_text_map_writer* writer,
+    const jaeger_span_context* ctx,
+    const jaeger_headers_config* config,
+    void (*encode_value)(char* restrict, const char* restrict))
+{
+    assert(writer != NULL);
+    assert(ctx != NULL);
+    assert(config != NULL);
+    char trace_context_buffer[JAEGERTRACINGC_SPAN_CONTEXT_MAX_STR_LEN + 1];
+    const int trace_context_len = jaeger_span_context_format(
+        ctx, trace_context_buffer, sizeof(trace_context_buffer));
+    assert(trace_context_len <= JAEGERTRACINGC_SPAN_CONTEXT_MAX_STR_LEN);
+    (void) trace_context_len;
+    opentracing_propagation_error_code result =
+        writer->set(writer, config->trace_context_header, trace_context_buffer);
+    /* Loop will not execute if result is not
+     * opentracing_propagation_error_code_success. */
+    for (int i = 0; i < jaeger_vector_length(&ctx->baggage) &&
+                    result == opentracing_propagation_error_code_success;
+         i++) {
+        const jaeger_key_value* kv =
+            jaeger_vector_get((jaeger_vector*) &ctx->baggage, i);
+        assert(kv != NULL);
+        const int prefix_len = strlen(config->trace_baggage_header_prefix);
+        const int key_len = strlen(kv->key);
+        char key_buffer[prefix_len + key_len + 1];
+        strncpy(key_buffer, config->trace_baggage_header_prefix, prefix_len);
+        strncpy(&key_buffer[prefix_len], kv->key, key_len + 1);
+        assert(key_buffer[prefix_len + key_len] == '\0');
+
+        /* The maximum a string can grow through encoding occurs if every
+         * character is encoded. In that case the output is three times as large
+         * as the input. For example, "xyz" becomes "%78%79%80".
+         */
+        const int max_encode_factor = 3;
+        char value_buffer[strlen(kv->value) * max_encode_factor + 1];
+        encode_value(value_buffer, kv->value);
+
+        result = writer->set(writer, key_buffer, value_buffer);
+    }
+    return result;
+}
 
 opentracing_propagation_error_code
 jaeger_inject_into_text_map(opentracing_text_map_writer* writer,
                             const jaeger_span_context* ctx,
-                            jaeger_metrics* metrics,
-                            const jaeger_headers_config* config);
+                            const jaeger_headers_config* config)
+{
+    return inject_text_map_helper(writer, ctx, config, &copy_str);
+}
 
 opentracing_propagation_error_code
 jaeger_inject_into_http_headers(opentracing_http_headers_writer* writer,
                                 const jaeger_span_context* ctx,
-                                jaeger_metrics* metrics,
                                 const jaeger_headers_config* config);
 
 opentracing_propagation_error_code
 jaeger_inject_into_binary(opentracing_http_headers_writer* writer,
                           int (*callback)(void*, const char*, size_t),
-                          jaeger_metrics* metrics,
                           const jaeger_headers_config* config);
 
 opentracing_propagation_error_code
 jaeger_inject_into_custom(opentracing_custom_carrier_writer* writer,
-                          const jaeger_span_context* ctx,
-                          jaeger_metrics* metrics,
-                          const jaeger_headers_config* config);
+                          jaeger_tracer* tracer,
+                          const jaeger_span_context* ctx);

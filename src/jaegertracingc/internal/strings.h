@@ -51,7 +51,7 @@ static inline int decode_hex(char ch)
     return -1;
 }
 
-static inline char hex_as_char(int num)
+static inline char encode_hex(int num)
 {
     assert(num >= 0 && num < 16);
     if (num < 10) {
@@ -108,7 +108,7 @@ static inline void decode_uri_value(char* restrict dst,
             second_nibble = decode_hex(ch);
             if (second_nibble == -1) {
                 APPEND_CHAR('%');
-                APPEND_CHAR(hex_as_char(first_nibble));
+                APPEND_CHAR(encode_hex(first_nibble));
                 APPEND_CHAR(ch);
             }
             else {
@@ -125,7 +125,7 @@ static inline void decode_uri_value(char* restrict dst,
         break;
     case first_hex_state:
         APPEND_CHAR('%');
-        APPEND_CHAR(hex_as_char(first_nibble));
+        APPEND_CHAR(encode_hex(first_nibble));
         break;
     default:
         break;
@@ -133,6 +133,49 @@ static inline void decode_uri_value(char* restrict dst,
     APPEND_CHAR('\0');
 
 #undef APPEND_CHAR
+}
+
+static inline void encode_uri_value(char* restrict dst,
+                                    const char* restrict src)
+{
+    int pos = 0;
+    for (int i = 0; i < (int) strlen(src); i++) {
+        const char ch = src[i];
+        if (isalnum(ch)) {
+            dst[pos++] = ch;
+        }
+        else {
+            switch (ch) {
+            case ';':
+            case '/':
+            case '?':
+            case ':':
+            case '@':
+            case '&':
+            case '=':
+            case '+':
+            case '$':
+            case ',':
+            case '-':
+            case '_':
+            case '.':
+            case '!':
+            case '~':
+            case '*':
+            case '\'':
+            case '(':
+            case ')':
+                dst[pos++] = ch;
+                break;
+            default:
+                dst[pos++] = '%';
+                dst[pos++] = encode_hex((ch >> 4) & 0x0f);
+                dst[pos++] = encode_hex(ch & 0x0f);
+                break;
+            }
+        }
+    }
+    dst[pos] = '\0';
 }
 
 static inline void copy_str(char* restrict dst, const char* restrict src)

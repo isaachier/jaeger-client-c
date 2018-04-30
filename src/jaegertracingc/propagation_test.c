@@ -175,6 +175,13 @@ static inline void test_decode_hex()
     TEST_ASSERT_EQUAL(9, decode_hex('9'));
 }
 
+static inline void test_encode_hex()
+{
+    TEST_ASSERT_EQUAL('f', encode_hex(0xf));
+    TEST_ASSERT_EQUAL('a', encode_hex(0xa));
+    TEST_ASSERT_EQUAL('2', encode_hex(2));
+}
+
 static inline void test_decode_uri_value()
 {
     const char* encoded[] = {
@@ -185,6 +192,18 @@ static inline void test_decode_uri_value()
         char buffer[strlen(encoded[i]) + 1];
         decode_uri_value(buffer, encoded[i]);
         TEST_ASSERT_EQUAL_STRING(decoded[i], buffer);
+    }
+}
+
+static inline void test_encode_uri_value()
+{
+    const char* decoded[] = {"hello world", "hello-world"};
+    const char* encoded[] = {"hello%20world", "hello-world"};
+
+    for (int i = 0, len = sizeof(encoded) / sizeof(encoded[0]); i < len; i++) {
+        char buffer[strlen(decoded[i]) * 3 + 1];
+        encode_uri_value(buffer, decoded[i]);
+        TEST_ASSERT_EQUAL_STRING(encoded[i], buffer);
     }
 }
 
@@ -348,7 +367,9 @@ static inline void test_extract_from_http_headers()
 void test_propagation()
 {
     test_decode_hex();
+    test_encode_hex();
     test_decode_uri_value();
+    test_encode_uri_value();
     test_to_lowercase();
     test_extract_from_text_map();
     test_extract_from_http_headers();

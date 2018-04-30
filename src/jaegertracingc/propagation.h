@@ -31,6 +31,7 @@ extern "C" {
 struct jaeger_headers_config;
 struct jaeger_metrics;
 struct jaeger_span_context;
+struct jaeger_tracer;
 
 opentracing_propagation_error_code
 jaeger_extract_from_text_map(opentracing_text_map_reader* reader,
@@ -53,33 +54,29 @@ jaeger_extract_from_binary(int (*callback)(void*, char*, size_t),
 
 opentracing_propagation_error_code
 jaeger_extract_from_custom(opentracing_custom_carrier_reader* reader,
+                           struct jaeger_tracer* tracer,
                            struct jaeger_span_context** ctx,
-                           struct jaeger_metrics* metrics,
-                           const struct jaeger_headers_config* config);
+                           struct jaeger_metrics* metrics);
 
 opentracing_propagation_error_code
 jaeger_inject_into_text_map(opentracing_text_map_writer* writer,
                             const struct jaeger_span_context* ctx,
-                            struct jaeger_metrics* metrics,
                             const struct jaeger_headers_config* config);
 
 opentracing_propagation_error_code
 jaeger_inject_into_http_headers(opentracing_http_headers_writer* writer,
                                 const struct jaeger_span_context* ctx,
-                                struct jaeger_metrics* metrics,
                                 const struct jaeger_headers_config* config);
 
 opentracing_propagation_error_code
 jaeger_inject_into_binary(opentracing_http_headers_writer* writer,
                           int (*callback)(void*, const char*, size_t),
-                          struct jaeger_metrics* metrics,
                           const struct jaeger_headers_config* config);
 
 opentracing_propagation_error_code
 jaeger_inject_into_custom(opentracing_custom_carrier_writer* writer,
-                          const struct jaeger_span_context* ctx,
-                          struct jaeger_metrics* metrics,
-                          const struct jaeger_headers_config* config);
+                          struct jaeger_tracer* tracer,
+                          const struct jaeger_span_context* ctx);
 
 #ifdef __cplusplus
 }
