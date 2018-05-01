@@ -39,6 +39,9 @@
 #define BIG_ENDIAN_32_TO_HOST(x) (x)
 #endif /* LITTLE_ENDIAN */
 
+#define HOST_TO_BIG_ENDIAN_64(x) BIG_ENDIAN_64_TO_HOST(x)
+#define HOST_TO_BIG_ENDIAN_32(x) BIG_ENDIAN_32_TO_HOST(x)
+
 #include "jaegertracingc/internal/strings.h"
 #include "jaegertracingc/metrics.h"
 #include "jaegertracingc/options.h"
@@ -244,21 +247,23 @@ static inline bool read_binary(int (*callback)(void*, char*, size_t),
     if (num_read != result_size) {
         return false;
     }
-    uint64_t value = 0;
-    for (int i = 0; i < num_read; i++) {
-        value |= (buffer[i] << (i * CHAR_BIT));
-    }
     switch (result_size) {
-    case sizeof(uint64_t):
+    case sizeof(uint64_t): {
+        uint64_t value;
+        memcpy(&value, buffer, sizeof(value));
         *(uint64_t*) result = BIG_ENDIAN_64_TO_HOST(value);
-        break;
-    case sizeof(uint32_t):
+    } break;
+    case sizeof(uint32_t): {
+        uint32_t value;
+        memcpy(&value, buffer, sizeof(value));
         *(uint32_t*) result = BIG_ENDIAN_32_TO_HOST(value);
-        break;
-    default:
+    } break;
+    default: {
         assert(result_size == sizeof(uint8_t));
+        uint8_t value;
+        memcpy(&value, buffer, sizeof(value));
         *(uint8_t*) result = (uint8_t) value;
-        break;
+    } break;
     }
     return true;
 }
@@ -316,12 +321,10 @@ opentracing_propagation_error_code
 jaeger_extract_from_binary(int (*callback)(void*, char*, size_t),
                            void* arg,
                            jaeger_span_context** ctx,
-                           jaeger_metrics* metrics,
-                           const jaeger_headers_config* config)
+                           jaeger_metrics* metrics)
 {
     assert(callback != NULL);
     assert(ctx != NULL);
-    assert(config != NULL);
 
     opentracing_propagation_error_code result =
         opentracing_propagation_error_code_success;
@@ -439,12 +442,63 @@ jaeger_inject_into_text_map(opentracing_text_map_writer* writer,
 opentracing_propagation_error_code
 jaeger_inject_into_http_headers(opentracing_http_headers_writer* writer,
                                 const jaeger_span_context* ctx,
-                                const jaeger_headers_config* config);
+                                const jaeger_headers_config* config)
+{
+    return inject_text_map_helper(
+        (opentracing_text_map_writer*) writer, ctx, config, &encode_uri_value);
+}
 
 opentracing_propagation_error_code
-jaeger_inject_into_binary(opentracing_http_headers_writer* writer,
-                          int (*callback)(void*, const char*, size_t),
-                          const jaeger_headers_config* config);
+jaeger_inject_into_binary(int (*callback)(void*, const char*, size_t),
+                          void* arg,
+                          const jaeger_span_context* ctx)
+{
+    assert(callback != NULL);
+    assert(ctx != NULL);
+
+#define WRITE_BINARY(x, bits)                                        \
+    do {                                                             \
+        const uint##bits##_t value = HOST_TO_BIG_ENDIAN_##bits((x)); \
+        char value_buffer[sizeof(value)];                            \
+        memcpy(value_buffer, &value, sizeof(value));                 \
+        if (callback(arg, value_buffer, sizeof(value_buffer)) !=     \
+            (int) sizeof(value_buffer)) {                            \
+            return opentracing_propagation_error_code_unknown;       \
+        }                                                            \
+    } while (0)
+
+    WRITE_BINARY(ctx->trace_id.high, 64);
+    WRITE_BINARY(ctx->trace_id.low, 64);
+    WRITE_BINARY(ctx->span_id, 64);
+    WRITE_BINARY(ctx->parent_id, 64);
+
+    char buffer[1];
+    buffer[0] = (char) ctx->flags;
+    if (callback(arg, buffer, sizeof(buffer)) != (int) sizeof(buffer)) {
+        return opentracing_propagation_error_code_unknown;
+    }
+
+    const uint32_t num_baggage_items = jaeger_vector_length(&ctx->baggage);
+    WRITE_BINARY(num_baggage_items, 32);
+    for (int i = 0; i < num_baggage_items; i++) {
+        const jaeger_key_value* kv =
+            jaeger_vector_get((jaeger_vector*) &ctx->baggage, i);
+        const uint32_t key_len = strlen(kv->key);
+        WRITE_BINARY(key_len, 32);
+        if (callback(arg, kv->key, key_len) != (int) key_len) {
+            return opentracing_propagation_error_code_unknown;
+        }
+        const uint32_t value_len = strlen(kv->value);
+        WRITE_BINARY(value_len, 32);
+        if (callback(arg, kv->value, value_len) != (int) value_len) {
+            return opentracing_propagation_error_code_unknown;
+        }
+    }
+
+    return opentracing_propagation_error_code_success;
+
+#undef WRITE_BINARY
+}
 
 opentracing_propagation_error_code
 jaeger_inject_into_custom(opentracing_custom_carrier_writer* writer,

@@ -364,6 +364,89 @@ static inline void test_extract_from_http_headers()
     jaeger_metrics_destroy(&metrics);
 }
 
+static inline char random_char()
+{
+    switch (rand() % 3) {
+    case 0:
+        return 'a' + rand() % 26;
+    case 1:
+        return 'A' + rand() % 26;
+    default:
+        return '0' + rand() % 10;
+    }
+}
+
+static inline void random_string(char* buffer, size_t len)
+{
+    for (int i = 0; i < ((int) len) - 1; i++) {
+        buffer[i] = random_char();
+    }
+    buffer[len - 1] = '\0';
+}
+
+static inline int
+binary_writer_callback(void* arg, const char* data, size_t len)
+{
+    jaeger_vector* buffer = (jaeger_vector*) arg;
+    char* addr =
+        (char*) jaeger_vector_extend(buffer, jaeger_vector_length(buffer), len);
+    TEST_ASSERT_NOT_NULL(addr);
+    memcpy(addr, data, len);
+    return len;
+}
+
+static inline int binary_reader_callback(void* arg, char* data, size_t len)
+{
+    jaeger_vector* buffer = (jaeger_vector*) arg;
+    TEST_ASSERT_GREATER_OR_EQUAL_INT(len, jaeger_vector_length(buffer));
+    for (int i = 0; i < (int) len; i++) {
+        data[i] = *(char*) jaeger_vector_get(buffer, 0);
+        jaeger_vector_remove(buffer, 0);
+    }
+    return len;
+}
+
+void test_binary()
+{
+    jaeger_metrics metrics;
+    jaeger_default_metrics_init(&metrics);
+
+    jaeger_span_context ctx;
+    TEST_ASSERT_TRUE(jaeger_span_context_init(&ctx));
+    ctx.trace_id = (jaeger_trace_id){.high = 0x1234, .low = 0x5678};
+    ctx.parent_id = 0xEF00;
+    ctx.span_id = 0xABCD;
+    const int max_baggage_items = 15;
+    const int num_baggage_items = rand() % max_baggage_items;
+    TEST_ASSERT_TRUE(jaeger_vector_reserve(&ctx.baggage, num_baggage_items));
+    for (int i = 0; i < num_baggage_items; i++) {
+        char key[rand() % 20 + 1];
+        random_string(key, sizeof(key));
+        char value[rand() % 20 + 1];
+        random_string(value, sizeof(value));
+        jaeger_key_value* kv = jaeger_vector_append(&ctx.baggage);
+        TEST_ASSERT_TRUE(jaeger_key_value_init(kv, key, value));
+    }
+
+    jaeger_vector binary_buffer;
+    TEST_ASSERT_TRUE(jaeger_vector_init(&binary_buffer, 1));
+    TEST_ASSERT_EQUAL(opentracing_propagation_error_code_success,
+                      jaeger_inject_into_binary(&binary_writer_callback,
+                                                (void*) &binary_buffer,
+                                                &ctx));
+    jaeger_span_context* ctx_copy;
+    TEST_ASSERT_EQUAL(
+        opentracing_propagation_error_code_success,
+        jaeger_extract_from_binary(
+            &binary_reader_callback, &binary_buffer, &ctx_copy, &metrics));
+    TEST_ASSERT_EQUAL(ctx.trace_id.high, ctx_copy->trace_id.high);
+    TEST_ASSERT_EQUAL(ctx.trace_id.low, ctx_copy->trace_id.low);
+    TEST_ASSERT_EQUAL(ctx.span_id, ctx_copy->span_id);
+    TEST_ASSERT_EQUAL(ctx.parent_id, ctx_copy->parent_id);
+    jaeger_vector_destroy(&binary_buffer);
+    jaeger_metrics_destroy(&metrics);
+}
+
 void test_propagation()
 {
     test_decode_hex();
@@ -373,4 +456,5 @@ void test_propagation()
     test_to_lowercase();
     test_extract_from_text_map();
     test_extract_from_http_headers();
+    test_binary();
 }
