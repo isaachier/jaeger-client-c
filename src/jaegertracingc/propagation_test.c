@@ -31,7 +31,7 @@ typedef struct mock_http_reader {
     opentracing_http_headers_reader base;
 } mock_http_reader;
 
-static opentracing_propagation_error_code
+static inline opentracing_propagation_error_code
 mock_reader_foreach_key(opentracing_text_map_reader* reader,
                         opentracing_propagation_error_code (*handler)(
                             void*, const char*, const char*),
@@ -56,7 +56,7 @@ mock_reader_foreach_key(opentracing_text_map_reader* reader,
     return opentracing_propagation_error_code_success;
 }
 
-static opentracing_propagation_error_code
+static inline opentracing_propagation_error_code
 mock_reader_foreach_key_baggage_format(
     opentracing_text_map_reader* reader,
     opentracing_propagation_error_code (*handler)(void*,
@@ -82,7 +82,8 @@ mock_reader_foreach_key_baggage_format(
     return opentracing_propagation_error_code_success;
 }
 
-static opentracing_propagation_error_code mock_reader_foreach_key_debug_header(
+static inline opentracing_propagation_error_code
+mock_reader_foreach_key_debug_header(
     opentracing_text_map_reader* reader,
     opentracing_propagation_error_code (*handler)(void*,
                                                   const char*,
@@ -107,7 +108,7 @@ static opentracing_propagation_error_code mock_reader_foreach_key_debug_header(
     return opentracing_propagation_error_code_success;
 }
 
-static opentracing_propagation_error_code
+static inline opentracing_propagation_error_code
 mock_reader_foreach_key_fail(opentracing_text_map_reader* reader,
                              opentracing_propagation_error_code (*handler)(
                                  void*, const char*, const char*),
@@ -127,7 +128,7 @@ mock_reader_foreach_key_fail(opentracing_text_map_reader* reader,
     return opentracing_propagation_error_code_success;
 }
 
-static opentracing_propagation_error_code
+static inline opentracing_propagation_error_code
 mock_reader_foreach_key_corrupt_baggage(
     opentracing_text_map_reader* reader,
     opentracing_propagation_error_code (*handler)(void*,
@@ -152,7 +153,8 @@ mock_reader_foreach_key_corrupt_baggage(
     return opentracing_propagation_error_code_success;
 }
 
-static opentracing_propagation_error_code mock_reader_foreach_key_empty_headers(
+static inline opentracing_propagation_error_code
+mock_reader_foreach_key_empty_headers(
     opentracing_text_map_reader* reader,
     opentracing_propagation_error_code (*handler)(void*,
                                                   const char*,
@@ -406,7 +408,7 @@ static inline int binary_reader_callback(void* arg, char* data, size_t len)
     return len;
 }
 
-void test_binary()
+static inline void test_binary()
 {
     jaeger_metrics metrics;
     jaeger_default_metrics_init(&metrics);
