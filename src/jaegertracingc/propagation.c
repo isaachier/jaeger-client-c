@@ -292,7 +292,7 @@ static opentracing_propagation_error_code parse_baggage_binary(
         if (!jaeger_vector_reserve(baggage, num_baggage_items)) {
             return opentracing_propagation_error_code_unknown;
         }
-        for (size_t i = 0; i < num_baggage_items; i++) {
+        for (int i = 0; i < (int) num_baggage_items; i++) {
             uint32_t key_len;
             READ_BINARY(key_len);
             char key_buffer[key_len + 1];
@@ -480,7 +480,7 @@ jaeger_inject_into_binary(int (*callback)(void*, const char*, size_t),
 
     const uint32_t num_baggage_items = jaeger_vector_length(&ctx->baggage);
     WRITE_BINARY(num_baggage_items, 32);
-    for (int i = 0; i < num_baggage_items; i++) {
+    for (int i = 0; i < (int) num_baggage_items; i++) {
         const jaeger_key_value* kv =
             jaeger_vector_get((jaeger_vector*) &ctx->baggage, i);
         const uint32_t key_len = strlen(kv->key);
