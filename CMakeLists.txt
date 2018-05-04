@@ -20,8 +20,11 @@ set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/toolchain.cmake"
     CACHE FILEPATH
     "Toolchain to use for building this package and dependencies")
 
-# TODO: Change to OFF once not debugging.
-option(HUNTER_KEEP_PACKAGE_SOURCES "Keep source code for dependencies" ON)
+include(CMakeDependentOption)
+option(HUNTER_KEEP_PACKAGE_SOURCES "Keep source code for dependencies" OFF)
+cmake_dependent_option(HUNTER_BUILD_SHARED_LIBS
+  "Build shared libraries for Hunter packages" OFF
+  "NOT BUILD_SHARED_LIBS" ON)
 
 include(HunterGate)
 HunterGate(
@@ -35,7 +38,6 @@ project(jaegertracingc VERSION 0.0.1)
 include(CheckCCompilerFlag)
 include(CheckSymbolExists)
 include(CheckStructHasMember)
-include(CMakeDependentOption)
 include(CTest)
 include(GenerateExportHeader)
 include(TestBigEndian)
