@@ -7,7 +7,7 @@ should work.
 
 ```
 sudo apt install libhttp-parser-dev libjansson-dev protobuf-c-compiler \
-     libprotobuf-c-dev
+                 libprotobuf-c-dev
 ```
 
 Run `git submodule update --init` to fetch the submodules.

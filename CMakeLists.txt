@@ -37,13 +37,12 @@ include(CheckSymbolExists)
 include(CheckStructHasMember)
 include(CMakeDependentOption)
 include(CTest)
+include(GenerateExportHeader)
 include(TestBigEndian)
 
 include(CheckAtomics)
 include(CheckAttributes)
 include(GenerateDocumentation)
-
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 if(CMAKE_C_COMPILER_ID STREQUAL "GNU" AND
    CMAKE_C_COMPILER_VERSION VERSION_GREATER_EQUAL "5.0")
@@ -67,6 +66,8 @@ if(JAEGERTRACINGC_COVERAGE)
   include(CodeCoverage)
   append_coverage_compiler_flags(CMAKE_C_FLAGS)
   set(COVERAGE_EXCLUDES
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/jaegertracingc/mock_agent.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/jaegertracingc/mock_agent.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/jaegertracingc/*_test.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/jaegertracingc/*_test.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/jaegertracingc/*_test_driver.c"
@@ -81,31 +82,53 @@ mark_as_advanced(JAEGERTRACINGC_VERBOSE_ALLOC)
 
 hunter_add_package(opentracing-c)
 find_package(opentracing-c CONFIG REQUIRED)
+list(APPEND package_deps opentracing-c)
+
+option(HUNTER_ENABLED "Use Hunter build system" ON)
+
+if(HUNTER_ENABLED)
+  set(hunter_config "CONFIG")
+endif()
 
 hunter_add_package(http-parser)
-find_package(http-parser CONFIG REQUIRED)
+find_package(http-parser ${hunter_config} REQUIRED)
+list(APPEND package_deps http-parser)
 
 hunter_add_package(jansson)
-find_package(jansson CONFIG REQUIRED)
+find_package(jansson ${hunter_config} REQUIRED)
+list(APPEND package_deps jansson)
 
-hunter_add_package(Protobuf)
-find_package(Protobuf CONFIG REQUIRED)
+if(HUNTER_ENABLED)
+  hunter_add_package(Protobuf)
+  find_package(Protobuf ${hunter_config} REQUIRED)
+  list(APPEND package_deps Protobuf)
+  set(protoc_exe protobuf::protoc)
+else()
+  find_program(protoc_exe protoc)
+  if(NOT protoc_exe)
+    message(FATAL_ERROR
+            "Cannot find protoc executable, please install Protobuf")
+  endif()
+endif()
 
 hunter_add_package(protobuf-c)
-find_package(protobuf-c CONFIG REQUIRED)
+find_package(protobuf-c ${hunter_config} REQUIRED)
+list(APPEND package_deps protobuf-c)
 
 hunter_add_package(pcg)
-find_package(pcg CONFIG REQUIRED)
+find_package(pcg ${hunter_config} REQUIRED)
+list(APPEND package_deps pcg)
 
 option(JAEGERTRACINGC_MT "Enable multithreading support" ON)
 if(JAEGERTRACINGC_MT)
   set(CMAKE_THREAD_PREFER_PTHREAD ON)
   find_package(Threads REQUIRED)
+  list(APPEND package_deps Threads)
 endif()
 
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+option(CMAKE_EXPORT_COMPILE_COMMANDS "Export compilation database" ON)
 
-set(core_src
+set(src
   src/jaegertracingc/alloc.c
   src/jaegertracingc/alloc.h
   src/jaegertracingc/clock.c
@@ -162,12 +185,12 @@ function(generate_protobuf_c gen_src)
         "${generated_src_dir}/protoc-gen/${component}.pb-c.c")
     add_custom_command(
       OUTPUT ${protoc_out_files}
-      COMMAND protobuf::protoc
+      COMMAND ${protoc_exe}
       ARGS --plugin=$<TARGET_FILE:protobuf-c::protoc-gen-c>
            --c_out "${generated_src_dir}/protoc-gen"
            -I. "${component}.proto"
-      MAIN_DEPENDENCY ${proto_src}
       WORKING_DIRECTORY ${dir}
+      MAIN_DEPENDENCY ${proto_src}
       VERBATIM
       USES_TERMINAL)
     list(APPEND out_files ${protoc_out_files})
@@ -182,8 +205,18 @@ generate_protobuf_c(
   "${CMAKE_CURRENT_SOURCE_DIR}/idl/protobuf/jaeger.proto"
   "${CMAKE_CURRENT_SOURCE_DIR}/idl/protobuf/sampling.proto")
 
-add_library(jaegertracingc ${core_src} ${protoc_gen_src})
+add_library(jaegertracingc ${src} ${protoc_gen_src})
+if(BUILD_SHARED_LIBS AND NOT BUILD_TESTING)
+  set_target_properties(jaegertracingc PROPERTIES
+    C_VISIBILITY_PRESET hidden
+    VISIBILITY_INLINES_HIDDEN ON)
+else()
+  target_compile_definitions(jaegertracingc PUBLIC JAEGERTRACINGC_STATIC)
+endif()
 target_compile_options(jaegertracingc PRIVATE ${jaegertracingc_flags})
+
+generate_export_header(jaegertracingc
+  EXPORT_FILE_NAME "${generated_src_dir}/visibility.h")
 
 configure_file(
   src/jaegertracingc/constants.h.in
@@ -211,24 +244,24 @@ endif()
 check_atomics(have_atomics)
 if(have_atomics)
   target_compile_definitions(jaegertracingc PUBLIC
-    "-DJAEGERTRACINGC_HAVE_ATOMICS")
+    "JAEGERTRACINGC_HAVE_ATOMICS")
 else()
 endif()
 
 check_symbol_exists(
   "SYS_getrandom" "linux/random.h;sys/syscall.h;unistd.h" have_getrandom)
 if(have_getrandom)
-  target_compile_definitions(jaegertracingc PRIVATE "-DHAVE_GETRANDOM")
+  target_compile_definitions(jaegertracingc PRIVATE "HAVE_GETRANDOM")
 else()
   check_symbol_exists("arc4random_buf" "stdlib.h" have_arc4random_buf)
   if(have_arc4random_buf)
-    target_compile_definitions(jaegertracingc PRIVATE "-DHAVE_ARC4RANDOM_BUF")
+    target_compile_definitions(jaegertracingc PRIVATE "HAVE_ARC4RANDOM_BUF")
   endif()
 endif()
 
 test_big_endian(big_endian)
 if(NOT big_endian)
-  target_compile_definitions(jaegertracingc PRIVATE "-DLITTLE_ENDIAN")
+  target_compile_definitions(jaegertracingc PRIVATE "LITTLE_ENDIAN")
 
   if(WIN32)
     set(swap_func "_byteswap_uint64")
@@ -250,7 +283,7 @@ check_attributes()
 
 if(JAEGERTRACINGC_VERBOSE_ALLOC)
   target_compile_definitions(
-    jaegertracingc PUBLIC "-DJAEGERTRACINGC_VERBOSE_ALLOC")
+    jaegertracingc PUBLIC "JAEGERTRACINGC_VERBOSE_ALLOC")
 endif()
 
 if(BUILD_TESTING)
@@ -292,7 +325,10 @@ if(BUILD_TESTING)
     src/jaegertracingc/unit_test_driver.h.in
     "${generated_src_dir}/unit_test_driver.h"
     @ONLY)
-  add_library(jaegertracingc_test ${test_src} "src/jaegertracingc/mock_agent.c")
+  add_library(jaegertracingc_test
+    ${test_src}
+    src/jaegertracingc/mock_agent.c
+    src/jaegertracingc/mock_agent.h)
   target_include_directories(jaegertracingc_test PUBLIC
     "src/jaegertracingc" $<BUILD_INTERFACE:${generated_src_dir}>)
   target_link_libraries(jaegertracingc_test PUBLIC jaegertracingc unity)
@@ -314,3 +350,90 @@ if(BUILD_TESTING)
 endif()
 
 generate_documentation()
+
+# Installation (https://github.com/forexample/package-example)
+
+# Introduce variables:
+# * CMAKE_INSTALL_LIBDIR
+# * CMAKE_INSTALL_BINDIR
+# * CMAKE_INSTALL_INCLUDEDIR
+include(GNUInstallDirs)
+
+# Layout. This works for all platforms:
+#   * <prefix>/lib*/cmake/<PROJECT-NAME>
+#   * <prefix>/lib*/
+#   * <prefix>/include/
+set(config_install_dir "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
+
+set(generated_dir "${CMAKE_CURRENT_BINARY_DIR}/generated")
+
+# Configuration
+set(version_config "${generated_dir}/${PROJECT_NAME}ConfigVersion.cmake")
+set(project_config "${generated_dir}/${PROJECT_NAME}Config.cmake")
+set(TARGETS_EXPORT_NAME "${PROJECT_NAME}Targets")
+set(namespace "${PROJECT_NAME}::")
+
+# Include module with fuction 'write_basic_package_version_file'
+include(CMakePackageConfigHelpers)
+
+# Configure '<PROJECT-NAME>ConfigVersion.cmake'
+# Use:
+#   * PROJECT_VERSION
+write_basic_package_version_file(
+    "${version_config}" COMPATIBILITY SameMajorVersion
+)
+
+# Configure '<PROJECT-NAME>Config.cmake'
+# Use variables:
+#   * TARGETS_EXPORT_NAME
+#   * PROJECT_NAME
+configure_package_config_file(
+    "cmake/Config.cmake.in"
+    "${project_config}"
+    INSTALL_DESTINATION "${config_install_dir}"
+)
+
+# Targets:
+#   * <prefix>/lib/libjaegertracingc.a
+#   * header location after install: <prefix>/include/jaegertracingc/tracer.h
+#   * headers can be included by C++ code `#include <jaegertracingc/tracer.h>`
+install(
+    TARGETS jaegertracingc
+    EXPORT "${TARGETS_EXPORT_NAME}"
+    LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+    INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+)
+
+# Headers:
+#   * src/jaegertracingc/tracer.h -> <prefix>/include/jaegertracingc/tracer.h
+#   * src/jaegertracingc/span.h -> <prefix>/include/jaegertracingc/span.h
+install(
+    DIRECTORY "src/jaegertracingc"
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+    FILES_MATCHING PATTERN "*.h"
+)
+
+# Export headers:
+#   * ${CMAKE_CURRENT_BINARY_DIR}/.../visibility.h -> <prefix>/include/jaegertracingc/visibility.h
+install(
+    FILES "${generated_src_dir}/visibility.h"
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/jaegertracingc"
+)
+
+# Config
+#   * <prefix>/lib/cmake/jaegertracingc/jaegertracingcConfig.cmake
+#   * <prefix>/lib/cmake/jaegertracingc/jaegertracingcConfigVersion.cmake
+install(
+    FILES "${project_config}" "${version_config}"
+    DESTINATION "${config_install_dir}"
+)
+
+# Config
+#   * <prefix>/lib/cmake/jaegertracingc/jaegertracingcTargets.cmake
+install(
+    EXPORT "${TARGETS_EXPORT_NAME}"
+    NAMESPACE "${namespace}"
+    DESTINATION "${config_install_dir}"
+)

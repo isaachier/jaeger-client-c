@@ -17,6 +17,8 @@
 #ifndef JAEGERTRACINGC_CONFIG_H
 #define JAEGERTRACINGC_CONFIG_H
 
+#include "jaegertracingc/visibility.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
