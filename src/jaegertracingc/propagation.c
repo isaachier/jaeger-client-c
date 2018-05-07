@@ -503,4 +503,11 @@ jaeger_inject_into_binary(int (*callback)(void*, const char*, size_t),
 opentracing_propagation_error_code
 jaeger_inject_into_custom(opentracing_custom_carrier_writer* writer,
                           jaeger_tracer* tracer,
-                          const jaeger_span_context* ctx);
+                          const jaeger_span_context* ctx)
+{
+    /* TODO */
+    (void) writer;
+    (void) tracer;
+    (void) ctx;
+    return opentracing_propagation_error_code_success;
+}

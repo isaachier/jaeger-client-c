@@ -578,10 +578,9 @@ jaeger_tracer_inject_text_map(opentracing_tracer* tracer,
                               const opentracing_span_context* span_context)
 {
     CHECK_SPAN_CONTEXT(span_context);
-    /* TODO */
-    (void) tracer;
-    (void) writer;
-    return opentracing_propagation_error_code_success;
+    jaeger_tracer* t = (jaeger_tracer*) tracer;
+    const jaeger_span_context* ctx = (jaeger_span_context*) span_context;
+    return jaeger_inject_into_text_map(writer, ctx, &t->headers);
 }
 
 opentracing_propagation_error_code
@@ -590,10 +589,9 @@ jaeger_tracer_inject_http_headers(opentracing_tracer* tracer,
                                   const opentracing_span_context* span_context)
 {
     CHECK_SPAN_CONTEXT(span_context);
-    /* TODO */
-    (void) tracer;
-    (void) writer;
-    return opentracing_propagation_error_code_success;
+    jaeger_tracer* t = (jaeger_tracer*) tracer;
+    const jaeger_span_context* ctx = (jaeger_span_context*) span_context;
+    return jaeger_inject_into_http_headers(writer, ctx, &t->headers);
 }
 
 opentracing_propagation_error_code
@@ -602,12 +600,10 @@ jaeger_tracer_inject_binary(opentracing_tracer* tracer,
                             void* arg,
                             const opentracing_span_context* span_context)
 {
-    CHECK_SPAN_CONTEXT(span_context);
-    /* TODO */
     (void) tracer;
-    (void) callback;
-    (void) arg;
-    return opentracing_propagation_error_code_success;
+    CHECK_SPAN_CONTEXT(span_context);
+    const jaeger_span_context* ctx = (jaeger_span_context*) span_context;
+    return jaeger_inject_into_binary(callback, arg, ctx);
 }
 
 opentracing_propagation_error_code
@@ -616,10 +612,9 @@ jaeger_tracer_inject_custom(opentracing_tracer* tracer,
                             const opentracing_span_context* span_context)
 {
     CHECK_SPAN_CONTEXT(span_context);
-    /* TODO */
-    (void) tracer;
-    (void) carrier;
-    return opentracing_propagation_error_code_success;
+    jaeger_tracer* t = (jaeger_tracer*) tracer;
+    const jaeger_span_context* ctx = (jaeger_span_context*) span_context;
+    return jaeger_inject_into_custom(carrier, t, ctx);
 }
 
 #undef CHECK_SPAN_CONTEXT

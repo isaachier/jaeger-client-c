@@ -78,7 +78,7 @@ jaeger_inject_into_custom(opentracing_custom_carrier_writer* writer,
                           const struct jaeger_span_context* ctx);
 
 #ifdef __cplusplus
-}
+} /* extern "C" */
 #endif /* __cplusplus */
 
 #endif /* JAEGERTRACINGC_PROPAGATION_H */
