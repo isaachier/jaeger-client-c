@@ -625,16 +625,8 @@ jaeger_tracer_extract_text_map(struct opentracing_tracer* tracer,
                                opentracing_span_context** span_context)
 {
     jaeger_tracer* t = (jaeger_tracer*) tracer;
-    jaeger_span_context* ctx = (jaeger_span_context*) *span_context;
-    opentracing_propagation_error_code return_code =
-        jaeger_extract_from_text_map(carrier,
-                                     (jaeger_span_context**) span_context,
-                                     t->metrics,
-                                     &t->headers);
-    if (return_code == opentracing_propagation_error_code_success) {
-        *span_context = (opentracing_span_context*) ctx;
-    }
-    return return_code;
+    return jaeger_extract_from_text_map(
+        carrier, (jaeger_span_context**) span_context, t->metrics, &t->headers);
 }
 
 opentracing_propagation_error_code
@@ -642,11 +634,9 @@ jaeger_tracer_extract_http_headers(opentracing_tracer* tracer,
                                    opentracing_http_headers_reader* carrier,
                                    opentracing_span_context** span_context)
 {
-    /* TODO */
-    (void) tracer;
-    (void) carrier;
-    (void) span_context;
-    return opentracing_propagation_error_code_success;
+    jaeger_tracer* t = (jaeger_tracer*) tracer;
+    return jaeger_extract_from_http_headers(
+        carrier, (jaeger_span_context**) span_context, t->metrics, &t->headers);
 }
 
 opentracing_propagation_error_code
@@ -655,12 +645,9 @@ jaeger_tracer_extract_binary(opentracing_tracer* tracer,
                              void* arg,
                              opentracing_span_context** span_context)
 {
-    /* TODO */
-    (void) tracer;
-    (void) callback;
-    (void) arg;
-    (void) span_context;
-    return opentracing_propagation_error_code_success;
+    jaeger_tracer* t = (jaeger_tracer*) tracer;
+    return jaeger_extract_from_binary(
+        callback, arg, (jaeger_span_context**) span_context, t->metrics);
 }
 
 opentracing_propagation_error_code
@@ -668,9 +655,5 @@ jaeger_tracer_extract_custom(opentracing_tracer* tracer,
                              opentracing_custom_carrier_reader* carrier,
                              opentracing_span_context** span_context)
 {
-    /* TODO */
-    (void) tracer;
-    (void) carrier;
-    (void) span_context;
-    return opentracing_propagation_error_code_success;
+    return carrier->extract(carrier, tracer, span_context);
 }
