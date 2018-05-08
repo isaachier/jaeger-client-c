@@ -9,7 +9,8 @@ function(__check_specific_attribute specific_attribute var)
     "${tmp_dir}/${specific_attribute}_attribute_test"
     "${CMAKE_CURRENT_SOURCE_DIR}/cmake/specific_attribute_test.c"
     COMPILE_DEFINITIONS "-DATTRIBUTE=${JAEGERTRACINGC_ATTRIBUTE}"
-                        "-DX=${specific_attribute}")
+                        "-DX=${specific_attribute}"
+                         "-Wall" "-Werror")
 
   if(have_${specific_attribute}_attribute)
     set(${var} ON PARENT_SCOPE)
@@ -17,7 +18,6 @@ function(__check_specific_attribute specific_attribute var)
   else()
     message(STATUS "Checking for ${JAEGERTRACINGC_ATTRIBUTE}((${specific_attribute})) - Failed")
   endif()
-
 endfunction()
 
 function(__check_have_weak_symbols var)
@@ -40,9 +40,30 @@ function(__check_have_format_attribute var)
   try_compile(have_format_attribute
     "${tmp_dir}/cmake/format_attribute_test"
     "${CMAKE_CURRENT_SOURCE_DIR}/cmake/format_attribute_test.c"
-    COMPILE_DEFINITIONS "-DATTRIBUTE=${JAEGERTRACINGC_ATTRIBUTE}")
+    COMPILE_DEFINITIONS "-DATTRIBUTE=${JAEGERTRACINGC_ATTRIBUTE}"
+                        "-Wall" "-Werror")
   if(have_format_attribute)
     set(${var} ON PARENT_SCOPE)
+    message(STATUS "Checking for ${JAEGERTRACINGC_ATTRIBUTE}((format())) - Success")
+  else()
+    message(STATUS "Checking for ${JAEGERTRACINGC_ATTRIBUTE}((format())) - Failed")
+  endif()
+endfunction()
+
+function(__check_have_guarded_by_attribute var)
+  find_package(Threads REQUIRED)
+  set(tmp_dir "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp")
+  try_compile(have_guarded_by_attribute
+    "${tmp_dir}/cmake/guarded_by_attribute_test"
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/guarded_by_attribute_test.c"
+    COMPILE_DEFINITIONS "-DATTRIBUTE=${JAEGERTRACINGC_ATTRIBUTE}"
+                        "-Wall" "-Werror"
+    LINK_LIBRARIES Threads::Threads)
+  if(have_guarded_by_attribute)
+    set(${var} ON PARENT_SCOPE)
+    message(STATUS "Checking for ${JAEGERTRACINGC_ATTRIBUTE}((guarded_by())) - Success")
+  else()
+    message(STATUS "Checking for ${JAEGERTRACINGC_ATTRIBUTE}((guarded_by())) - Failed")
   endif()
 endfunction()
 
@@ -53,7 +74,7 @@ function(check_attributes)
       try_compile(have_${keyword}
         "${tmp_dir}/attribute_keyword_test"
         "${CMAKE_CURRENT_SOURCE_DIR}/cmake/attribute_keyword_test.c"
-        COMPILE_DEFINITIONS "-DATTRIBUTE=${keyword}")
+        COMPILE_DEFINITIONS "-DATTRIBUTE=${keyword}" "-Wall" "-Werror")
       if(have_${keyword})
         set(JAEGERTRACINGC_ATTRIBUTE "${keyword}" CACHE INTERNAL
             "Attribute keyword")
@@ -79,5 +100,10 @@ function(check_attributes)
   __check_have_format_attribute(have_format_attribute)
   if(have_format_attribute)
     set(JAEGERTRACINGC_HAVE_FORMAT_ATTRIBUTE ON PARENT_SCOPE)
+  endif()
+
+  __check_have_guarded_by_attribute(have_guarded_by_attribute)
+  if(have_guarded_by_attribute)
+    set(JAEGERTRACINGC_HAVE_GUARDED_BY_ATTRIBUTE ON PARENT_SCOPE)
   endif()
 endfunction()
