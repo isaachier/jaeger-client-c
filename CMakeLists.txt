@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.6)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
@@ -32,6 +32,8 @@ HunterGate(
     SHA1 "6e3cb4c333b76803a83c56fcbca3b0bfd9f96f27"
     LOCAL
 )
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 project(jaegertracingc VERSION 0.0.1)
 
@@ -128,8 +130,6 @@ if(JAEGERTRACINGC_MT)
   list(APPEND package_deps Threads)
 endif()
 
-option(CMAKE_EXPORT_COMPILE_COMMANDS "Export compilation database" ON)
-
 set(src
   src/jaegertracingc/alloc.c
   src/jaegertracingc/alloc.h
@@ -216,6 +216,15 @@ else()
   target_compile_definitions(jaegertracingc PUBLIC JAEGERTRACINGC_STATIC)
 endif()
 target_compile_options(jaegertracingc PRIVATE ${jaegertracingc_flags})
+
+find_program(clang_tidy_path clang-tidy)
+if(clang_tidy_path)
+  list(APPEND properties C_CLANG_TIDY ${clang_tidy_path})
+endif()
+
+if(properties)
+  set_target_properties(jaegertracingc PROPERTIES ${properties})
+endif()
 
 generate_export_header(jaegertracingc
   EXPORT_FILE_NAME "${generated_src_dir}/visibility.h")
