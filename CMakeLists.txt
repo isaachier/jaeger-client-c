@@ -317,6 +317,7 @@ if(BUILD_TESTING)
     src/jaegertracingc/random_test.c
     src/jaegertracingc/reporter_test.c
     src/jaegertracingc/sampler_test.c
+    src/jaegertracingc/siphash_test.c
     src/jaegertracingc/span_test.c
     src/jaegertracingc/tag_test.c
     src/jaegertracingc/threading_test.c

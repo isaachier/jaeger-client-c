@@ -14,24 +14,21 @@
  * limitations under the License.
  */
 
-/**
- * @file
- * Siphash implementation.
- */
+#include "jaegertracingc/siphash.h"
+#include "unity.h"
 
-#ifndef JAEGERTRACINGC_INTERNAL_SIPHASH_H
-#define JAEGERTRACINGC_INTERNAL_SIPHASH_H
-
-#include "jaegertracingc/common.h"
-
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
-uint64_t siphash(const uint8_t* buffer, size_t size, const uint8_t seed[16]);
-
-#ifdef __cplusplus
-} /* extern C */
-#endif /* __cplusplus */
-
-#endif /* JAEGERTRACINGC_INTERNAL_SIPHASH_H */
+void test_siphash()
+{
+    const uint8_t seed[16] = {0};
+    const struct {
+        const char* data;
+        uint64_t hash_code;
+    } test_cases[] = {{.data = "test", .hash_code = 0x3d5124c4cd58914e}};
+    for (size_t i = 0, len = sizeof(test_cases) / sizeof(test_cases[0]);
+         i < len;
+         i++) {
+        TEST_ASSERT_EQUAL_HEX64(
+            test_cases[i].hash_code,
+            siphash(test_cases[i].data, strlen(test_cases[i].data), seed));
+    }
+}

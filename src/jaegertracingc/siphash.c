@@ -25,16 +25,12 @@
 #define C_ROUNDS 2
 #define D_ROUNDS 4
 
-static inline uint32_t unpack32(const uint8_t* buffer)
-{
-    return (buffer[0]) | (buffer[1] << 8) | (buffer[2] << 16) |
-           (buffer[3] << 24);
-}
-
 static inline uint64_t unpack64(const uint8_t* buffer)
 {
-    return (((uint64_t) unpack32(buffer)) << 32) |
-           (unpack32(&buffer[sizeof(uint32_t)]));
+    return ((uint64_t) buffer[0]) | ((uint64_t) buffer[1] << 8) |
+           ((uint64_t) buffer[2] << 16) | ((uint64_t) buffer[3] << 24) |
+           ((uint64_t) buffer[4] << 32) | ((uint64_t) buffer[5] << 40) |
+           ((uint64_t) buffer[6] << 48) | ((uint64_t) buffer[7] << 56);
 }
 
 static inline uint64_t rotl(uint64_t x, size_t b)
@@ -60,16 +56,14 @@ static inline void sipround(uint64_t* v)
     v[2] = rotl(v[2], 32);
 }
 
-uint64_t siphash(const void* data, size_t size, const uint64_t seed[2])
+uint64_t siphash(const uint8_t* buffer, size_t size, const uint8_t seed[16])
 {
     uint64_t v[4] = {0x736f6d6570736575ULL,
                      0x646f72616e646f6dULL,
                      0x6c7967656e657261ULL,
                      0x7465646279746573ULL};
-    const uint64_t k0 = seed[0];
-    const uint64_t k1 = seed[1];
-    uint8_t buffer[size];
-    memcpy(&buffer, data, size);
+    const uint64_t k0 = unpack64(&seed[0]);
+    const uint64_t k1 = unpack64(&seed[8]);
     const uint8_t* end = buffer + size - (size % sizeof(uint64_t));
     const size_t num_left = size & 7;
     uint64_t b = ((uint64_t) size) << 56;
@@ -90,14 +84,30 @@ uint64_t siphash(const void* data, size_t size, const uint64_t seed[2])
         v[0] ^= m;
     }
 
-    assert(num_left < sizeof(b));
-    for (size_t i = 0; i < num_left; i++) {
-        if (i > 0) {
-            b <<= 8;
-        }
-        b |= *iter;
-        iter++;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
+
+    switch (num_left) {
+    case 7:
+        b |= ((uint64_t) iter[6]) << 48;
+    case 6:
+        b |= ((uint64_t) iter[5]) << 40;
+    case 5:
+        b |= ((uint64_t) iter[4]) << 32;
+    case 4:
+        b |= ((uint64_t) iter[3]) << 24;
+    case 3:
+        b |= ((uint64_t) iter[2]) << 16;
+    case 2:
+        b |= ((uint64_t) iter[1]) << 8;
+    case 1:
+        b |= ((uint64_t) iter[0]);
+    case 0:
+        break;
     }
+
+#pragma GCC diagnostic pop
+
     v[3] ^= b;
 
     for (int i = 0; i < C_ROUNDS; i++) {
