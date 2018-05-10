@@ -138,6 +138,9 @@ set(src
   src/jaegertracingc/common.c
   src/jaegertracingc/common.h
   src/jaegertracingc/constants.c
+  ${CMAKE_CURRENT_BINARY_DIR}/src/jaegertracingc/constants.h
+  src/jaegertracingc/hashtable.c
+  src/jaegertracingc/hashtable.h
   src/jaegertracingc/key_value.c
   src/jaegertracingc/key_value.h
   src/jaegertracingc/log_record.c
@@ -160,6 +163,8 @@ set(src
   src/jaegertracingc/sampler.h
   src/jaegertracingc/sampling_strategy.c
   src/jaegertracingc/sampling_strategy.h
+  src/jaegertracingc/siphash.c
+  src/jaegertracingc/siphash.h
   src/jaegertracingc/span.c
   src/jaegertracingc/span.h
   src/jaegertracingc/tag.c

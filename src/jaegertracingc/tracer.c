@@ -206,7 +206,7 @@ void jaeger_tracer_destroy(jaeger_destructible* d)
     }
 
     jaeger_tracer* tracer = (jaeger_tracer*) d;
-    tracer->close(tracer);
+    ((opentracing_tracer*) tracer)->close(((opentracing_tracer*) tracer));
     if (tracer->service_name != NULL) {
         jaeger_free(tracer->service_name);
         tracer->service_name = NULL;
