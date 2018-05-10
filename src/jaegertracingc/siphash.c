@@ -84,8 +84,10 @@ uint64_t siphash(const uint8_t* buffer, size_t size, const uint8_t seed[16])
         v[0] ^= m;
     }
 
+#ifdef __clang__
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wimplicit-fallthrough"
+#endif /* __clang__ */
 
     switch (num_left) {
     case 7:
@@ -106,7 +108,9 @@ uint64_t siphash(const uint8_t* buffer, size_t size, const uint8_t seed[16])
         break;
     }
 
+#ifdef __clang__
 #pragma clang diagnostic pop
+#endif /* __clang__ */
 
     v[3] ^= b;
 
