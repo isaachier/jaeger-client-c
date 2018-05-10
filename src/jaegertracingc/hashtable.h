@@ -41,7 +41,7 @@ typedef struct jaeger_hashtable_list {
     struct jaeger_hashtable_list* prev;
     /** Pointer to next node. */
     struct jaeger_hashtable_list* next;
-} jaeger_hashtable_node;
+} jaeger_hashtable_list;
 
 /**
  * Static initializer for hashtable list.
@@ -82,9 +82,6 @@ static inline void jaeger_hashtable_entry_destroy(jaeger_hashtable_entry* entry)
         return;
     }
 
-    jaeger_hashtable_list_destroy(&entry->list);
-    jaeger_hashtable_list_destroy(&entry->ordered_list);
-    entry->hash_code = 0;
     jaeger_free(entry->key);
     entry->key = NULL;
     jaeger_free(entry->value);
@@ -157,7 +154,22 @@ typedef struct jaeger_hashtable {
     }
 
 #define JAEGERTRACINGC_HASHTABLE_KEY_TO_ITER(k) \
-    (&(container_of(k, jaeger_hashtable_entry, key)->ordered_list))
+    JAEGERTRACINGC_CONTAINER_OF(k, jaeger_hashtable_entry, key)->ordered_list
+
+/**
+ * Clear all entries from a hashtable.
+ */
+static inline void jaeger_hashtable_clear(jaeger_hashtable* hashtable)
+{
+    for (jaeger_hashtable_list *list = &hashtable->list, *next;
+         list != &hashtable->list;
+         list = next) {
+        next = list->next;
+        jaeger_hashtable_entry* entry =
+            JAEGERTRACINGC_CONTAINER_OF(list, jaeger_hashtable_entry, list);
+        jaeger_hashtable_entry_destroy(entry);
+    }
+}
 
 /**
  * Hashtable destructor.
@@ -167,14 +179,7 @@ static inline void jaeger_hashtable_destroy(jaeger_hashtable* hashtable)
     if (hashtable == NULL) {
         return;
     }
-
-    for (jaeger_hashtable_list *list = hashtable->list, next;
-         list != &hashtable->list;
-         list = next) {
-        next = list->next;
-        entry = container_of(list, jaeger_hashtable_entry, list);
-        jaeger_hashtable_entry_destroy(entry);
-    }
+    jaeger_hashtable_clear(hashtable);
     free(hashtable->buckets);
     hashtable->buckets = NULL;
 }
@@ -205,6 +210,10 @@ static inline bool jaeger_hashtable_init(jaeger_hashtable* hashtable)
     }
     return true;
 }
+
+static inline bool jaeger_hashtable_put(jaeger_hashtable* hashtable,
+                                        const char* key,
+                                        const char* value)
 
 #ifdef __cplusplus
 } /* extern C */
