@@ -48,7 +48,7 @@ typedef struct jaeger_hashtable_list {
  */
 #define JAEGERTRACINGC_HASHTABLE_LIST_INIT(list) \
     {                                            \
-        .prev = (list), .next = (list)           \
+        .prev = (&(list)), .next = (&(list))     \
     }
 
 /**
@@ -65,12 +65,12 @@ typedef struct jaeger_hashtable_entry {
 /**
  * Static initializer for hashtable entry.
  */
-#define JAEGERTRACINGC_HASHTABLE_ENTRY_INIT(entry)                     \
-    {                                                                  \
-        .list = JAEGERTRACINGC_HASHTABLE_LIST_INIT(&(entry).list),     \
-        .ordered_list =                                                \
-            JAEGERTRACINGC_HASHTABLE_LIST_INIT(&(entry).ordered_list), \
-        .hash_code = 0, .key = NULL, .value = NULL                     \
+#define JAEGERTRACINGC_HASHTABLE_ENTRY_INIT(entry)                    \
+    {                                                                 \
+        .list = JAEGERTRACINGC_HASHTABLE_LIST_INIT((entry).list),     \
+        .ordered_list =                                               \
+            JAEGERTRACINGC_HASHTABLE_LIST_INIT((entry).ordered_list), \
+        .hash_code = 0, .key = NULL, .value = NULL                    \
     }
 
 /**
@@ -145,12 +145,12 @@ typedef struct jaeger_hashtable {
 /**
  * Static initializer for hashtable.
  */
-#define JAEGERTRACINGC_HASHTABLE_INIT(hashtable)                       \
-    {                                                                  \
-        .size = 0, .order = 0, .buckets = NULL,                        \
-        .list = JAEGERTRACINGC_HASHTABLE_LIST_INIT(hashtable.list),    \
-        .ordered_list =                                                \
-            JAEGERTRACINGC_HASHTABLE_LIST_INIT(hashtable.ordered_list) \
+#define JAEGERTRACINGC_HASHTABLE_INIT(hashtable)                         \
+    {                                                                    \
+        .size = 0, .order = 0, .buckets = NULL,                          \
+        .list = JAEGERTRACINGC_HASHTABLE_LIST_INIT((hashtable).list),    \
+        .ordered_list =                                                  \
+            JAEGERTRACINGC_HASHTABLE_LIST_INIT((hashtable).ordered_list) \
     }
 
 #define JAEGERTRACINGC_HASHTABLE_KEY_TO_ITER(k) \
@@ -190,21 +190,19 @@ static inline void jaeger_hashtable_destroy(jaeger_hashtable* hashtable)
 static inline bool jaeger_hashtable_init(jaeger_hashtable* hashtable)
 {
     assert(hashtable != NULL);
-    *hashtable = (jaeger_hashtable) JAEGERTRACINGC_HASHTABLE_INIT;
+    *hashtable = (jaeger_hashtable) JAEGERTRACINGC_HASHTABLE_INIT(*hashtable);
     const size_t init_capacity = (1 << JAEGERTRACINGC_HASHTABLE_INIT_ORDER);
     hashtable->buckets =
         jaeger_malloc(init_capacity * sizeof(jaeger_hashtable_bucket));
     memset(hashtable->buckets, 0, sizeof(jaeger_hashtable_bucket));
-    if (hashtable->buckets == NULL ||
-        !jaeger_hashtable_list_init(&hashtable->list) ||
-        !jaeger_hashtable_list_init(&hashtable->ordered_list)) {
+    if (hashtable->buckets == NULL) {
         jaeger_hashtable_destroy(hashtable);
         return false;
     }
     hashtable->size = 0;
     hashtable->order = JAEGERTRACINGC_HASHTABLE_INIT_ORDER;
     for (size_t i = 0; i < init_capacity; i++) {
-        buckets[i] =
+        hashtable->buckets[i] =
             (jaeger_hashtable_bucket) JAEGERTRACINGC_HASHTABLE_BUCKET_INIT(
                 *hashtable);
     }
@@ -214,6 +212,10 @@ static inline bool jaeger_hashtable_init(jaeger_hashtable* hashtable)
 static inline bool jaeger_hashtable_put(jaeger_hashtable* hashtable,
                                         const char* key,
                                         const char* value)
+{
+    /* TODO */
+    return true;
+}
 
 #ifdef __cplusplus
 } /* extern C */
