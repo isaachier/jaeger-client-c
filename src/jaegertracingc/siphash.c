@@ -84,33 +84,25 @@ uint64_t siphash(const uint8_t* buffer, size_t size, const uint8_t seed[16])
         v[0] ^= m;
     }
 
-#ifdef __clang__
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wimplicit-fallthrough"
-#endif /* __clang__ */
-
     switch (num_left) {
     case 7:
-        b |= ((uint64_t) iter[6]) << 48;
+        b |= ((uint64_t) iter[6]) << 48; /* FALLTHRU */
     case 6:
-        b |= ((uint64_t) iter[5]) << 40;
+        b |= ((uint64_t) iter[5]) << 40; /* FALLTHRU */
     case 5:
-        b |= ((uint64_t) iter[4]) << 32;
+        b |= ((uint64_t) iter[4]) << 32; /* FALLTHRU */
     case 4:
-        b |= ((uint64_t) iter[3]) << 24;
+        b |= ((uint64_t) iter[3]) << 24; /* FALLTHRU */
     case 3:
-        b |= ((uint64_t) iter[2]) << 16;
+        b |= ((uint64_t) iter[2]) << 16; /* FALLTHRU */
     case 2:
-        b |= ((uint64_t) iter[1]) << 8;
+        b |= ((uint64_t) iter[1]) << 8; /* FALLTHRU */
     case 1:
         b |= ((uint64_t) iter[0]);
+        break;
     case 0:
         break;
     }
-
-#ifdef __clang__
-#pragma clang diagnostic pop
-#endif /* __clang__ */
 
     v[3] ^= b;
 
