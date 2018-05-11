@@ -62,6 +62,7 @@ typedef struct jaeger_list_node {
         memset(node, 0, sizeof(*node));                                     \
         ((jaeger_destructible*) node)->destroy = &node_type_name##_dealloc; \
         node->data = data;                                                  \
+        return node;                                                        \
     }
 
 /** Linked list implementation. */
@@ -106,10 +107,8 @@ jaeger_list_insert(jaeger_list* list, size_t index, jaeger_list_node* elem)
         else {
             assert(list->head->prev == NULL);
             elem->prev = NULL;
-            elem->next = list->head->next;
-            if (elem->next != NULL) {
-                elem->next->prev = elem;
-            }
+            elem->next = list->head;
+            list->head->prev = elem;
         }
         list->head = elem;
         list->size++;
@@ -141,8 +140,8 @@ static inline void jaeger_list_node_remove(jaeger_list* list,
     assert(node != NULL);
 
     if (list->head == node) {
-        if (list->head->next != NULL) {
-            list->head = list->head->next;
+        if (node->next != NULL) {
+            list->head = node->next;
         }
         else {
             list->head = NULL;
