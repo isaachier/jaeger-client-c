@@ -14,26 +14,4 @@
  * limitations under the License.
  */
 
-#include "jaegertracingc/hashtable.h"
-
-#include "jaegertracingc/internal/random.h"
-#include "jaegertracingc/siphash.h"
-
-static uint8_t seed[16];
-
-static inline void fill_seed()
-{
-    RANDOM_SEED(seed);
-}
-
-static uint8_t* hash_seed()
-{
-    static jaeger_once once;
-    jaeger_do_once(&once, &fill_seed);
-    return seed;
-}
-
-size_t jaeger_hashtable_hash(const char* key)
-{
-    return jaeger_siphash((const uint8_t*) key, strlen(key), hash_seed());
-}
+#include "jaegertracingc/list.h"

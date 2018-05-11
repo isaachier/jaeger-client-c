@@ -139,10 +139,12 @@ set(src
   src/jaegertracingc/common.h
   src/jaegertracingc/constants.c
   ${CMAKE_CURRENT_BINARY_DIR}/src/jaegertracingc/constants.h
-  src/jaegertracingc/hashtable.c
-  src/jaegertracingc/hashtable.h
+  #src/jaegertracingc/hashtable.c
+  #src/jaegertracingc/hashtable.h
   src/jaegertracingc/key_value.c
   src/jaegertracingc/key_value.h
+  src/jaegertracingc/list.c
+  src/jaegertracingc/list.h
   src/jaegertracingc/log_record.c
   src/jaegertracingc/log_record.h
   src/jaegertracingc/logging.c
@@ -309,6 +311,7 @@ if(BUILD_TESTING)
   set(test_src
     src/jaegertracingc/alloc_test.c
     src/jaegertracingc/clock_test.c
+    src/jaegertracingc/list_test.c
     src/jaegertracingc/logging_test.c
     src/jaegertracingc/log_record_test.c
     src/jaegertracingc/metrics_test.c

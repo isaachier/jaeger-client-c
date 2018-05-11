@@ -25,24 +25,30 @@
 #include "jaegertracingc/random.h"
 #include "jaegertracingc/threading.h"
 
-#define NUM_UINT64_IN_SEED 2
-
 #if defined(HAVE_GETRANDOM)
 
 #include <linux/random.h>
 #include <sys/syscall.h>
 #include <unistd.h>
 
-#define RANDOM_SEED(seed) \
-    syscall(SYS_getrandom, seed, sizeof(seed), GRND_NONBLOCK)
+#define RANDOM_SEED(seed)                                            \
+    do {                                                             \
+        syscall(SYS_getrandom, (seed), sizeof(seed), GRND_NONBLOCK); \
+    } while (0)
 
 #elif defined(HAVE_ARC4RANDOM_BUF)
 
-#define RANDOM_SEED(seed) arc4random_buf(seed, sizeof(seed))
+#define RANDOM_SEED(seed)                     \
+    do {                                      \
+        arc4random_buf((seed), sizeof(seed)); \
+    } while (0)
 
 #else
 
-#define RANDOM_SEED(seed) read_random_seed(seed, "/dev/random")
+#define RANDOM_SEED(seed)                                    \
+    do {                                                     \
+        read_random_seed(seed, sizeof(seed), "/dev/random"); \
+    } while (0)
 
 #endif /* HAVE_GETRANDOM */
 
@@ -53,8 +59,8 @@ typedef struct jaeger_rng {
     struct pcg_state_setseq_64 state;
 } jaeger_rng;
 
-static inline void read_random_seed(uint64_t* seed,
-                                    const char* random_source_path)
+static inline void
+read_random_seed(uint64_t* seed, size_t len, const char* random_source_path)
 {
     FILE* random_source_file = fopen(random_source_path, "r");
     if (random_source_file == NULL) {
@@ -65,16 +71,15 @@ static inline void read_random_seed(uint64_t* seed,
         return;
     }
 
-    const int num_read =
-        fread(seed, sizeof(seed[0]), NUM_UINT64_IN_SEED, random_source_file);
+    const int num_read = fread(seed, sizeof(seed[0]), len, random_source_file);
     fclose(random_source_file);
 
     /* Warn if we could not read entire seed from random source, but not an
      * error regardless. */
-    if (num_read != NUM_UINT64_IN_SEED) {
+    if (num_read != (int) len) {
         jaeger_log_warn("Could not read entire random block, "
                         "bytes requested = %lu, bytes read = %lu, errno = %d",
-                        NUM_UINT64_IN_SEED * sizeof(uint64_t),
+                        len * sizeof(uint64_t),
                         num_read * sizeof(uint64_t),
                         errno);
     }
@@ -88,6 +93,8 @@ static void rng_destroy(jaeger_destructible* d)
     jaeger_rng* rng = (jaeger_rng*) d;
     jaeger_free(rng);
 }
+
+#define NUM_UINT64_IN_SEED 2
 
 static inline void jaeger_rng_init(jaeger_rng* rng)
 {

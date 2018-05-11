@@ -38,8 +38,8 @@ void test_siphash()
          i < len;
          i++) {
         TEST_ASSERT_EQUAL_HEX64(test_cases[i].hash_code,
-                                siphash((uint8_t*) test_cases[i].data,
-                                        strlen(test_cases[i].data),
-                                        seed));
+                                jaeger_siphash((uint8_t*) test_cases[i].data,
+                                               strlen(test_cases[i].data),
+                                               seed));
     }
 }

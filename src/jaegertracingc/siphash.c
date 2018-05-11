@@ -56,7 +56,8 @@ static inline void sipround(uint64_t* v)
     v[2] = rotl(v[2], 32);
 }
 
-uint64_t siphash(const uint8_t* buffer, size_t size, const uint8_t seed[16])
+uint64_t
+jaeger_siphash(const uint8_t* buffer, size_t size, const uint8_t seed[16])
 {
     uint64_t v[4] = {0x736f6d6570736575ULL,
                      0x646f72616e646f6dULL,

@@ -28,7 +28,8 @@
 extern "C" {
 #endif /* __cplusplus */
 
-uint64_t siphash(const uint8_t* buffer, size_t size, const uint8_t seed[16]);
+uint64_t
+jaeger_siphash(const uint8_t* buffer, size_t size, const uint8_t seed[16]);
 
 #ifdef __cplusplus
 } /* extern C */

@@ -14,26 +14,21 @@
  * limitations under the License.
  */
 
-#include "jaegertracingc/hashtable.h"
+#include "jaegertracingc/list.h"
+#include "unity.h"
 
-#include "jaegertracingc/internal/random.h"
-#include "jaegertracingc/siphash.h"
+JAEGERTRACINGC_DEFINE_LIST_NODE(number_node, int)
 
-static uint8_t seed[16];
-
-static inline void fill_seed()
+void test_list()
 {
-    RANDOM_SEED(seed);
-}
-
-static uint8_t* hash_seed()
-{
-    static jaeger_once once;
-    jaeger_do_once(&once, &fill_seed);
-    return seed;
-}
-
-size_t jaeger_hashtable_hash(const char* key)
-{
-    return jaeger_siphash((const uint8_t*) key, strlen(key), hash_seed());
+    jaeger_list number_list = JAEGERTRACINGC_LIST_INIT(number_list);
+    for (int i = 0; i < 10; i++) {
+        jaeger_list_node* elem = (jaeger_list_node*) number_node_new(i);
+        TEST_ASSERT_NOT_NULL(elem);
+        jaeger_list_append(&number_list, elem);
+        const number_node* node =
+            (const number_node*) jaeger_list_get(&number_list, i);
+        TEST_ASSERT_EQUAL(i, node->data);
+    }
+    jaeger_list_clear(&number_list);
 }
