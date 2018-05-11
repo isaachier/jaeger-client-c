@@ -29,6 +29,26 @@ void test_list()
         const number_node* node =
             (const number_node*) jaeger_list_get(&number_list, i);
         TEST_ASSERT_EQUAL(i, node->data);
+        TEST_ASSERT_EQUAL(i + 1, number_list.size);
     }
+    number_node* node = (number_node*) jaeger_list_get(&number_list, 4);
+    TEST_ASSERT_NOT_NULL(node);
+    TEST_ASSERT_EQUAL(4, node->data);
+    const number_node* prev =
+        (const number_node*) ((const jaeger_list_node*) node)->prev;
+    TEST_ASSERT_NOT_NULL(prev);
+    TEST_ASSERT_EQUAL_PTR(node, ((const jaeger_list_node*) prev)->next);
+    TEST_ASSERT_EQUAL(3, prev->data);
+    const number_node* next =
+        (const number_node*) ((const jaeger_list_node*) node)->next;
+    TEST_ASSERT_NOT_NULL(next);
+    TEST_ASSERT_EQUAL(5, next->data);
+
+    jaeger_list_node_remove(&number_list, (jaeger_list_node*) node);
+    TEST_ASSERT_EQUAL_PTR(prev, ((const jaeger_list_node*) next)->prev);
+    TEST_ASSERT_EQUAL_PTR(next, ((const jaeger_list_node*) prev)->next);
+    TEST_ASSERT_EQUAL(9, number_list.size);
+
     jaeger_list_clear(&number_list);
+    TEST_ASSERT_EQUAL(0, number_list.size);
 }

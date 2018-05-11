@@ -134,6 +134,34 @@ static inline void jaeger_list_append(jaeger_list* list, jaeger_list_node* elem)
     return jaeger_list_insert(list, list->size, elem);
 }
 
+static inline void jaeger_list_node_remove(jaeger_list* list,
+                                           jaeger_list_node* node)
+{
+    assert(list != NULL);
+    assert(node != NULL);
+
+    if (list->head == node) {
+        if (list->head->next != NULL) {
+            list->head = list->head->next;
+        }
+        else {
+            list->head = NULL;
+        }
+    }
+
+    if (node->next != NULL) {
+        node->next->prev = node->prev;
+    }
+    if (node->prev != NULL) {
+        node->prev->next = node->next;
+    }
+    node->next = NULL;
+    node->prev = NULL;
+
+    ((jaeger_destructible*) node)->destroy((jaeger_destructible*) node);
+    list->size--;
+}
+
 static inline void jaeger_list_clear(jaeger_list* list)
 {
     if (list == NULL) {

@@ -16,13 +16,15 @@
 
 /**
  * @file
- * Hashtable data structure. Implementation inspired by Jansson's hashtable.
+ * Hashtable data structure.
  */
 
 #ifndef JAEGERTRACINGC_HASHTABLE_H
 #define JAEGERTRACINGC_HASHTABLE_H
 
 #include "jaegertracingc/common.h"
+#include "jaegertracingc/key_value.h"
+#include "jaegertracingc/list.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -40,121 +42,12 @@ extern "C" {
 #define JAEGERTRACINGC_HASHTABLE_THRESHOLD 1.0
 
 /**
- * Linked list used for hashtable chaining.
- */
-typedef struct jaeger_hashtable_list {
-    /** Pointer to previous node. */
-    struct jaeger_hashtable_list* prev;
-    /** Pointer to next node. */
-    struct jaeger_hashtable_list* next;
-} jaeger_hashtable_list;
-
-/**
- * Static initializer for hashtable list.
- */
-#define JAEGERTRACINGC_HASHTABLE_LIST_INIT(list) \
-    {                                            \
-        .prev = (&(list)), .next = (&(list))     \
-    }
-
-static inline void jaeger_hashtable_list_insert(jaeger_hashtable_list* list,
-                                                jaeger_hashtable_list* node)
-{
-    node->next = list;
-    node->prev = list->prev;
-    list->prev->next = node;
-    list->prev = node;
-}
-
-/**
- * Entry representing a key-value pair.
- */
-typedef struct jaeger_hashtable_entry {
-    jaeger_hashtable_list list;
-    jaeger_hashtable_list ordered_list;
-    size_t hash_code;
-    char* key;
-    char* value;
-} jaeger_hashtable_entry;
-
-/**
- * Static initializer for hashtable entry.
- */
-#define JAEGERTRACINGC_HASHTABLE_ENTRY_INIT(entry)                    \
-    {                                                                 \
-        .list = JAEGERTRACINGC_HASHTABLE_LIST_INIT((entry).list),     \
-        .ordered_list =                                               \
-            JAEGERTRACINGC_HASHTABLE_LIST_INIT((entry).ordered_list), \
-        .hash_code = 0, .key = NULL, .value = NULL                    \
-    }
-
-/**
- * Hashtable entry destructor.
- */
-static inline void jaeger_hashtable_entry_destroy(jaeger_hashtable_entry* entry)
-{
-    if (entry == NULL) {
-        return;
-    }
-
-    jaeger_free(entry->key);
-    entry->key = NULL;
-    jaeger_free(entry->value);
-    entry->value = NULL;
-}
-
-/**
- * Hashtable entry constructor.
- * @param key Key for new entry. Must not be NULL.
- * @param value Value for new entry. Must not be NULL.
- * @return True on success, false otherwise.
- */
-static inline bool jaeger_hashtable_entry_init(jaeger_hashtable_entry* entry,
-                                               const char* key,
-                                               const char* value)
-{
-    assert(entry != NULL);
-    assert(key != NULL);
-    assert(value != NULL);
-    *entry =
-        (jaeger_hashtable_entry) JAEGERTRACINGC_HASHTABLE_ENTRY_INIT(*entry);
-    entry->key = jaeger_strdup(key);
-    if (entry->key == NULL) {
-        return false;
-    }
-    entry->value = jaeger_strdup(value);
-    if (entry->value == NULL) {
-        jaeger_hashtable_entry_destroy(entry);
-        return false;
-    }
-    return true;
-}
-
-/**
- * Hashtable bucket representation.
- */
-typedef struct jaeger_hashtable_bucket {
-    jaeger_hashtable_list* first;
-    jaeger_hashtable_list* last;
-} jaeger_hashtable_bucket;
-
-/**
- * Static initializer for hashtable bucket.
- */
-#define JAEGERTRACINGC_HASHTABLE_BUCKET_INIT(hashtable)           \
-    {                                                             \
-        .first = (&(hashtable).list), .last = (&(hashtable).list) \
-    }
-
-/**
  * Hashtable data structure.
  */
 typedef struct jaeger_hashtable {
     size_t size;
     size_t order;
-    jaeger_hashtable_bucket* buckets;
-    jaeger_hashtable_list list;
-    jaeger_hashtable_list ordered_list;
+    jaeger_list* buckets;
 } jaeger_hashtable;
 
 /**
