@@ -17,11 +17,13 @@
 #include "jaegertracingc/list.h"
 #include "unity.h"
 
-JAEGERTRACINGC_DEFINE_LIST_NODE(number_node, int)
+#define NOOP_DTOR(X)
+JAEGERTRACINGC_DEFINE_LIST_NODE(number_node, int, NOOP_DTOR)
+#undef NOOP_DTOR
 
 void test_list()
 {
-    jaeger_list number_list = JAEGERTRACINGC_LIST_INIT(number_list);
+    jaeger_list number_list = JAEGERTRACINGC_LIST_INIT;
     jaeger_list_node* elem = (jaeger_list_node*) number_node_new(-3);
     TEST_ASSERT_NOT_NULL(elem);
     TEST_ASSERT_EQUAL(0, number_list.size);

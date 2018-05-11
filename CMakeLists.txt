@@ -139,8 +139,8 @@ set(src
   src/jaegertracingc/common.h
   src/jaegertracingc/constants.c
   ${CMAKE_CURRENT_BINARY_DIR}/src/jaegertracingc/constants.h
-  #src/jaegertracingc/hashtable.c
-  #src/jaegertracingc/hashtable.h
+  src/jaegertracingc/hashtable.c
+  src/jaegertracingc/hashtable.h
   src/jaegertracingc/key_value.c
   src/jaegertracingc/key_value.h
   src/jaegertracingc/list.c
