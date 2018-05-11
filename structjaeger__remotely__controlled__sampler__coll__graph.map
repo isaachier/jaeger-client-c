@@ -1,0 +1,16 @@
+<map id="jaeger_remotely_controlled_sampler" name="jaeger_remotely_controlled_sampler">
+<area shape="rect" id="node2" href="$structjaeger__metrics.html" title="jaeger_metrics" alt="" coords="995,207,1101,233"/>
+<area shape="rect" id="node3" href="$structjaeger__counter.html" title="Counter metric interface. " alt="" coords="606,156,713,183"/>
+<area shape="rect" id="node5" href="$structjaeger__gauge.html" title="Gauge metric interface. " alt="" coords="610,207,709,233"/>
+<area shape="rect" id="node6" href="$structjaeger__http__sampling__manager.html" title="jaeger_http_sampling\l_manager" alt="" coords="587,321,732,362"/>
+<area shape="rect" id="node7" href="$structjaeger__vector.html" title="jaeger_vector" alt="" coords="247,364,347,391"/>
+<area shape="rect" id="node16" href="$structjaeger__adaptive__sampler.html" title="jaeger_adaptive_sampler" alt="" coords="576,500,743,527"/>
+<area shape="rect" id="node8" href="$structjaeger__url.html" title="jaeger_url" alt="" coords="257,309,336,336"/>
+<area shape="rect" id="node9" href="$structjaeger__sampler.html" title="jaeger_sampler" alt="" coords="21,492,132,519"/>
+<area shape="rect" id="node11" href="$structjaeger__const__sampler.html" title="jaeger_const_sampler" alt="" coords="388,440,537,467"/>
+<area shape="rect" id="node12" href="$structjaeger__guaranteed__throughput__probabilistic__sampler.html" title="jaeger_guaranteed_throughput\l_probabilistic_sampler" alt="" coords="561,618,757,659"/>
+<area shape="rect" id="node13" href="$structjaeger__probabilistic__sampler.html" title="jaeger_probabilistic\l_sampler" alt="" coords="230,541,363,582"/>
+<area shape="rect" id="node14" href="$structjaeger__rate__limiting__sampler.html" title="jaeger_rate_limiting\l_sampler" alt="" coords="229,697,364,738"/>
+<area shape="rect" id="node10" href="$structjaeger__sampler__choice.html" title="jaeger_sampler_choice" alt="" coords="971,528,1125,555"/>
+<area shape="rect" id="node15" href="$structjaeger__token__bucket.html" title="jaeger_token_bucket" alt="" coords="5,711,148,737"/>
+</map>

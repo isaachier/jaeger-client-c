@@ -1,0 +1,20 @@
+<map id="jaegertracingc/mock_agent.h" name="jaegertracingc/mock_agent.h">
+<area shape="rect" id="node11" href="$common_8h.html" title="Common headers, struct definitions, and macros. " alt="" coords="960,348,1128,375"/>
+<area shape="rect" id="node27" href="$sampler_8h.html" title="Span sampler interface. " alt="" coords="873,95,1037,121"/>
+<area shape="rect" id="node38" href="$vector_8h.html" title="C generic vector implementation. " alt="" coords="808,266,963,293"/>
+<area shape="rect" id="node39" href="$threading_8h.html" title="Threading utilities. " alt="" coords="1376,177,1547,203"/>
+<area shape="rect" id="node12" href="$config_8h_source.html" title="jaegertracingc/config.h" alt="" coords="334,423,487,449"/>
+<area shape="rect" id="node25" href="$alloc_8h.html" title="Allocator struct and functions. " alt="" coords="563,423,709,449"/>
+<area shape="rect" id="node26" href="$logging_8h.html" title="Logging interface and initialization functions. " alt="" coords="525,497,683,524"/>
+<area shape="rect" id="node13" href="$visibility_8h_source.html" title="jaegertracingc/visibility.h" alt="" coords="331,497,496,524"/>
+<area shape="rect" id="node28" href="$clock_8h.html" title="Timestamp and duration representations. " alt="" coords="987,266,1136,293"/>
+<area shape="rect" id="node29" href="$constants_8h_source.html" title="jaegertracingc/constants.h" alt="" coords="226,177,401,203"/>
+<area shape="rect" id="node30" href="$metrics_8h.html" title="Metrics interfaces to track various numbers while tracing. " alt="" coords="774,177,935,203"/>
+<area shape="rect" id="node31" href="$net_8h.html" title="Network utilities. " alt="" coords="1895,177,2031,203"/>
+<area shape="rect" id="node33" href="$sampling__strategy_8h.html" title="Sampling strategy type definitions. " alt="" coords="43,169,202,211"/>
+<area shape="rect" id="node36" href="$tag_8h.html" title="Tag representation and functions. " alt="" coords="613,177,749,203"/>
+<area shape="rect" id="node42" href="$token__bucket_8h.html" title="Token bucket implementation. " alt="" coords="1112,169,1251,211"/>
+<area shape="rect" id="node43" href="$trace__id_8h.html" title="Trace ID representation. " alt="" coords="425,177,589,203"/>
+<area shape="rect" id="node34" href="$sampling_8pb-c_8h_source.html" title="jaegertracingc/protoc\l&#45;gen/sampling.pb&#45;c.h" alt="" coords="59,259,202,300"/>
+<area shape="rect" id="node37" href="$jaeger_8pb-c_8h_source.html" title="jaegertracingc/protoc\l&#45;gen/jaeger.pb&#45;c.h" alt="" coords="435,259,578,300"/>
+</map>

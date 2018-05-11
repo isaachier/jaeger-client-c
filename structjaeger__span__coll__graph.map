@@ -1,0 +1,13 @@
+<map id="jaeger_span" name="jaeger_span">
+<area shape="rect" id="node2" href="$structjaeger__vector.html" title="jaeger_vector" alt="" coords="531,289,631,316"/>
+<area shape="rect" id="node3" href="$structjaeger__tracer.html" title="Tracer implementation. " alt="" coords="781,155,879,181"/>
+<area shape="rect" id="node12" href="$structjaeger__span__context.html" title="Span context represents propagated span identity and state. " alt="" coords="759,351,901,377"/>
+<area shape="rect" id="node4" href="$structjaeger__tracer__options.html" title="Options that can be used to customize the tracer. " alt="" coords="508,157,655,184"/>
+<area shape="rect" id="node5" href="$structjaeger__metrics.html" title="jaeger_metrics" alt="" coords="528,208,635,235"/>
+<area shape="rect" id="node6" href="$structjaeger__counter.html" title="Counter metric interface. " alt="" coords="185,184,292,211"/>
+<area shape="rect" id="node8" href="$structjaeger__gauge.html" title="Gauge metric interface. " alt="" coords="189,235,288,261"/>
+<area shape="rect" id="node9" href="$structjaeger__headers__config.html" title="HTTP headers to use for span context propagation. " alt="" coords="505,5,657,32"/>
+<area shape="rect" id="node10" href="$structjaeger__reporter.html" title="jaeger_reporter" alt="" coords="527,56,635,83"/>
+<area shape="rect" id="node11" href="$structjaeger__sampler.html" title="jaeger_sampler" alt="" coords="526,107,637,133"/>
+<area shape="rect" id="node13" href="$structjaeger__trace__id.html" title="128 bit unique ID for a given trace. " alt="" coords="526,369,637,396"/>
+</map>

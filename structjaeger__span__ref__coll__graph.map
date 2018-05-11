@@ -1,0 +1,5 @@
+<map id="jaeger_span_ref" name="jaeger_span_ref">
+<area shape="rect" id="node2" href="$structjaeger__span__context.html" title="Span context represents propagated span identity and state. " alt="" coords="48,95,191,121"/>
+<area shape="rect" id="node3" href="$structjaeger__vector.html" title="jaeger_vector" alt="" coords="5,5,105,32"/>
+<area shape="rect" id="node4" href="$structjaeger__trace__id.html" title="128 bit unique ID for a given trace. " alt="" coords="129,5,240,32"/>
+</map>

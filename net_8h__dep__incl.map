@@ -1,0 +1,7 @@
+<map id="jaegertracingc/net.h" name="jaegertracingc/net.h">
+<area shape="rect" id="node2" href="$reporter_8h.html" title="Span reporter interface. " alt="" coords="7,80,170,107"/>
+<area shape="rect" id="node5" href="$sampler_8h.html" title="Span sampler interface. " alt="" coords="195,80,359,107"/>
+<area shape="rect" id="node3" href="$tracer_8h.html" title="Tracer implementation. " alt="" coords="23,162,173,189"/>
+<area shape="rect" id="node4" href="$propagation_8c.html" title="Trace ID representation. " alt="" coords="5,244,191,271"/>
+<area shape="rect" id="node6" href="$mock__agent_8h.html" title="Key value pair representation. " alt="" coords="207,155,346,196"/>
+</map>

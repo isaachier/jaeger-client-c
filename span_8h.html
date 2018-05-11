@@ -105,13 +105,13 @@ $(document).ready(function(){initNavTree('span_8h.html','');});
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for span.h:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="span_8h__incl.svg" width="1499" height="604"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+<div class="center"><iframe scrolling="no" frameborder="0" src="span_8h__incl.svg" width="1539" height="604"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
 </div>
 </div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="span_8h__dep__incl.svg" width="227" height="187"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+<div class="center"><iframe scrolling="no" frameborder="0" src="span_8h__dep__incl.svg" width="299" height="262"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
 </div>
 </div>
 </div>
@@ -161,10 +161,10 @@ typedef struct <a class="el" href="structjaeger__span.html">jaeger_span</a>&#160
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
 Enumerations</h2></td></tr>
-<tr class="memitem:adc29c2ff13d900c2f185ee95427fb06c"><td class="memItemLeft" align="right" valign="top"><a id="adc29c2ff13d900c2f185ee95427fb06c"></a>enum &#160;</td><td class="memItemRight" valign="bottom">{ <b>jaeger_sampling_flag_sampled</b> = 1, 
+<tr class="memitem:a06fc87d81c62e9abb8790b6e5713c55b"><td class="memItemLeft" align="right" valign="top"><a id="a06fc87d81c62e9abb8790b6e5713c55b"></a>enum &#160;</td><td class="memItemRight" valign="bottom">{ <b>jaeger_sampling_flag_sampled</b> = 1, 
 <b>jaeger_sampling_flag_debug</b> = (1 &lt;&lt; 1)
  }</td></tr>
-<tr class="separator:adc29c2ff13d900c2f185ee95427fb06c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a06fc87d81c62e9abb8790b6e5713c55b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
@@ -177,9 +177,15 @@ Functions</h2></td></tr>
 <tr class="memitem:afc88e55d2f2a2e0de7fd9b045daca9ed"><td class="memItemLeft" align="right" valign="top"><a id="afc88e55d2f2a2e0de7fd9b045daca9ed"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>if</b> (dst-&gt;trace_id==NULL)</td></tr>
 <tr class="separator:afc88e55d2f2a2e0de7fd9b045daca9ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3f3e908fe3a449f53063b06e1cf4c049"><td class="memItemLeft" align="right" valign="top"><a id="a3f3e908fe3a449f53063b06e1cf4c049"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_mutex_lock</b> ((jaeger_mutex *) &amp;src-&gt;context.mutex)</td></tr>
+<tr class="separator:a3f3e908fe3a449f53063b06e1cf4c049"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2074fc04b05d7d8dda51da016ed09ed6"><td class="memItemLeft" align="right" valign="top"><a id="a2074fc04b05d7d8dda51da016ed09ed6"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_trace_id_to_protobuf</b> (dst-&gt;trace_id, &amp;src-&gt;context.trace_id)</td></tr>
 <tr class="separator:a2074fc04b05d7d8dda51da016ed09ed6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acd0b2274da629550f830bfe9b17d2f35"><td class="memItemLeft" align="right" valign="top"><a id="acd0b2274da629550f830bfe9b17d2f35"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>jaeger_mutex_unlock</b> ((jaeger_mutex *) &amp;src-&gt;context.mutex)</td></tr>
+<tr class="separator:acd0b2274da629550f830bfe9b17d2f35"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab8cecf89062fb525a9bbb8fe8eb68589"><td class="memItemLeft" align="right" valign="top"><a id="ab8cecf89062fb525a9bbb8fe8eb68589"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>JAEGERTRACINGC_WRAP_COPY</b> (jaeger_span_ref_to_protobuf, <a class="el" href="struct__Jaegertracing____Protobuf____SpanRef.html">Jaegertracing__Protobuf__SpanRef</a>, <a class="el" href="structjaeger__span__ref.html">jaeger_span_ref</a>) struct <a class="el" href="structjaeger__tracer.html">jaeger_tracer</a></td></tr>
 <tr class="separator:ab8cecf89062fb525a9bbb8fe8eb68589"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -195,12 +201,12 @@ Variables</h2></td></tr>
 <tr class="separator:ab30ce5929cacc46873c25a334765b9b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a530d962454b3b6d0ccec26743f67c7ab"><td class="memItemLeft" align="right" valign="top">dst&#160;</td><td class="memItemRight" valign="bottom"><b>trace_id</b></td></tr>
 <tr class="separator:a530d962454b3b6d0ccec26743f67c7ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7d917b3d27271d47a6f94e25bc79f1a7"><td class="memItemLeft" align="right" valign="top"><a id="a7d917b3d27271d47a6f94e25bc79f1a7"></a>
-dst&#160;</td><td class="memItemRight" valign="bottom"><b>type</b> = (Jaegertracing__Protobuf__SpanRef__Type) src-&gt;type</td></tr>
-<tr class="separator:a7d917b3d27271d47a6f94e25bc79f1a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af87d22acd4bc66953aa36c4e0e0d0e04"><td class="memItemLeft" align="right" valign="top"><a id="af87d22acd4bc66953aa36c4e0e0d0e04"></a>
 dst&#160;</td><td class="memItemRight" valign="bottom"><b>span_id</b> = src-&gt;context.span_id</td></tr>
 <tr class="separator:af87d22acd4bc66953aa36c4e0e0d0e04"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7d917b3d27271d47a6f94e25bc79f1a7"><td class="memItemLeft" align="right" valign="top"><a id="a7d917b3d27271d47a6f94e25bc79f1a7"></a>
+dst&#160;</td><td class="memItemRight" valign="bottom"><b>type</b> = (Jaegertracing__Protobuf__SpanRef__Type) src-&gt;type</td></tr>
+<tr class="separator:a7d917b3d27271d47a6f94e25bc79f1a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a930920b2bc42824a5c03be681830f4b2"><td class="memItemLeft" align="right" valign="top"><a id="a930920b2bc42824a5c03be681830f4b2"></a>
 return&#160;</td><td class="memItemRight" valign="bottom"><b>true</b></td></tr>
 <tr class="separator:a930920b2bc42824a5c03be681830f4b2"><td class="memSeparator" colspan="2">&#160;</td></tr>

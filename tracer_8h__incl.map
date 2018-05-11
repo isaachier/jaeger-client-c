@@ -1,0 +1,25 @@
+<map id="jaegertracingc/tracer.h" name="jaegertracingc/tracer.h">
+<area shape="rect" id="node3" href="$common_8h.html" title="Common headers, struct definitions, and macros. " alt="" coords="1536,497,1704,524"/>
+<area shape="rect" id="node20" href="$options_8h.html" title="Configuration options. " alt="" coords="2428,237,2588,263"/>
+<area shape="rect" id="node22" href="$reporter_8h.html" title="Span reporter interface. " alt="" coords="1033,80,1196,107"/>
+<area shape="rect" id="node31" href="$span_8h.html" title="Span, span context, and span ref representations and functions. " alt="" coords="1589,155,1736,181"/>
+<area shape="rect" id="node34" href="$vector_8h.html" title="C generic vector implementation. " alt="" coords="2292,415,2447,442"/>
+<area shape="rect" id="node36" href="$tag_8h.html" title="Tag representation and functions. " alt="" coords="2148,326,2284,353"/>
+<area shape="rect" id="node44" href="$sampler_8h.html" title="Span sampler interface. " alt="" coords="1133,237,1297,263"/>
+<area shape="rect" id="node4" href="$config_8h_source.html" title="jaegertracingc/config.h" alt="" coords="1183,572,1337,599"/>
+<area shape="rect" id="node18" href="$alloc_8h.html" title="Allocator struct and functions. " alt="" coords="2173,572,2318,599"/>
+<area shape="rect" id="node19" href="$logging_8h.html" title="Logging interface and initialization functions. " alt="" coords="2255,647,2414,673"/>
+<area shape="rect" id="node5" href="$visibility_8h_source.html" title="jaegertracingc/visibility.h" alt="" coords="1183,647,1348,673"/>
+<area shape="rect" id="node21" href="$constants_8h_source.html" title="jaegertracingc/constants.h" alt="" coords="1949,326,2123,353"/>
+<area shape="rect" id="node23" href="$metrics_8h.html" title="Metrics interfaces to track various numbers while tracing. " alt="" coords="677,326,838,353"/>
+<area shape="rect" id="node24" href="$net_8h.html" title="Network utilities. " alt="" coords="487,326,623,353"/>
+<area shape="rect" id="node39" href="$threading_8h.html" title="Threading utilities. " alt="" coords="913,326,1084,353"/>
+<area shape="rect" id="node32" href="$clock_8h.html" title="Timestamp and duration representations. " alt="" coords="1383,415,1532,442"/>
+<area shape="rect" id="node33" href="$key__value_8h.html" title="Key value pair representation. " alt="" coords="2561,319,2689,360"/>
+<area shape="rect" id="node35" href="$log__record_8h.html" title="Log record representation for use in span. " alt="" coords="1849,229,1973,271"/>
+<area shape="rect" id="node43" href="$trace__id_8h.html" title="Trace ID representation. " alt="" coords="1658,326,1822,353"/>
+<area shape="rect" id="node37" href="$jaeger_8pb-c_8h_source.html" title="jaegertracingc/protoc\l&#45;gen/jaeger.pb&#45;c.h" alt="" coords="2017,408,2159,449"/>
+<area shape="rect" id="node45" href="$sampling__strategy_8h.html" title="Sampling strategy type definitions. " alt="" coords="1423,319,1582,360"/>
+<area shape="rect" id="node47" href="$token__bucket_8h.html" title="Token bucket implementation. " alt="" coords="1108,319,1247,360"/>
+<area shape="rect" id="node46" href="$sampling_8pb-c_8h_source.html" title="jaegertracingc/protoc\l&#45;gen/sampling.pb&#45;c.h" alt="" coords="1850,408,1993,449"/>
+</map>

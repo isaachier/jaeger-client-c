@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['random_2eh',['random.h',['../random_8h.html',1,'']]],
-  ['reporter_2eh',['reporter.h',['../reporter_8h.html',1,'']]]
+  ['log_5frecord_2eh',['log_record.h',['../log__record_8h.html',1,'']]],
+  ['logging_2eh',['logging.h',['../logging_8h.html',1,'']]]
 ];

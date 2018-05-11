@@ -1,0 +1,5 @@
+<map id="_Jaegertracing__Protobuf__SamplingManager__SamplingStrategyResponse" name="_Jaegertracing__Protobuf__SamplingManager__SamplingStrategyResponse">
+<area shape="rect" id="node2" href="$struct__Jaegertracing____Protobuf____SamplingManager____RateLimitingSamplingStrategy.html" title="_Jaegertracing__Protobuf\l__SamplingManager__RateLimiting\lSamplingStrategy" alt="" coords="5,12,232,68"/>
+<area shape="rect" id="node4" href="$struct__Jaegertracing____Protobuf____SamplingManager____PerOperationSamplingStrategy____OperationSamplingStrategy.html" title="_Jaegertracing__Protobuf\l__SamplingManager__PerOperation\lSamplingStrategy__OperationSamplingStrategy" alt="" coords="355,45,653,101"/>
+<area shape="rect" id="node3" href="$struct__Jaegertracing____Protobuf____SamplingManager____PerOperationSamplingStrategy.html" title="_Jaegertracing__Protobuf\l__SamplingManager__PerOperation\lSamplingStrategy" alt="" coords="839,45,1069,101"/>
+</map>

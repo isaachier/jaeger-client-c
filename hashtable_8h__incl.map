@@ -1,0 +1,10 @@
+<map id="jaegertracingc/hashtable.h" name="jaegertracingc/hashtable.h">
+<area shape="rect" id="node2" href="$common_8h.html" title="Common headers, struct definitions, and macros. " alt="" coords="696,244,864,271"/>
+<area shape="rect" id="node20" href="$key__value_8h.html" title="Key value pair representation. " alt="" coords="999,80,1127,121"/>
+<area shape="rect" id="node22" href="$list_8h_source.html" title="jaegertracingc/list.h" alt="" coords="661,169,795,196"/>
+<area shape="rect" id="node3" href="$config_8h_source.html" title="jaegertracingc/config.h" alt="" coords="41,319,194,345"/>
+<area shape="rect" id="node18" href="$alloc_8h.html" title="Allocator struct and functions. " alt="" coords="1239,319,1385,345"/>
+<area shape="rect" id="node19" href="$logging_8h.html" title="Logging interface and initialization functions. " alt="" coords="1370,393,1529,420"/>
+<area shape="rect" id="node4" href="$visibility_8h_source.html" title="jaegertracingc/visibility.h" alt="" coords="40,393,205,420"/>
+<area shape="rect" id="node21" href="$vector_8h.html" title="C generic vector implementation. " alt="" coords="871,169,1025,196"/>
+</map>

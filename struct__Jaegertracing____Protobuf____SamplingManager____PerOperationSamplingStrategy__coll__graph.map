@@ -1,0 +1,4 @@
+<map id="_Jaegertracing__Protobuf__SamplingManager__PerOperationSamplingStrategy" name="_Jaegertracing__Protobuf__SamplingManager__PerOperationSamplingStrategy">
+<area shape="rect" id="node2" href="$struct__Jaegertracing____Protobuf____SamplingManager____PerOperationSamplingStrategy____OperationSamplingStrategy.html" title="_Jaegertracing__Protobuf\l__SamplingManager__PerOperation\lSamplingStrategy__OperationSamplingStrategy" alt="" coords="355,5,653,61"/>
+<area shape="rect" id="node3" href="$struct__Jaegertracing____Protobuf____SamplingManager____RateLimitingSamplingStrategy.html" title="_Jaegertracing__Protobuf\l__SamplingManager__RateLimiting\lSamplingStrategy" alt="" coords="5,5,232,61"/>
+</map>

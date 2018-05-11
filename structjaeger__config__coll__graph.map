@@ -1,0 +1,6 @@
+<map id="jaeger_config" name="jaeger_config">
+<area shape="rect" id="node2" href="$structjaeger__reporter__config.html" title="Reporter config. " alt="" coords="22,5,173,32"/>
+<area shape="rect" id="node3" href="$structjaeger__baggage__restrictions__config.html" title="Baggage restrictions config. " alt="" coords="5,57,189,98"/>
+<area shape="rect" id="node4" href="$structjaeger__sampler__config.html" title="Sampler config. " alt="" coords="21,123,173,149"/>
+<area shape="rect" id="node5" href="$structjaeger__headers__config.html" title="HTTP headers to use for span context propagation. " alt="" coords="21,173,173,200"/>
+</map>

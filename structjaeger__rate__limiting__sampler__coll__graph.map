@@ -1,0 +1,4 @@
+<map id="jaeger_rate_limiting_sampler" name="jaeger_rate_limiting_sampler">
+<area shape="rect" id="node2" href="$structjaeger__token__bucket.html" title="jaeger_token_bucket" alt="" coords="5,5,148,32"/>
+<area shape="rect" id="node3" href="$structjaeger__sampler.html" title="jaeger_sampler" alt="" coords="172,5,283,32"/>
+</map>

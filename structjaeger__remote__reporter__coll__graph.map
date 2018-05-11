@@ -1,0 +1,8 @@
+<map id="jaeger_remote_reporter" name="jaeger_remote_reporter">
+<area shape="rect" id="node2" href="$structjaeger__metrics.html" title="jaeger_metrics" alt="" coords="75,339,182,366"/>
+<area shape="rect" id="node3" href="$structjaeger__counter.html" title="Counter metric interface. " alt="" coords="12,81,119,108"/>
+<area shape="rect" id="node5" href="$structjaeger__gauge.html" title="Gauge metric interface. " alt="" coords="160,81,259,108"/>
+<area shape="rect" id="node6" href="$structjaeger__vector.html" title="jaeger_vector" alt="" coords="206,339,306,366"/>
+<area shape="rect" id="node7" href="$structjaeger__reporter.html" title="jaeger_reporter" alt="" coords="330,339,438,366"/>
+<area shape="rect" id="node8" href="$struct__Jaegertracing____Protobuf____Process.html" title="_Jaegertracing__Protobuf\l__Process" alt="" coords="463,332,634,373"/>
+</map>

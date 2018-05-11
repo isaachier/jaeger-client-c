@@ -1,0 +1,9 @@
+<map id="jaegertracingc/tag.h" name="jaegertracingc/tag.h">
+<area shape="rect" id="node2" href="$alloc_8h.html" title="Allocator struct and functions. " alt="" coords="139,244,285,271"/>
+<area shape="rect" id="node9" href="$common_8h.html" title="Common headers, struct definitions, and macros. " alt="" coords="556,169,724,196"/>
+<area shape="rect" id="node20" href="$jaeger_8pb-c_8h_source.html" title="jaegertracingc/protoc\l&#45;gen/jaeger.pb&#45;c.h" alt="" coords="751,80,894,121"/>
+<area shape="rect" id="node22" href="$vector_8h.html" title="C generic vector implementation. " alt="" coords="567,87,721,114"/>
+<area shape="rect" id="node6" href="$logging_8h.html" title="Logging interface and initialization functions. " alt="" coords="278,319,437,345"/>
+<area shape="rect" id="node10" href="$config_8h_source.html" title="jaegertracingc/config.h" alt="" coords="563,244,717,271"/>
+<area shape="rect" id="node11" href="$visibility_8h_source.html" title="jaegertracingc/visibility.h" alt="" coords="563,319,728,345"/>
+</map>

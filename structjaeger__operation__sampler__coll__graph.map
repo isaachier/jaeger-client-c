@@ -1,0 +1,7 @@
+<map id="jaeger_operation_sampler" name="jaeger_operation_sampler">
+<area shape="rect" id="node2" href="$structjaeger__guaranteed__throughput__probabilistic__sampler.html" title="jaeger_guaranteed_throughput\l_probabilistic_sampler" alt="" coords="25,199,221,240"/>
+<area shape="rect" id="node3" href="$structjaeger__probabilistic__sampler.html" title="jaeger_probabilistic\l_sampler" alt="" coords="56,95,190,136"/>
+<area shape="rect" id="node4" href="$structjaeger__sampler.html" title="jaeger_sampler" alt="" coords="68,5,178,32"/>
+<area shape="rect" id="node5" href="$structjaeger__rate__limiting__sampler.html" title="jaeger_rate_limiting\l_sampler" alt="" coords="214,95,349,136"/>
+<area shape="rect" id="node6" href="$structjaeger__token__bucket.html" title="jaeger_token_bucket" alt="" coords="210,5,353,32"/>
+</map>

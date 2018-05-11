@@ -1,0 +1,4 @@
+<map id="jaeger_metrics" name="jaeger_metrics">
+<area shape="rect" id="node2" href="$structjaeger__counter.html" title="Counter metric interface. " alt="" coords="13,81,120,108"/>
+<area shape="rect" id="node4" href="$structjaeger__gauge.html" title="Gauge metric interface. " alt="" coords="161,81,260,108"/>
+</map>

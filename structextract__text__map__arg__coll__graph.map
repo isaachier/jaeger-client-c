@@ -1,0 +1,9 @@
+<map id="extract_text_map_arg" name="extract_text_map_arg">
+<area shape="rect" id="node2" href="$structjaeger__metrics.html" title="jaeger_metrics" alt="" coords="143,332,249,359"/>
+<area shape="rect" id="node3" href="$structjaeger__counter.html" title="Counter metric interface. " alt="" coords="5,81,112,108"/>
+<area shape="rect" id="node5" href="$structjaeger__gauge.html" title="Gauge metric interface. " alt="" coords="171,81,269,108"/>
+<area shape="rect" id="node6" href="$structjaeger__headers__config.html" title="HTTP headers to use for span context propagation. " alt="" coords="273,332,425,359"/>
+<area shape="rect" id="node7" href="$structjaeger__span__context.html" title="Span context represents propagated span identity and state. " alt="" coords="450,332,593,359"/>
+<area shape="rect" id="node8" href="$structjaeger__vector.html" title="jaeger_vector" alt="" coords="431,81,531,108"/>
+<area shape="rect" id="node9" href="$structjaeger__trace__id.html" title="128 bit unique ID for a given trace. " alt="" coords="555,81,666,108"/>
+</map>

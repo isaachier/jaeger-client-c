@@ -1,0 +1,8 @@
+<map id="jaegertracingc/token_bucket.h" name="jaegertracingc/token_bucket.h">
+<area shape="rect" id="node2" href="$clock_8h.html" title="Timestamp and duration representations. " alt="" coords="616,95,765,121"/>
+<area shape="rect" id="node3" href="$common_8h.html" title="Common headers, struct definitions, and macros. " alt="" coords="663,169,831,196"/>
+<area shape="rect" id="node4" href="$config_8h_source.html" title="jaegertracingc/config.h" alt="" coords="14,244,167,271"/>
+<area shape="rect" id="node19" href="$alloc_8h.html" title="Allocator struct and functions. " alt="" coords="821,244,966,271"/>
+<area shape="rect" id="node20" href="$logging_8h.html" title="Logging interface and initialization functions. " alt="" coords="746,319,905,345"/>
+<area shape="rect" id="node5" href="$visibility_8h_source.html" title="jaegertracingc/visibility.h" alt="" coords="5,319,171,345"/>
+</map>

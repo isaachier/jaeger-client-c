@@ -1,0 +1,12 @@
+<map id="jaegertracingc/vector.h" name="jaegertracingc/vector.h">
+<area shape="rect" id="node2" href="$key__value_8h.html" title="Key value pair representation. " alt="" coords="173,80,301,121"/>
+<area shape="rect" id="node4" href="$span_8h.html" title="Span, span context, and span ref representations and functions. " alt="" coords="265,266,412,293"/>
+<area shape="rect" id="node6" href="$tracer_8h.html" title="Tracer implementation. " alt="" coords="426,423,577,449"/>
+<area shape="rect" id="node7" href="$reporter_8h.html" title="Span reporter interface. " alt="" coords="473,348,636,375"/>
+<area shape="rect" id="node8" href="$log__record_8h.html" title="Log record representation for use in span. " alt="" coords="277,169,401,211"/>
+<area shape="rect" id="node9" href="$mock__agent_8h.html" title="Key value pair representation. " alt="" coords="711,259,849,300"/>
+<area shape="rect" id="node10" href="$sampler_8h.html" title="Span sampler interface. " alt="" coords="587,177,751,203"/>
+<area shape="rect" id="node11" href="$tag_8h.html" title="Tag representation and functions. " alt="" coords="376,87,512,114"/>
+<area shape="rect" id="node3" href="$hashtable_8h.html" title="Hashtable data structure. " alt="" coords="26,177,201,203"/>
+<area shape="rect" id="node5" href="$propagation_8c.html" title="Trace ID representation. " alt="" coords="298,497,483,524"/>
+</map>

@@ -1,0 +1,7 @@
+<map id="jaeger_baggage_setter" name="jaeger_baggage_setter">
+<area shape="rect" id="node2" href="$structjaeger__metrics.html" title="jaeger_metrics" alt="" coords="183,339,289,366"/>
+<area shape="rect" id="node3" href="$structjaeger__counter.html" title="Counter metric interface. " alt="" coords="5,81,112,108"/>
+<area shape="rect" id="node5" href="$structjaeger__gauge.html" title="Gauge metric interface. " alt="" coords="153,81,252,108"/>
+<area shape="rect" id="node6" href="$structjaeger__baggage__restriction__manager.html" title="Interface for object that manages baggage restrictions. " alt="" coords="314,332,491,373"/>
+<area shape="rect" id="node7" href="$structjaeger__baggage__restriction.html" title="Representation of baggage restriction for a given key and a given service. " alt="" coords="314,81,491,108"/>
+</map>

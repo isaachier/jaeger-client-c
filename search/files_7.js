@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['sampler_2eh',['sampler.h',['../sampler_8h.html',1,'']]],
-  ['sampling_5fstrategy_2eh',['sampling_strategy.h',['../sampling__strategy_8h.html',1,'']]],
-  ['span_2eh',['span.h',['../span_8h.html',1,'']]]
+  ['metrics_2eh',['metrics.h',['../metrics_8h.html',1,'']]],
+  ['mock_5fagent_2eh',['mock_agent.h',['../mock__agent_8h.html',1,'']]]
 ];

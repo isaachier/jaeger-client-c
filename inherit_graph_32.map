@@ -1,0 +1,5 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node2" href="$structjaeger__counter.html" title="Counter metric interface. " alt="" coords="189,5,295,32"/>
+<area shape="rect" id="node3" href="$structjaeger__gauge.html" title="Gauge metric interface. " alt="" coords="193,56,291,83"/>
+<area shape="rect" id="node4" href="$structjaeger__list__node.html" title="Base class for list elems. " alt="" coords="184,107,300,133"/>
+</map>

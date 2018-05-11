@@ -1,0 +1,8 @@
+<map id="jaegertracingc/baggage.h" name="jaegertracingc/baggage.h">
+<area shape="rect" id="node2" href="$common_8h.html" title="Common headers, struct definitions, and macros. " alt="" coords="663,155,831,181"/>
+<area shape="rect" id="node20" href="$metrics_8h.html" title="Metrics interfaces to track various numbers while tracing. " alt="" coords="726,80,887,107"/>
+<area shape="rect" id="node3" href="$config_8h_source.html" title="jaegertracingc/config.h" alt="" coords="14,229,167,256"/>
+<area shape="rect" id="node18" href="$alloc_8h.html" title="Allocator struct and functions. " alt="" coords="821,229,966,256"/>
+<area shape="rect" id="node19" href="$logging_8h.html" title="Logging interface and initialization functions. " alt="" coords="746,304,905,331"/>
+<area shape="rect" id="node4" href="$visibility_8h_source.html" title="jaegertracingc/visibility.h" alt="" coords="5,304,171,331"/>
+</map>

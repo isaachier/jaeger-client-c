@@ -1,0 +1,5 @@
+<map id="jaeger_adaptive_sampler" name="jaeger_adaptive_sampler">
+<area shape="rect" id="node2" href="$structjaeger__vector.html" title="jaeger_vector" alt="" coords="5,102,105,129"/>
+<area shape="rect" id="node3" href="$structjaeger__probabilistic__sampler.html" title="jaeger_probabilistic\l_sampler" alt="" coords="211,95,345,136"/>
+<area shape="rect" id="node4" href="$structjaeger__sampler.html" title="jaeger_sampler" alt="" coords="120,5,231,32"/>
+</map>
