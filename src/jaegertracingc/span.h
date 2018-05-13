@@ -158,9 +158,7 @@ jaeger_span_context_copy(jaeger_span_context* restrict dst,
 {
     assert(dst != NULL);
     assert(src != NULL);
-    if (!jaeger_span_context_init(dst)) {
-        return false;
-    }
+    *dst = (jaeger_span_context) JAEGERTRACINGC_SPAN_CONTEXT_INIT;
     jaeger_lock((jaeger_mutex*) &src->mutex, &dst->mutex);
     if (!jaeger_hashtable_copy(&dst->baggage, &src->baggage)) {
         jaeger_mutex_unlock((jaeger_mutex*) &src->mutex);
