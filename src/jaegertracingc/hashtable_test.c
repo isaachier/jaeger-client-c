@@ -38,7 +38,17 @@ void test_hashtable()
         TEST_ASSERT_NOT_NULL(kv);
         TEST_ASSERT_EQUAL_STRING(key, kv->key);
         TEST_ASSERT_EQUAL_STRING(value, kv->value);
+
+        char value_replacement[buffer_size];
+        random_string(value_replacement, buffer_size);
+        TEST_ASSERT_TRUE(
+            jaeger_hashtable_put(&hashtable, key, value_replacement));
+        kv = jaeger_hashtable_find(&hashtable, key);
+        TEST_ASSERT_NOT_NULL(kv);
+        TEST_ASSERT_EQUAL_STRING(key, kv->key);
+        TEST_ASSERT_EQUAL_STRING(value_replacement, kv->value);
     }
 
     jaeger_hashtable_destroy(&hashtable);
+    jaeger_hashtable_destroy(NULL);
 }
