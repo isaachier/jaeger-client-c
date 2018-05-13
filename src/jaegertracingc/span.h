@@ -520,12 +520,18 @@ static inline void jaeger_span_set_baggage_item(opentracing_span* span,
     jaeger_span* s = (jaeger_span*) span;
     jaeger_lock(&s->mutex, &s->context.mutex);
     /* TODO: Use baggage setter for validation once implemented. */
+    /* TODO: Replace with hashtable. */
     bool found = false;
     for (int i = 0, len = jaeger_vector_length(&s->context.baggage); i < len;
          i++) {
         jaeger_key_value* kv = jaeger_vector_get(&s->context.baggage, i);
         if (strcmp(kv->key, key) == 0) {
-            kv->value = jaeger_strdup(value);
+            char* value_copy = jaeger_strdup(value);
+            if (value_copy == NULL) {
+                return;
+            }
+            jaeger_free(kv->value);
+            kv->value = value_copy;
             found = true;
             break;
         }
@@ -593,11 +599,11 @@ static inline void jaeger_span_set_tag_no_locking(
  * @param tag The tag value to consider for sampling.
  * @return True on success, false otherwise.
  */
-static inline bool jaeger_span_set_sampling_priority(
-    jaeger_span* span, const char* key, const opentracing_value* value)
+static inline bool
+jaeger_span_set_sampling_priority(jaeger_span* span,
+                                  const opentracing_value* value)
 {
     assert(span != NULL);
-    assert(key != NULL);
     assert(value != NULL);
     switch (value->type) {
     case opentracing_value_int64:
@@ -641,7 +647,7 @@ static inline void jaeger_span_set_tag(opentracing_span* span,
     assert(value != NULL);
     jaeger_span* s = (jaeger_span*) span;
     if (strcmp(key, JAEGERTRACINGC_SAMPLING_PRIORITY) == 0 &&
-        !jaeger_span_set_sampling_priority(s, key, value)) {
+        !jaeger_span_set_sampling_priority(s, value)) {
         return;
     }
     jaeger_mutex_lock(&s->mutex);

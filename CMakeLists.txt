@@ -311,6 +311,7 @@ if(BUILD_TESTING)
   set(test_src
     src/jaegertracingc/alloc_test.c
     src/jaegertracingc/clock_test.c
+    src/jaegertracingc/hashtable_test.c
     src/jaegertracingc/list_test.c
     src/jaegertracingc/logging_test.c
     src/jaegertracingc/log_record_test.c

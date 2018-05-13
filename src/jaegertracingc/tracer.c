@@ -505,7 +505,7 @@ opentracing_span* jaeger_tracer_start_span_with_options(
 
         if (strcmp(src_tag.key, SAMPLING_PRIORITY_TAG_KEY) == 0 &&
             src_tag.value_case == JAEGERTRACINGC_TAG_TYPE(LONG)) {
-            if (jaeger_span_set_sampling_priority(span, src_tag.key, &value)) {
+            if (jaeger_span_set_sampling_priority(span, &value)) {
                 continue;
             }
         }

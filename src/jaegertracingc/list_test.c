@@ -32,6 +32,7 @@ void test_list()
     TEST_ASSERT_EQUAL_PTR(elem, number_list.head);
     TEST_ASSERT_EQUAL(1, number_list.size);
     jaeger_list_node_remove(&number_list, elem);
+    ((jaeger_destructible*) elem)->destroy((jaeger_destructible*) elem);
     TEST_ASSERT_EQUAL(0, number_list.size);
 
     for (int i = 0; i < 10; i++) {
@@ -51,6 +52,7 @@ void test_list()
     TEST_ASSERT_EQUAL(11, number_list.size);
     TEST_ASSERT_EQUAL(-1, ((number_node*) number_list.head)->data);
     jaeger_list_node_remove(&number_list, elem);
+    ((jaeger_destructible*) elem)->destroy((jaeger_destructible*) elem);
     TEST_ASSERT_EQUAL(10, number_list.size);
 
     elem = (jaeger_list_node*) number_node_new(-2);
@@ -59,6 +61,7 @@ void test_list()
     jaeger_list_insert(&number_list, 1, elem);
     TEST_ASSERT_EQUAL(11, number_list.size);
     jaeger_list_node_remove(&number_list, elem);
+    ((jaeger_destructible*) elem)->destroy((jaeger_destructible*) elem);
     TEST_ASSERT_EQUAL(10, number_list.size);
 
     number_node* node = (number_node*) jaeger_list_get(&number_list, 4);
@@ -75,6 +78,7 @@ void test_list()
     TEST_ASSERT_EQUAL(5, next->data);
 
     jaeger_list_node_remove(&number_list, (jaeger_list_node*) node);
+    ((jaeger_destructible*) node)->destroy((jaeger_destructible*) node);
     TEST_ASSERT_EQUAL_PTR(prev, ((const jaeger_list_node*) next)->prev);
     TEST_ASSERT_EQUAL_PTR(next, ((const jaeger_list_node*) prev)->next);
     TEST_ASSERT_EQUAL(9, number_list.size);

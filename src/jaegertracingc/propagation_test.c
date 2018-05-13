@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-#include "jaegertracingc/internal/strings.h"
 #include "jaegertracingc/propagation.h"
 
 #include "unity.h"
 
+#include "jaegertracingc/internal/strings.h"
+#include "jaegertracingc/internal/test_helpers.h"
 #include "jaegertracingc/metrics.h"
 #include "jaegertracingc/options.h"
 #include "jaegertracingc/span.h"
@@ -432,26 +433,6 @@ static inline void test_http_headers()
         &key_values, jaeger_key_value_destroy, jaeger_key_value);
     jaeger_vector_destroy(&key_values);
     jaeger_metrics_destroy(&metrics);
-}
-
-static inline char random_char()
-{
-    switch (rand() % 3) {
-    case 0:
-        return 'a' + rand() % 26;
-    case 1:
-        return 'A' + rand() % 26;
-    default:
-        return '0' + rand() % 10;
-    }
-}
-
-static inline void random_string(char* buffer, size_t len)
-{
-    for (int i = 0; i < ((int) len) - 1; i++) {
-        buffer[i] = random_char();
-    }
-    buffer[len - 1] = '\0';
 }
 
 static inline int

@@ -158,7 +158,6 @@ static inline void jaeger_list_node_remove(jaeger_list* list,
     node->next = NULL;
     node->prev = NULL;
 
-    ((jaeger_destructible*) node)->destroy((jaeger_destructible*) node);
     list->size--;
 }
 
