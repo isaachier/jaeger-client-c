@@ -28,7 +28,7 @@ extern "C" {
 #endif /* __cplusplus */
 
 /**
- * Base class for list elems.
+ * Base class for list elements.
  * @extends jaeger_destructible
  */
 typedef struct jaeger_list_node {
@@ -171,11 +171,10 @@ static inline void jaeger_list_clear(jaeger_list* list)
          node = next_node) {
         next_node = node->next;
         ((jaeger_destructible*) node)->destroy((jaeger_destructible*) node);
-        list->size--;
     }
 
     list->head = NULL;
-    assert(list->size == 0);
+    list->size = 0;
 }
 
 #ifdef __cplusplus

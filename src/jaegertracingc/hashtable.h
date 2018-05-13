@@ -126,8 +126,10 @@ static inline bool jaeger_hashtable_rehash(jaeger_hashtable* hashtable)
     const size_t bucket_count = (1 << (hashtable->order));
     for (size_t i = 0; i < bucket_count; i++) {
         jaeger_list* bucket = &hashtable->buckets[i];
-        for (jaeger_list_node* entry = bucket->head; entry != NULL;
-             entry = entry->next) {
+        for (jaeger_list_node *entry = bucket->head, *next_entry; entry != NULL;
+             entry = next_entry) {
+            /* Store next node before modifying current node. */
+            next_entry = entry->next;
             /* Remove node, without deleting it, and reinsert into new bucket.
              */
             jaeger_list_node_remove(bucket, entry);
@@ -137,6 +139,7 @@ static inline bool jaeger_hashtable_rehash(jaeger_hashtable* hashtable)
             jaeger_list_append(&new_buckets[index], entry);
         }
     }
+    jaeger_free(hashtable->buckets);
     hashtable->buckets = new_buckets;
     hashtable->order++;
     return true;
@@ -213,16 +216,13 @@ static inline bool jaeger_hashtable_put(jaeger_hashtable* hashtable,
     }
     entry = jaeger_key_value_node_new(kv);
     if (entry == NULL) {
-        goto cleanup;
+        ((jaeger_destructible*) entry)->destroy((jaeger_destructible*) entry);
+        return false;
     }
     jaeger_list_insert(bucket, bucket->size, (jaeger_list_node*) entry);
     hashtable->size++;
 
     return true;
-
-cleanup:
-    ((jaeger_destructible*) entry)->destroy((jaeger_destructible*) entry);
-    return false;
 }
 
 #ifdef __cplusplus
