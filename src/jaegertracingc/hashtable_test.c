@@ -27,10 +27,11 @@ void test_hashtable()
     jaeger_hashtable hashtable;
     TEST_ASSERT_TRUE(jaeger_hashtable_init(&hashtable));
 
+    char key[buffer_size];
+    char value[buffer_size];
+
     for (size_t i = 0; i < num_insertions; i++) {
-        char key[buffer_size];
         random_string(key, buffer_size);
-        char value[buffer_size];
         random_string(value, buffer_size);
 
         TEST_ASSERT_TRUE(jaeger_hashtable_put(&hashtable, key, value));
@@ -41,14 +42,64 @@ void test_hashtable()
 
         char value_replacement[buffer_size];
         random_string(value_replacement, buffer_size);
-        TEST_ASSERT_TRUE(
-            jaeger_hashtable_put(&hashtable, key, value_replacement));
-        kv = jaeger_hashtable_find(&hashtable, key);
-        TEST_ASSERT_NOT_NULL(kv);
-        TEST_ASSERT_EQUAL_STRING(key, kv->key);
-        TEST_ASSERT_EQUAL_STRING(value_replacement, kv->value);
+        static bool test_oom_replace = false;
+        if (rand() / RAND_MAX > 0.95 ||
+            (i == num_insertions - 1 && !test_oom_replace)) {
+            test_oom_replace = true;
+            /* Test replace memory failure. */
+            jaeger_set_allocator(jaeger_null_allocator());
+            TEST_ASSERT_FALSE(
+                jaeger_hashtable_put(&hashtable, key, value_replacement));
+            jaeger_set_allocator(jaeger_built_in_allocator());
+        }
+        else {
+            TEST_ASSERT_TRUE(
+                jaeger_hashtable_put(&hashtable, key, value_replacement));
+            kv = jaeger_hashtable_find(&hashtable, key);
+            TEST_ASSERT_NOT_NULL(kv);
+            TEST_ASSERT_EQUAL_STRING(key, kv->key);
+            TEST_ASSERT_EQUAL_STRING(value_replacement, kv->value);
+        }
+
+        TEST_ASSERT_EQUAL(i + 1, hashtable.size);
     }
+
+    /* Test insert memory failure. */
+    random_string(key, buffer_size);
+    random_string(value, buffer_size);
+    jaeger_set_allocator(jaeger_null_allocator());
+    TEST_ASSERT_FALSE(jaeger_hashtable_put(&hashtable, key, value));
+    TEST_ASSERT_EQUAL(num_insertions, hashtable.size);
+    jaeger_set_allocator(jaeger_built_in_allocator());
+    const jaeger_key_value* kv = jaeger_hashtable_find(&hashtable, key);
+    TEST_ASSERT_NULL(kv);
+
+    jaeger_hashtable_clear(&hashtable);
+    TEST_ASSERT_EQUAL(0, hashtable.size);
 
     jaeger_hashtable_destroy(&hashtable);
     jaeger_hashtable_destroy(NULL);
+
+    /* Test rehash memory failure. */
+    TEST_ASSERT_TRUE(jaeger_hashtable_init(&hashtable));
+    for (size_t i = 0; i < (1 << JAEGERTRACINGC_HASHTABLE_INIT_ORDER) - 1;
+         i++) {
+        TEST_ASSERT_TRUE(jaeger_hashtable_put(&hashtable, key, value));
+        random_string(key, buffer_size);
+        random_string(value, buffer_size);
+    }
+    random_string(key, buffer_size);
+    random_string(value, buffer_size);
+    jaeger_set_allocator(jaeger_null_allocator());
+    TEST_ASSERT_FALSE(jaeger_hashtable_put(&hashtable, key, value));
+    TEST_ASSERT_EQUAL((1 << JAEGERTRACINGC_HASHTABLE_INIT_ORDER) - 1,
+                      hashtable.size);
+    jaeger_set_allocator(jaeger_built_in_allocator());
+
+    jaeger_hashtable_destroy(&hashtable);
+
+    /* Test init memory failure. */
+    jaeger_set_allocator(jaeger_null_allocator());
+    TEST_ASSERT_FALSE(jaeger_hashtable_init(&hashtable));
+    jaeger_set_allocator(jaeger_built_in_allocator());
 }

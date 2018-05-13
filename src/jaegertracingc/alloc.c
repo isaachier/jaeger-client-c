@@ -96,25 +96,22 @@ jaeger_allocator* jaeger_null_allocator(void)
     return &null_alloc;
 }
 
+static jaeger_allocator** jaeger_global_allocator(void)
+{
+    static jaeger_allocator built_in_alloc = BUILT_IN_ALLOCATOR_INIT;
+    static jaeger_allocator* alloc = &built_in_alloc;
+    return &alloc;
+}
+
 void jaeger_set_allocator(jaeger_allocator* alloc)
 {
     assert(alloc != NULL);
-    *jaeger_get_allocator() = *alloc;
+    *jaeger_global_allocator() = alloc;
 }
 
 jaeger_allocator* jaeger_get_allocator(void)
 {
-    static jaeger_allocator shared_alloc = BUILT_IN_ALLOCATOR_INIT;
-
-    /* Flag to indicate we have to call json_set_alloc_funcs. Not thread-safe,
-     * but not a huge deal to call json_set_alloc_funcs multiple times.
-     */
-    static bool initialized = false;
-    if (!initialized) {
-        json_set_alloc_funcs(&jaeger_malloc, &jaeger_free);
-        initialized = true;
-    }
-    return &shared_alloc;
+    return *jaeger_global_allocator();
 }
 
 void* jaeger_malloc(size_t sz)

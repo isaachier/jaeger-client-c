@@ -72,6 +72,7 @@ static inline void jaeger_hashtable_clear(jaeger_hashtable* hashtable)
     for (size_t i = 0; i < bucket_count; i++) {
         jaeger_list_clear(&hashtable->buckets[i]);
     }
+    hashtable->size = 0;
 }
 
 /**
@@ -190,7 +191,7 @@ static inline bool jaeger_hashtable_put(jaeger_hashtable* hashtable,
     assert(key != NULL);
     assert(value != NULL);
     const size_t bucket_count = (1 << hashtable->order);
-    if (((double) hashtable->size + 1) / bucket_count >
+    if (((double) hashtable->size + 1) / bucket_count >=
             JAEGERTRACINGC_HASHTABLE_THRESHOLD &&
         !jaeger_hashtable_rehash(hashtable)) {
         return false;
@@ -211,12 +212,9 @@ static inline bool jaeger_hashtable_put(jaeger_hashtable* hashtable,
     }
 
     jaeger_key_value kv;
-    if (!jaeger_key_value_init(&kv, key, value)) {
-        return false;
-    }
-    entry = jaeger_key_value_node_new(kv);
-    if (entry == NULL) {
-        ((jaeger_destructible*) entry)->destroy((jaeger_destructible*) entry);
+    if (!jaeger_key_value_init(&kv, key, value) ||
+        (entry = jaeger_key_value_node_new(kv)) == NULL) {
+        jaeger_key_value_destroy(&kv);
         return false;
     }
     jaeger_list_insert(bucket, bucket->size, (jaeger_list_node*) entry);
