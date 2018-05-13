@@ -60,7 +60,7 @@ typedef struct jaeger_rng {
 } jaeger_rng;
 
 static inline void
-read_random_seed(uint64_t* seed, size_t len, const char* random_source_path)
+read_random_seed(void* seed, size_t len, const char* random_source_path)
 {
     FILE* random_source_file = fopen(random_source_path, "r");
     if (random_source_file == NULL) {
@@ -71,7 +71,7 @@ read_random_seed(uint64_t* seed, size_t len, const char* random_source_path)
         return;
     }
 
-    const int num_read = fread(seed, sizeof(seed[0]), len, random_source_file);
+    const int num_read = fread((char*) seed, 1, len, random_source_file);
     fclose(random_source_file);
 
     /* Warn if we could not read entire seed from random source, but not an
@@ -79,8 +79,8 @@ read_random_seed(uint64_t* seed, size_t len, const char* random_source_path)
     if (num_read != (int) len) {
         jaeger_log_warn("Could not read entire random block, "
                         "bytes requested = %lu, bytes read = %lu, errno = %d",
-                        len * sizeof(uint64_t),
-                        num_read * sizeof(uint64_t),
+                        len,
+                        num_read,
                         errno);
     }
 }

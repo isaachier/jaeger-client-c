@@ -23,7 +23,7 @@ static uint8_t seed[16];
 
 static inline void fill_seed()
 {
-    RANDOM_SEED((char*) seed);
+    RANDOM_SEED(seed);
 }
 
 static uint8_t* hash_seed()
