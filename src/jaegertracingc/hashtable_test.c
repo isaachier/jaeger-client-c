@@ -82,7 +82,8 @@ void test_hashtable()
 
     /* Test rehash memory failure. */
     TEST_ASSERT_TRUE(jaeger_hashtable_init(&hashtable));
-    for (size_t i = 0; i < (1 << JAEGERTRACINGC_HASHTABLE_INIT_ORDER) - 1;
+    for (size_t i = 0; (i + 1) / (1 << JAEGERTRACINGC_HASHTABLE_INIT_ORDER) <
+                       JAEGERTRACINGC_HASHTABLE_THRESHOLD;
          i++) {
         TEST_ASSERT_TRUE(jaeger_hashtable_put(&hashtable, key, value));
         random_string(key, buffer_size);
@@ -92,8 +93,9 @@ void test_hashtable()
     random_string(value, buffer_size);
     jaeger_set_allocator(jaeger_null_allocator());
     TEST_ASSERT_FALSE(jaeger_hashtable_put(&hashtable, key, value));
-    TEST_ASSERT_EQUAL((1 << JAEGERTRACINGC_HASHTABLE_INIT_ORDER) - 1,
-                      hashtable.size);
+    TEST_ASSERT_LESS_THAN(JAEGERTRACINGC_HASHTABLE_THRESHOLD,
+                          hashtable.size /
+                              (1 << JAEGERTRACINGC_HASHTABLE_INIT_ORDER));
     jaeger_set_allocator(jaeger_built_in_allocator());
 
     jaeger_hashtable_destroy(&hashtable);
@@ -102,4 +104,8 @@ void test_hashtable()
     jaeger_set_allocator(jaeger_null_allocator());
     TEST_ASSERT_FALSE(jaeger_hashtable_init(&hashtable));
     jaeger_set_allocator(jaeger_built_in_allocator());
+
+    /* Test minimal size. */
+    TEST_ASSERT_EQUAL_HEX(0x100, jaeger_hashtable_minimal_order(0xf0));
+    TEST_ASSERT_EQUAL_HEX(0x10, jaeger_hashtable_minimal_order(0x8));
 }

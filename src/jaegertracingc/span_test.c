@@ -23,13 +23,22 @@ static const jaeger_key_value baggage[] = {
     {.key = "key3", .value = "value3"},
 };
 
+static inline int cmp_kv(const void* lhs, const void* rhs)
+{
+    return strcmp(((const jaeger_key_value*) lhs)->key,
+                  ((const jaeger_key_value*) rhs)->key);
+}
+
 static opentracing_bool
 visit_baggage(void* arg, const char* key, const char* value)
 {
-    const jaeger_key_value* kv = &baggage[*(int*) arg];
-    TEST_ASSERT_EQUAL_STRING(kv->key, key);
-    TEST_ASSERT_EQUAL_STRING(kv->value, value);
-    (*(int*) arg)++;
+    (void) arg;
+    const jaeger_key_value kv = {.key = (char*) key, .value = (char*) value};
+    TEST_ASSERT_NOT_NULL(bsearch(&kv,
+                                 baggage,
+                                 sizeof(baggage) / sizeof(baggage[0]),
+                                 sizeof(baggage[0]),
+                                 cmp_kv));
     return opentracing_true;
 }
 
@@ -73,10 +82,9 @@ void test_span()
             ->set_baggage_item(
                 ((opentracing_span*) &span), baggage[i].key, baggage[i].value);
     }
-    int arg = 0;
     ((opentracing_span_context*) &span.context)
         ->foreach_baggage_item(
-            ((opentracing_span_context*) &span.context), &visit_baggage, &arg);
+            ((opentracing_span_context*) &span.context), &visit_baggage, NULL);
     ((opentracing_destructible*) &span)
         ->destroy((opentracing_destructible*) &span);
 }

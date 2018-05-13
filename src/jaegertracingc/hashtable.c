@@ -37,3 +37,15 @@ size_t jaeger_hashtable_hash(const char* key)
 {
     return jaeger_siphash((const uint8_t*) key, strlen(key), hash_seed());
 }
+
+size_t jaeger_hashtable_minimal_order(size_t size)
+{
+#ifdef HAVE_BUILTIN
+    return 1 << (sizeof(size_t) * CHAR_BIT - __builtin_clz(size));
+#else
+    size_t order = 0;
+    for (; ((size_t) 1 << order) < size; order++)
+        ;
+    return order;
+#endif /* HAVE_BUILTIN */
+}

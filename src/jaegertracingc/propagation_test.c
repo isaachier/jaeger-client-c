@@ -18,6 +18,7 @@
 
 #include "unity.h"
 
+#include "jaegertracingc/hashtable.h"
 #include "jaegertracingc/internal/strings.h"
 #include "jaegertracingc/internal/test_helpers.h"
 #include "jaegertracingc/metrics.h"
@@ -256,12 +257,12 @@ static inline void test_text_map()
     TEST_ASSERT_EQUAL(0xcd, ctx->span_id);
     TEST_ASSERT_EQUAL(0, ctx->parent_id);
     TEST_ASSERT_EQUAL(0, ctx->flags);
-    TEST_ASSERT_EQUAL(2, jaeger_vector_length(&ctx->baggage));
-    const jaeger_key_value* kv = jaeger_vector_get(&ctx->baggage, 0);
+    TEST_ASSERT_EQUAL(2, ctx->baggage.size);
+    const jaeger_key_value* kv = jaeger_hashtable_find(&ctx->baggage, "k1");
     TEST_ASSERT_NOT_NULL(kv);
     TEST_ASSERT_EQUAL_STRING("k1", kv->key);
     TEST_ASSERT_EQUAL_STRING("v1", kv->value);
-    kv = jaeger_vector_get(&ctx->baggage, 1);
+    kv = jaeger_hashtable_find(&ctx->baggage, "k2");
     TEST_ASSERT_NOT_NULL(kv);
     TEST_ASSERT_EQUAL_STRING("k2", kv->key);
     TEST_ASSERT_EQUAL_STRING("v2", kv->value);
@@ -275,12 +276,9 @@ static inline void test_text_map()
     ctx->span_id = 0xcd;
     ctx->parent_id = 0xef;
     ctx->flags = jaeger_sampling_flag_sampled;
-    JAEGERTRACINGC_VECTOR_FOR_EACH(
-        &ctx->baggage, jaeger_key_value_destroy, jaeger_key_value);
-    jaeger_vector_clear(&ctx->baggage);
-    jaeger_key_value* baggage_kv = jaeger_vector_append(&ctx->baggage);
-    TEST_ASSERT_NOT_NULL(baggage_kv);
-    TEST_ASSERT_TRUE(jaeger_key_value_init(baggage_kv, "k1", "v1"));
+    jaeger_hashtable_clear(&ctx->baggage);
+    TEST_ASSERT_TRUE(jaeger_hashtable_put(&ctx->baggage, "k1", "v1"));
+    TEST_ASSERT_EQUAL(1, ctx->baggage.size);
     mock_text_map_writer writer = {.base = {.set = &mock_writer_set},
                                    .key_values = &key_values};
     const jaeger_headers_config config = JAEGERTRACINGC_HEADERS_CONFIG_INIT;
@@ -300,14 +298,13 @@ static inline void test_text_map()
     TEST_ASSERT_EQUAL(ctx->span_id, ctx_copy->span_id);
     TEST_ASSERT_EQUAL(ctx->parent_id, ctx_copy->parent_id);
     TEST_ASSERT_EQUAL(ctx->flags, ctx_copy->flags);
-    TEST_ASSERT_EQUAL(jaeger_vector_length(&ctx->baggage),
-                      jaeger_vector_length(&ctx_copy->baggage));
-    for (int i = 0, len = jaeger_vector_length(&ctx->baggage); i < len; i++) {
-        const jaeger_key_value* kv1 = jaeger_vector_get(&ctx->baggage, i);
-        const jaeger_key_value* kv2 = jaeger_vector_get(&ctx_copy->baggage, i);
-        TEST_ASSERT_EQUAL_STRING(kv1->key, kv2->key);
-        TEST_ASSERT_EQUAL_STRING(kv1->value, kv2->value);
-    }
+    TEST_ASSERT_EQUAL(ctx->baggage.size, ctx_copy->baggage.size);
+    kv = jaeger_hashtable_find(&ctx->baggage, "k1");
+    TEST_ASSERT_NOT_NULL(kv);
+    const jaeger_key_value* kv_copy =
+        jaeger_hashtable_find(&ctx_copy->baggage, "k1");
+    TEST_ASSERT_NOT_NULL(kv_copy);
+    TEST_ASSERT_EQUAL_STRING(kv->value, kv_copy->value);
 
     ((jaeger_destructible*) ctx)->destroy((jaeger_destructible*) ctx);
     ((jaeger_destructible*) ctx_copy)->destroy((jaeger_destructible*) ctx_copy);
@@ -344,12 +341,12 @@ static inline void test_http_headers()
     TEST_ASSERT_EQUAL(0xcd, ctx->span_id);
     TEST_ASSERT_EQUAL(0, ctx->parent_id);
     TEST_ASSERT_EQUAL(0, ctx->flags);
-    TEST_ASSERT_EQUAL(2, jaeger_vector_length(&ctx->baggage));
-    const jaeger_key_value* kv = jaeger_vector_get(&ctx->baggage, 0);
+    TEST_ASSERT_EQUAL(2, ctx->baggage.size);
+    const jaeger_key_value* kv = jaeger_hashtable_find(&ctx->baggage, "k1");
     TEST_ASSERT_NOT_NULL(kv);
     TEST_ASSERT_EQUAL_STRING("k1", kv->key);
     TEST_ASSERT_EQUAL_STRING("v1", kv->value);
-    kv = jaeger_vector_get(&ctx->baggage, 1);
+    kv = jaeger_hashtable_find(&ctx->baggage, "k2");
     TEST_ASSERT_NOT_NULL(kv);
     TEST_ASSERT_EQUAL_STRING("k2", kv->key);
     TEST_ASSERT_EQUAL_STRING("v2", kv->value);
@@ -369,12 +366,12 @@ static inline void test_http_headers()
     TEST_ASSERT_EQUAL(0xcd, ctx->span_id);
     TEST_ASSERT_EQUAL(0, ctx->parent_id);
     TEST_ASSERT_EQUAL(0, ctx->flags);
-    TEST_ASSERT_EQUAL(2, jaeger_vector_length(&ctx->baggage));
-    kv = jaeger_vector_get(&ctx->baggage, 0);
+    TEST_ASSERT_EQUAL(2, ctx->baggage.size);
+    kv = jaeger_hashtable_find(&ctx->baggage, "k3");
     TEST_ASSERT_NOT_NULL(kv);
     TEST_ASSERT_EQUAL_STRING("k3", kv->key);
     TEST_ASSERT_EQUAL_STRING("value3", kv->value);
-    kv = jaeger_vector_get(&ctx->baggage, 1);
+    kv = jaeger_hashtable_find(&ctx->baggage, "key-4");
     TEST_ASSERT_NOT_NULL(kv);
     TEST_ASSERT_EQUAL_STRING("key-4", kv->key);
     TEST_ASSERT_EQUAL_STRING("value-x", kv->value);
@@ -469,14 +466,12 @@ static inline void test_binary()
     ctx.span_id = 0xABCD;
     const int max_baggage_items = 15;
     const int num_baggage_items = rand() % max_baggage_items;
-    TEST_ASSERT_TRUE(jaeger_vector_reserve(&ctx.baggage, num_baggage_items));
     for (int i = 0; i < num_baggage_items; i++) {
         char key[rand() % 20 + 1];
         random_string(key, sizeof(key));
         char value[rand() % 20 + 1];
         random_string(value, sizeof(value));
-        jaeger_key_value* kv = jaeger_vector_append(&ctx.baggage);
-        TEST_ASSERT_TRUE(jaeger_key_value_init(kv, key, value));
+        TEST_ASSERT_TRUE(jaeger_hashtable_put(&ctx.baggage, key, value));
     }
 
     jaeger_vector binary_buffer;

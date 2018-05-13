@@ -46,6 +46,7 @@ include(TestBigEndian)
 
 include(CheckAtomics)
 include(CheckAttributes)
+include(CheckBuiltin)
 include(GenerateDocumentation)
 
 if(CMAKE_C_COMPILER_ID STREQUAL "GNU" AND
@@ -299,9 +300,14 @@ endif()
 
 check_attributes()
 
+check_builtin(have_builtin)
+if(have_builtin)
+  target_compile_definitions(jaegertracingc PRIVATE HAVE_BUILTIN)
+endif()
+
 if(JAEGERTRACINGC_VERBOSE_ALLOC)
   target_compile_definitions(
-    jaegertracingc PUBLIC "JAEGERTRACINGC_VERBOSE_ALLOC")
+    jaegertracingc PRIVATE JAEGERTRACINGC_VERBOSE_ALLOC)
 endif()
 
 if(BUILD_TESTING)

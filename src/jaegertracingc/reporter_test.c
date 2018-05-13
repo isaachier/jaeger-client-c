@@ -98,11 +98,8 @@ void test_reporter()
                               .flags = 0};
     span_ref_ptr->type = opentracing_span_reference_child_of;
 
-    jaeger_key_value* kv = jaeger_vector_append(&span.context.baggage);
-    TEST_ASSERT_NOT_NULL(kv);
-    *kv = (jaeger_key_value) JAEGERTRACINGC_KEY_VALUE_INIT;
-    TEST_ASSERT_TRUE(jaeger_key_value_init(kv, "key", "value"));
-
+    TEST_ASSERT_TRUE(
+        jaeger_hashtable_put(&span.context.baggage, "key", "value"));
     jaeger_reporter* r = jaeger_null_reporter();
     r->report(r, &span);
     ((jaeger_destructible*) r)->destroy((jaeger_destructible*) r);

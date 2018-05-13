@@ -92,6 +92,7 @@ static inline void* jaeger_vector_get(jaeger_vector* vec, int index)
 static inline bool jaeger_vector_reserve(jaeger_vector* vec, int new_capacity)
 {
     assert(vec != NULL);
+    assert(vec->capacity > 0);
     if (vec->capacity >= new_capacity) {
         return true;
     }

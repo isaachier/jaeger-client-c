@@ -36,7 +36,7 @@ typedef struct extract_text_map_arg {
 } extract_text_map_arg;
 
 static opentracing_propagation_error_code
-parse_key_value(jaeger_vector* baggage, char* str)
+parse_key_value(jaeger_hashtable* baggage, char* str)
 {
     char* eq_context;
     const char* key = strtok_r(str, "=", &eq_context);
@@ -48,12 +48,7 @@ parse_key_value(jaeger_vector* baggage, char* str)
         return opentracing_propagation_error_code_span_context_corrupted;
     }
 
-    jaeger_key_value* kv = jaeger_vector_append(baggage);
-    if (kv == NULL) {
-        return opentracing_propagation_error_code_unknown;
-    }
-    if (!jaeger_key_value_init(kv, key, value)) {
-        baggage->len--;
+    if (!jaeger_hashtable_put(baggage, key, value)) {
         return opentracing_propagation_error_code_unknown;
     }
 
@@ -61,7 +56,7 @@ parse_key_value(jaeger_vector* baggage, char* str)
 }
 
 static opentracing_propagation_error_code
-parse_comma_separated_map(jaeger_vector* baggage, char* str)
+parse_comma_separated_map(jaeger_hashtable* baggage, char* str)
 {
     assert(baggage != NULL);
     assert(str != NULL);
@@ -129,12 +124,7 @@ extract_text_map_callback(void* arg, const char* key, const char* value)
             char value_buffer[strlen(value) + 1];
             decode_value(value_buffer, value);
 
-            jaeger_key_value* kv = jaeger_vector_append(&ctx->baggage);
-            if (kv == NULL) {
-                return opentracing_propagation_error_code_unknown;
-            }
-            if (!jaeger_key_value_init(kv, suffix, value_buffer)) {
-                ctx->baggage.len--;
+            if (!jaeger_hashtable_put(&ctx->baggage, suffix, value_buffer)) {
                 return opentracing_propagation_error_code_unknown;
             }
         }
@@ -158,8 +148,7 @@ extract_from_text_map_helper(opentracing_text_map_reader* reader,
         goto cleanup;
     }
     if (arg->ctx->trace_id.high == 0 && arg->ctx->trace_id.low == 0 &&
-        arg->ctx->debug_id == NULL &&
-        jaeger_vector_length(&arg->ctx->baggage) == 0) {
+        arg->ctx->debug_id == NULL && arg->ctx->baggage.size == 0) {
         /* Successfully decoded an empty span context. */
         result = opentracing_propagation_error_code_success;
         goto cleanup;
@@ -248,7 +237,7 @@ static inline bool read_binary(int (*callback)(void*, char*, size_t),
 }
 
 static opentracing_propagation_error_code parse_baggage_binary(
-    int (*callback)(void*, char*, size_t), void* arg, jaeger_vector* baggage)
+    int (*callback)(void*, char*, size_t), void* arg, jaeger_hashtable* baggage)
 {
 #define READ_BINARY(x)                                                        \
     do {                                                                      \
@@ -268,9 +257,6 @@ static opentracing_propagation_error_code parse_baggage_binary(
     uint32_t num_baggage_items;
     READ_BINARY(num_baggage_items);
     if (num_baggage_items > 0) {
-        if (!jaeger_vector_reserve(baggage, num_baggage_items)) {
-            return opentracing_propagation_error_code_unknown;
-        }
         for (int i = 0; i < (int) num_baggage_items; i++) {
             uint32_t key_len;
             READ_BINARY(key_len);
@@ -282,9 +268,7 @@ static opentracing_propagation_error_code parse_baggage_binary(
             char value_buffer[value_len + 1];
             READ_BUFFER(value_buffer, value_len);
 
-            jaeger_key_value* kv = jaeger_vector_append(baggage);
-            assert(kv != NULL); /* Should never be NULL if reserve succeeded. */
-            if (!jaeger_key_value_init(kv, key_buffer, value_buffer)) {
+            if (!jaeger_hashtable_put(baggage, key_buffer, value_buffer)) {
                 return opentracing_propagation_error_code_unknown;
             }
         }
@@ -384,28 +368,31 @@ static inline opentracing_propagation_error_code inject_text_map_helper(
         writer->set(writer, config->trace_context_header, trace_context_buffer);
     /* Loop will not execute if result is not
      * opentracing_propagation_error_code_success. */
-    for (int i = 0; i < jaeger_vector_length(&ctx->baggage) &&
-                    result == opentracing_propagation_error_code_success;
+    for (size_t i = 0; i < ((size_t) 1 << ctx->baggage.order) &&
+                       result == opentracing_propagation_error_code_success;
          i++) {
-        const jaeger_key_value* kv =
-            jaeger_vector_get((jaeger_vector*) &ctx->baggage, i);
-        assert(kv != NULL);
-        const int prefix_len = strlen(config->trace_baggage_header_prefix);
-        const int key_len = strlen(kv->key);
-        char key_buffer[prefix_len + key_len + 1];
-        strncpy(key_buffer, config->trace_baggage_header_prefix, prefix_len);
-        strncpy(&key_buffer[prefix_len], kv->key, key_len + 1);
-        assert(key_buffer[prefix_len + key_len] == '\0');
+        for (const jaeger_list_node* node = ctx->baggage.buckets[i].head;
+             node != NULL;
+             node = node->next) {
+            const jaeger_key_value* kv =
+                &((const jaeger_key_value_node*) node)->data;
+            const int prefix_len = strlen(config->trace_baggage_header_prefix);
+            const int key_len = strlen(kv->key);
+            char key_buffer[prefix_len + key_len + 1];
+            strncpy(
+                key_buffer, config->trace_baggage_header_prefix, prefix_len);
+            strncpy(&key_buffer[prefix_len], kv->key, key_len + 1);
+            assert(key_buffer[prefix_len + key_len] == '\0');
+            /* The maximum a string can grow through encoding occurs if every
+             * character is encoded. In that case the output is three times as
+             * large as the input. For example, "xyz" becomes "%78%79%80".
+             */
+            const int max_encode_factor = 3;
+            char value_buffer[strlen(kv->value) * max_encode_factor + 1];
+            encode_value(value_buffer, kv->value);
 
-        /* The maximum a string can grow through encoding occurs if every
-         * character is encoded. In that case the output is three times as large
-         * as the input. For example, "xyz" becomes "%78%79%80".
-         */
-        const int max_encode_factor = 3;
-        char value_buffer[strlen(kv->value) * max_encode_factor + 1];
-        encode_value(value_buffer, kv->value);
-
-        result = writer->set(writer, key_buffer, value_buffer);
+            result = writer->set(writer, key_buffer, value_buffer);
+        }
     }
     return result;
 }
@@ -457,7 +444,7 @@ jaeger_inject_into_binary(int (*callback)(void*, const char*, size_t),
         return opentracing_propagation_error_code_unknown;
     }
 
-    const uint32_t num_baggage_items = jaeger_vector_length(&ctx->baggage);
+    const uint32_t num_baggage_items = ctx->baggage.size;
     WRITE_BINARY(num_baggage_items, 32);
     for (int i = 0; i < (int) num_baggage_items; i++) {
         const jaeger_key_value* kv =

@@ -24,6 +24,7 @@
 
 #include "jaegertracingc/clock.h"
 #include "jaegertracingc/common.h"
+#include "jaegertracingc/hashtable.h"
 #include "jaegertracingc/key_value.h"
 #include "jaegertracingc/log_record.h"
 #include "jaegertracingc/tag.h"
@@ -74,7 +75,7 @@ typedef struct jaeger_span_context {
     uint8_t flags;
 
     /** Key-value pairs that are propagated along with the span. */
-    jaeger_vector baggage;
+    jaeger_hashtable baggage;
 
     /**
      * Can be set to correlation ID when the context is being extracted from a
@@ -94,17 +95,17 @@ static const char jaeger_span_context_type_descriptor[] = "jaeger_span_context";
 static const int jaeger_span_context_type_descriptor_length =
     sizeof(jaeger_span_context_type_descriptor);
 
-#define JAEGERTRACINGC_SPAN_CONTEXT_INIT                                   \
-    {                                                                      \
-        .base = {.base = {.destroy = jaeger_span_context_destroy},         \
-                 .foreach_baggage_item =                                   \
-                     &jaeger_span_context_foreach_baggage_item,            \
-                 .type_descriptor = jaeger_span_context_type_descriptor,   \
-                 .type_descriptor_length =                                 \
-                     jaeger_span_context_type_descriptor_length},          \
-        .trace_id = JAEGERTRACINGC_TRACE_ID_INIT, .span_id = 0,            \
-        .parent_id = 0, .flags = 0, .baggage = JAEGERTRACINGC_VECTOR_INIT, \
-        .debug_id = NULL, .mutex = JAEGERTRACINGC_MUTEX_INIT               \
+#define JAEGERTRACINGC_SPAN_CONTEXT_INIT                                      \
+    {                                                                         \
+        .base = {.base = {.destroy = jaeger_span_context_destroy},            \
+                 .foreach_baggage_item =                                      \
+                     &jaeger_span_context_foreach_baggage_item,               \
+                 .type_descriptor = jaeger_span_context_type_descriptor,      \
+                 .type_descriptor_length =                                    \
+                     jaeger_span_context_type_descriptor_length},             \
+        .trace_id = JAEGERTRACINGC_TRACE_ID_INIT, .span_id = 0,               \
+        .parent_id = 0, .flags = 0, .baggage = JAEGERTRACINGC_HASHTABLE_INIT, \
+        .debug_id = NULL, .mutex = JAEGERTRACINGC_MUTEX_INIT                  \
     }
 
 static inline void jaeger_span_context_destroy(jaeger_destructible* d)
@@ -113,9 +114,7 @@ static inline void jaeger_span_context_destroy(jaeger_destructible* d)
         return;
     }
     jaeger_span_context* ctx = (jaeger_span_context*) d;
-    JAEGERTRACINGC_VECTOR_FOR_EACH(
-        &ctx->baggage, jaeger_key_value_destroy, jaeger_key_value);
-    jaeger_vector_destroy(&ctx->baggage);
+    jaeger_hashtable_destroy(&ctx->baggage);
     if (ctx->debug_id != NULL) {
         jaeger_free(ctx->debug_id);
         ctx->debug_id = NULL;
@@ -130,12 +129,19 @@ static inline void jaeger_span_context_foreach_baggage_item(
 {
     jaeger_span_context* ctx = (jaeger_span_context*) span_context;
     jaeger_mutex_lock(&ctx->mutex);
-    for (int i = 0, len = jaeger_vector_length(&ctx->baggage); i < len; i++) {
-        const jaeger_key_value* kv = jaeger_vector_get(&ctx->baggage, i);
-        if (!f(arg, kv->key, kv->value)) {
-            break;
+
+    jaeger_hashtable* baggage = &((jaeger_span_context*) span_context)->baggage;
+    for (size_t i = 0, len = 1 << baggage->order; i < len; i++) {
+        for (const jaeger_list_node* node = baggage->buckets[i].head;
+             node != NULL;
+             node = node->next) {
+            const jaeger_key_value* kv = &((jaeger_key_value_node*) node)->data;
+            if (!f(arg, kv->key, kv->value)) {
+                break;
+            }
         }
     }
+
     jaeger_mutex_unlock(&ctx->mutex);
 }
 
@@ -143,7 +149,7 @@ static inline bool jaeger_span_context_init(jaeger_span_context* ctx)
 {
     assert(ctx != NULL);
     *ctx = (jaeger_span_context) JAEGERTRACINGC_SPAN_CONTEXT_INIT;
-    return jaeger_vector_init(&ctx->baggage, sizeof(jaeger_key_value));
+    return jaeger_hashtable_init(&ctx->baggage);
 }
 
 static inline bool
@@ -156,10 +162,7 @@ jaeger_span_context_copy(jaeger_span_context* restrict dst,
         return false;
     }
     jaeger_lock((jaeger_mutex*) &src->mutex, &dst->mutex);
-    if (!jaeger_vector_copy(&dst->baggage,
-                            &src->baggage,
-                            &jaeger_key_value_copy_wrapper,
-                            NULL)) {
+    if (!jaeger_hashtable_copy(&dst->baggage, &src->baggage)) {
         jaeger_mutex_unlock((jaeger_mutex*) &src->mutex);
         jaeger_mutex_unlock(&dst->mutex);
         jaeger_span_context_destroy((jaeger_destructible*) dst);
@@ -520,28 +523,7 @@ static inline void jaeger_span_set_baggage_item(opentracing_span* span,
     jaeger_span* s = (jaeger_span*) span;
     jaeger_lock(&s->mutex, &s->context.mutex);
     /* TODO: Use baggage setter for validation once implemented. */
-    /* TODO: Replace with hashtable. */
-    bool found = false;
-    for (int i = 0, len = jaeger_vector_length(&s->context.baggage); i < len;
-         i++) {
-        jaeger_key_value* kv = jaeger_vector_get(&s->context.baggage, i);
-        if (strcmp(kv->key, key) == 0) {
-            char* value_copy = jaeger_strdup(value);
-            if (value_copy == NULL) {
-                return;
-            }
-            jaeger_free(kv->value);
-            kv->value = value_copy;
-            found = true;
-            break;
-        }
-    }
-
-    if (!found) {
-        jaeger_key_value* kv = jaeger_vector_append(&s->context.baggage);
-        jaeger_key_value_init(kv, key, value);
-    }
-
+    jaeger_hashtable_put(&s->context.baggage, key, value);
     jaeger_mutex_unlock(&s->mutex);
     jaeger_mutex_unlock(&s->context.mutex);
 }
@@ -558,19 +540,14 @@ static inline const char* jaeger_span_baggage_item(const opentracing_span* span,
 {
     const jaeger_span* s = (const jaeger_span*) span;
     jaeger_lock((jaeger_mutex*) &s->mutex, (jaeger_mutex*) &s->context.mutex);
-    const char* value = NULL;
-    for (int i = 0, len = jaeger_vector_length(&s->context.baggage); i < len;
-         i++) {
-        const jaeger_key_value* kv =
-            jaeger_vector_get((jaeger_vector*) &s->context.baggage, i);
-        if (strcmp(kv->key, key) == 0) {
-            value = kv->value;
-            break;
-        }
-    }
+    const jaeger_key_value* kv =
+        jaeger_hashtable_find((jaeger_hashtable*) &s->context.baggage, key);
     jaeger_mutex_unlock((jaeger_mutex*) &s->mutex);
     jaeger_mutex_unlock((jaeger_mutex*) &s->context.mutex);
-    return value;
+    if (kv == NULL) {
+        return NULL;
+    }
+    return kv->value;
 }
 
 /**

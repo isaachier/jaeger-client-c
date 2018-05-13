@@ -356,7 +356,7 @@ span_inherit_from_parent(jaeger_tracer* tracer,
         const jaeger_span_context* ctx =
             (const jaeger_span_context*) span_ref->referenced_context;
         jaeger_mutex_lock((jaeger_mutex*) &ctx->mutex);
-        const int num_baggage_items = jaeger_vector_length(&ctx->baggage);
+        const int num_baggage_items = ctx->baggage.size;
         jaeger_mutex_unlock((jaeger_mutex*) &ctx->mutex);
         if (!jaeger_span_context_is_valid(ctx) &&
             !jaeger_span_context_is_debug_id_container_only(ctx) &&
@@ -415,10 +415,7 @@ span_inherit_from_parent(jaeger_tracer* tracer,
 
     if (has_parent) {
         assert(parent != NULL);
-        if (!jaeger_vector_copy(&span->context.baggage,
-                                &parent->baggage,
-                                jaeger_key_value_copy_wrapper,
-                                NULL)) {
+        if (!jaeger_hashtable_copy(&span->context.baggage, &parent->baggage)) {
             return false;
         }
     }
