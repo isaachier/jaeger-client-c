@@ -51,8 +51,8 @@ int64_t random64(void)
     }
 
     assert(rng != NULL);
-    int64_t result = pcg32_random_r(&rng->state);
+    uint64_t result = pcg32_random_r(&rng->state);
     result <<= 32;
     result |= pcg32_random_r(&rng->state);
-    return result;
+    return (int64_t) result;
 }

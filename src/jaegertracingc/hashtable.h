@@ -223,7 +223,7 @@ static inline bool jaeger_hashtable_put(jaeger_hashtable* hashtable,
     return true;
 }
 
-size_t jaeger_hashtable_minimal_order(size_t size);
+uint32_t jaeger_hashtable_minimal_order(uint32_t size);
 
 static inline bool jaeger_hashtable_copy(jaeger_hashtable* restrict dst,
                                          const jaeger_hashtable* restrict src)
@@ -244,7 +244,7 @@ static inline bool jaeger_hashtable_copy(jaeger_hashtable* restrict dst,
     for (size_t i = 0; i < bucket_count; i++) {
         dst->buckets[i] = (jaeger_list) JAEGERTRACINGC_LIST_INIT;
     }
-    for (size_t i = 0; i < ((size_t) 1 << src->order); i++) {
+    for (size_t i = 0, len = 1 << src->order; i < len; i++) {
         for (jaeger_list_node* entry = src->buckets[i].head; entry != NULL;
              entry = entry->next) {
             const jaeger_key_value* kv =

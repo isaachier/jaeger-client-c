@@ -38,16 +38,16 @@ size_t jaeger_hashtable_hash(const char* key)
     return jaeger_siphash((const uint8_t*) key, strlen(key), hash_seed());
 }
 
-size_t jaeger_hashtable_minimal_order(size_t size)
+uint32_t jaeger_hashtable_minimal_order(uint32_t size)
 {
     if (size == 0) {
         return JAEGERTRACINGC_HASHTABLE_INIT_ORDER;
     }
 #ifdef HAVE_BUILTIN
-    return sizeof(size_t) * CHAR_BIT - __builtin_clz(size);
+    return (uint32_t) sizeof(size) * CHAR_BIT - __builtin_clz(size);
 #else
-    size_t order = 0;
-    for (; ((size_t) 1 << order) < size; order++)
+    uint32_t order = 0;
+    for (; ((uint32_t) 1 << order) < size; order++)
         ;
     return order;
 #endif /* HAVE_BUILTIN */
