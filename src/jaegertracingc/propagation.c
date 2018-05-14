@@ -36,45 +36,6 @@ typedef struct extract_text_map_arg {
 } extract_text_map_arg;
 
 static opentracing_propagation_error_code
-parse_key_value(jaeger_hashtable* baggage, char* str)
-{
-    char* eq_context;
-    const char* key = strtok_r(str, "=", &eq_context);
-    if (key == NULL) {
-        return opentracing_propagation_error_code_span_context_corrupted;
-    }
-    const char* value = strtok_r(NULL, "=", &eq_context);
-    if (value == NULL) {
-        return opentracing_propagation_error_code_span_context_corrupted;
-    }
-
-    if (!jaeger_hashtable_put(baggage, key, value)) {
-        return opentracing_propagation_error_code_unknown;
-    }
-
-    return opentracing_propagation_error_code_success;
-}
-
-static opentracing_propagation_error_code
-parse_comma_separated_map(jaeger_hashtable* baggage, char* str)
-{
-    assert(baggage != NULL);
-    assert(str != NULL);
-
-    char* comma_context;
-    char* kv_str = strtok_r(str, ",", &comma_context);
-    while (kv_str != NULL) {
-        const opentracing_propagation_error_code result =
-            parse_key_value(baggage, kv_str);
-        if (result != opentracing_propagation_error_code_success) {
-            return result;
-        }
-        kv_str = strtok_r(NULL, ",", &comma_context);
-    }
-    return opentracing_propagation_error_code_success;
-}
-
-static opentracing_propagation_error_code
 extract_text_map_callback(void* arg, const char* key, const char* value)
 {
     jaeger_span_context* ctx = ((extract_text_map_arg*) arg)->ctx;

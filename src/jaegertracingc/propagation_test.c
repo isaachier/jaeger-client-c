@@ -500,6 +500,15 @@ static inline void test_binary()
     jaeger_metrics_destroy(&metrics);
 }
 
+static inline void test_parse_key_value()
+{
+    jaeger_hashtable baggage;
+    TEST_ASSERT_TRUE(jaeger_hashtable_init(&baggage));
+    TEST_ASSERT_EQUAL(opentracing_propagation_error_code_span_context_corrupted,
+                      parse_key_value(&baggage, ""));
+    jaeger_hashtable_destroy(&baggage);
+}
+
 void test_propagation()
 {
     test_decode_hex();
@@ -510,4 +519,5 @@ void test_propagation()
     test_text_map();
     test_http_headers();
     test_binary();
+    test_parse_key_value();
 }
