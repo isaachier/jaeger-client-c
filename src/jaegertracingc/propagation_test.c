@@ -465,7 +465,9 @@ static inline void test_binary()
     ctx.parent_id = 0xEF00;
     ctx.span_id = 0xABCD;
     const int max_baggage_items = 15;
-    const int num_baggage_items = rand() % max_baggage_items;
+    const int min_baggage_items = 1;
+    const int num_baggage_items =
+        rand() % (max_baggage_items - min_baggage_items) + min_baggage_items;
     for (int i = 0; i < num_baggage_items; i++) {
         char key[rand() % 20 + 1];
         random_string(key, sizeof(key));
@@ -489,6 +491,7 @@ static inline void test_binary()
     TEST_ASSERT_EQUAL(ctx.trace_id.low, ctx_copy->trace_id.low);
     TEST_ASSERT_EQUAL(ctx.span_id, ctx_copy->span_id);
     TEST_ASSERT_EQUAL(ctx.parent_id, ctx_copy->parent_id);
+    TEST_ASSERT_EQUAL(ctx.baggage.size, ctx_copy->baggage.size);
 
     jaeger_span_context_destroy((jaeger_destructible*) &ctx);
     jaeger_span_context_destroy((jaeger_destructible*) ctx_copy);

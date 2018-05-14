@@ -16,6 +16,9 @@
 
 #ifndef JAEGERTRACINGC_UNIT_TEST_DRIVER_H
 #define JAEGERTRACINGC_UNIT_TEST_DRIVER_H
+
+#include <stdlib.h>
+#include <time.h>
 @unit_test_driver_includes@
 #include "unity.h"
 
@@ -26,6 +29,7 @@ extern "C" {
 static inline int run_tests()
 {
     UNITY_BEGIN();
+    srand(time(NULL));
     @unit_test_driver_impl@
     return UNITY_END();
 }
