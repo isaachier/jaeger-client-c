@@ -201,9 +201,8 @@ parse_key_value(jaeger_hashtable* baggage, char* str)
     assert(str != NULL);
     char* eq_context;
     const char* key = strtok_r(str, "=", &eq_context);
-    assert(key != NULL);
     const char* value = strtok_r(NULL, "=", &eq_context);
-    if (value == NULL) {
+    if (key == NULL || value == NULL) {
         return opentracing_propagation_error_code_span_context_corrupted;
     }
 
