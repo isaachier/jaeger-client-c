@@ -190,7 +190,8 @@ set(src
 set(generated_src_dir "${CMAKE_CURRENT_BINARY_DIR}/src/jaegertracingc")
 
 file(MAKE_DIRECTORY "${generated_src_dir}/protoc-gen")
-file(WRITE "${generated_src_dir}/protoc-gen/.clang-tidy" "")
+file(WRITE "${generated_src_dir}/protoc-gen/.clang-tidy"
+     "Checks: 'clang-diagnostic-*,clang-analyzer-*,-clang-diagnostic-unused-command-line-argument'\n")
 function(generate_protobuf_c gen_src)
   foreach(proto_src ${ARGN})
     get_filename_component(component ${proto_src} NAME_WE)
@@ -235,11 +236,8 @@ endif()
 
 find_program(clang_tidy_path clang-tidy)
 if(clang_tidy_path)
-  list(APPEND properties C_CLANG_TIDY ${clang_tidy_path})
-endif()
-
-if(properties)
-  set_target_properties(jaegertracingc PROPERTIES ${properties})
+  set_target_properties(jaegertracingc PROPERTIES
+    C_CLANG_TIDY ${clang_tidy_path})
 endif()
 
 generate_export_header(jaegertracingc

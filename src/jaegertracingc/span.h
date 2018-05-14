@@ -43,13 +43,13 @@ extern "C" {
  * 3 + 16 + 2 = 21
  */
 #define JAEGERTRACINGC_SPAN_CONTEXT_MAX_STR_LEN \
-    (JAEGERTRACINGC_TRACE_ID_MAX_STR_LEN) + 21
+    (JAEGERTRACINGC_TRACE_ID_MAX_STR_LEN + 21)
 
 #define JAEGERTRACINGC_SAMPLING_PRIORITY "sampling.priority"
 
 enum {
-    jaeger_sampling_flag_sampled = 1,
-    jaeger_sampling_flag_debug = (1 << 1)
+    jaeger_sampling_flag_sampled = 1u,
+    jaeger_sampling_flag_debug = (1u << 1u)
 };
 
 /**
@@ -131,7 +131,7 @@ static inline void jaeger_span_context_foreach_baggage_item(
     jaeger_mutex_lock(&ctx->mutex);
 
     jaeger_hashtable* baggage = &((jaeger_span_context*) span_context)->baggage;
-    for (size_t i = 0, len = 1 << baggage->order; i < len; i++) {
+    for (size_t i = 0, len = 1u << baggage->order; i < len; i++) {
         for (const jaeger_list_node* node = baggage->buckets[i].head;
              node != NULL;
              node = node->next) {
@@ -381,7 +381,8 @@ static inline bool jaeger_span_init_vectors(jaeger_span* span)
  */
 static inline bool jaeger_span_is_sampled_no_locking(const jaeger_span* span)
 {
-    return (span->context.flags & jaeger_sampling_flag_sampled) != 0;
+    return (span->context.flags & ((uint8_t) jaeger_sampling_flag_sampled)) !=
+           0;
 }
 
 /**
@@ -594,14 +595,12 @@ jaeger_span_set_sampling_priority(jaeger_span* span,
     if ((value->type == opentracing_value_int64 && value->value.int64_value) ||
         (value->type == opentracing_value_uint64 &&
          value->value.uint64_value)) {
-        span->context.flags = span->context.flags |
-                              ((uint8_t) jaeger_sampling_flag_debug) |
-                              ((uint8_t) jaeger_sampling_flag_sampled);
+        span->context.flags |= ((uint8_t) jaeger_sampling_flag_debug) |
+                               ((uint8_t) jaeger_sampling_flag_sampled);
         success = true;
     }
     else {
-        span->context.flags =
-            span->context.flags & (~((uint8_t) jaeger_sampling_flag_sampled));
+        span->context.flags &= (~((uint8_t) jaeger_sampling_flag_sampled));
     }
     jaeger_mutex_unlock(&span->mutex);
     jaeger_mutex_unlock(&span->context.mutex);
@@ -761,7 +760,7 @@ jaeger_protobuf_list_destroy(void** data, int num, void (*destroy)(void*))
     assert(num > 0);
     assert(data != NULL);
     assert(destroy != NULL);
-    for (int i = 0; i < (int) num; i++) {
+    for (int i = 0; i < num; i++) {
         if (data[i] == NULL) {
             continue;
         }

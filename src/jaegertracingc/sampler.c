@@ -507,7 +507,7 @@ static inline bool jaeger_http_sampling_manager_format_request(
     assert(sampling_host_port != NULL);
 
     str_segment path_segment = {.off = -1, .len = 0};
-    if (url->parts.field_set & UF_PATH) {
+    if (url->parts.field_set & ((uint8_t) UF_PATH)) {
         path_segment = (str_segment){.off = url->parts.field_data[UF_PATH].off,
                                      .len = url->parts.field_data[UF_PATH].len};
     }
@@ -1086,13 +1086,11 @@ static inline bool jaeger_remotely_controlled_sampler_update_adaptive_sampler(
         return jaeger_adaptive_sampler_update(
             &sampler->sampler.adaptive_sampler, strategies);
     }
-    else {
-        jaeger_sampler_choice_destroy(&sampler->sampler);
-        sampler->sampler.type = jaeger_adaptive_sampler_type;
-        return jaeger_adaptive_sampler_init(&sampler->sampler.adaptive_sampler,
-                                            strategies,
-                                            sampler->max_operations);
-    }
+    jaeger_sampler_choice_destroy(&sampler->sampler);
+    sampler->sampler.type = jaeger_adaptive_sampler_type;
+    return jaeger_adaptive_sampler_init(&sampler->sampler.adaptive_sampler,
+                                        strategies,
+                                        sampler->max_operations);
 }
 
 bool jaeger_remotely_controlled_sampler_update(

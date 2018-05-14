@@ -26,9 +26,10 @@
 
 #include "jaegertracingc/propagation.h"
 #include "jaegertracingc/random.h"
+#include "jaegertracingc/span.h"
 
 #ifdef HOST_NAME_MAX
-#define HOST_NAME_MAX_LEN HOST_NAME_MAX + 1
+#define HOST_NAME_MAX_LEN (HOST_NAME_MAX + 1)
 #else
 #define HOST_NAME_MAX_LEN 256
 #endif /* HOST_NAME_MAX */
@@ -57,10 +58,10 @@ static inline int score_addr(const struct ifaddrs* addr)
         score += 300;
     }
     struct sockaddr_in* ip_addr = (struct sockaddr_in*) sock_addr;
-    if ((addr->ifa_flags & IFF_LOOPBACK) == 0 &&
+    if ((addr->ifa_flags & ((uint32_t) IFF_LOOPBACK)) == 0 &&
         ip_addr->sin_addr.s_addr != htonl(INADDR_LOOPBACK)) {
         score += 100;
-        if ((addr->ifa_flags & IFF_UP) != 0) {
+        if ((addr->ifa_flags & ((uint32_t) IFF_UP)) != 0) {
             score += 100;
         }
     }
@@ -394,8 +395,8 @@ span_inherit_from_parent(jaeger_tracer* tracer,
         span->context.flags = 0;
         if (has_parent &&
             jaeger_span_context_is_debug_id_container_only(parent)) {
-            span->context.flags |=
-                (jaeger_sampling_flag_sampled | jaeger_sampling_flag_debug);
+            span->context.flags |= ((uint8_t) jaeger_sampling_flag_sampled |
+                                    (uint8_t) jaeger_sampling_flag_debug);
             append_tag(
                 &span->tags, JAEGERTRACINGC_DEBUG_HEADER, parent->debug_id);
         }

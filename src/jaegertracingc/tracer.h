@@ -28,13 +28,15 @@
 #include "jaegertracingc/options.h"
 #include "jaegertracingc/reporter.h"
 #include "jaegertracingc/sampler.h"
-#include "jaegertracingc/span.h"
 #include "jaegertracingc/tag.h"
 #include "jaegertracingc/vector.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
+
+/* Forward declaration. */
+struct jaeger_span;
 
 /**
  * Options that can be used to customize the tracer.
@@ -149,7 +151,7 @@ typedef struct jaeger_tracer {
  * Close and free resources associated with the tracer.
  * @param tracer Tracer to destroy
  */
-void jaeger_tracer_destroy(jaeger_destructible* tracer);
+void jaeger_tracer_destroy(jaeger_destructible* d);
 
 /**
  * Initialize a new tracer.
@@ -221,6 +223,7 @@ static inline void jaeger_tracer_close(opentracing_tracer* tracer)
  * @param tracer Tracer instance.
  * @param span Span to report.
  */
+/* NOLINTNEXTLINE(readability-redundant-declaration) */
 void jaeger_tracer_report_span(jaeger_tracer* tracer, jaeger_span* span);
 
 /**

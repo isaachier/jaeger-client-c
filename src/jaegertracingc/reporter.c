@@ -124,15 +124,15 @@ static void composite_reporter_destroy(jaeger_destructible* destructible)
     }
     jaeger_composite_reporter* r = (jaeger_composite_reporter*) destructible;
 
-#define DESTROY(x)                   \
-    do {                             \
-        assert(x != NULL);           \
-        jaeger_destructible** d = x; \
-        if (*d == NULL) {            \
-            continue;                \
-        }                            \
-        (*d)->destroy(*d);           \
-        jaeger_free(*d);             \
+#define DESTROY(x)                     \
+    do {                               \
+        assert((x) != NULL);           \
+        jaeger_destructible** d = (x); \
+        if (*d == NULL) {              \
+            continue;                  \
+        }                              \
+        (*d)->destroy(*d);             \
+        jaeger_free(*d);               \
     } while (0)
 
     JAEGERTRACINGC_VECTOR_FOR_EACH(
@@ -154,10 +154,10 @@ static void composite_reporter_report(jaeger_reporter* reporter,
 
 #define REPORT(x)                                         \
     do {                                                  \
-        if (x == NULL) {                                  \
+        if ((x) == NULL) {                                \
             continue;                                     \
         }                                                 \
-        jaeger_reporter** child_reporter = x;             \
+        jaeger_reporter** child_reporter = (x);           \
         if (*child_reporter == NULL) {                    \
             continue;                                     \
         }                                                 \
@@ -175,10 +175,10 @@ static bool composite_reporter_flush(jaeger_reporter* reporter)
 
 #define FLUSH(x)                                          \
     do {                                                  \
-        if (x == NULL) {                                  \
+        if ((x) == NULL) {                                \
             continue;                                     \
         }                                                 \
-        jaeger_reporter** child_reporter = x;             \
+        jaeger_reporter** child_reporter = (x);           \
         if (*child_reporter == NULL) {                    \
             continue;                                     \
         }                                                 \
@@ -324,8 +324,8 @@ static inline bool build_batch(Jaegertracing__Protobuf__Batch* batch,
     for (; batch->n_spans > 0 &&
            (int) jaegertracing__protobuf__batch__get_packed_size(batch) >
                max_packet_size;
-         batch->n_spans--)
-        ;
+         batch->n_spans--) {
+    }
     if (batch->n_spans == 0) {
         large_batch_error(batch, spans, num_spans, max_packet_size, metrics);
         return false;

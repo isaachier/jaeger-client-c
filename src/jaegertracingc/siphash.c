@@ -27,10 +27,10 @@
 
 static inline uint64_t unpack64(const uint8_t* buffer)
 {
-    return ((uint64_t) buffer[0]) | ((uint64_t) buffer[1] << 8) |
-           ((uint64_t) buffer[2] << 16) | ((uint64_t) buffer[3] << 24) |
-           ((uint64_t) buffer[4] << 32) | ((uint64_t) buffer[5] << 40) |
-           ((uint64_t) buffer[6] << 48) | ((uint64_t) buffer[7] << 56);
+    return ((uint64_t) buffer[0]) | ((uint64_t) buffer[1] << 8u) |
+           ((uint64_t) buffer[2] << 16u) | ((uint64_t) buffer[3] << 24u) |
+           ((uint64_t) buffer[4] << 32u) | ((uint64_t) buffer[5] << 40u) |
+           ((uint64_t) buffer[6] << 48u) | ((uint64_t) buffer[7] << 56u);
 }
 
 static inline uint64_t rotl(uint64_t x, size_t b)
@@ -66,8 +66,8 @@ jaeger_siphash(const uint8_t* buffer, size_t size, const uint8_t seed[16])
     const uint64_t k0 = unpack64(&seed[0]);
     const uint64_t k1 = unpack64(&seed[8]);
     const uint8_t* end = buffer + size - (size % sizeof(uint64_t));
-    const size_t num_left = size & 7;
-    uint64_t b = ((uint64_t) size) << 56;
+    const size_t num_left = size & 7u;
+    uint64_t b = ((uint64_t) size) << 56u;
     v[3] ^= k1;
     v[2] ^= k0;
     v[1] ^= k1;
@@ -87,17 +87,17 @@ jaeger_siphash(const uint8_t* buffer, size_t size, const uint8_t seed[16])
 
     switch (num_left) {
     case 7:
-        b |= ((uint64_t) iter[6]) << 48; /* FALLTHRU */
+        b |= ((uint64_t) iter[6]) << 48u; /* FALLTHRU */
     case 6:
-        b |= ((uint64_t) iter[5]) << 40; /* FALLTHRU */
+        b |= ((uint64_t) iter[5]) << 40u; /* FALLTHRU */
     case 5:
-        b |= ((uint64_t) iter[4]) << 32; /* FALLTHRU */
+        b |= ((uint64_t) iter[4]) << 32u; /* FALLTHRU */
     case 4:
-        b |= ((uint64_t) iter[3]) << 24; /* FALLTHRU */
+        b |= ((uint64_t) iter[3]) << 24u; /* FALLTHRU */
     case 3:
-        b |= ((uint64_t) iter[2]) << 16; /* FALLTHRU */
+        b |= ((uint64_t) iter[2]) << 16u; /* FALLTHRU */
     case 2:
-        b |= ((uint64_t) iter[1]) << 8; /* FALLTHRU */
+        b |= ((uint64_t) iter[1]) << 8u; /* FALLTHRU */
     case 1:
         b |= ((uint64_t) iter[0]);
         break;
@@ -112,7 +112,7 @@ jaeger_siphash(const uint8_t* buffer, size_t size, const uint8_t seed[16])
     }
 
     v[0] ^= b;
-    v[2] ^= 0xff;
+    v[2] ^= 0xffu;
 
     for (int i = 0; i < D_ROUNDS; i++) {
         sipround(v);

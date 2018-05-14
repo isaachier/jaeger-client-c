@@ -1,6 +1,6 @@
 Checks:          'clang-diagnostic-*,clang-analyzer-*,clang-diagnostic-*,clang-analyzer-*,*,-clang-diagnostic-unused-command-line-argument,-llvm-header-guard,-hicpp-no-assembler'
-WarningsAsErrors: ''
-HeaderFilterRegex: 'jaegertracingc'
+WarningsAsErrors: false
+FormatStyle: file
 AnalyzeTemporaryDtors: false
 CheckOptions:
   - key:             bugprone-argument-comment.StrictMode
@@ -251,3 +251,5 @@ CheckOptions:
     value:           '0'
   - key:             readability-static-accessed-through-instance.NameSpecifierNestingThreshold
     value:           '3'
+
+# vim:syntax=yaml

@@ -102,7 +102,7 @@ typedef struct jaeger_remote_reporter {
 } jaeger_remote_reporter;
 
 bool jaeger_remote_reporter_init(jaeger_remote_reporter* reporter,
-                                 const char* host_port,
+                                 const char* host_port_str,
                                  int max_packet_size,
                                  jaeger_metrics* metrics);
 
