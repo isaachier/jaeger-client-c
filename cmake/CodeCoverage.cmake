@@ -124,6 +124,7 @@ function(setup_target_for_coverage)
 endfunction() # setup_target_for_coverage
 
 function(append_coverage_compiler_flags flags_var)
-  set(${flags_var} "${${flags_var}} ${COVERAGE_COMPILER_FLAGS}" PARENT_SCOPE)
+  list(APPEND ${flags_var} ${COVERAGE_COMPILER_FLAGS})
+  set(${flags_var} "${${flags_var}}" PARENT_SCOPE)
   message(STATUS "Appending code coverage compiler flags: ${COVERAGE_COMPILER_FLAGS}")
 endfunction() # append_coverage_compiler_flags

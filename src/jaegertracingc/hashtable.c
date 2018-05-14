@@ -40,8 +40,11 @@ size_t jaeger_hashtable_hash(const char* key)
 
 size_t jaeger_hashtable_minimal_order(size_t size)
 {
+    if (size == 0) {
+        return JAEGERTRACINGC_HASHTABLE_INIT_ORDER;
+    }
 #ifdef HAVE_BUILTIN
-    return 1 << (sizeof(size_t) * CHAR_BIT - __builtin_clz(size));
+    return sizeof(size_t) * CHAR_BIT - __builtin_clz(size);
 #else
     size_t order = 0;
     for (; ((size_t) 1 << order) < size; order++)

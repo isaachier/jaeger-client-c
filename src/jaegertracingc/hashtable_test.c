@@ -106,6 +106,6 @@ void test_hashtable()
     jaeger_set_allocator(jaeger_built_in_allocator());
 
     /* Test minimal size. */
-    TEST_ASSERT_EQUAL_HEX(0x100, jaeger_hashtable_minimal_order(0xf0));
-    TEST_ASSERT_EQUAL_HEX(0x10, jaeger_hashtable_minimal_order(0x8));
+    TEST_ASSERT_EQUAL_HEX(0x100, 1 << jaeger_hashtable_minimal_order(0xf0));
+    TEST_ASSERT_EQUAL_HEX(0x10, 1 << jaeger_hashtable_minimal_order(0x8));
 }

@@ -48,6 +48,7 @@ include(CheckAtomics)
 include(CheckAttributes)
 include(CheckBuiltin)
 include(GenerateDocumentation)
+include(Sanitizers)
 
 if(CMAKE_C_COMPILER_ID STREQUAL "GNU" AND
    CMAKE_C_COMPILER_VERSION VERSION_GREATER_EQUAL "5.0")
@@ -69,7 +70,7 @@ cmake_dependent_option(JAEGERTRACINGC_COVERAGE "Enable code coverage" OFF
                        "BUILD_TESTING;debug_build" OFF)
 if(JAEGERTRACINGC_COVERAGE)
   include(CodeCoverage)
-  append_coverage_compiler_flags(CMAKE_C_FLAGS)
+  append_coverage_compiler_flags(jaegertracingc_flags)
   set(COVERAGE_EXCLUDES
     "${CMAKE_CURRENT_SOURCE_DIR}/src/jaegertracingc/mock_agent.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/jaegertracingc/mock_agent.h"
@@ -80,6 +81,9 @@ if(JAEGERTRACINGC_COVERAGE)
     "${CMAKE_CURRENT_BINARY_DIR}/src/jaegertracingc/protoc-gen/*"
     "${CMAKE_CURRENT_SOURCE_DIR}/third_party/unity/src/*")
 endif()
+
+append_sanitizer_flags(sanitizer_flags)
+list(APPEND jaegertracingc_flags ${sanitizer_flags})
 
 cmake_dependent_option(JAEGERTRACINGC_VERBOSE_ALLOC "Print all allocations" OFF
                        "BUILD_TESTING;debug_build" OFF)
@@ -224,6 +228,9 @@ else()
   target_compile_definitions(jaegertracingc PUBLIC JAEGERTRACINGC_STATIC)
 endif()
 target_compile_options(jaegertracingc PRIVATE ${jaegertracingc_flags})
+if(sanitizer_flags)
+  target_link_libraries(jaegertracingc PRIVATE ${sanitizer_flags})
+endif()
 
 find_program(clang_tidy_path clang-tidy)
 if(clang_tidy_path)
@@ -365,6 +372,10 @@ if(BUILD_TESTING)
 	foreach(driver default)
 	  add_executable(${driver}_test "src/jaegertracingc/${driver}_test_driver.c")
 	  target_link_libraries(${driver}_test PUBLIC jaegertracingc_test)
+    if(sanitizer_flags)
+      target_compile_options(${driver}_test PRIVATE ${sanitizer_flags})
+      target_link_libraries(jaegertracingc PRIVATE ${sanitizer_flags})
+    endif()
   	add_test(${driver}_test ${driver}_test)
 	endforeach()
 
