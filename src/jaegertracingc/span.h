@@ -43,7 +43,7 @@ extern "C" {
  * 3 + 16 + 2 = 21
  */
 #define JAEGERTRACINGC_SPAN_CONTEXT_MAX_STR_LEN \
-    JAEGERTRACINGC_TRACE_ID_MAX_STR_LEN + 21
+    (JAEGERTRACINGC_TRACE_ID_MAX_STR_LEN) + 21
 
 #define JAEGERTRACINGC_SAMPLING_PRIORITY "sampling.priority"
 
@@ -594,13 +594,14 @@ jaeger_span_set_sampling_priority(jaeger_span* span,
     if ((value->type == opentracing_value_int64 && value->value.int64_value) ||
         (value->type == opentracing_value_uint64 &&
          value->value.uint64_value)) {
-        span->context.flags = span->context.flags | jaeger_sampling_flag_debug |
-                              jaeger_sampling_flag_sampled;
+        span->context.flags = span->context.flags |
+                              ((uint8_t) jaeger_sampling_flag_debug) |
+                              ((uint8_t) jaeger_sampling_flag_sampled);
         success = true;
     }
     else {
         span->context.flags =
-            span->context.flags & (~jaeger_sampling_flag_sampled);
+            span->context.flags & (~((uint8_t) jaeger_sampling_flag_sampled));
     }
     jaeger_mutex_unlock(&span->mutex);
     jaeger_mutex_unlock(&span->context.mutex);

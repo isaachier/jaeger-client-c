@@ -101,7 +101,8 @@ extract_text_map_callback(void* arg, const char* key, const char* value)
         if (ctx->debug_id == NULL) {
             return opentracing_propagation_error_code_unknown;
         }
-        ctx->flags |= jaeger_sampling_flag_debug | jaeger_sampling_flag_sampled;
+        ctx->flags |= ((uint8_t) jaeger_sampling_flag_debug) |
+                      ((uint8_t) jaeger_sampling_flag_sampled);
     }
     else if (strcmp(key_buffer, config->baggage_header) == 0) {
         char value_buffer[strlen(value) + 1];
@@ -219,18 +220,20 @@ static inline bool read_binary(int (*callback)(void*, char*, size_t),
     case sizeof(uint64_t): {
         uint64_t value;
         memcpy(&value, buffer, sizeof(value));
+        /* NOLINTNEXTLINE(hicpp-signed-bitwise) */
         *(uint64_t*) result = BIG_ENDIAN_64_TO_HOST(value);
     } break;
     case sizeof(uint32_t): {
         uint32_t value;
         memcpy(&value, buffer, sizeof(value));
+        /* NOLINTNEXTLINE(hicpp-signed-bitwise) */
         *(uint32_t*) result = BIG_ENDIAN_32_TO_HOST(value);
     } break;
     default: {
         assert(result_size == sizeof(uint8_t));
         uint8_t value;
         memcpy(&value, buffer, sizeof(value));
-        *(uint8_t*) result = (uint8_t) value;
+        *(uint8_t*) result = value;
     } break;
     }
     return true;
@@ -422,15 +425,17 @@ jaeger_inject_into_binary(int (*callback)(void*, const char*, size_t),
     assert(callback != NULL);
     assert(ctx != NULL);
 
-#define WRITE_BINARY(x, bits)                                        \
-    do {                                                             \
-        const uint##bits##_t value = HOST_TO_BIG_ENDIAN_##bits((x)); \
-        char value_buffer[sizeof(value)];                            \
-        memcpy(value_buffer, &value, sizeof(value));                 \
-        if (callback(arg, value_buffer, sizeof(value_buffer)) !=     \
-            (int) sizeof(value_buffer)) {                            \
-            return opentracing_propagation_error_code_unknown;       \
-        }                                                            \
+#define WRITE_BINARY(x, bits)                                                  \
+    do {                                                                       \
+                                                                               \
+        const uint##bits##_t value =                                           \
+            HOST_TO_BIG_ENDIAN_##bits((x)); /* NOLINT(hicpp-signed-bitwise) */ \
+        char value_buffer[sizeof(value)];                                      \
+        memcpy(value_buffer, &value, sizeof(value));                           \
+        if (callback(arg, value_buffer, sizeof(value_buffer)) !=               \
+            (int) sizeof(value_buffer)) {                                      \
+            return opentracing_propagation_error_code_unknown;                 \
+        }                                                                      \
     } while (0)
 
     WRITE_BINARY(ctx->trace_id.high, 64);

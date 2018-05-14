@@ -57,9 +57,7 @@ static inline char encode_hex(int num)
     if (num < 10) {
         return '0' + num;
     }
-    else {
-        return 'a' + (num - 10);
-    }
+    return 'a' + (num - 10);
 }
 
 static inline void decode_uri_value(char* restrict dst,
@@ -112,8 +110,8 @@ static inline void decode_uri_value(char* restrict dst,
                 APPEND_CHAR(ch);
             }
             else {
-                APPEND_CHAR((char) (((first_nibble & 0xf) << 4) |
-                                    (second_nibble & 0xf)));
+                APPEND_CHAR((char) (((((uint8_t) first_nibble) & 0xfu) << 4u) |
+                                    (((uint8_t) second_nibble) & 0xfu)));
             }
             state = default_state;
             break;
@@ -167,11 +165,13 @@ static inline void encode_uri_value(char* restrict dst,
             case ')':
                 dst[pos++] = ch;
                 break;
-            default:
+            default: {
                 dst[pos++] = '%';
-                dst[pos++] = encode_hex((ch >> 4) & 0x0f);
-                dst[pos++] = encode_hex(ch & 0x0f);
-                break;
+                const uint8_t first_nibble = (((uint32_t) ch) >> 4u) & 0x0fu;
+                const uint8_t second_nibble = ((uint8_t) ch) & 0x0fu;
+                dst[pos++] = encode_hex(first_nibble);
+                dst[pos++] = encode_hex(second_nibble);
+            } break;
             }
         }
     }

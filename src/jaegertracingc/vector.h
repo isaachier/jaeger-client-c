@@ -189,8 +189,7 @@ static inline void jaeger_vector_destroy(jaeger_vector* vec)
 #define JAEGERTRACINGC_VECTOR_FOR_EACH(vec, op, type)                    \
     do {                                                                 \
         for (int i = 0, len = jaeger_vector_length(vec); i < len; i++) { \
-            type* elem = (type*) jaeger_vector_offset((vec), i);         \
-            op(elem);                                                    \
+            op((type*) jaeger_vector_offset((vec), i));                  \
         }                                                                \
     } while (0)
 
@@ -318,11 +317,11 @@ jaeger_vector_ptr_copy(jaeger_vector* restrict dst,
 
 #define JAEGERTRACINGC_DST_VECTOR_ALLOC_FREE(ptr) \
     do {                                          \
-        if (*ptr != NULL) {                       \
+        if (*(ptr) != NULL) {                     \
             if (destroy != NULL) {                \
-                destroy(*ptr);                    \
+                destroy(*(ptr));                  \
             }                                     \
-            jaeger_free(*ptr);                    \
+            jaeger_free(*(ptr));                  \
         }                                         \
     } while (0)
 

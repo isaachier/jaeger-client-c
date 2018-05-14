@@ -40,32 +40,6 @@ typedef struct jaeger_list_node {
     struct jaeger_list_node* next;
 } jaeger_list_node;
 
-/** Convenience macro to implement list node subclass. */
-#define JAEGERTRACINGC_DEFINE_LIST_NODE(node_type_name, data_type, destructor) \
-    typedef struct node_type_name {                                            \
-        jaeger_list_node base;                                                 \
-        data_type data;                                                        \
-    } node_type_name;                                                          \
-                                                                               \
-    static inline void node_type_name##_dealloc(jaeger_destructible* d)        \
-    {                                                                          \
-        destructor(&((node_type_name*) d)->data);                              \
-        jaeger_free(d);                                                        \
-    }                                                                          \
-                                                                               \
-    static inline node_type_name* node_type_name##_new(data_type data)         \
-    {                                                                          \
-        node_type_name* node =                                                 \
-            (node_type_name*) jaeger_malloc(sizeof(node_type_name));           \
-        if (node == NULL) {                                                    \
-            return NULL;                                                       \
-        }                                                                      \
-        memset(node, 0, sizeof(*node));                                        \
-        ((jaeger_destructible*) node)->destroy = &node_type_name##_dealloc;    \
-        node->data = data;                                                     \
-        return node;                                                           \
-    }
-
 /** Linked list implementation. */
 typedef struct jaeger_list {
     /** Head of list. */

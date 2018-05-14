@@ -190,6 +190,7 @@ set(src
 set(generated_src_dir "${CMAKE_CURRENT_BINARY_DIR}/src/jaegertracingc")
 
 file(MAKE_DIRECTORY "${generated_src_dir}/protoc-gen")
+file(WRITE "${generated_src_dir}/protoc-gen/.clang-tidy" "")
 function(generate_protobuf_c gen_src)
   foreach(proto_src ${ARGN})
     get_filename_component(component ${proto_src} NAME_WE)

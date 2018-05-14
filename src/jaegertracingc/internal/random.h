@@ -62,7 +62,7 @@ typedef struct jaeger_rng {
 static inline void
 read_random_seed(void* seed, size_t len, const char* random_source_path)
 {
-    FILE* random_source_file = fopen(random_source_path, "r");
+    FILE* random_source_file = fopen(random_source_path, "re");
     if (random_source_file == NULL) {
         jaeger_log_warn("Cannot open %s to initialize random seed, "
                         "errno = %d",

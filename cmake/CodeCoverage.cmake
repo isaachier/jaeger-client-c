@@ -52,7 +52,7 @@ else()
   message(FATAL_ERROR "Compiler is not gcc nor clang! Aborting...")
 endif()
 
-set(COVERAGE_COMPILER_FLAGS "${extra_coverage_flags} -g -O0 --coverage -fprofile-arcs -ftest-coverage"
+set(COVERAGE_COMPILER_FLAGS ${extra_coverage_flags} -g -O0 --coverage -fprofile-arcs -ftest-coverage
   CACHE INTERNAL "")
 
 if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")

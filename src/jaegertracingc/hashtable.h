@@ -33,7 +33,7 @@ extern "C" {
 /**
  * Initial order of new hashtable.
  */
-#define JAEGERTRACINGC_HASHTABLE_INIT_ORDER 4
+#define JAEGERTRACINGC_HASHTABLE_INIT_ORDER 4u
 
 /**
  * Threshold of size to bucket count ratio at which point the hashtable will
@@ -58,9 +58,31 @@ typedef struct jaeger_hashtable {
         .size = 0, .order = 0, .buckets = NULL \
     }
 
-JAEGERTRACINGC_DEFINE_LIST_NODE(jaeger_key_value_node,
-                                jaeger_key_value,
-                                jaeger_key_value_destroy)
+/** Define link list node for key-value pairs. */
+typedef struct jaeger_key_value_node {
+    jaeger_list_node base;
+    jaeger_key_value data;
+} jaeger_key_value_node;
+
+static inline void jaeger_key_value_node_dealloc(jaeger_destructible* d)
+{
+    jaeger_key_value_destroy(&((jaeger_key_value_node*) d)->data);
+    jaeger_free(d);
+}
+
+static inline jaeger_key_value_node*
+jaeger_key_value_node_new(jaeger_key_value data)
+{
+    jaeger_key_value_node* node =
+        (jaeger_key_value_node*) jaeger_malloc(sizeof(jaeger_key_value_node));
+    if (node == NULL) {
+        return NULL;
+    }
+    memset(node, 0, sizeof(*node));
+    ((jaeger_destructible*) node)->destroy = &jaeger_key_value_node_dealloc;
+    node->data = data;
+    return node;
+}
 
 /**
  * Clear all entries from a hashtable.
@@ -68,7 +90,7 @@ JAEGERTRACINGC_DEFINE_LIST_NODE(jaeger_key_value_node,
 static inline void jaeger_hashtable_clear(jaeger_hashtable* hashtable)
 {
     assert(hashtable != NULL);
-    const size_t bucket_count = (1 << hashtable->order);
+    const size_t bucket_count = (1u << hashtable->order);
     for (size_t i = 0; i < bucket_count; i++) {
         jaeger_list_clear(&hashtable->buckets[i]);
     }
@@ -95,7 +117,7 @@ static inline bool jaeger_hashtable_init(jaeger_hashtable* hashtable)
 {
     assert(hashtable != NULL);
     *hashtable = (jaeger_hashtable) JAEGERTRACINGC_HASHTABLE_INIT;
-    const size_t bucket_count = (1 << JAEGERTRACINGC_HASHTABLE_INIT_ORDER);
+    const size_t bucket_count = (1u << JAEGERTRACINGC_HASHTABLE_INIT_ORDER);
     hashtable->buckets = jaeger_malloc(bucket_count * sizeof(jaeger_list));
     if (hashtable->buckets == NULL) {
         jaeger_hashtable_destroy(hashtable);
@@ -114,7 +136,7 @@ size_t jaeger_hashtable_hash(const char* key);
 static inline bool jaeger_hashtable_rehash(jaeger_hashtable* hashtable)
 {
     assert(hashtable != NULL);
-    const size_t new_bucket_count = (1 << (hashtable->order + 1));
+    const size_t new_bucket_count = (1u << (hashtable->order + 1));
     jaeger_list* new_buckets =
         jaeger_malloc(new_bucket_count * sizeof(jaeger_list));
     if (new_buckets == NULL) {
@@ -124,7 +146,7 @@ static inline bool jaeger_hashtable_rehash(jaeger_hashtable* hashtable)
         new_buckets[i] = (jaeger_list) JAEGERTRACINGC_LIST_INIT;
     }
 
-    for (size_t i = 0; i < (size_t)(1 << (hashtable->order)); i++) {
+    for (size_t i = 0; i < (1u << (hashtable->order)); i++) {
         jaeger_list* bucket = &hashtable->buckets[i];
         for (jaeger_list_node *entry = bucket->head, *next_entry; entry != NULL;
              entry = next_entry) { /* Store next node before modifying current
@@ -158,7 +180,7 @@ jaeger_hashtable_internal_lookup(jaeger_hashtable* hashtable, const char* key)
     assert(key != NULL);
 
     jaeger_hashtable_lookup_result result = {.node = NULL, .bucket = NULL};
-    const size_t bucket_count = (1 << hashtable->order);
+    const size_t bucket_count = (1u << hashtable->order);
     const size_t hash_code = jaeger_hashtable_hash(key);
     const size_t index = hash_code & (bucket_count - 1);
     result.bucket = &hashtable->buckets[index];
@@ -190,7 +212,7 @@ static inline bool jaeger_hashtable_put(jaeger_hashtable* hashtable,
     assert(hashtable != NULL);
     assert(key != NULL);
     assert(value != NULL);
-    const size_t bucket_count = (1 << hashtable->order);
+    const size_t bucket_count = (1u << hashtable->order);
     if (((double) hashtable->size + 1) / bucket_count >=
             JAEGERTRACINGC_HASHTABLE_THRESHOLD &&
         !jaeger_hashtable_rehash(hashtable)) {
@@ -235,7 +257,7 @@ static inline bool jaeger_hashtable_copy(jaeger_hashtable* restrict dst,
 
     *dst = (jaeger_hashtable) JAEGERTRACINGC_HASHTABLE_INIT;
     const size_t order = jaeger_hashtable_minimal_order(src->size);
-    const size_t bucket_count = 1 << order;
+    const size_t bucket_count = (1u << order);
     dst->buckets = jaeger_malloc(bucket_count * sizeof(jaeger_list));
     if (dst->buckets == NULL) {
         return false;
@@ -244,7 +266,7 @@ static inline bool jaeger_hashtable_copy(jaeger_hashtable* restrict dst,
     for (size_t i = 0; i < bucket_count; i++) {
         dst->buckets[i] = (jaeger_list) JAEGERTRACINGC_LIST_INIT;
     }
-    for (size_t i = 0, len = 1 << src->order; i < len; i++) {
+    for (size_t i = 0, len = (1u << src->order); i < len; i++) {
         for (jaeger_list_node* entry = src->buckets[i].head; entry != NULL;
              entry = entry->next) {
             const jaeger_key_value* kv =

@@ -106,12 +106,11 @@ typedef struct jaeger_thread_local {
     bool initialized;
 } jaeger_thread_local;
 
-static inline void jaeger_thread_local_destroy(jaeger_thread_local* d)
+static inline void jaeger_thread_local_destroy(jaeger_thread_local* local)
 {
-    if (d == NULL) {
+    if (local == NULL) {
         return;
     }
-    jaeger_thread_local* local = (jaeger_thread_local*) d;
     if (!local->initialized) {
         return;
     }

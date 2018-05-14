@@ -32,11 +32,11 @@ static jaeger_mutex stderr_mutex = JAEGERTRACINGC_MUTEX_INIT;
         jaeger_logger* logger, const char* format, va_list args) \
     {                                                            \
         (void) logger;                                           \
-        fprintf(stream, "%s: ", #level);                         \
-        jaeger_mutex_lock(&mutex);                               \
-        vfprintf(stream, format, args);                          \
-        fputc('\n', stream);                                     \
-        jaeger_mutex_unlock(&mutex);                             \
+        fprintf((stream), "%s: ", #level);                       \
+        jaeger_mutex_lock(&(mutex));                             \
+        vfprintf((stream), format, args);                        \
+        fputc('\n', (stream));                                   \
+        jaeger_mutex_unlock(&(mutex));                           \
     }
 
 jaeger_logger* jaeger_null_logger()

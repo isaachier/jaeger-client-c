@@ -22,13 +22,15 @@
 #ifndef JAEGERTRACINGC_NET_H
 #define JAEGERTRACINGC_NET_H
 
-#include <http_parser.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <stdlib.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
+
+#include <http_parser.h>
+
 #include "jaegertracingc/common.h"
 
 #ifdef __cplusplus
@@ -139,7 +141,7 @@ static inline bool jaeger_host_port_from_url(jaeger_host_port* host_port,
     assert(url->str != NULL);
 
     int port = 0;
-    if (url->parts.field_set & (1 << UF_PORT)) {
+    if (url->parts.field_set & (1u << ((uint32_t) UF_PORT))) {
         const str_segment port_segment = {
             .off = url->parts.field_data[UF_PORT].off,
             .len = url->parts.field_data[UF_PORT].len};
@@ -149,7 +151,7 @@ static inline bool jaeger_host_port_from_url(jaeger_host_port* host_port,
     }
 
     str_segment host_segment = {.off = -1, .len = 0};
-    if (url->parts.field_set & (1 << UF_HOST)) {
+    if (url->parts.field_set & (1u << ((uint32_t) UF_HOST))) {
         host_segment = (str_segment){.off = url->parts.field_data[UF_HOST].off,
                                      .len = url->parts.field_data[UF_HOST].len};
     }

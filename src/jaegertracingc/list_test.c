@@ -17,9 +17,24 @@
 #include "jaegertracingc/list.h"
 #include "unity.h"
 
-#define NOOP_DTOR(X)
-JAEGERTRACINGC_DEFINE_LIST_NODE(number_node, int, NOOP_DTOR)
-#undef NOOP_DTOR
+typedef struct number_node {
+    jaeger_list_node base;
+    int data;
+} number_node;
+
+static inline void number_node_dealloc(jaeger_destructible* d)
+{
+    jaeger_free(d);
+}
+
+static inline number_node* number_node_new(int data)
+{
+    number_node* node = jaeger_malloc(sizeof(*node));
+    TEST_ASSERT_NOT_NULL(node);
+    *node = (number_node){.base = {.base = {.destroy = &number_node_dealloc}},
+                          .data = data};
+    return node;
+}
 
 void test_list()
 {

@@ -54,7 +54,7 @@ extern "C" {
     JAEGERTRACINGC_MIN(JAEGERTRACINGC_MAX((x), (low)), (high))
 
 #define JAEGERTRACINGC_CONTAINER_OF(ptr, type, member) \
-    (type*) (((char*) ptr) - offsetof(type, member))
+    (type*) (((char*) (ptr)) - offsetof(type, member))
 
 typedef opentracing_destructible jaeger_destructible;
 
