@@ -25,7 +25,6 @@ static void* random_func(void* arg)
 {
     TEST_ASSERT_NOT_NULL(arg);
     int64_t* x = arg;
-    jaeger_logger* logger = jaeger_null_logger();
     *x = random64();
     return NULL;
 }
@@ -43,7 +42,6 @@ void test_random()
         jaeger_thread_join(threads[i], NULL);
     }
 
-    jaeger_logger* logger = jaeger_null_logger();
     uint64_t seed[NUM_UINT64_IN_SEED];
     memset(seed, 0, sizeof(seed));
     read_random_seed(seed, sizeof(seed), "bad-path");

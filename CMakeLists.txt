@@ -367,14 +367,12 @@ if(BUILD_TESTING)
   target_link_libraries(jaegertracingc_test PUBLIC jaegertracingc unity)
   target_compile_definitions(jaegertracingc_test PUBLIC
     UNITY_USE_COMMAND_LINE_ARGS)
+  target_compile_options(jaegertracingc_test PUBLIC ${jaegertracingc_flags})
+  target_link_libraries(jaegertracingc_test PUBLIC ${sanitizer_flags})
 
 	foreach(driver default)
 	  add_executable(${driver}_test "src/jaegertracingc/${driver}_test_driver.c")
 	  target_link_libraries(${driver}_test PUBLIC jaegertracingc_test)
-    if(sanitizer_flags)
-      target_compile_options(${driver}_test PRIVATE ${sanitizer_flags})
-      target_link_libraries(jaegertracingc PRIVATE ${sanitizer_flags})
-    endif()
   	add_test(${driver}_test ${driver}_test)
 	endforeach()
 

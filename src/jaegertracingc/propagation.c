@@ -451,18 +451,22 @@ jaeger_inject_into_binary(int (*callback)(void*, const char*, size_t),
 
     const uint32_t num_baggage_items = ctx->baggage.size;
     WRITE_BINARY(num_baggage_items, 32);
-    for (int i = 0; i < (int) num_baggage_items; i++) {
-        const jaeger_key_value* kv =
-            jaeger_vector_get((jaeger_vector*) &ctx->baggage, i);
-        const uint32_t key_len = strlen(kv->key);
-        WRITE_BINARY(key_len, 32);
-        if (callback(arg, kv->key, key_len) != (int) key_len) {
-            return opentracing_propagation_error_code_unknown;
-        }
-        const uint32_t value_len = strlen(kv->value);
-        WRITE_BINARY(value_len, 32);
-        if (callback(arg, kv->value, value_len) != (int) value_len) {
-            return opentracing_propagation_error_code_unknown;
+    for (size_t i = 0; i < ctx->baggage.size; i++) {
+        for (const jaeger_list_node* node = ctx->baggage.buckets[i].head;
+             node != NULL;
+             node = node->next) {
+            const jaeger_key_value* kv =
+                &((const jaeger_key_value_node*) node)->data;
+            const uint32_t key_len = strlen(kv->key);
+            WRITE_BINARY(key_len, 32);
+            if (callback(arg, kv->key, key_len) != (int) key_len) {
+                return opentracing_propagation_error_code_unknown;
+            }
+            const uint32_t value_len = strlen(kv->value);
+            WRITE_BINARY(value_len, 32);
+            if (callback(arg, kv->value, value_len) != (int) value_len) {
+                return opentracing_propagation_error_code_unknown;
+            }
         }
     }
 

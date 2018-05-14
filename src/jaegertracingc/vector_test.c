@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-#include "jaegertracingc/vector.h"
 #include "jaegertracingc/tag.h"
+#include "jaegertracingc/vector.h"
 #include "unity.h"
 
 void test_vector()
 {
     /* Most of vector is covered in tag_test. This test covers only edge cases.
      */
-    jaeger_allocator* alloc = jaeger_null_allocator();
     jaeger_vector vec;
-    jaeger_logger* logger = jaeger_null_logger();
 
     jaeger_set_allocator(jaeger_null_allocator());
     TEST_ASSERT_FALSE(jaeger_vector_init(&vec, sizeof(char)));

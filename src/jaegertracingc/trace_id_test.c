@@ -21,11 +21,11 @@ void test_trace_id()
 {
     const jaeger_trace_id trace_ids[] = {{.high = 0, .low = 0},
                                          {.high = 1, .low = 2},
-                                         {.high = UINT_MAX, .low = 0}};
+                                         {.high = UINT64_MAX, .low = 0}};
     const int num_trace_ids = sizeof(trace_ids) / sizeof(trace_ids[0]);
     for (int i = 0; i < num_trace_ids; i++) {
         const jaeger_trace_id trace_id = trace_ids[i];
-        char buffer[JAEGERTRACINGC_TRACE_ID_MAX_STR_LEN];
+        char buffer[JAEGERTRACINGC_TRACE_ID_MAX_STR_LEN + 1];
         const int str_len =
             jaeger_trace_id_format(&trace_id, buffer, sizeof(buffer));
         TEST_ASSERT_LESS_THAN(sizeof(buffer), str_len);
