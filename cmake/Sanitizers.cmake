@@ -6,6 +6,7 @@ set(__SANITIZERS ON)
 function(append_sanitizer_flags flags_var)
   option(ADDRESS_SANITIZER "Enable address sanitizer" OFF)
   option(LEAK_SANITIZER "Enable leak sanitizer" OFF)
+  option(MEMORY_SANITIZER "Enable memory sanitizer" OFF)
   option(THREAD_SANITIZER "Enable thread sanitizer" OFF)
   option(UNDEFINED_SANITIZER "Enable undefined behavior sanitizer" OFF)
 
@@ -15,6 +16,10 @@ function(append_sanitizer_flags flags_var)
 
   if(LEAK_SANITIZER)
     list(APPEND sanitizers leak)
+  endif()
+
+  if(MEMORY_SANITIZER)
+    list(APPEND sanitizers memory)
   endif()
 
   if(THREAD_SANITIZER)
