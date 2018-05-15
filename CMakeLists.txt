@@ -28,8 +28,8 @@ cmake_dependent_option(HUNTER_BUILD_SHARED_LIBS
 
 include(HunterGate)
 HunterGate(
-    URL "https://github.com/ruslo/hunter/archive/v0.20.35.tar.gz"
-    SHA1 "6e3cb4c333b76803a83c56fcbca3b0bfd9f96f27"
+    URL "https://github.com/ruslo/hunter/archive/v0.20.74.tar.gz"
+    SHA1 "88e3c806f0ff640c0e3cbc32b340ae2c370b31f5"
     LOCAL
 )
 
