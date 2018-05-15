@@ -464,14 +464,17 @@ static inline void test_binary()
     ctx.trace_id = (jaeger_trace_id){.high = 0x1234, .low = 0x5678};
     ctx.parent_id = 0xEF00;
     ctx.span_id = 0xABCD;
-    const int max_baggage_items = 15;
-    const int min_baggage_items = 1;
+    enum {
+        max_baggage_items = 15,
+        min_baggage_items = 1,
+        max_baggage_str_len = 20
+    };
     const int num_baggage_items =
         rand() % (max_baggage_items - min_baggage_items) + min_baggage_items;
     for (int i = 0; i < num_baggage_items; i++) {
-        char key[rand() % 20 + 1];
+        char key[rand() % max_baggage_str_len + 1];
         random_string(key, sizeof(key));
-        char value[rand() % 20 + 1];
+        char value[rand() % max_baggage_str_len + 1];
         random_string(value, sizeof(value));
         TEST_ASSERT_TRUE(jaeger_hashtable_put(&ctx.baggage, key, value));
     }

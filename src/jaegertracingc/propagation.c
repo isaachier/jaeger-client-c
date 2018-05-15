@@ -220,21 +220,21 @@ static opentracing_propagation_error_code parse_baggage_binary(
 
     uint32_t num_baggage_items;
     READ_BINARY(num_baggage_items);
-    if (num_baggage_items > 0) {
-        for (int i = 0; i < (int) num_baggage_items; i++) {
-            uint32_t key_len;
-            READ_BINARY(key_len);
-            char key_buffer[key_len + 1];
-            READ_BUFFER(key_buffer, key_len);
+    printf("READ: num_baggage_items = %d\n", (int) num_baggage_items);
+    for (int i = 0; i < (int) num_baggage_items; i++) {
+        uint32_t key_len;
+        READ_BINARY(key_len);
+        char key_buffer[key_len + 1];
+        READ_BUFFER(key_buffer, key_len);
 
-            uint32_t value_len;
-            READ_BINARY(value_len);
-            char value_buffer[value_len + 1];
-            READ_BUFFER(value_buffer, value_len);
-
-            if (!jaeger_hashtable_put(baggage, key_buffer, value_buffer)) {
-                return opentracing_propagation_error_code_unknown;
-            }
+        uint32_t value_len;
+        READ_BINARY(value_len);
+        char value_buffer[value_len + 1];
+        READ_BUFFER(value_buffer, value_len);
+        printf(
+            "READ: key = \"%s\", value = \"%s\"\n", key_buffer, value_buffer);
+        if (!jaeger_hashtable_put(baggage, key_buffer, value_buffer)) {
+            return opentracing_propagation_error_code_unknown;
         }
     }
 
@@ -412,10 +412,14 @@ jaeger_inject_into_binary(int (*callback)(void*, const char*, size_t),
 
     const uint32_t num_baggage_items = ctx->baggage.size;
     WRITE_BINARY(num_baggage_items, 32);
+    printf("num_baggage_items = %d\n", (int) num_baggage_items);
+    uint32_t size = 0;
     for (size_t i = 0; i < ctx->baggage.size; i++) {
         for (const jaeger_list_node* node = ctx->baggage.buckets[i].head;
              node != NULL;
              node = node->next) {
+            size++;
+            printf("size = %d\n", (int) size);
             const jaeger_key_value* kv =
                 &((const jaeger_key_value_node*) node)->data;
             const uint32_t key_len = strlen(kv->key);
@@ -428,8 +432,10 @@ jaeger_inject_into_binary(int (*callback)(void*, const char*, size_t),
             if (callback(arg, kv->value, value_len) != (int) value_len) {
                 return opentracing_propagation_error_code_unknown;
             }
+            printf("WRITE: key = \"%s\", value = \"%s\"\n", kv->key, kv->value);
         }
     }
+    assert(ctx->baggage.size == size);
 
     return opentracing_propagation_error_code_success;
 
