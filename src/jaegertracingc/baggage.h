@@ -79,6 +79,8 @@ jaeger_default_baggage_restriction_manager_get_restriction(
     const char* service,
     const char* key)
 {
+    (void) service;
+    (void) key;
     jaeger_default_baggage_restriction_manager* default_manager =
         (jaeger_default_baggage_restriction_manager*) manager;
     return (jaeger_baggage_restriction){
