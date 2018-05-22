@@ -16,14 +16,15 @@
 
 /**
  * @file
- * Trace ID representation.
+ * Baggage restriction utilities.
  */
 
-#ifndef JAEGERTRACINGC_TRACE_ID_H
-#define JAEGERTRACINGC_TRACE_ID_H
+#ifndef JAEGERTRACINGC_BAGGAGE_H
+#define JAEGERTRACINGC_BAGGAGE_H
 
 #include "jaegertracingc/common.h"
 #include "jaegertracingc/metrics.h"
+#include "jaegertracingc/span.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -60,13 +61,13 @@ typedef struct jaeger_baggage_restriction_manager {
  * Default implementation of jaeger_baggage_restriction_manager interface.
  * @extends jaeger_baggage_restriction_manager
  */
-struct jaeger_default_baggage_restriction_manager {
+typedef struct jaeger_default_baggage_restriction_manager {
     /** Base class instance. */
     jaeger_baggage_restriction_manager base;
 
     /** Maximum value length for every key. */
     size_t max_value_len;
-};
+} jaeger_default_baggage_restriction_manager;
 
 /**
  * Implementation of get_restriction for
@@ -81,7 +82,7 @@ jaeger_default_baggage_restriction_manager_get_restriction(
     jaeger_default_baggage_restriction_manager* default_manager =
         (jaeger_default_baggage_restriction_manager*) manager;
     return (jaeger_baggage_restriction){
-        .key_allowed = true, .max_value_len = default_manager.max_value_len};
+        .key_allowed = true, .max_value_len = default_manager->max_value_len};
 }
 
 /**
@@ -99,14 +100,21 @@ static inline void jaeger_default_baggage_restriction_manager_init(
         .max_value_len = max_value_len};
 }
 
-/* TODO */
+/** Facade to enforce remote baggage restrictions in tracer. */
 typedef struct jaeger_baggage_setter {
+    /** Remote baggage restriction manager instance. */
     jaeger_baggage_restriction_manager* manager;
+    /** Metrics used for maintaining success count, error count, etc. */
     jaeger_metrics* metrics;
 } jaeger_baggage_setter;
+
+void jaeger_baggage_setter_set_baggage(jaeger_baggage_setter* setter,
+                                       jaeger_span* span,
+                                       const char* key,
+                                       const char* value);
 
 #ifdef __cplusplus
 } /* extern C */
 #endif /* __cplusplus */
 
-#endif /* JAEGERTRACINGC_TRACE_ID_H */
+#endif /* JAEGERTRACINGC_BAGGAGE_H */

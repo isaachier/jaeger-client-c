@@ -138,6 +138,8 @@ endif()
 set(src
   src/jaegertracingc/alloc.c
   src/jaegertracingc/alloc.h
+  src/jaegertracingc/baggage.c
+  src/jaegertracingc/baggage.h
   src/jaegertracingc/clock.c
   src/jaegertracingc/clock.h
   src/jaegertracingc/common.c

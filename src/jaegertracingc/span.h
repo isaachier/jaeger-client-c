@@ -635,7 +635,9 @@ static inline void jaeger_span_set_tag(opentracing_span* span,
 /**
  * Append to span logs.
  * @param span The span instance.
- * @param log_record The log record to append.
+ * @param fields The log fields for the record to append.
+ * @param num_fields The number of log fields. May only be zero if fields is
+ *                   NULL.
  */
 static inline void jaeger_span_log(opentracing_span* span,
                                    const opentracing_log_field* fields,
