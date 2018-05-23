@@ -392,13 +392,14 @@ cmake_dependent_option(JAEGERTRACINGC_FUZZ "Enable fuzz testing" OFF
   "BUILD_TESTING;have_fuzz_support" OFF)
 if(JAEGERTRACINGC_FUZZ)
   set(fuzz_tests
-    src/jaegertracingc/siphash_fuzz_test.c)
-  set(fuzz_flags "-fsanitize=fuzzer,address,undefined")
+    src/jaegertracingc/siphash_fuzz_test.c
+    src/jaegertracingc/trace_id_fuzz_test.c)
+  append_fuzz_flags(fuzz_flags)
   foreach(fuzz_test_src ${fuzz_tests})
-    get_filename_component(${fuzz_test_src} fuzz_test NAME_WE)
+    get_filename_component(fuzz_test ${fuzz_test_src} NAME_WE)
     add_executable(${fuzz_test} ${fuzz_test_src})
-    target_compile_options(${fuzz_test} PRIVATE "${fuzz_flags}")
-    target_link_libraries(${fuzz_test} jaegertracingc "${fuzz_flags}")
+    target_compile_options(${fuzz_test} PRIVATE ${fuzz_flags})
+    target_link_libraries(${fuzz_test} jaegertracingc ${fuzz_flags})
   endforeach()
 endif()
 

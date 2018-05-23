@@ -3,7 +3,7 @@ if(__FUZZ)
 endif()
 set(__FUZZ ON)
 
-set(_fuzz_flags "-fsanitize=fuzz,address,undefined")
+set(_fuzz_flags "-fsanitize=fuzzer,address,undefined")
 
 function(append_fuzz_flags var)
   list(APPEND ${var} ${_fuzz_flags})
