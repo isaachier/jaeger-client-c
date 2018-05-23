@@ -126,13 +126,11 @@ static void composite_reporter_destroy(jaeger_destructible* destructible)
 
 #define DESTROY(x)                     \
     do {                               \
-        assert((x) != NULL);           \
         jaeger_destructible** d = (x); \
-        if (*d == NULL) {              \
-            continue;                  \
+        if (d != NULL && *d != NULL) { \
+            (*d)->destroy(*d);         \
+            jaeger_free(*d);           \
         }                              \
-        (*d)->destroy(*d);             \
-        jaeger_free(*d);               \
     } while (0)
 
     JAEGERTRACINGC_VECTOR_FOR_EACH(
@@ -152,16 +150,12 @@ static void composite_reporter_report(jaeger_reporter* reporter,
     }
     jaeger_composite_reporter* r = (jaeger_composite_reporter*) reporter;
 
-#define REPORT(x)                                         \
-    do {                                                  \
-        if ((x) == NULL) {                                \
-            continue;                                     \
-        }                                                 \
-        jaeger_reporter** child_reporter = (x);           \
-        if (*child_reporter == NULL) {                    \
-            continue;                                     \
-        }                                                 \
-        (*child_reporter)->report(*child_reporter, span); \
+#define REPORT(x)                                                \
+    do {                                                         \
+        jaeger_reporter** child_reporter = (x);                  \
+        if (child_reporter != NULL && *child_reporter != NULL) { \
+            (*child_reporter)->report(*child_reporter, span);    \
+        }                                                        \
     } while (0)
 
     JAEGERTRACINGC_VECTOR_FOR_EACH(&r->reporters, REPORT, jaeger_reporter*);
@@ -173,18 +167,13 @@ static bool composite_reporter_flush(jaeger_reporter* reporter)
 {
     jaeger_composite_reporter* r = (jaeger_composite_reporter*) reporter;
 
-#define FLUSH(x)                                          \
-    do {                                                  \
-        if ((x) == NULL) {                                \
-            continue;                                     \
-        }                                                 \
-        jaeger_reporter** child_reporter = (x);           \
-        if (*child_reporter == NULL) {                    \
-            continue;                                     \
-        }                                                 \
-        if (!(*child_reporter)->flush(*child_reporter)) { \
-            success = false;                              \
-        }                                                 \
+#define FLUSH(x)                                                 \
+    do {                                                         \
+        jaeger_reporter** child_reporter = (x);                  \
+        if (child_reporter != NULL && *child_reporter != NULL && \
+            !(*child_reporter)->flush(*child_reporter)) {        \
+            success = false;                                     \
+        }                                                        \
     } while (0)
 
     bool success = true;
