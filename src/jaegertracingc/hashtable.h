@@ -245,6 +245,17 @@ static inline bool jaeger_hashtable_put(jaeger_hashtable* hashtable,
     return true;
 }
 
+static inline void jaeger_hashtable_remove(jaeger_hashtable* hashtable,
+                                           const char* key)
+{
+    jaeger_hashtable_lookup_result result =
+        jaeger_hashtable_internal_lookup(hashtable, key);
+    if (result.bucket != NULL && result.node != NULL) {
+        jaeger_list_node_remove(result.bucket, (jaeger_list_node*) result.node);
+        jaeger_key_value_node_dealloc((jaeger_destructible*) result.node);
+    }
+}
+
 uint32_t jaeger_hashtable_minimal_order(uint32_t size);
 
 static inline bool jaeger_hashtable_copy(jaeger_hashtable* restrict dst,

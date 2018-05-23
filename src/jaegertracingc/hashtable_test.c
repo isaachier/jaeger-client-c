@@ -74,6 +74,13 @@ void test_hashtable()
     const jaeger_key_value* kv = jaeger_hashtable_find(&hashtable, key);
     TEST_ASSERT_NULL(kv);
 
+    /* Test remove key. */
+    random_string(key, buffer_size);
+    random_string(value, buffer_size);
+    TEST_ASSERT_TRUE(jaeger_hashtable_put(&hashtable, key, value));
+    jaeger_hashtable_remove(&hashtable, key);
+    TEST_ASSERT_NULL(jaeger_hashtable_find(&hashtable, key));
+
     jaeger_hashtable_clear(&hashtable);
     TEST_ASSERT_EQUAL(0, hashtable.size);
 

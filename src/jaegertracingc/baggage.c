@@ -18,6 +18,16 @@
 
 #include "jaegertracingc/tracer.h"
 
+#define LOG_FIELD(key_str, value_str)              \
+    {                                              \
+        .key = (key_str), .value = {               \
+            .type = opentracing_value_string,      \
+            .value = {.string_value = (value_str)} \
+        }                                          \
+    }
+
+#define BOOL_STR(x) ((x) ? "true" : "false")
+
 void jaeger_baggage_setter_set_baggage(jaeger_baggage_setter* setter,
                                        jaeger_span* span,
                                        const char* key,
@@ -59,16 +69,6 @@ void jaeger_baggage_setter_set_baggage(jaeger_baggage_setter* setter,
 
 log:
     if (jaeger_span_is_sampled_no_locking(span)) {
-#define LOG_FIELD(key_str, value_str)              \
-    {                                              \
-        .key = (key_str), .value = {               \
-            .type = opentracing_value_string,      \
-            .value = {.string_value = (value_str)} \
-        }                                          \
-    }
-
-#define BOOL_STR(x) ((x) ? "true" : "false")
-
         opentracing_log_field fields[] = {
             LOG_FIELD("event", "baggage"),
             LOG_FIELD("key", key),
