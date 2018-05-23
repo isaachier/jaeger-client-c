@@ -47,6 +47,7 @@ include(TestBigEndian)
 include(CheckAtomics)
 include(CheckAttributes)
 include(CheckBuiltin)
+include(Fuzz)
 include(GenerateDocumentation)
 include(Sanitizers)
 
@@ -384,6 +385,21 @@ if(BUILD_TESTING)
       EXECUTABLE ${CMAKE_CURRENT_BINARY_DIR}/default_test
       DEPENDENCIES default_test)
   endif()
+endif()
+
+check_fuzz_support(have_fuzz_support)
+cmake_dependent_option(JAEGERTRACINGC_FUZZ "Enable fuzz testing" OFF
+  "BUILD_TESTING;have_fuzz_support" OFF)
+if(JAEGERTRACINGC_FUZZ)
+  set(fuzz_tests
+    src/jaegertracingc/siphash_fuzz_test.c)
+  set(fuzz_flags "-fsanitize=fuzzer,address,undefined")
+  foreach(fuzz_test_src ${fuzz_tests})
+    get_filename_component(${fuzz_test_src} fuzz_test NAME_WE)
+    add_executable(${fuzz_test} ${fuzz_test_src})
+    target_compile_options(${fuzz_test} PRIVATE "${fuzz_flags}")
+    target_link_libraries(${fuzz_test} jaegertracingc "${fuzz_flags}")
+  endforeach()
 endif()
 
 generate_documentation()
