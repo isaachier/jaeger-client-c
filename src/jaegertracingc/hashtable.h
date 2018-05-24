@@ -271,7 +271,7 @@ static inline bool jaeger_hashtable_copy(jaeger_hashtable* restrict dst,
     const size_t bucket_count = (1u << order);
     dst->buckets = jaeger_malloc(bucket_count * sizeof(jaeger_list));
     if (dst->buckets == NULL) {
-        return false;
+        goto cleanup;
     }
     dst->order = order;
     for (size_t i = 0; i < bucket_count; i++) {

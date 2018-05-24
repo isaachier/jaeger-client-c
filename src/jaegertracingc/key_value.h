@@ -65,14 +65,17 @@ jaeger_key_value_init(jaeger_key_value* kv, const char* key, const char* value)
     *kv = (jaeger_key_value) JAEGERTRACINGC_KEY_VALUE_INIT;
     kv->key = jaeger_strdup(key);
     if (kv->key == NULL) {
-        return false;
+        goto cleanup;
     }
     kv->value = jaeger_strdup(value);
     if (kv->value == NULL) {
-        jaeger_key_value_destroy(kv);
-        return false;
+        goto cleanup;
     }
     return true;
+
+cleanup:
+    jaeger_key_value_destroy(kv);
+    return false;
 }
 
 static inline bool jaeger_key_value_copy(jaeger_key_value* restrict dst,

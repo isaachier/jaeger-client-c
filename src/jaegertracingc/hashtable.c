@@ -40,7 +40,7 @@ size_t jaeger_hashtable_hash(const char* key)
 
 uint32_t jaeger_hashtable_minimal_order(uint32_t size)
 {
-    if (size == 0) {
+    if (size < JAEGERTRACINGC_HASHTABLE_INIT_ORDER) {
         return JAEGERTRACINGC_HASHTABLE_INIT_ORDER;
     }
 #ifdef HAVE_BUILTIN

@@ -102,17 +102,28 @@ void test_hashtable()
     TEST_ASSERT_FALSE(jaeger_hashtable_put(&hashtable, key, value));
     TEST_ASSERT_LESS_THAN(JAEGERTRACINGC_HASHTABLE_THRESHOLD,
                           hashtable.size /
-                              (1 << JAEGERTRACINGC_HASHTABLE_INIT_ORDER));
+                              (1u << JAEGERTRACINGC_HASHTABLE_INIT_ORDER));
+    jaeger_set_allocator(jaeger_built_in_allocator());
+
+    /* Test hashtable copy allocation failure. */
+    jaeger_set_allocator(jaeger_null_allocator());
+    jaeger_hashtable hashtable_copy;
+    TEST_ASSERT_FALSE(jaeger_hashtable_copy(&hashtable_copy, &hashtable));
     jaeger_set_allocator(jaeger_built_in_allocator());
 
     jaeger_hashtable_destroy(&hashtable);
 
-    /* Test init memory failure. */
     jaeger_set_allocator(jaeger_null_allocator());
+    /* Test hashtable allocation failure. */
     TEST_ASSERT_FALSE(jaeger_hashtable_init(&hashtable));
+    /* Test node allocation failure. */
+    const jaeger_key_value key_value = {.key = "test", .value = "alloc"};
+    TEST_ASSERT_NULL(jaeger_key_value_node_new(key_value));
     jaeger_set_allocator(jaeger_built_in_allocator());
 
     /* Test minimal size. */
     TEST_ASSERT_EQUAL_HEX(0x100, 1 << jaeger_hashtable_minimal_order(0xf0));
     TEST_ASSERT_EQUAL_HEX(0x10, 1 << jaeger_hashtable_minimal_order(0x8));
+    TEST_ASSERT_EQUAL_HEX(JAEGERTRACINGC_HASHTABLE_INIT_ORDER,
+                          jaeger_hashtable_minimal_order(0));
 }
