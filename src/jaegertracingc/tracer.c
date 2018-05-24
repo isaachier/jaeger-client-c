@@ -386,9 +386,9 @@ span_inherit_from_parent(jaeger_tracer* tracer,
 
     if (!has_parent || parent == NULL ||
         !jaeger_span_context_is_valid(parent)) {
-        span->context.trace_id.low = random64();
+        span->context.trace_id.low = jaeger_random64();
         if (tracer->options.gen_128_bit) {
-            span->context.trace_id.high = random64();
+            span->context.trace_id.high = jaeger_random64();
         }
         span->context.span_id = span->context.trace_id.low;
         span->context.parent_id = 0;
@@ -409,7 +409,7 @@ span_inherit_from_parent(jaeger_tracer* tracer,
     }
     else {
         span->context.trace_id = parent->trace_id;
-        span->context.span_id = random64();
+        span->context.span_id = jaeger_random64();
         span->context.parent_id = parent->span_id;
         span->context.flags = parent->flags;
     }

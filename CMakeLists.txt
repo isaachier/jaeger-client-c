@@ -341,6 +341,7 @@ if(BUILD_TESTING)
     src/jaegertracingc/tag_test.c
     src/jaegertracingc/threading_test.c
     src/jaegertracingc/trace_id_test.c
+    src/jaegertracingc/tracer_test.c
     src/jaegertracingc/token_bucket_test.c
     src/jaegertracingc/vector_test.c)
   foreach(test_file ${test_src})

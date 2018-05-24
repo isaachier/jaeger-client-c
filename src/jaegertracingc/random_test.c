@@ -16,8 +16,11 @@
 
 #include "jaegertracingc/internal/random.h"
 #include "jaegertracingc/random.h"
-#include "jaegertracingc/threading.h"
+
 #include "unity.h"
+
+#include "jaegertracingc/alloc.h"
+#include "jaegertracingc/threading.h"
 
 #define NUM_THREADS 5
 
@@ -25,12 +28,17 @@ static void* random_func(void* arg)
 {
     TEST_ASSERT_NOT_NULL(arg);
     int64_t* x = arg;
-    *x = random64();
+    *x = jaeger_random64();
     return NULL;
 }
 
 void test_random()
 {
+    /* Test allocation failure. */
+    jaeger_set_allocator(jaeger_null_allocator());
+    TEST_ASSERT_EQUAL(0, jaeger_random64());
+    jaeger_set_allocator(jaeger_built_in_allocator());
+
     int64_t random_numbers[NUM_THREADS] = {0};
     jaeger_thread threads[NUM_THREADS];
     for (int i = 0; i < NUM_THREADS; i++) {

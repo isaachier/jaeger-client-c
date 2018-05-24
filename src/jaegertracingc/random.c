@@ -32,7 +32,7 @@ void init_rng(void)
     atexit(&cleanup_rng);
 }
 
-int64_t random64(void)
+int64_t jaeger_random64(void)
 {
     jaeger_do_once(&once, init_rng);
     assert(rng_storage.initialized);
@@ -40,13 +40,12 @@ int64_t random64(void)
     if (rng == NULL) {
         rng = jaeger_rng_alloc();
         if (rng == NULL) {
-            return 0;
+            goto cleanup;
         }
         jaeger_rng_init(rng);
         if (!jaeger_thread_local_set_value(&rng_storage,
                                            (jaeger_destructible*) rng)) {
-            jaeger_free(rng);
-            return 0;
+            goto cleanup;
         }
     }
 
@@ -55,4 +54,8 @@ int64_t random64(void)
     result <<= 32u;
     result |= pcg32_random_r(&rng->state);
     return (int64_t) result;
+
+cleanup:
+    jaeger_free(rng);
+    return 0;
 }

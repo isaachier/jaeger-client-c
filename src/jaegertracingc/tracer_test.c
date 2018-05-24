@@ -14,24 +14,10 @@
  * limitations under the License.
  */
 
-/**
- * @file
- * Random number generation.
- */
+#include "jaegertracingc/tracer.h"
 
-#ifndef JAEGERTRACINGC_RANDOM_H
-#define JAEGERTRACINGC_RANDOM_H
+#include "unity.h"
 
-#include <stdint.h>
-
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
-int64_t jaeger_random64(void);
-
-#ifdef __cplusplus
-} /* extern C */
-#endif /* __cplusplus */
-
-#endif /* JAEGERTRACINGC_RANDOM_H */
+void test_tracer()
+{
+}

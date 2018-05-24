@@ -75,10 +75,7 @@ void jaeger_logging_reporter_init(jaeger_reporter* reporter)
 
 static void in_memory_reporter_destroy(jaeger_destructible* destructible)
 {
-    if (destructible == NULL) {
-        return;
-    }
-
+    assert(destructible != NULL);
     jaeger_in_memory_reporter* r = (jaeger_in_memory_reporter*) destructible;
 
     JAEGERTRACINGC_VECTOR_FOR_EACH(
@@ -119,9 +116,7 @@ bool jaeger_in_memory_reporter_init(jaeger_in_memory_reporter* reporter)
 
 static void composite_reporter_destroy(jaeger_destructible* destructible)
 {
-    if (destructible == NULL) {
-        return;
-    }
+    assert(destructible != NULL);
     jaeger_composite_reporter* r = (jaeger_composite_reporter*) destructible;
 
 #define DESTROY(x)                     \
@@ -198,9 +193,7 @@ bool jaeger_composite_reporter_init(jaeger_composite_reporter* reporter)
 
 static inline void process_destroy(Jaegertracing__Protobuf__Process* process)
 {
-    if (process == NULL) {
-        return;
-    }
+    assert(process != NULL);
     if (process->tags != NULL) {
         for (int i = 0; i < (int) process->n_tags; i++) {
             if (process->tags[i] != NULL) {
@@ -223,10 +216,8 @@ static inline bool build_process(Jaegertracing__Protobuf__Process* process,
 {
     assert(process != NULL);
     assert(tracer != NULL);
-    if (tracer->service_name == NULL || strlen(tracer->service_name) == 0) {
-        jaeger_log_error("Invalid null or empty service name");
-        return false;
-    }
+    assert(tracer->service_name != NULL);
+    assert(strlen(tracer->service_name) > 0);
     process->service_name = jaeger_strdup(tracer->service_name);
     if (process->service_name == NULL) {
         goto cleanup;
@@ -391,11 +382,9 @@ remote_reporter_update_queue_length(jaeger_remote_reporter* reporter)
     if (reporter->metrics == NULL) {
         return;
     }
-    if (reporter->metrics != NULL) {
-        jaeger_counter* dropped = reporter->metrics->reporter_dropped;
-        assert(dropped != NULL);
-        dropped->inc(dropped, 1);
-    }
+    jaeger_counter* dropped = reporter->metrics->reporter_dropped;
+    assert(dropped != NULL);
+    dropped->inc(dropped, 1);
 }
 
 static void remote_reporter_report(jaeger_reporter* reporter,

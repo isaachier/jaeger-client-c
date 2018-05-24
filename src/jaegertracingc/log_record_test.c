@@ -38,14 +38,14 @@ void test_log_record()
                                               .value = {.bool_value = true}};
     }
 
-    opentracing_log_record log_record = {
+    opentracing_log_record ot_log_record = {
         .timestamp = timestamp, .fields = fields, .num_fields = num_fields};
     jaeger_log_record log_record_copy;
     TEST_ASSERT_TRUE(
-        jaeger_log_record_from_opentracing(&log_record_copy, &log_record));
+        jaeger_log_record_from_opentracing(&log_record_copy, &ot_log_record));
 
     for (int i = 0; i < num_fields; i++) {
-        jaeger_free((char*) log_record.fields[i].key);
+        jaeger_free((char*) ot_log_record.fields[i].key);
     }
 
     Jaegertracing__Protobuf__Log log_record_pb;
@@ -54,4 +54,14 @@ void test_log_record()
 
     jaeger_log_record_destroy_wrapper(&log_record_copy);
     jaeger_log_record_protobuf_destroy_wrapper(&log_record_pb);
+
+    /* Test allocation failure. */
+    jaeger_set_allocator(jaeger_null_allocator());
+    jaeger_log_record log_record = JAEGERTRACINGC_LOG_RECORD_INIT;
+    TEST_ASSERT_FALSE(jaeger_log_record_copy(&log_record_copy, &log_record));
+    TEST_ASSERT_FALSE(
+        jaeger_log_record_from_opentracing(&log_record, &ot_log_record));
+    TEST_ASSERT_TRUE(
+        jaeger_log_record_to_protobuf(&log_record_pb, &log_record));
+    jaeger_set_allocator(jaeger_built_in_allocator());
 }

@@ -75,7 +75,8 @@ jaeger_probabilistic_sampler_is_sampled(jaeger_sampler* sampler,
     (void) trace_id;
     (void) operation_name;
     jaeger_probabilistic_sampler* s = (jaeger_probabilistic_sampler*) sampler;
-    const double random_value = ((double) ((uint64_t) random64())) / UINT64_MAX;
+    const long double random_value =
+        ((long double) ((uint64_t) jaeger_random64())) / UINT64_MAX;
     const bool decision = (s->sampling_rate >= random_value);
     if (tags != NULL &&
         jaeger_vector_reserve(tags, jaeger_vector_length(tags) + 2)) {

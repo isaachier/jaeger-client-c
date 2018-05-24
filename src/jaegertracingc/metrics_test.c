@@ -41,6 +41,7 @@ void test_metrics()
     jaeger_metrics metrics;
     jaeger_default_metrics_init(&metrics);
     jaeger_metrics_destroy(&metrics);
+    jaeger_metrics_destroy(NULL);
 
     jaeger_null_metrics();
 }

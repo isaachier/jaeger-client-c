@@ -102,6 +102,7 @@ void test_reporter()
         jaeger_hashtable_put(&span.context.baggage, "key", "value"));
     jaeger_reporter* r = jaeger_null_reporter();
     r->report(r, &span);
+    TEST_ASSERT_TRUE(r->flush(r));
     ((jaeger_destructible*) r)->destroy((jaeger_destructible*) r);
 
     jaeger_reporter reporter;
@@ -114,13 +115,33 @@ void test_reporter()
     TEST_ASSERT_TRUE(jaeger_in_memory_reporter_init(&in_memory_reporter));
     r = (jaeger_reporter*) &in_memory_reporter;
     r->report(r, &span);
+    r->report(r, NULL);
+    ((jaeger_destructible*) r)->destroy((jaeger_destructible*) r);
+
+    /* Test allocation failure for in memory reporter. */
+    TEST_ASSERT_TRUE(jaeger_in_memory_reporter_init(&in_memory_reporter));
+    jaeger_set_allocator(jaeger_null_allocator());
+    jaeger_in_memory_reporter fail_in_memory_reporter;
+    TEST_ASSERT_FALSE(jaeger_in_memory_reporter_init(&fail_in_memory_reporter));
+    for (int i = 0; i < JAEGERTRACINGC_VECTOR_INIT_CAPACITY; i++) {
+        r->report(r, &span);
+    }
+    r->report(r, &span);
+    jaeger_set_allocator(jaeger_built_in_allocator());
     ((jaeger_destructible*) r)->destroy((jaeger_destructible*) r);
 
     jaeger_composite_reporter composite_reporter;
     TEST_ASSERT_TRUE(jaeger_composite_reporter_init(&composite_reporter));
     r = (jaeger_reporter*) &composite_reporter;
     r->report(r, &span);
+    r->report(r, NULL);
+    TEST_ASSERT_TRUE(r->flush(r));
     ((jaeger_destructible*) r)->destroy((jaeger_destructible*) r);
+
+    /* Test allocation failure for composite reporter. */
+    jaeger_set_allocator(jaeger_null_allocator());
+    TEST_ASSERT_FALSE(jaeger_composite_reporter_init(&composite_reporter));
+    jaeger_set_allocator(jaeger_built_in_allocator());
 
     const int server_fd = start_udp_server();
     struct sockaddr_in addr;
