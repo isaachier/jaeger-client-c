@@ -441,9 +441,10 @@ jaeger_inject_into_custom(opentracing_custom_carrier_writer* writer,
                           jaeger_tracer* tracer,
                           const jaeger_span_context* ctx)
 {
-    /* TODO */
-    (void) writer;
-    (void) tracer;
-    (void) ctx;
-    return opentracing_propagation_error_code_success;
+    assert(writer != NULL);
+    assert(tracer != NULL);
+    assert(ctx != NULL);
+    return writer->inject(writer,
+                          (opentracing_tracer*) tracer,
+                          (const opentracing_span_context*) ctx);
 }

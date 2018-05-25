@@ -24,6 +24,7 @@
 #include "jaegertracingc/metrics.h"
 #include "jaegertracingc/options.h"
 #include "jaegertracingc/span.h"
+#include "jaegertracingc/tracer.h"
 #include "jaegertracingc/vector.h"
 
 typedef struct mock_text_map_reader {
@@ -503,6 +504,37 @@ static inline void test_binary()
     jaeger_metrics_destroy(&metrics);
 }
 
+static inline opentracing_propagation_error_code
+mock_custom_carrier_reader_extract(opentracing_custom_carrier_reader* reader,
+                                   const opentracing_tracer* tracer,
+                                   opentracing_span_context** ctx)
+{
+    (void) reader;
+    (void) tracer;
+    jaeger_span_context** c = (jaeger_span_context**) ctx;
+    TEST_ASSERT_NOT_NULL(c);
+    *c = jaeger_malloc(sizeof(jaeger_span_context));
+    TEST_ASSERT_NOT_NULL(*c);
+    **c = (jaeger_span_context) JAEGERTRACINGC_SPAN_CONTEXT_INIT;
+    return opentracing_propagation_error_code_success;
+}
+
+static inline void test_custom_carrier()
+{
+    jaeger_metrics metrics;
+    TEST_ASSERT_TRUE(jaeger_default_metrics_init(&metrics));
+    opentracing_custom_carrier_reader mock_reader;
+    mock_reader.extract = &mock_custom_carrier_reader_extract;
+    jaeger_span_context* ctx;
+    jaeger_tracer tracer; /* No need to actually initialize this. */
+    TEST_ASSERT_EQUAL(
+        opentracing_propagation_error_code_success,
+        jaeger_extract_from_custom(&mock_reader, &tracer, &ctx, &metrics));
+    jaeger_metrics_destroy(&metrics);
+    jaeger_span_context_destroy((jaeger_destructible*) ctx);
+    jaeger_free(ctx);
+}
+
 static inline void test_parse_key_value()
 {
     jaeger_hashtable baggage;
@@ -522,5 +554,6 @@ void test_propagation()
     test_text_map();
     test_http_headers();
     test_binary();
+    test_custom_carrier();
     test_parse_key_value();
 }

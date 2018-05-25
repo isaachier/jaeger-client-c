@@ -97,7 +97,7 @@ static const int jaeger_span_context_type_descriptor_length =
 
 #define JAEGERTRACINGC_SPAN_CONTEXT_INIT                                      \
     {                                                                         \
-        .base = {.base = {.destroy = jaeger_span_context_destroy},            \
+        .base = {.base = {.destroy = &jaeger_span_context_destroy},           \
                  .foreach_baggage_item =                                      \
                      &jaeger_span_context_foreach_baggage_item,               \
                  .type_descriptor = jaeger_span_context_type_descriptor,      \
