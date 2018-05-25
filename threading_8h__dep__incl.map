@@ -3,7 +3,8 @@
 <area shape="rect" id="node3" href="$mock__agent_8h.html" title="Key value pair representation. " alt="" coords="467,169,605,211"/>
 <area shape="rect" id="node4" href="$span_8h.html" title="Span, span context, and span ref representations and functions. " alt="" coords="179,87,325,114"/>
 <area shape="rect" id="node7" href="$reporter_8h.html" title="Span reporter interface. " alt="" coords="280,177,443,203"/>
-<area shape="rect" id="node8" href="$sampler_8h.html" title="Span sampler interface. " alt="" coords="454,87,618,114"/>
-<area shape="rect" id="node5" href="$propagation_8c.html" title="Trace ID representation. " alt="" coords="155,333,341,360"/>
-<area shape="rect" id="node6" href="$tracer_8h.html" title="Tracer implementation. " alt="" coords="258,259,409,285"/>
+<area shape="rect" id="node9" href="$sampler_8h.html" title="Span sampler interface. " alt="" coords="454,87,618,114"/>
+<area shape="rect" id="node5" href="$baggage_8h.html" title="Baggage restriction utilities. " alt="" coords="38,177,205,203"/>
+<area shape="rect" id="node6" href="$propagation_8c.html" title="Trace ID representation. " alt="" coords="209,333,394,360"/>
+<area shape="rect" id="node8" href="$tracer_8h.html" title="Tracer implementation. " alt="" coords="286,259,437,285"/>
 </map>

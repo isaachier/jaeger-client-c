@@ -1,6 +1,7 @@
 <map id="jaegertracingc/log_record.h" name="jaegertracingc/log_record.h">
-<area shape="rect" id="node2" href="$span_8h.html" title="Span, span context, and span ref representations and functions. " alt="" coords="19,95,166,121"/>
-<area shape="rect" id="node3" href="$propagation_8c.html" title="Trace ID representation. " alt="" coords="5,319,191,345"/>
-<area shape="rect" id="node4" href="$tracer_8h.html" title="Tracer implementation. " alt="" coords="80,244,231,271"/>
-<area shape="rect" id="node5" href="$reporter_8h.html" title="Span reporter interface. " alt="" coords="130,169,293,196"/>
+<area shape="rect" id="node2" href="$span_8h.html" title="Span, span context, and span ref representations and functions. " alt="" coords="137,95,283,121"/>
+<area shape="rect" id="node3" href="$baggage_8h.html" title="Baggage restriction utilities. " alt="" coords="5,169,172,196"/>
+<area shape="rect" id="node4" href="$propagation_8c.html" title="Trace ID representation. " alt="" coords="173,319,359,345"/>
+<area shape="rect" id="node5" href="$reporter_8h.html" title="Span reporter interface. " alt="" coords="247,169,410,196"/>
+<area shape="rect" id="node6" href="$tracer_8h.html" title="Tracer implementation. " alt="" coords="251,244,401,271"/>
 </map>

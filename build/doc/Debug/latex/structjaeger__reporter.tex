@@ -1,0 +1,55 @@
+\hypertarget{structjaeger__reporter}{}\section{jaeger\+\_\+reporter Struct Reference}
+\label{structjaeger__reporter}\index{jaeger\+\_\+reporter@{jaeger\+\_\+reporter}}
+\subsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{structjaeger__reporter_af897c2ec6ff7a5340f14008ffad9a209}\label{structjaeger__reporter_af897c2ec6ff7a5340f14008ffad9a209}} 
+jaeger\+\_\+destructible {\bfseries base}
+\item 
+void($\ast$ \mbox{\hyperlink{structjaeger__reporter_a39f5460f19fe10f0267a6e6be240c1cc}{report}} )(struct \mbox{\hyperlink{structjaeger__reporter}{jaeger\+\_\+reporter}} $\ast$reporter, const \mbox{\hyperlink{structjaeger__span}{jaeger\+\_\+span}} $\ast$span)
+\begin{DoxyCompactList}\small\item\em Report span. \end{DoxyCompactList}\item 
+bool($\ast$ \mbox{\hyperlink{structjaeger__reporter_a8cfdee6e96497116c184476050b8fb13}{flush}} )(struct \mbox{\hyperlink{structjaeger__reporter}{jaeger\+\_\+reporter}} $\ast$reporter)
+\begin{DoxyCompactList}\small\item\em Flush any pending spans. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Field Documentation}
+\mbox{\Hypertarget{structjaeger__reporter_a8cfdee6e96497116c184476050b8fb13}\label{structjaeger__reporter_a8cfdee6e96497116c184476050b8fb13}} 
+\index{jaeger\+\_\+reporter@{jaeger\+\_\+reporter}!flush@{flush}}
+\index{flush@{flush}!jaeger\+\_\+reporter@{jaeger\+\_\+reporter}}
+\subsubsection{\texorpdfstring{flush}{flush}}
+{\footnotesize\ttfamily bool($\ast$ jaeger\+\_\+reporter\+::flush) (struct \mbox{\hyperlink{structjaeger__reporter}{jaeger\+\_\+reporter}} $\ast$reporter)}
+
+
+
+Flush any pending spans. 
+
+Only used in remote reporter. 
+\begin{DoxyParams}{Parameters}
+{\em reporter} & Reporter instance. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True on success, false otherwise. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{structjaeger__reporter_a39f5460f19fe10f0267a6e6be240c1cc}\label{structjaeger__reporter_a39f5460f19fe10f0267a6e6be240c1cc}} 
+\index{jaeger\+\_\+reporter@{jaeger\+\_\+reporter}!report@{report}}
+\index{report@{report}!jaeger\+\_\+reporter@{jaeger\+\_\+reporter}}
+\subsubsection{\texorpdfstring{report}{report}}
+{\footnotesize\ttfamily void($\ast$ jaeger\+\_\+reporter\+::report) (struct \mbox{\hyperlink{structjaeger__reporter}{jaeger\+\_\+reporter}} $\ast$reporter, const \mbox{\hyperlink{structjaeger__span}{jaeger\+\_\+span}} $\ast$span)}
+
+
+
+Report span. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em reporter} & Reporter instance. \\
+\hline
+{\em span} & Span to report. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+jaegertracingc/\mbox{\hyperlink{reporter_8h}{reporter.\+h}}\end{DoxyCompactItemize}

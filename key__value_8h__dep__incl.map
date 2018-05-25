@@ -1,7 +1,9 @@
 <map id="jaegertracingc/key_value.h" name="jaegertracingc/key_value.h">
-<area shape="rect" id="node2" href="$hashtable_8h.html" title="Hashtable data structure. " alt="" coords="5,95,180,121"/>
-<area shape="rect" id="node3" href="$span_8h.html" title="Span, span context, and span ref representations and functions. " alt="" coords="205,95,351,121"/>
-<area shape="rect" id="node4" href="$propagation_8c.html" title="Trace ID representation. " alt="" coords="191,319,376,345"/>
-<area shape="rect" id="node5" href="$tracer_8h.html" title="Tracer implementation. " alt="" coords="265,244,416,271"/>
-<area shape="rect" id="node6" href="$reporter_8h.html" title="Span reporter interface. " alt="" coords="315,169,478,196"/>
+<area shape="rect" id="node2" href="$hashtable_8h.html" title="Hashtable data structure. " alt="" coords="46,95,221,121"/>
+<area shape="rect" id="node5" href="$span_8h.html" title="Span, span context, and span ref representations and functions. " alt="" coords="185,169,332,196"/>
+<area shape="rect" id="node3" href="$strings_8h.html" title="jaegertracingc/internal\l/strings.h" alt="" coords="5,319,155,360"/>
+<area shape="rect" id="node4" href="$propagation_8c.html" title="Trace ID representation. " alt="" coords="99,408,285,435"/>
+<area shape="rect" id="node6" href="$baggage_8h.html" title="Baggage restriction utilities. " alt="" coords="230,244,397,271"/>
+<area shape="rect" id="node7" href="$reporter_8h.html" title="Span reporter interface. " alt="" coords="421,244,584,271"/>
+<area shape="rect" id="node8" href="$tracer_8h.html" title="Tracer implementation. " alt="" coords="329,326,479,353"/>
 </map>

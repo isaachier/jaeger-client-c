@@ -1,0 +1,152 @@
+[
+{
+  "directory": "/home/ihier/proj/c/jaeger-client-c/build",
+  "command": "/usr/bin/cc -DHAVE_BUILTIN -DHAVE_GETRANDOM -DJAEGERTRACINGC_HAVE_ATOMICS -DJAEGERTRACINGC_MT -DJAEGERTRACINGC_STATIC -DLITTLE_ENDIAN -DPACKAGE_STRING=\"\\\"protobuf-c 1.3.0\\\"\" -DPACKAGE_VERSION=\\\"1.3.0\\\" -DWORDS_BIGENDIAN=0 -I/home/ihier/proj/c/jaeger-client-c/src -I/home/ihier/proj/c/jaeger-client-c/build/src -isystem /home/ihier/.hunter/_Base/88e3c80/9f55789/c94c43f/Install/include  -g -fPIC   -Wall -Werror -Wextra -std=gnu99 -o CMakeFiles/jaegertracingc.dir/src/jaegertracingc/alloc.c.o   -c /home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/alloc.c",
+  "file": "/home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/alloc.c"
+},
+{
+  "directory": "/home/ihier/proj/c/jaeger-client-c/build",
+  "command": "/usr/bin/cc -DHAVE_BUILTIN -DHAVE_GETRANDOM -DJAEGERTRACINGC_HAVE_ATOMICS -DJAEGERTRACINGC_MT -DJAEGERTRACINGC_STATIC -DLITTLE_ENDIAN -DPACKAGE_STRING=\"\\\"protobuf-c 1.3.0\\\"\" -DPACKAGE_VERSION=\\\"1.3.0\\\" -DWORDS_BIGENDIAN=0 -I/home/ihier/proj/c/jaeger-client-c/src -I/home/ihier/proj/c/jaeger-client-c/build/src -isystem /home/ihier/.hunter/_Base/88e3c80/9f55789/c94c43f/Install/include  -g -fPIC   -Wall -Werror -Wextra -std=gnu99 -o CMakeFiles/jaegertracingc.dir/src/jaegertracingc/baggage.c.o   -c /home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/baggage.c",
+  "file": "/home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/baggage.c"
+},
+{
+  "directory": "/home/ihier/proj/c/jaeger-client-c/build",
+  "command": "/usr/bin/cc -DHAVE_BUILTIN -DHAVE_GETRANDOM -DJAEGERTRACINGC_HAVE_ATOMICS -DJAEGERTRACINGC_MT -DJAEGERTRACINGC_STATIC -DLITTLE_ENDIAN -DPACKAGE_STRING=\"\\\"protobuf-c 1.3.0\\\"\" -DPACKAGE_VERSION=\\\"1.3.0\\\" -DWORDS_BIGENDIAN=0 -I/home/ihier/proj/c/jaeger-client-c/src -I/home/ihier/proj/c/jaeger-client-c/build/src -isystem /home/ihier/.hunter/_Base/88e3c80/9f55789/c94c43f/Install/include  -g -fPIC   -Wall -Werror -Wextra -std=gnu99 -o CMakeFiles/jaegertracingc.dir/src/jaegertracingc/clock.c.o   -c /home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/clock.c",
+  "file": "/home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/clock.c"
+},
+{
+  "directory": "/home/ihier/proj/c/jaeger-client-c/build",
+  "command": "/usr/bin/cc -DHAVE_BUILTIN -DHAVE_GETRANDOM -DJAEGERTRACINGC_HAVE_ATOMICS -DJAEGERTRACINGC_MT -DJAEGERTRACINGC_STATIC -DLITTLE_ENDIAN -DPACKAGE_STRING=\"\\\"protobuf-c 1.3.0\\\"\" -DPACKAGE_VERSION=\\\"1.3.0\\\" -DWORDS_BIGENDIAN=0 -I/home/ihier/proj/c/jaeger-client-c/src -I/home/ihier/proj/c/jaeger-client-c/build/src -isystem /home/ihier/.hunter/_Base/88e3c80/9f55789/c94c43f/Install/include  -g -fPIC   -Wall -Werror -Wextra -std=gnu99 -o CMakeFiles/jaegertracingc.dir/src/jaegertracingc/common.c.o   -c /home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/common.c",
+  "file": "/home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/common.c"
+},
+{
+  "directory": "/home/ihier/proj/c/jaeger-client-c/build",
+  "command": "/usr/bin/cc -DHAVE_BUILTIN -DHAVE_GETRANDOM -DJAEGERTRACINGC_HAVE_ATOMICS -DJAEGERTRACINGC_MT -DJAEGERTRACINGC_STATIC -DLITTLE_ENDIAN -DPACKAGE_STRING=\"\\\"protobuf-c 1.3.0\\\"\" -DPACKAGE_VERSION=\\\"1.3.0\\\" -DWORDS_BIGENDIAN=0 -I/home/ihier/proj/c/jaeger-client-c/src -I/home/ihier/proj/c/jaeger-client-c/build/src -isystem /home/ihier/.hunter/_Base/88e3c80/9f55789/c94c43f/Install/include  -g -fPIC   -Wall -Werror -Wextra -std=gnu99 -o CMakeFiles/jaegertracingc.dir/src/jaegertracingc/constants.c.o   -c /home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/constants.c",
+  "file": "/home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/constants.c"
+},
+{
+  "directory": "/home/ihier/proj/c/jaeger-client-c/build",
+  "command": "/usr/bin/cc -DHAVE_BUILTIN -DHAVE_GETRANDOM -DJAEGERTRACINGC_HAVE_ATOMICS -DJAEGERTRACINGC_MT -DJAEGERTRACINGC_STATIC -DLITTLE_ENDIAN -DPACKAGE_STRING=\"\\\"protobuf-c 1.3.0\\\"\" -DPACKAGE_VERSION=\\\"1.3.0\\\" -DWORDS_BIGENDIAN=0 -I/home/ihier/proj/c/jaeger-client-c/src -I/home/ihier/proj/c/jaeger-client-c/build/src -isystem /home/ihier/.hunter/_Base/88e3c80/9f55789/c94c43f/Install/include  -g -fPIC   -Wall -Werror -Wextra -std=gnu99 -o CMakeFiles/jaegertracingc.dir/src/jaegertracingc/hashtable.c.o   -c /home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/hashtable.c",
+  "file": "/home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/hashtable.c"
+},
+{
+  "directory": "/home/ihier/proj/c/jaeger-client-c/build",
+  "command": "/usr/bin/cc -DHAVE_BUILTIN -DHAVE_GETRANDOM -DJAEGERTRACINGC_HAVE_ATOMICS -DJAEGERTRACINGC_MT -DJAEGERTRACINGC_STATIC -DLITTLE_ENDIAN -DPACKAGE_STRING=\"\\\"protobuf-c 1.3.0\\\"\" -DPACKAGE_VERSION=\\\"1.3.0\\\" -DWORDS_BIGENDIAN=0 -I/home/ihier/proj/c/jaeger-client-c/src -I/home/ihier/proj/c/jaeger-client-c/build/src -isystem /home/ihier/.hunter/_Base/88e3c80/9f55789/c94c43f/Install/include  -g -fPIC   -Wall -Werror -Wextra -std=gnu99 -o CMakeFiles/jaegertracingc.dir/src/jaegertracingc/key_value.c.o   -c /home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/key_value.c",
+  "file": "/home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/key_value.c"
+},
+{
+  "directory": "/home/ihier/proj/c/jaeger-client-c/build",
+  "command": "/usr/bin/cc -DHAVE_BUILTIN -DHAVE_GETRANDOM -DJAEGERTRACINGC_HAVE_ATOMICS -DJAEGERTRACINGC_MT -DJAEGERTRACINGC_STATIC -DLITTLE_ENDIAN -DPACKAGE_STRING=\"\\\"protobuf-c 1.3.0\\\"\" -DPACKAGE_VERSION=\\\"1.3.0\\\" -DWORDS_BIGENDIAN=0 -I/home/ihier/proj/c/jaeger-client-c/src -I/home/ihier/proj/c/jaeger-client-c/build/src -isystem /home/ihier/.hunter/_Base/88e3c80/9f55789/c94c43f/Install/include  -g -fPIC   -Wall -Werror -Wextra -std=gnu99 -o CMakeFiles/jaegertracingc.dir/src/jaegertracingc/list.c.o   -c /home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/list.c",
+  "file": "/home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/list.c"
+},
+{
+  "directory": "/home/ihier/proj/c/jaeger-client-c/build",
+  "command": "/usr/bin/cc -DHAVE_BUILTIN -DHAVE_GETRANDOM -DJAEGERTRACINGC_HAVE_ATOMICS -DJAEGERTRACINGC_MT -DJAEGERTRACINGC_STATIC -DLITTLE_ENDIAN -DPACKAGE_STRING=\"\\\"protobuf-c 1.3.0\\\"\" -DPACKAGE_VERSION=\\\"1.3.0\\\" -DWORDS_BIGENDIAN=0 -I/home/ihier/proj/c/jaeger-client-c/src -I/home/ihier/proj/c/jaeger-client-c/build/src -isystem /home/ihier/.hunter/_Base/88e3c80/9f55789/c94c43f/Install/include  -g -fPIC   -Wall -Werror -Wextra -std=gnu99 -o CMakeFiles/jaegertracingc.dir/src/jaegertracingc/log_record.c.o   -c /home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/log_record.c",
+  "file": "/home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/log_record.c"
+},
+{
+  "directory": "/home/ihier/proj/c/jaeger-client-c/build",
+  "command": "/usr/bin/cc -DHAVE_BUILTIN -DHAVE_GETRANDOM -DJAEGERTRACINGC_HAVE_ATOMICS -DJAEGERTRACINGC_MT -DJAEGERTRACINGC_STATIC -DLITTLE_ENDIAN -DPACKAGE_STRING=\"\\\"protobuf-c 1.3.0\\\"\" -DPACKAGE_VERSION=\\\"1.3.0\\\" -DWORDS_BIGENDIAN=0 -I/home/ihier/proj/c/jaeger-client-c/src -I/home/ihier/proj/c/jaeger-client-c/build/src -isystem /home/ihier/.hunter/_Base/88e3c80/9f55789/c94c43f/Install/include  -g -fPIC   -Wall -Werror -Wextra -std=gnu99 -o CMakeFiles/jaegertracingc.dir/src/jaegertracingc/logging.c.o   -c /home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/logging.c",
+  "file": "/home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/logging.c"
+},
+{
+  "directory": "/home/ihier/proj/c/jaeger-client-c/build",
+  "command": "/usr/bin/cc -DHAVE_BUILTIN -DHAVE_GETRANDOM -DJAEGERTRACINGC_HAVE_ATOMICS -DJAEGERTRACINGC_MT -DJAEGERTRACINGC_STATIC -DLITTLE_ENDIAN -DPACKAGE_STRING=\"\\\"protobuf-c 1.3.0\\\"\" -DPACKAGE_VERSION=\\\"1.3.0\\\" -DWORDS_BIGENDIAN=0 -I/home/ihier/proj/c/jaeger-client-c/src -I/home/ihier/proj/c/jaeger-client-c/build/src -isystem /home/ihier/.hunter/_Base/88e3c80/9f55789/c94c43f/Install/include  -g -fPIC   -Wall -Werror -Wextra -std=gnu99 -o CMakeFiles/jaegertracingc.dir/src/jaegertracingc/metrics.c.o   -c /home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/metrics.c",
+  "file": "/home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/metrics.c"
+},
+{
+  "directory": "/home/ihier/proj/c/jaeger-client-c/build",
+  "command": "/usr/bin/cc -DHAVE_BUILTIN -DHAVE_GETRANDOM -DJAEGERTRACINGC_HAVE_ATOMICS -DJAEGERTRACINGC_MT -DJAEGERTRACINGC_STATIC -DLITTLE_ENDIAN -DPACKAGE_STRING=\"\\\"protobuf-c 1.3.0\\\"\" -DPACKAGE_VERSION=\\\"1.3.0\\\" -DWORDS_BIGENDIAN=0 -I/home/ihier/proj/c/jaeger-client-c/src -I/home/ihier/proj/c/jaeger-client-c/build/src -isystem /home/ihier/.hunter/_Base/88e3c80/9f55789/c94c43f/Install/include  -g -fPIC   -Wall -Werror -Wextra -std=gnu99 -o CMakeFiles/jaegertracingc.dir/src/jaegertracingc/net.c.o   -c /home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/net.c",
+  "file": "/home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/net.c"
+},
+{
+  "directory": "/home/ihier/proj/c/jaeger-client-c/build",
+  "command": "/usr/bin/cc -DHAVE_BUILTIN -DHAVE_GETRANDOM -DJAEGERTRACINGC_HAVE_ATOMICS -DJAEGERTRACINGC_MT -DJAEGERTRACINGC_STATIC -DLITTLE_ENDIAN -DPACKAGE_STRING=\"\\\"protobuf-c 1.3.0\\\"\" -DPACKAGE_VERSION=\\\"1.3.0\\\" -DWORDS_BIGENDIAN=0 -I/home/ihier/proj/c/jaeger-client-c/src -I/home/ihier/proj/c/jaeger-client-c/build/src -isystem /home/ihier/.hunter/_Base/88e3c80/9f55789/c94c43f/Install/include  -g -fPIC   -Wall -Werror -Wextra -std=gnu99 -o CMakeFiles/jaegertracingc.dir/src/jaegertracingc/options.c.o   -c /home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/options.c",
+  "file": "/home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/options.c"
+},
+{
+  "directory": "/home/ihier/proj/c/jaeger-client-c/build",
+  "command": "/usr/bin/cc -DHAVE_BUILTIN -DHAVE_GETRANDOM -DJAEGERTRACINGC_HAVE_ATOMICS -DJAEGERTRACINGC_MT -DJAEGERTRACINGC_STATIC -DLITTLE_ENDIAN -DPACKAGE_STRING=\"\\\"protobuf-c 1.3.0\\\"\" -DPACKAGE_VERSION=\\\"1.3.0\\\" -DWORDS_BIGENDIAN=0 -I/home/ihier/proj/c/jaeger-client-c/src -I/home/ihier/proj/c/jaeger-client-c/build/src -isystem /home/ihier/.hunter/_Base/88e3c80/9f55789/c94c43f/Install/include  -g -fPIC   -Wall -Werror -Wextra -std=gnu99 -o CMakeFiles/jaegertracingc.dir/src/jaegertracingc/propagation.c.o   -c /home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/propagation.c",
+  "file": "/home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/propagation.c"
+},
+{
+  "directory": "/home/ihier/proj/c/jaeger-client-c/build",
+  "command": "/usr/bin/cc -DHAVE_BUILTIN -DHAVE_GETRANDOM -DJAEGERTRACINGC_HAVE_ATOMICS -DJAEGERTRACINGC_MT -DJAEGERTRACINGC_STATIC -DLITTLE_ENDIAN -DPACKAGE_STRING=\"\\\"protobuf-c 1.3.0\\\"\" -DPACKAGE_VERSION=\\\"1.3.0\\\" -DWORDS_BIGENDIAN=0 -I/home/ihier/proj/c/jaeger-client-c/src -I/home/ihier/proj/c/jaeger-client-c/build/src -isystem /home/ihier/.hunter/_Base/88e3c80/9f55789/c94c43f/Install/include  -g -fPIC   -Wall -Werror -Wextra -std=gnu99 -o CMakeFiles/jaegertracingc.dir/src/jaegertracingc/random.c.o   -c /home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/random.c",
+  "file": "/home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/random.c"
+},
+{
+  "directory": "/home/ihier/proj/c/jaeger-client-c/build",
+  "command": "/usr/bin/cc -DHAVE_BUILTIN -DHAVE_GETRANDOM -DJAEGERTRACINGC_HAVE_ATOMICS -DJAEGERTRACINGC_MT -DJAEGERTRACINGC_STATIC -DLITTLE_ENDIAN -DPACKAGE_STRING=\"\\\"protobuf-c 1.3.0\\\"\" -DPACKAGE_VERSION=\\\"1.3.0\\\" -DWORDS_BIGENDIAN=0 -I/home/ihier/proj/c/jaeger-client-c/src -I/home/ihier/proj/c/jaeger-client-c/build/src -isystem /home/ihier/.hunter/_Base/88e3c80/9f55789/c94c43f/Install/include  -g -fPIC   -Wall -Werror -Wextra -std=gnu99 -o CMakeFiles/jaegertracingc.dir/src/jaegertracingc/reporter.c.o   -c /home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/reporter.c",
+  "file": "/home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/reporter.c"
+},
+{
+  "directory": "/home/ihier/proj/c/jaeger-client-c/build",
+  "command": "/usr/bin/cc -DHAVE_BUILTIN -DHAVE_GETRANDOM -DJAEGERTRACINGC_HAVE_ATOMICS -DJAEGERTRACINGC_MT -DJAEGERTRACINGC_STATIC -DLITTLE_ENDIAN -DPACKAGE_STRING=\"\\\"protobuf-c 1.3.0\\\"\" -DPACKAGE_VERSION=\\\"1.3.0\\\" -DWORDS_BIGENDIAN=0 -I/home/ihier/proj/c/jaeger-client-c/src -I/home/ihier/proj/c/jaeger-client-c/build/src -isystem /home/ihier/.hunter/_Base/88e3c80/9f55789/c94c43f/Install/include  -g -fPIC   -Wall -Werror -Wextra -std=gnu99 -o CMakeFiles/jaegertracingc.dir/src/jaegertracingc/sampler.c.o   -c /home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/sampler.c",
+  "file": "/home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/sampler.c"
+},
+{
+  "directory": "/home/ihier/proj/c/jaeger-client-c/build",
+  "command": "/usr/bin/cc -DHAVE_BUILTIN -DHAVE_GETRANDOM -DJAEGERTRACINGC_HAVE_ATOMICS -DJAEGERTRACINGC_MT -DJAEGERTRACINGC_STATIC -DLITTLE_ENDIAN -DPACKAGE_STRING=\"\\\"protobuf-c 1.3.0\\\"\" -DPACKAGE_VERSION=\\\"1.3.0\\\" -DWORDS_BIGENDIAN=0 -I/home/ihier/proj/c/jaeger-client-c/src -I/home/ihier/proj/c/jaeger-client-c/build/src -isystem /home/ihier/.hunter/_Base/88e3c80/9f55789/c94c43f/Install/include  -g -fPIC   -Wall -Werror -Wextra -std=gnu99 -o CMakeFiles/jaegertracingc.dir/src/jaegertracingc/sampling_strategy.c.o   -c /home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/sampling_strategy.c",
+  "file": "/home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/sampling_strategy.c"
+},
+{
+  "directory": "/home/ihier/proj/c/jaeger-client-c/build",
+  "command": "/usr/bin/cc -DHAVE_BUILTIN -DHAVE_GETRANDOM -DJAEGERTRACINGC_HAVE_ATOMICS -DJAEGERTRACINGC_MT -DJAEGERTRACINGC_STATIC -DLITTLE_ENDIAN -DPACKAGE_STRING=\"\\\"protobuf-c 1.3.0\\\"\" -DPACKAGE_VERSION=\\\"1.3.0\\\" -DWORDS_BIGENDIAN=0 -I/home/ihier/proj/c/jaeger-client-c/src -I/home/ihier/proj/c/jaeger-client-c/build/src -isystem /home/ihier/.hunter/_Base/88e3c80/9f55789/c94c43f/Install/include  -g -fPIC   -Wall -Werror -Wextra -std=gnu99 -o CMakeFiles/jaegertracingc.dir/src/jaegertracingc/siphash.c.o   -c /home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/siphash.c",
+  "file": "/home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/siphash.c"
+},
+{
+  "directory": "/home/ihier/proj/c/jaeger-client-c/build",
+  "command": "/usr/bin/cc -DHAVE_BUILTIN -DHAVE_GETRANDOM -DJAEGERTRACINGC_HAVE_ATOMICS -DJAEGERTRACINGC_MT -DJAEGERTRACINGC_STATIC -DLITTLE_ENDIAN -DPACKAGE_STRING=\"\\\"protobuf-c 1.3.0\\\"\" -DPACKAGE_VERSION=\\\"1.3.0\\\" -DWORDS_BIGENDIAN=0 -I/home/ihier/proj/c/jaeger-client-c/src -I/home/ihier/proj/c/jaeger-client-c/build/src -isystem /home/ihier/.hunter/_Base/88e3c80/9f55789/c94c43f/Install/include  -g -fPIC   -Wall -Werror -Wextra -std=gnu99 -o CMakeFiles/jaegertracingc.dir/src/jaegertracingc/span.c.o   -c /home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/span.c",
+  "file": "/home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/span.c"
+},
+{
+  "directory": "/home/ihier/proj/c/jaeger-client-c/build",
+  "command": "/usr/bin/cc -DHAVE_BUILTIN -DHAVE_GETRANDOM -DJAEGERTRACINGC_HAVE_ATOMICS -DJAEGERTRACINGC_MT -DJAEGERTRACINGC_STATIC -DLITTLE_ENDIAN -DPACKAGE_STRING=\"\\\"protobuf-c 1.3.0\\\"\" -DPACKAGE_VERSION=\\\"1.3.0\\\" -DWORDS_BIGENDIAN=0 -I/home/ihier/proj/c/jaeger-client-c/src -I/home/ihier/proj/c/jaeger-client-c/build/src -isystem /home/ihier/.hunter/_Base/88e3c80/9f55789/c94c43f/Install/include  -g -fPIC   -Wall -Werror -Wextra -std=gnu99 -o CMakeFiles/jaegertracingc.dir/src/jaegertracingc/tag.c.o   -c /home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/tag.c",
+  "file": "/home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/tag.c"
+},
+{
+  "directory": "/home/ihier/proj/c/jaeger-client-c/build",
+  "command": "/usr/bin/cc -DHAVE_BUILTIN -DHAVE_GETRANDOM -DJAEGERTRACINGC_HAVE_ATOMICS -DJAEGERTRACINGC_MT -DJAEGERTRACINGC_STATIC -DLITTLE_ENDIAN -DPACKAGE_STRING=\"\\\"protobuf-c 1.3.0\\\"\" -DPACKAGE_VERSION=\\\"1.3.0\\\" -DWORDS_BIGENDIAN=0 -I/home/ihier/proj/c/jaeger-client-c/src -I/home/ihier/proj/c/jaeger-client-c/build/src -isystem /home/ihier/.hunter/_Base/88e3c80/9f55789/c94c43f/Install/include  -g -fPIC   -Wall -Werror -Wextra -std=gnu99 -o CMakeFiles/jaegertracingc.dir/src/jaegertracingc/threading.c.o   -c /home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/threading.c",
+  "file": "/home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/threading.c"
+},
+{
+  "directory": "/home/ihier/proj/c/jaeger-client-c/build",
+  "command": "/usr/bin/cc -DHAVE_BUILTIN -DHAVE_GETRANDOM -DJAEGERTRACINGC_HAVE_ATOMICS -DJAEGERTRACINGC_MT -DJAEGERTRACINGC_STATIC -DLITTLE_ENDIAN -DPACKAGE_STRING=\"\\\"protobuf-c 1.3.0\\\"\" -DPACKAGE_VERSION=\\\"1.3.0\\\" -DWORDS_BIGENDIAN=0 -I/home/ihier/proj/c/jaeger-client-c/src -I/home/ihier/proj/c/jaeger-client-c/build/src -isystem /home/ihier/.hunter/_Base/88e3c80/9f55789/c94c43f/Install/include  -g -fPIC   -Wall -Werror -Wextra -std=gnu99 -o CMakeFiles/jaegertracingc.dir/src/jaegertracingc/token_bucket.c.o   -c /home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/token_bucket.c",
+  "file": "/home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/token_bucket.c"
+},
+{
+  "directory": "/home/ihier/proj/c/jaeger-client-c/build",
+  "command": "/usr/bin/cc -DHAVE_BUILTIN -DHAVE_GETRANDOM -DJAEGERTRACINGC_HAVE_ATOMICS -DJAEGERTRACINGC_MT -DJAEGERTRACINGC_STATIC -DLITTLE_ENDIAN -DPACKAGE_STRING=\"\\\"protobuf-c 1.3.0\\\"\" -DPACKAGE_VERSION=\\\"1.3.0\\\" -DWORDS_BIGENDIAN=0 -I/home/ihier/proj/c/jaeger-client-c/src -I/home/ihier/proj/c/jaeger-client-c/build/src -isystem /home/ihier/.hunter/_Base/88e3c80/9f55789/c94c43f/Install/include  -g -fPIC   -Wall -Werror -Wextra -std=gnu99 -o CMakeFiles/jaegertracingc.dir/src/jaegertracingc/trace_id.c.o   -c /home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/trace_id.c",
+  "file": "/home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/trace_id.c"
+},
+{
+  "directory": "/home/ihier/proj/c/jaeger-client-c/build",
+  "command": "/usr/bin/cc -DHAVE_BUILTIN -DHAVE_GETRANDOM -DJAEGERTRACINGC_HAVE_ATOMICS -DJAEGERTRACINGC_MT -DJAEGERTRACINGC_STATIC -DLITTLE_ENDIAN -DPACKAGE_STRING=\"\\\"protobuf-c 1.3.0\\\"\" -DPACKAGE_VERSION=\\\"1.3.0\\\" -DWORDS_BIGENDIAN=0 -I/home/ihier/proj/c/jaeger-client-c/src -I/home/ihier/proj/c/jaeger-client-c/build/src -isystem /home/ihier/.hunter/_Base/88e3c80/9f55789/c94c43f/Install/include  -g -fPIC   -Wall -Werror -Wextra -std=gnu99 -o CMakeFiles/jaegertracingc.dir/src/jaegertracingc/tracer.c.o   -c /home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/tracer.c",
+  "file": "/home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/tracer.c"
+},
+{
+  "directory": "/home/ihier/proj/c/jaeger-client-c/build",
+  "command": "/usr/bin/cc -DHAVE_BUILTIN -DHAVE_GETRANDOM -DJAEGERTRACINGC_HAVE_ATOMICS -DJAEGERTRACINGC_MT -DJAEGERTRACINGC_STATIC -DLITTLE_ENDIAN -DPACKAGE_STRING=\"\\\"protobuf-c 1.3.0\\\"\" -DPACKAGE_VERSION=\\\"1.3.0\\\" -DWORDS_BIGENDIAN=0 -I/home/ihier/proj/c/jaeger-client-c/src -I/home/ihier/proj/c/jaeger-client-c/build/src -isystem /home/ihier/.hunter/_Base/88e3c80/9f55789/c94c43f/Install/include  -g -fPIC   -Wall -Werror -Wextra -std=gnu99 -o CMakeFiles/jaegertracingc.dir/src/jaegertracingc/vector.c.o   -c /home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/vector.c",
+  "file": "/home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/vector.c"
+},
+{
+  "directory": "/home/ihier/proj/c/jaeger-client-c/build",
+  "command": "/usr/bin/cc -DHAVE_BUILTIN -DHAVE_GETRANDOM -DJAEGERTRACINGC_HAVE_ATOMICS -DJAEGERTRACINGC_MT -DJAEGERTRACINGC_STATIC -DLITTLE_ENDIAN -DPACKAGE_STRING=\"\\\"protobuf-c 1.3.0\\\"\" -DPACKAGE_VERSION=\\\"1.3.0\\\" -DWORDS_BIGENDIAN=0 -I/home/ihier/proj/c/jaeger-client-c/src -I/home/ihier/proj/c/jaeger-client-c/build/src -isystem /home/ihier/.hunter/_Base/88e3c80/9f55789/c94c43f/Install/include  -g -fPIC   -Wall -Werror -Wextra -std=gnu99 -o CMakeFiles/jaegertracingc.dir/src/jaegertracingc/protoc-gen/agent.pb-c.c.o   -c /home/ihier/proj/c/jaeger-client-c/build/src/jaegertracingc/protoc-gen/agent.pb-c.c",
+  "file": "/home/ihier/proj/c/jaeger-client-c/build/src/jaegertracingc/protoc-gen/agent.pb-c.c"
+},
+{
+  "directory": "/home/ihier/proj/c/jaeger-client-c/build",
+  "command": "/usr/bin/cc -DHAVE_BUILTIN -DHAVE_GETRANDOM -DJAEGERTRACINGC_HAVE_ATOMICS -DJAEGERTRACINGC_MT -DJAEGERTRACINGC_STATIC -DLITTLE_ENDIAN -DPACKAGE_STRING=\"\\\"protobuf-c 1.3.0\\\"\" -DPACKAGE_VERSION=\\\"1.3.0\\\" -DWORDS_BIGENDIAN=0 -I/home/ihier/proj/c/jaeger-client-c/src -I/home/ihier/proj/c/jaeger-client-c/build/src -isystem /home/ihier/.hunter/_Base/88e3c80/9f55789/c94c43f/Install/include  -g -fPIC   -Wall -Werror -Wextra -std=gnu99 -o CMakeFiles/jaegertracingc.dir/src/jaegertracingc/protoc-gen/baggage.pb-c.c.o   -c /home/ihier/proj/c/jaeger-client-c/build/src/jaegertracingc/protoc-gen/baggage.pb-c.c",
+  "file": "/home/ihier/proj/c/jaeger-client-c/build/src/jaegertracingc/protoc-gen/baggage.pb-c.c"
+},
+{
+  "directory": "/home/ihier/proj/c/jaeger-client-c/build",
+  "command": "/usr/bin/cc -DHAVE_BUILTIN -DHAVE_GETRANDOM -DJAEGERTRACINGC_HAVE_ATOMICS -DJAEGERTRACINGC_MT -DJAEGERTRACINGC_STATIC -DLITTLE_ENDIAN -DPACKAGE_STRING=\"\\\"protobuf-c 1.3.0\\\"\" -DPACKAGE_VERSION=\\\"1.3.0\\\" -DWORDS_BIGENDIAN=0 -I/home/ihier/proj/c/jaeger-client-c/src -I/home/ihier/proj/c/jaeger-client-c/build/src -isystem /home/ihier/.hunter/_Base/88e3c80/9f55789/c94c43f/Install/include  -g -fPIC   -Wall -Werror -Wextra -std=gnu99 -o CMakeFiles/jaegertracingc.dir/src/jaegertracingc/protoc-gen/jaeger.pb-c.c.o   -c /home/ihier/proj/c/jaeger-client-c/build/src/jaegertracingc/protoc-gen/jaeger.pb-c.c",
+  "file": "/home/ihier/proj/c/jaeger-client-c/build/src/jaegertracingc/protoc-gen/jaeger.pb-c.c"
+},
+{
+  "directory": "/home/ihier/proj/c/jaeger-client-c/build",
+  "command": "/usr/bin/cc -DHAVE_BUILTIN -DHAVE_GETRANDOM -DJAEGERTRACINGC_HAVE_ATOMICS -DJAEGERTRACINGC_MT -DJAEGERTRACINGC_STATIC -DLITTLE_ENDIAN -DPACKAGE_STRING=\"\\\"protobuf-c 1.3.0\\\"\" -DPACKAGE_VERSION=\\\"1.3.0\\\" -DWORDS_BIGENDIAN=0 -I/home/ihier/proj/c/jaeger-client-c/src -I/home/ihier/proj/c/jaeger-client-c/build/src -isystem /home/ihier/.hunter/_Base/88e3c80/9f55789/c94c43f/Install/include  -g -fPIC   -Wall -Werror -Wextra -std=gnu99 -o CMakeFiles/jaegertracingc.dir/src/jaegertracingc/protoc-gen/sampling.pb-c.c.o   -c /home/ihier/proj/c/jaeger-client-c/build/src/jaegertracingc/protoc-gen/sampling.pb-c.c",
+  "file": "/home/ihier/proj/c/jaeger-client-c/build/src/jaegertracingc/protoc-gen/sampling.pb-c.c"
+}
+]

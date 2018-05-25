@@ -1,0 +1,38 @@
+\hypertarget{endian_8h}{}\section{jaegertracingc/internal/endian.h File Reference}
+\label{endian_8h}\index{jaegertracingc/internal/endian.\+h@{jaegertracingc/internal/endian.\+h}}
+{\ttfamily \#include $<$endian.\+h$>$}\newline
+Include dependency graph for endian.\+h\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=210pt]{endian_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=224pt]{endian_8h__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{endian_8h_ab2d851980460d74a294c99768e68f45c}\label{endian_8h_ab2d851980460d74a294c99768e68f45c}} 
+\#define {\bfseries B\+Y\+T\+E\+S\+W\+A\+P64}(x)~be64toh((x))
+\item 
+\mbox{\Hypertarget{endian_8h_ab55feb41f784e836c8af8902e80e6e04}\label{endian_8h_ab55feb41f784e836c8af8902e80e6e04}} 
+\#define {\bfseries B\+Y\+T\+E\+S\+W\+A\+P32}(x)~be32toh((x))
+\item 
+\mbox{\Hypertarget{endian_8h_a758da2f6ffbe5137c3299ee64e4e9ade}\label{endian_8h_a758da2f6ffbe5137c3299ee64e4e9ade}} 
+\#define {\bfseries B\+I\+G\+\_\+\+E\+N\+D\+I\+A\+N\+\_\+64\+\_\+\+T\+O\+\_\+\+H\+O\+ST}(x)~B\+Y\+T\+E\+S\+W\+A\+P64(x)
+\item 
+\mbox{\Hypertarget{endian_8h_aa7291a2e9ea1417cc2267d7674c81565}\label{endian_8h_aa7291a2e9ea1417cc2267d7674c81565}} 
+\#define {\bfseries B\+I\+G\+\_\+\+E\+N\+D\+I\+A\+N\+\_\+32\+\_\+\+T\+O\+\_\+\+H\+O\+ST}(x)~B\+Y\+T\+E\+S\+W\+A\+P32(x)
+\item 
+\mbox{\Hypertarget{endian_8h_a67fee3084ff2a6a661779b2172d634b4}\label{endian_8h_a67fee3084ff2a6a661779b2172d634b4}} 
+\#define {\bfseries H\+O\+S\+T\+\_\+\+T\+O\+\_\+\+B\+I\+G\+\_\+\+E\+N\+D\+I\+A\+N\+\_\+64}(x)~B\+I\+G\+\_\+\+E\+N\+D\+I\+A\+N\+\_\+64\+\_\+\+T\+O\+\_\+\+H\+O\+ST(x)
+\item 
+\mbox{\Hypertarget{endian_8h_af9e6097802072cead05ad7ce64d38f4d}\label{endian_8h_af9e6097802072cead05ad7ce64d38f4d}} 
+\#define {\bfseries H\+O\+S\+T\+\_\+\+T\+O\+\_\+\+B\+I\+G\+\_\+\+E\+N\+D\+I\+A\+N\+\_\+32}(x)~B\+I\+G\+\_\+\+E\+N\+D\+I\+A\+N\+\_\+32\+\_\+\+T\+O\+\_\+\+H\+O\+ST(x)
+\end{DoxyCompactItemize}

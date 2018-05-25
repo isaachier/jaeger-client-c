@@ -12,54 +12,54 @@
 <!-- Node41 -->
 <g id="node1" class="node">
 <title>Node41</title>
-<polygon fill="#bfbfbf" stroke="#000000" points="53.5,-123.5 53.5,-142.5 176.5,-142.5 176.5,-123.5 53.5,-123.5"/>
-<text text-anchor="middle" x="115" y="-130.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">jaegertracingc/sampler.h</text>
+<polygon fill="#bfbfbf" stroke="#000000" points="71,-123.5 71,-142.5 194,-142.5 194,-123.5 71,-123.5"/>
+<text text-anchor="middle" x="132.5" y="-130.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">jaegertracingc/sampler.h</text>
 </g>
 <!-- Node42 -->
 <g id="node2" class="node">
 <title>Node42</title>
-<g id="a_node2"><a xlink:href="mock__agent_8h.html" target="_top" xlink:title="Key value pair representation. ">
-<polygon fill="#ffffff" stroke="#000000" points="0,-56.5 0,-86.5 104,-86.5 104,-56.5 0,-56.5"/>
-<text text-anchor="start" x="8" y="-74.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">jaegertracingc/mock</text>
-<text text-anchor="middle" x="52" y="-63.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">_agent.h</text>
+<g id="a_node2"><a xlink:href="tracer_8h.html" target="_top" xlink:title="Tracer implementation. ">
+<polygon fill="#ffffff" stroke="#000000" points="13,-62 13,-81 126,-81 126,-62 13,-62"/>
+<text text-anchor="middle" x="69.5" y="-69" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">jaegertracingc/tracer.h</text>
 </a>
 </g>
 </g>
 <!-- Node41&#45;&gt;Node42 -->
 <g id="edge1" class="edge">
 <title>Node41&#45;&gt;Node42</title>
-<path fill="none" stroke="#191970" d="M97.8006,-116.2101C88.3047,-106.9403 76.6077,-95.5218 67.4115,-86.5446"/>
-<polygon fill="#191970" stroke="#191970" points="95.5556,-118.9097 105.1563,-123.3906 100.4454,-113.9007 95.5556,-118.9097"/>
-</g>
-<!-- Node43 -->
-<g id="node3" class="node">
-<title>Node43</title>
-<g id="a_node3"><a xlink:href="tracer_8h.html" target="_top" xlink:title="Tracer implementation. ">
-<polygon fill="#ffffff" stroke="#000000" points="122.5,-62 122.5,-81 235.5,-81 235.5,-62 122.5,-62"/>
-<text text-anchor="middle" x="179" y="-69" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">jaegertracingc/tracer.h</text>
-</a>
-</g>
-</g>
-<!-- Node41&#45;&gt;Node43 -->
-<g id="edge2" class="edge">
-<title>Node41&#45;&gt;Node43</title>
-<path fill="none" stroke="#191970" d="M132.4566,-116.2253C144.1353,-105.0028 159.0967,-90.6258 168.859,-81.2449"/>
-<polygon fill="#191970" stroke="#191970" points="129.7854,-113.9381 125,-123.3906 134.6356,-118.9854 129.7854,-113.9381"/>
+<path fill="none" stroke="#191970" d="M115.3162,-116.2253C103.82,-105.0028 89.0923,-90.6258 79.4825,-81.2449"/>
+<polygon fill="#191970" stroke="#191970" points="113.0556,-118.9097 122.6563,-123.3906 117.9454,-113.9007 113.0556,-118.9097"/>
 </g>
 <!-- Node44 -->
 <g id="node4" class="node">
 <title>Node44</title>
-<g id="a_node4"><a xlink:href="propagation_8c.html" target="_top" xlink:title="Trace ID representation. ">
-<polygon fill="#ffffff" stroke="#000000" points="109.5,-.5 109.5,-19.5 248.5,-19.5 248.5,-.5 109.5,-.5"/>
-<text text-anchor="middle" x="179" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">jaegertracingc/propagation.c</text>
+<g id="a_node4"><a xlink:href="mock__agent_8h.html" target="_top" xlink:title="Key value pair representation. ">
+<polygon fill="#ffffff" stroke="#000000" points="144.5,-56.5 144.5,-86.5 248.5,-86.5 248.5,-56.5 144.5,-56.5"/>
+<text text-anchor="start" x="152.5" y="-74.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">jaegertracingc/mock</text>
+<text text-anchor="middle" x="196.5" y="-63.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">_agent.h</text>
 </a>
 </g>
 </g>
-<!-- Node43&#45;&gt;Node44 -->
+<!-- Node41&#45;&gt;Node44 -->
 <g id="edge3" class="edge">
-<title>Node43&#45;&gt;Node44</title>
-<path fill="none" stroke="#191970" d="M179,-51.7462C179,-41.0519 179,-28.314 179,-19.7449"/>
-<polygon fill="#191970" stroke="#191970" points="175.5001,-51.8906 179,-61.8906 182.5001,-51.8907 175.5001,-51.8906"/>
+<title>Node41&#45;&gt;Node44</title>
+<path fill="none" stroke="#191970" d="M149.9724,-116.2101C159.6191,-106.9403 171.5017,-95.5218 180.8438,-86.5446"/>
+<polygon fill="#191970" stroke="#191970" points="147.2854,-113.9381 142.5,-123.3906 152.1356,-118.9854 147.2854,-113.9381"/>
+</g>
+<!-- Node43 -->
+<g id="node3" class="node">
+<title>Node43</title>
+<g id="a_node3"><a xlink:href="propagation_8c.html" target="_top" xlink:title="Trace ID representation. ">
+<polygon fill="#ffffff" stroke="#000000" points="0,-.5 0,-19.5 139,-19.5 139,-.5 0,-.5"/>
+<text text-anchor="middle" x="69.5" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">jaegertracingc/propagation.c</text>
+</a>
+</g>
+</g>
+<!-- Node42&#45;&gt;Node43 -->
+<g id="edge2" class="edge">
+<title>Node42&#45;&gt;Node43</title>
+<path fill="none" stroke="#191970" d="M69.5,-51.7462C69.5,-41.0519 69.5,-28.314 69.5,-19.7449"/>
+<polygon fill="#191970" stroke="#191970" points="66.0001,-51.8906 69.5,-61.8906 73.0001,-51.8907 66.0001,-51.8906"/>
 </g>
 </g>
 </svg>

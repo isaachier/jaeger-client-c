@@ -1,0 +1,83 @@
+\hypertarget{clock_8h}{}\section{jaegertracingc/clock.h File Reference}
+\label{clock_8h}\index{jaegertracingc/clock.\+h@{jaegertracingc/clock.\+h}}
+
+
+Timestamp and duration representations.  
+
+
+{\ttfamily \#include \char`\"{}jaegertracingc/common.\+h\char`\"{}}\newline
+Include dependency graph for clock.\+h\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{clock_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{clock_8h__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{clock_8h_a2063a571cd76bc80e468c7eb7acd4948}\label{clock_8h_a2063a571cd76bc80e468c7eb7acd4948}} 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+N\+A\+N\+O\+S\+E\+C\+O\+N\+D\+S\+\_\+\+P\+E\+R\+\_\+\+S\+E\+C\+O\+ND}~1000000000
+\item 
+\mbox{\Hypertarget{clock_8h_a2d254e2e8e84115eae0bb9ea37958e8f}\label{clock_8h_a2d254e2e8e84115eae0bb9ea37958e8f}} 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+M\+I\+C\+R\+O\+S\+E\+C\+O\+N\+D\+S\+\_\+\+P\+E\+R\+\_\+\+S\+E\+C\+O\+ND}~1000000
+\item 
+\mbox{\Hypertarget{clock_8h_a2b2d7ecbc3f251c08dc350dd34a49c79}\label{clock_8h_a2b2d7ecbc3f251c08dc350dd34a49c79}} 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+N\+A\+N\+O\+S\+E\+C\+O\+N\+D\+S\+\_\+\+P\+E\+R\+\_\+\+M\+I\+C\+R\+O\+S\+E\+C\+O\+ND}~1000
+\item 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+T\+I\+M\+E\+\_\+\+C\+A\+ST}(x,  type)
+\item 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+T\+I\+M\+E\+S\+T\+A\+M\+P\+\_\+\+I\+N\+IT}
+\item 
+\mbox{\Hypertarget{clock_8h_a8b5b653bbbf733c984d505c29f95ebe8}\label{clock_8h_a8b5b653bbbf733c984d505c29f95ebe8}} 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+D\+U\+R\+A\+T\+I\+O\+N\+\_\+\+I\+N\+IT}~J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+T\+I\+M\+E\+S\+T\+A\+M\+P\+\_\+\+I\+N\+IT
+\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{clock_8h_ab709536a0ff5199c2e1e364a79ae9808}\label{clock_8h_ab709536a0ff5199c2e1e364a79ae9808}} 
+typedef opentracing\+\_\+duration {\bfseries jaeger\+\_\+duration}
+\item 
+\mbox{\Hypertarget{clock_8h_a3d95f77c13cc89c2a8c3e10f6c9b154f}\label{clock_8h_a3d95f77c13cc89c2a8c3e10f6c9b154f}} 
+typedef opentracing\+\_\+timestamp {\bfseries jaeger\+\_\+timestamp}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Timestamp and duration representations. 
+
+
+
+\subsection{Macro Definition Documentation}
+\mbox{\Hypertarget{clock_8h_a937506357c9229e7492b7126313364c0}\label{clock_8h_a937506357c9229e7492b7126313364c0}} 
+\index{clock.\+h@{clock.\+h}!J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+T\+I\+M\+E\+\_\+\+C\+A\+ST@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+T\+I\+M\+E\+\_\+\+C\+A\+ST}}
+\index{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+T\+I\+M\+E\+\_\+\+C\+A\+ST@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+T\+I\+M\+E\+\_\+\+C\+A\+ST}!clock.\+h@{clock.\+h}}
+\subsubsection{\texorpdfstring{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+T\+I\+M\+E\+\_\+\+C\+A\+ST}{JAEGERTRACINGC\_TIME\_CAST}}
+{\footnotesize\ttfamily \#define J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+T\+I\+M\+E\+\_\+\+C\+A\+ST(\begin{DoxyParamCaption}\item[{}]{x,  }\item[{}]{type }\end{DoxyParamCaption})}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\DoxyCodeLine{(type)                                           \(\backslash\)}
+\DoxyCodeLine{    \{                                                \(\backslash\)}
+\DoxyCodeLine{        .tv\_sec = (x).tv\_sec, .tv\_nsec = (x).tv\_nsec \(\backslash\)}
+\DoxyCodeLine{    \}}
+\end{DoxyCode}
+\mbox{\Hypertarget{clock_8h_adeef897ea2f31d9b82a5f512d25f00b2}\label{clock_8h_adeef897ea2f31d9b82a5f512d25f00b2}} 
+\index{clock.\+h@{clock.\+h}!J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+T\+I\+M\+E\+S\+T\+A\+M\+P\+\_\+\+I\+N\+IT@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+T\+I\+M\+E\+S\+T\+A\+M\+P\+\_\+\+I\+N\+IT}}
+\index{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+T\+I\+M\+E\+S\+T\+A\+M\+P\+\_\+\+I\+N\+IT@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+T\+I\+M\+E\+S\+T\+A\+M\+P\+\_\+\+I\+N\+IT}!clock.\+h@{clock.\+h}}
+\subsubsection{\texorpdfstring{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+T\+I\+M\+E\+S\+T\+A\+M\+P\+\_\+\+I\+N\+IT}{JAEGERTRACINGC\_TIMESTAMP\_INIT}}
+{\footnotesize\ttfamily \#define J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+T\+I\+M\+E\+S\+T\+A\+M\+P\+\_\+\+I\+N\+IT}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\DoxyCodeLine{\{                                         \(\backslash\)}
+\DoxyCodeLine{        .value = \{.tv\_sec = 0, .tv\_nsec = 0 \} \(\backslash\)}
+\DoxyCodeLine{    \}}
+\end{DoxyCode}

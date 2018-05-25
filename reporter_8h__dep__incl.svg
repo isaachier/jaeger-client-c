@@ -9,39 +9,39 @@
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 136)">
 <title>jaegertracingc/reporter.h</title>
 <polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-136 143,-136 143,4 -4,4"/>
-<!-- Node40 -->
+<!-- Node42 -->
 <g id="node1" class="node">
-<title>Node40</title>
+<title>Node42</title>
 <polygon fill="#bfbfbf" stroke="#000000" points="8.5,-112.5 8.5,-131.5 130.5,-131.5 130.5,-112.5 8.5,-112.5"/>
 <text text-anchor="middle" x="69.5" y="-119.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">jaegertracingc/reporter.h</text>
 </g>
-<!-- Node41 -->
+<!-- Node43 -->
 <g id="node2" class="node">
-<title>Node41</title>
+<title>Node43</title>
 <g id="a_node2"><a xlink:href="tracer_8h.html" target="_top" xlink:title="Tracer implementation. ">
 <polygon fill="#ffffff" stroke="#000000" points="13,-56.5 13,-75.5 126,-75.5 126,-56.5 13,-56.5"/>
 <text text-anchor="middle" x="69.5" y="-63.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">jaegertracingc/tracer.h</text>
 </a>
 </g>
 </g>
-<!-- Node40&#45;&gt;Node41 -->
+<!-- Node42&#45;&gt;Node43 -->
 <g id="edge1" class="edge">
-<title>Node40&#45;&gt;Node41</title>
+<title>Node42&#45;&gt;Node43</title>
 <path fill="none" stroke="#191970" d="M69.5,-102.1575C69.5,-93.155 69.5,-82.9199 69.5,-75.6427"/>
 <polygon fill="#191970" stroke="#191970" points="66.0001,-102.2455 69.5,-112.2455 73.0001,-102.2456 66.0001,-102.2455"/>
 </g>
-<!-- Node42 -->
+<!-- Node44 -->
 <g id="node3" class="node">
-<title>Node42</title>
+<title>Node44</title>
 <g id="a_node3"><a xlink:href="propagation_8c.html" target="_top" xlink:title="Trace ID representation. ">
 <polygon fill="#ffffff" stroke="#000000" points="0,-.5 0,-19.5 139,-19.5 139,-.5 0,-.5"/>
 <text text-anchor="middle" x="69.5" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">jaegertracingc/propagation.c</text>
 </a>
 </g>
 </g>
-<!-- Node41&#45;&gt;Node42 -->
+<!-- Node43&#45;&gt;Node44 -->
 <g id="edge2" class="edge">
-<title>Node41&#45;&gt;Node42</title>
+<title>Node43&#45;&gt;Node44</title>
 <path fill="none" stroke="#191970" d="M69.5,-46.1575C69.5,-37.155 69.5,-26.9199 69.5,-19.6427"/>
 <polygon fill="#191970" stroke="#191970" points="66.0001,-46.2455 69.5,-56.2455 73.0001,-46.2456 66.0001,-46.2455"/>
 </g>

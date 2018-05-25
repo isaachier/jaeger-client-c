@@ -1,0 +1,139 @@
+\hypertarget{vector_8h}{}\section{jaegertracingc/vector.h File Reference}
+\label{vector_8h}\index{jaegertracingc/vector.\+h@{jaegertracingc/vector.\+h}}
+
+
+C generic vector implementation.  
+
+
+{\ttfamily \#include \char`\"{}jaegertracingc/common.\+h\char`\"{}}\newline
+Include dependency graph for vector.\+h\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{vector_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{vector_8h__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structjaeger__vector}{jaeger\+\_\+vector}}
+\item 
+struct \mbox{\hyperlink{structjaeger__vector__ptr__copy__arg}{jaeger\+\_\+vector\+\_\+ptr\+\_\+copy\+\_\+arg}}
+\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{vector_8h_a78e2776e34339aed0e7837869197f7e7}\label{vector_8h_a78e2776e34339aed0e7837869197f7e7}} 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+R\+E\+S\+I\+Z\+E\+\_\+\+F\+A\+C\+T\+OR}~2
+\item 
+\mbox{\Hypertarget{vector_8h_a80f0fd2c18ddbbfba8825e56f39badf6}\label{vector_8h_a80f0fd2c18ddbbfba8825e56f39badf6}} 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+I\+N\+I\+T\+\_\+\+C\+A\+P\+A\+C\+I\+TY}~10
+\item 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+I\+N\+IT}
+\item 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+F\+O\+R\+\_\+\+E\+A\+CH}(vec,  op,  type)
+\item 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+W\+R\+A\+P\+\_\+\+C\+O\+PY}(copy,  dst\+\_\+type,  src\+\_\+type)
+\item 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+W\+R\+A\+P\+\_\+\+D\+E\+S\+T\+R\+OY}(destroy,  type)
+\item 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+D\+S\+T\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+A\+L\+L\+O\+C\+\_\+\+F\+R\+EE}(ptr)
+\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{vector_8h_a8885c767fb743756cda2d72a65e46c8d}\label{vector_8h_a8885c767fb743756cda2d72a65e46c8d}} 
+typedef int($\ast$ {\bfseries jaeger\+\_\+comparator}) (const void $\ast$, const void $\ast$)
+\item 
+\mbox{\Hypertarget{vector_8h_af10da7fdb37d0a573e24c3d0a48d15f2}\label{vector_8h_af10da7fdb37d0a573e24c3d0a48d15f2}} 
+typedef struct \mbox{\hyperlink{structjaeger__vector}{jaeger\+\_\+vector}} {\bfseries jaeger\+\_\+vector}
+\item 
+\mbox{\Hypertarget{vector_8h_a5b9f549cbcf76e64554c3a57f6bbfa9c}\label{vector_8h_a5b9f549cbcf76e64554c3a57f6bbfa9c}} 
+typedef struct \mbox{\hyperlink{structjaeger__vector__ptr__copy__arg}{jaeger\+\_\+vector\+\_\+ptr\+\_\+copy\+\_\+arg}} {\bfseries jaeger\+\_\+vector\+\_\+ptr\+\_\+copy\+\_\+arg}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+C generic vector implementation. 
+
+
+
+\subsection{Macro Definition Documentation}
+\mbox{\Hypertarget{vector_8h_a9dcfea2680cf6a2a7eab96d71298c60d}\label{vector_8h_a9dcfea2680cf6a2a7eab96d71298c60d}} 
+\index{vector.\+h@{vector.\+h}!J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+D\+S\+T\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+A\+L\+L\+O\+C\+\_\+\+F\+R\+EE@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+D\+S\+T\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+A\+L\+L\+O\+C\+\_\+\+F\+R\+EE}}
+\index{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+D\+S\+T\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+A\+L\+L\+O\+C\+\_\+\+F\+R\+EE@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+D\+S\+T\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+A\+L\+L\+O\+C\+\_\+\+F\+R\+EE}!vector.\+h@{vector.\+h}}
+\subsubsection{\texorpdfstring{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+D\+S\+T\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+A\+L\+L\+O\+C\+\_\+\+F\+R\+EE}{JAEGERTRACINGC\_DST\_VECTOR\_ALLOC\_FREE}}
+{\footnotesize\ttfamily \#define J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+D\+S\+T\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+A\+L\+L\+O\+C\+\_\+\+F\+R\+EE(\begin{DoxyParamCaption}\item[{}]{ptr }\end{DoxyParamCaption})}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\DoxyCodeLine{\textcolor{keywordflow}{do} \{                                          \(\backslash\)}
+\DoxyCodeLine{        if (*(ptr) != NULL) \{                     \(\backslash\)}
+\DoxyCodeLine{            if (destroy != NULL) \{                \(\backslash\)}
+\DoxyCodeLine{                destroy(*(ptr));                  \(\backslash\)}
+\DoxyCodeLine{            \}                                     \(\backslash\)}
+\DoxyCodeLine{            jaeger\_free(*(ptr));                  \(\backslash\)}
+\DoxyCodeLine{        \}                                         \(\backslash\)}
+\DoxyCodeLine{    \} \textcolor{keywordflow}{while} (0)}
+\end{DoxyCode}
+\mbox{\Hypertarget{vector_8h_a9871659dd9abe55096365c3b3fbf2ac1}\label{vector_8h_a9871659dd9abe55096365c3b3fbf2ac1}} 
+\index{vector.\+h@{vector.\+h}!J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+F\+O\+R\+\_\+\+E\+A\+CH@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+F\+O\+R\+\_\+\+E\+A\+CH}}
+\index{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+F\+O\+R\+\_\+\+E\+A\+CH@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+F\+O\+R\+\_\+\+E\+A\+CH}!vector.\+h@{vector.\+h}}
+\subsubsection{\texorpdfstring{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+F\+O\+R\+\_\+\+E\+A\+CH}{JAEGERTRACINGC\_VECTOR\_FOR\_EACH}}
+{\footnotesize\ttfamily \#define J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+F\+O\+R\+\_\+\+E\+A\+CH(\begin{DoxyParamCaption}\item[{}]{vec,  }\item[{}]{op,  }\item[{}]{type }\end{DoxyParamCaption})}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\DoxyCodeLine{\textcolor{keywordflow}{do} \{                                                                 \(\backslash\)}
+\DoxyCodeLine{        for (\textcolor{keywordtype}{int} i = 0, len = jaeger\_vector\_length(vec); i < len; i++) \{ \(\backslash\)}
+\DoxyCodeLine{            op((type*) jaeger\_vector\_offset((vec), i));                  \(\backslash\)}
+\DoxyCodeLine{        \}                                                                \(\backslash\)}
+\DoxyCodeLine{    \} \textcolor{keywordflow}{while} (0)}
+\end{DoxyCode}
+\mbox{\Hypertarget{vector_8h_a6b64e28ee92afaee87e6f0a5573ca6d6}\label{vector_8h_a6b64e28ee92afaee87e6f0a5573ca6d6}} 
+\index{vector.\+h@{vector.\+h}!J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+I\+N\+IT@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+I\+N\+IT}}
+\index{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+I\+N\+IT@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+I\+N\+IT}!vector.\+h@{vector.\+h}}
+\subsubsection{\texorpdfstring{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+I\+N\+IT}{JAEGERTRACINGC\_VECTOR\_INIT}}
+{\footnotesize\ttfamily \#define J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+V\+E\+C\+T\+O\+R\+\_\+\+I\+N\+IT}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\DoxyCodeLine{\{                                                         \(\backslash\)}
+\DoxyCodeLine{        .len = 0, .capacity = 0, .data = NULL, .type\_size = 0 \(\backslash\)}
+\DoxyCodeLine{    \}}
+\end{DoxyCode}
+\mbox{\Hypertarget{vector_8h_aac3189a37050bee32a769aa1c469c2a4}\label{vector_8h_aac3189a37050bee32a769aa1c469c2a4}} 
+\index{vector.\+h@{vector.\+h}!J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+W\+R\+A\+P\+\_\+\+C\+O\+PY@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+W\+R\+A\+P\+\_\+\+C\+O\+PY}}
+\index{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+W\+R\+A\+P\+\_\+\+C\+O\+PY@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+W\+R\+A\+P\+\_\+\+C\+O\+PY}!vector.\+h@{vector.\+h}}
+\subsubsection{\texorpdfstring{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+W\+R\+A\+P\+\_\+\+C\+O\+PY}{JAEGERTRACINGC\_WRAP\_COPY}}
+{\footnotesize\ttfamily \#define J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+W\+R\+A\+P\+\_\+\+C\+O\+PY(\begin{DoxyParamCaption}\item[{}]{copy,  }\item[{}]{dst\+\_\+type,  }\item[{}]{src\+\_\+type }\end{DoxyParamCaption})}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\DoxyCodeLine{\textcolor{keyword}{static} \textcolor{keyword}{inline} \textcolor{keywordtype}{bool} copy\#\#\_wrapper(                           \(\backslash\)}
+\DoxyCodeLine{        \textcolor{keywordtype}{void}* arg, \textcolor{keywordtype}{void}* restrict dst, \textcolor{keyword}{const} \textcolor{keywordtype}{void}* restrict src) \(\backslash\)}
+\DoxyCodeLine{    \{                                                            \(\backslash\)}
+\DoxyCodeLine{        (void) arg;                                              \(\backslash\)}
+\DoxyCodeLine{        return copy((dst\_type*) dst, (src\_type*) src);           \(\backslash\)}
+\DoxyCodeLine{    \}}
+\end{DoxyCode}
+\mbox{\Hypertarget{vector_8h_ac370ae89b3abdc9f81910a3bd2f8347a}\label{vector_8h_ac370ae89b3abdc9f81910a3bd2f8347a}} 
+\index{vector.\+h@{vector.\+h}!J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+W\+R\+A\+P\+\_\+\+D\+E\+S\+T\+R\+OY@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+W\+R\+A\+P\+\_\+\+D\+E\+S\+T\+R\+OY}}
+\index{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+W\+R\+A\+P\+\_\+\+D\+E\+S\+T\+R\+OY@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+W\+R\+A\+P\+\_\+\+D\+E\+S\+T\+R\+OY}!vector.\+h@{vector.\+h}}
+\subsubsection{\texorpdfstring{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+W\+R\+A\+P\+\_\+\+D\+E\+S\+T\+R\+OY}{JAEGERTRACINGC\_WRAP\_DESTROY}}
+{\footnotesize\ttfamily \#define J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+W\+R\+A\+P\+\_\+\+D\+E\+S\+T\+R\+OY(\begin{DoxyParamCaption}\item[{}]{destroy,  }\item[{}]{type }\end{DoxyParamCaption})}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\DoxyCodeLine{\textcolor{keyword}{static} \textcolor{keyword}{inline} \textcolor{keywordtype}{void} destroy\#\#\_wrapper(\textcolor{keywordtype}{void}* x)  \(\backslash\)}
+\DoxyCodeLine{    \{                                              \(\backslash\)}
+\DoxyCodeLine{        destroy((type*) x);                        \(\backslash\)}
+\DoxyCodeLine{    \}}
+\end{DoxyCode}

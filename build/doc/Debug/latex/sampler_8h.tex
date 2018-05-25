@@ -1,0 +1,196 @@
+\hypertarget{sampler_8h}{}\section{jaegertracingc/sampler.h File Reference}
+\label{sampler_8h}\index{jaegertracingc/sampler.\+h@{jaegertracingc/sampler.\+h}}
+
+
+Span sampler interface.  
+
+
+{\ttfamily \#include \char`\"{}jaegertracingc/clock.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/common.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/constants.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/metrics.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/net.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/sampling\+\_\+strategy.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/tag.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/threading.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/token\+\_\+bucket.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/trace\+\_\+id.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/vector.\+h\char`\"{}}\newline
+Include dependency graph for sampler.\+h\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{sampler_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=329pt]{sampler_8h__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structjaeger__sampler}{jaeger\+\_\+sampler}}
+\item 
+struct \mbox{\hyperlink{structjaeger__const__sampler}{jaeger\+\_\+const\+\_\+sampler}}
+\item 
+struct \mbox{\hyperlink{structjaeger__probabilistic__sampler}{jaeger\+\_\+probabilistic\+\_\+sampler}}
+\item 
+struct \mbox{\hyperlink{structjaeger__rate__limiting__sampler}{jaeger\+\_\+rate\+\_\+limiting\+\_\+sampler}}
+\item 
+struct \mbox{\hyperlink{structjaeger__guaranteed__throughput__probabilistic__sampler}{jaeger\+\_\+guaranteed\+\_\+throughput\+\_\+probabilistic\+\_\+sampler}}
+\item 
+struct \mbox{\hyperlink{structjaeger__operation__sampler}{jaeger\+\_\+operation\+\_\+sampler}}
+\item 
+struct \mbox{\hyperlink{structjaeger__adaptive__sampler}{jaeger\+\_\+adaptive\+\_\+sampler}}
+\item 
+struct \mbox{\hyperlink{structjaeger__sampler__choice}{jaeger\+\_\+sampler\+\_\+choice}}
+\item 
+struct \mbox{\hyperlink{structjaeger__http__sampling__manager}{jaeger\+\_\+http\+\_\+sampling\+\_\+manager}}
+\item 
+struct \mbox{\hyperlink{structjaeger__remotely__controlled__sampler}{jaeger\+\_\+remotely\+\_\+controlled\+\_\+sampler}}
+\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{sampler_8h_a2e7886346f937d0886c28c2b742ae3ce}\label{sampler_8h_a2e7886346f937d0886c28c2b742ae3ce}} 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+D\+O\+U\+B\+L\+E\+\_\+\+S\+T\+R\+\_\+\+S\+I\+ZE}~16
+\item 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+S\+A\+M\+P\+L\+E\+R\+\_\+\+C\+H\+O\+I\+C\+E\+\_\+\+I\+N\+IT}
+\item 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+S\+A\+M\+P\+L\+E\+R\+\_\+\+T\+Y\+P\+E\+\_\+\+C\+A\+SE}(type)
+\item 
+\mbox{\Hypertarget{sampler_8h_a20db383401732b19b1089c12eb6a3093}\label{sampler_8h_a20db383401732b19b1089c12eb6a3093}} 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+H\+T\+T\+P\+\_\+\+S\+A\+M\+P\+L\+I\+N\+G\+\_\+\+M\+A\+N\+A\+G\+E\+R\+\_\+\+R\+E\+Q\+U\+E\+S\+T\+\_\+\+M\+A\+X\+\_\+\+L\+EN}~256
+\item 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+H\+T\+T\+P\+\_\+\+S\+A\+M\+P\+L\+I\+N\+G\+\_\+\+M\+A\+N\+A\+G\+E\+R\+\_\+\+I\+N\+IT}
+\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{sampler_8h_a789c3c23d9ee272ae3f67b15e7e3ae90}\label{sampler_8h_a789c3c23d9ee272ae3f67b15e7e3ae90}} 
+typedef struct \mbox{\hyperlink{structjaeger__sampler}{jaeger\+\_\+sampler}} {\bfseries jaeger\+\_\+sampler}
+\item 
+\mbox{\Hypertarget{sampler_8h_a3f6d4379c2e07902fa5adf679b661eb9}\label{sampler_8h_a3f6d4379c2e07902fa5adf679b661eb9}} 
+typedef struct \mbox{\hyperlink{structjaeger__const__sampler}{jaeger\+\_\+const\+\_\+sampler}} {\bfseries jaeger\+\_\+const\+\_\+sampler}
+\item 
+\mbox{\Hypertarget{sampler_8h_aaca67f9bc53a6ac49d0f5e0921b532a2}\label{sampler_8h_aaca67f9bc53a6ac49d0f5e0921b532a2}} 
+typedef struct \mbox{\hyperlink{structjaeger__probabilistic__sampler}{jaeger\+\_\+probabilistic\+\_\+sampler}} {\bfseries jaeger\+\_\+probabilistic\+\_\+sampler}
+\item 
+\mbox{\Hypertarget{sampler_8h_af310685b4410a27c20440e8a621674d0}\label{sampler_8h_af310685b4410a27c20440e8a621674d0}} 
+typedef struct \mbox{\hyperlink{structjaeger__rate__limiting__sampler}{jaeger\+\_\+rate\+\_\+limiting\+\_\+sampler}} {\bfseries jaeger\+\_\+rate\+\_\+limiting\+\_\+sampler}
+\item 
+\mbox{\Hypertarget{sampler_8h_a8e2dd9969d35c98fbe90a858584e4a79}\label{sampler_8h_a8e2dd9969d35c98fbe90a858584e4a79}} 
+typedef struct \mbox{\hyperlink{structjaeger__guaranteed__throughput__probabilistic__sampler}{jaeger\+\_\+guaranteed\+\_\+throughput\+\_\+probabilistic\+\_\+sampler}} {\bfseries jaeger\+\_\+guaranteed\+\_\+throughput\+\_\+probabilistic\+\_\+sampler}
+\item 
+\mbox{\Hypertarget{sampler_8h_ab2c3801bae4284a9ea4ae665d7cde9d9}\label{sampler_8h_ab2c3801bae4284a9ea4ae665d7cde9d9}} 
+typedef struct \mbox{\hyperlink{structjaeger__operation__sampler}{jaeger\+\_\+operation\+\_\+sampler}} {\bfseries jaeger\+\_\+operation\+\_\+sampler}
+\item 
+\mbox{\Hypertarget{sampler_8h_a3004e386ea4634cd00f5c250e0249086}\label{sampler_8h_a3004e386ea4634cd00f5c250e0249086}} 
+typedef struct \mbox{\hyperlink{structjaeger__adaptive__sampler}{jaeger\+\_\+adaptive\+\_\+sampler}} {\bfseries jaeger\+\_\+adaptive\+\_\+sampler}
+\item 
+\mbox{\Hypertarget{sampler_8h_af0d790417c730ebc23d4b8500ad11ace}\label{sampler_8h_af0d790417c730ebc23d4b8500ad11ace}} 
+typedef enum jaeger\+\_\+sampler\+\_\+type {\bfseries jaeger\+\_\+sampler\+\_\+type}
+\item 
+\mbox{\Hypertarget{sampler_8h_a27c2318e959b68f625e3be41bd739c27}\label{sampler_8h_a27c2318e959b68f625e3be41bd739c27}} 
+typedef struct \mbox{\hyperlink{structjaeger__sampler__choice}{jaeger\+\_\+sampler\+\_\+choice}} {\bfseries jaeger\+\_\+sampler\+\_\+choice}
+\item 
+\mbox{\Hypertarget{sampler_8h_a34811fc39ed95bb242f2bc649571d34c}\label{sampler_8h_a34811fc39ed95bb242f2bc649571d34c}} 
+typedef struct \mbox{\hyperlink{structjaeger__http__sampling__manager}{jaeger\+\_\+http\+\_\+sampling\+\_\+manager}} {\bfseries jaeger\+\_\+http\+\_\+sampling\+\_\+manager}
+\item 
+\mbox{\Hypertarget{sampler_8h_a4805785a10edc33b1ba2051b41f2789c}\label{sampler_8h_a4805785a10edc33b1ba2051b41f2789c}} 
+typedef struct \mbox{\hyperlink{structjaeger__remotely__controlled__sampler}{jaeger\+\_\+remotely\+\_\+controlled\+\_\+sampler}} {\bfseries jaeger\+\_\+remotely\+\_\+controlled\+\_\+sampler}
+\end{DoxyCompactItemize}
+\subsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{sampler_8h_a78cfd4ae63ddd39ee09444287a372900}\label{sampler_8h_a78cfd4ae63ddd39ee09444287a372900}} 
+enum {\bfseries jaeger\+\_\+sampler\+\_\+type} \{ \newline
+{\bfseries jaeger\+\_\+const\+\_\+sampler\+\_\+type}, 
+{\bfseries jaeger\+\_\+probabilistic\+\_\+sampler\+\_\+type}, 
+{\bfseries jaeger\+\_\+rate\+\_\+limiting\+\_\+sampler\+\_\+type}, 
+{\bfseries jaeger\+\_\+guaranteed\+\_\+throughput\+\_\+probabilistic\+\_\+sampler\+\_\+type}, 
+\newline
+{\bfseries jaeger\+\_\+adaptive\+\_\+sampler\+\_\+type}
+ \}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{sampler_8h_a29da68875c74253041bffd961c1d803c}\label{sampler_8h_a29da68875c74253041bffd961c1d803c}} 
+void {\bfseries jaeger\+\_\+const\+\_\+sampler\+\_\+init} (\mbox{\hyperlink{structjaeger__const__sampler}{jaeger\+\_\+const\+\_\+sampler}} $\ast$sampler, bool decision)
+\item 
+\mbox{\Hypertarget{sampler_8h_a51668db3ea0db0b73634058ba9ac785e}\label{sampler_8h_a51668db3ea0db0b73634058ba9ac785e}} 
+void {\bfseries jaeger\+\_\+probabilistic\+\_\+sampler\+\_\+init} (\mbox{\hyperlink{structjaeger__probabilistic__sampler}{jaeger\+\_\+probabilistic\+\_\+sampler}} $\ast$sampler, double sampling\+\_\+rate)
+\item 
+\mbox{\Hypertarget{sampler_8h_a0b539b92d4c986654640ec39eff8a1f6}\label{sampler_8h_a0b539b92d4c986654640ec39eff8a1f6}} 
+void {\bfseries jaeger\+\_\+rate\+\_\+limiting\+\_\+sampler\+\_\+init} (\mbox{\hyperlink{structjaeger__rate__limiting__sampler}{jaeger\+\_\+rate\+\_\+limiting\+\_\+sampler}} $\ast$sampler, double max\+\_\+traces\+\_\+per\+\_\+second)
+\item 
+\mbox{\Hypertarget{sampler_8h_a77a14b5dd3fe7d99820a32f19391bd1b}\label{sampler_8h_a77a14b5dd3fe7d99820a32f19391bd1b}} 
+void {\bfseries jaeger\+\_\+guaranteed\+\_\+throughput\+\_\+probabilistic\+\_\+sampler\+\_\+init} (\mbox{\hyperlink{structjaeger__guaranteed__throughput__probabilistic__sampler}{jaeger\+\_\+guaranteed\+\_\+throughput\+\_\+probabilistic\+\_\+sampler}} $\ast$sampler, double lower\+\_\+bound, double sampling\+\_\+rate)
+\item 
+\mbox{\Hypertarget{sampler_8h_a7bb0d1e70bc76e53e5b4c7b20ce70333}\label{sampler_8h_a7bb0d1e70bc76e53e5b4c7b20ce70333}} 
+void {\bfseries jaeger\+\_\+guaranteed\+\_\+throughput\+\_\+probabilistic\+\_\+sampler\+\_\+update} (\mbox{\hyperlink{structjaeger__guaranteed__throughput__probabilistic__sampler}{jaeger\+\_\+guaranteed\+\_\+throughput\+\_\+probabilistic\+\_\+sampler}} $\ast$sampler, double lower\+\_\+bound, double sampling\+\_\+rate)
+\item 
+\mbox{\Hypertarget{sampler_8h_a685ed0ff91439171e665fe98fdba8bbd}\label{sampler_8h_a685ed0ff91439171e665fe98fdba8bbd}} 
+bool {\bfseries jaeger\+\_\+adaptive\+\_\+sampler\+\_\+init} (\mbox{\hyperlink{structjaeger__adaptive__sampler}{jaeger\+\_\+adaptive\+\_\+sampler}} $\ast$sampler, const \mbox{\hyperlink{struct__Jaegertracing____Protobuf____SamplingManager____PerOperationSamplingStrategy}{jaeger\+\_\+per\+\_\+operation\+\_\+strategy}} $\ast$strategies, int max\+\_\+operations)
+\item 
+\mbox{\Hypertarget{sampler_8h_abea4d6e8735ce1927564b56b88c7b438}\label{sampler_8h_abea4d6e8735ce1927564b56b88c7b438}} 
+bool {\bfseries jaeger\+\_\+remotely\+\_\+controlled\+\_\+sampler\+\_\+init} (\mbox{\hyperlink{structjaeger__remotely__controlled__sampler}{jaeger\+\_\+remotely\+\_\+controlled\+\_\+sampler}} $\ast$sampler, const char $\ast$service\+\_\+name, const char $\ast$sampling\+\_\+server\+\_\+url, const \mbox{\hyperlink{structjaeger__sampler__choice}{jaeger\+\_\+sampler\+\_\+choice}} $\ast$initial\+\_\+sampler, int max\+\_\+operations, \mbox{\hyperlink{structjaeger__metrics}{jaeger\+\_\+metrics}} $\ast$metrics)
+\item 
+\mbox{\Hypertarget{sampler_8h_af15672048a099456a17c3e7eb0758867}\label{sampler_8h_af15672048a099456a17c3e7eb0758867}} 
+bool {\bfseries jaeger\+\_\+remotely\+\_\+controlled\+\_\+sampler\+\_\+update} (\mbox{\hyperlink{structjaeger__remotely__controlled__sampler}{jaeger\+\_\+remotely\+\_\+controlled\+\_\+sampler}} $\ast$sampler)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Span sampler interface. 
+
+
+
+\subsection{Macro Definition Documentation}
+\mbox{\Hypertarget{sampler_8h_ad06d82e00c925c4fb4f1b86ae944a1da}\label{sampler_8h_ad06d82e00c925c4fb4f1b86ae944a1da}} 
+\index{sampler.\+h@{sampler.\+h}!J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+H\+T\+T\+P\+\_\+\+S\+A\+M\+P\+L\+I\+N\+G\+\_\+\+M\+A\+N\+A\+G\+E\+R\+\_\+\+I\+N\+IT@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+H\+T\+T\+P\+\_\+\+S\+A\+M\+P\+L\+I\+N\+G\+\_\+\+M\+A\+N\+A\+G\+E\+R\+\_\+\+I\+N\+IT}}
+\index{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+H\+T\+T\+P\+\_\+\+S\+A\+M\+P\+L\+I\+N\+G\+\_\+\+M\+A\+N\+A\+G\+E\+R\+\_\+\+I\+N\+IT@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+H\+T\+T\+P\+\_\+\+S\+A\+M\+P\+L\+I\+N\+G\+\_\+\+M\+A\+N\+A\+G\+E\+R\+\_\+\+I\+N\+IT}!sampler.\+h@{sampler.\+h}}
+\subsubsection{\texorpdfstring{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+H\+T\+T\+P\+\_\+\+S\+A\+M\+P\+L\+I\+N\+G\+\_\+\+M\+A\+N\+A\+G\+E\+R\+\_\+\+I\+N\+IT}{JAEGERTRACINGC\_HTTP\_SAMPLING\_MANAGER\_INIT}}
+{\footnotesize\ttfamily \#define J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+H\+T\+T\+P\+\_\+\+S\+A\+M\+P\+L\+I\+N\+G\+\_\+\+M\+A\+N\+A\+G\+E\+R\+\_\+\+I\+N\+IT}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\DoxyCodeLine{\{                                                                         \(\backslash\)}
+\DoxyCodeLine{        .service\_name = NULL, .sampling\_server\_url = JAEGERTRACINGC\_URL\_INIT, \(\backslash\)}
+\DoxyCodeLine{        .fd = -1, .parser = \{\}, .settings = \{\}, .request\_length = 0,          \(\backslash\)}
+\DoxyCodeLine{        .request\_buffer = \{\textcolor{charliteral}{'\(\backslash\)0'}\}, .response = JAEGERTRACINGC\_VECTOR\_INIT      \(\backslash\)}
+\DoxyCodeLine{    \}}
+\end{DoxyCode}
+\mbox{\Hypertarget{sampler_8h_a268a99c6febf68349aea2b668a6d332d}\label{sampler_8h_a268a99c6febf68349aea2b668a6d332d}} 
+\index{sampler.\+h@{sampler.\+h}!J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+S\+A\+M\+P\+L\+E\+R\+\_\+\+C\+H\+O\+I\+C\+E\+\_\+\+I\+N\+IT@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+S\+A\+M\+P\+L\+E\+R\+\_\+\+C\+H\+O\+I\+C\+E\+\_\+\+I\+N\+IT}}
+\index{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+S\+A\+M\+P\+L\+E\+R\+\_\+\+C\+H\+O\+I\+C\+E\+\_\+\+I\+N\+IT@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+S\+A\+M\+P\+L\+E\+R\+\_\+\+C\+H\+O\+I\+C\+E\+\_\+\+I\+N\+IT}!sampler.\+h@{sampler.\+h}}
+\subsubsection{\texorpdfstring{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+S\+A\+M\+P\+L\+E\+R\+\_\+\+C\+H\+O\+I\+C\+E\+\_\+\+I\+N\+IT}{JAEGERTRACINGC\_SAMPLER\_CHOICE\_INIT}}
+{\footnotesize\ttfamily \#define J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+S\+A\+M\+P\+L\+E\+R\+\_\+\+C\+H\+O\+I\+C\+E\+\_\+\+I\+N\+IT}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\DoxyCodeLine{\{                                                                \(\backslash\)}
+\DoxyCodeLine{        .type = -1, .const\_sampler = \{                               \(\backslash\)}
+\DoxyCodeLine{            .base = \{.base = \{.destroy = NULL\}, .is\_sampled = NULL\}, \(\backslash\)}
+\DoxyCodeLine{            .decision = \textcolor{keyword}{false}                                        \(\backslash\)}
+\DoxyCodeLine{        \}                                                            \(\backslash\)}
+\DoxyCodeLine{    \}}
+\end{DoxyCode}
+\mbox{\Hypertarget{sampler_8h_af8c356b1834e213dc4147c834f50910c}\label{sampler_8h_af8c356b1834e213dc4147c834f50910c}} 
+\index{sampler.\+h@{sampler.\+h}!J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+S\+A\+M\+P\+L\+E\+R\+\_\+\+T\+Y\+P\+E\+\_\+\+C\+A\+SE@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+S\+A\+M\+P\+L\+E\+R\+\_\+\+T\+Y\+P\+E\+\_\+\+C\+A\+SE}}
+\index{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+S\+A\+M\+P\+L\+E\+R\+\_\+\+T\+Y\+P\+E\+\_\+\+C\+A\+SE@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+S\+A\+M\+P\+L\+E\+R\+\_\+\+T\+Y\+P\+E\+\_\+\+C\+A\+SE}!sampler.\+h@{sampler.\+h}}
+\subsubsection{\texorpdfstring{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+S\+A\+M\+P\+L\+E\+R\+\_\+\+T\+Y\+P\+E\+\_\+\+C\+A\+SE}{JAEGERTRACINGC\_SAMPLER\_TYPE\_CASE}}
+{\footnotesize\ttfamily \#define J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+S\+A\+M\+P\+L\+E\+R\+\_\+\+T\+Y\+P\+E\+\_\+\+C\+A\+SE(\begin{DoxyParamCaption}\item[{}]{type }\end{DoxyParamCaption})}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\DoxyCodeLine{\textcolor{keywordflow}{case} jaeger\_\#\#type\#\#\_sampler\_type:         \(\backslash\)}
+\DoxyCodeLine{        return (\mbox{\hyperlink{structjaeger__sampler}{jaeger\_sampler}}*) \&sampler->type\#\#\_sampler}
+\end{DoxyCode}

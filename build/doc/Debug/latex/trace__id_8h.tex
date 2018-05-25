@@ -1,0 +1,113 @@
+\hypertarget{trace__id_8h}{}\section{jaegertracingc/trace\+\_\+id.h File Reference}
+\label{trace__id_8h}\index{jaegertracingc/trace\+\_\+id.\+h@{jaegertracingc/trace\+\_\+id.\+h}}
+
+
+Trace ID representation.  
+
+
+{\ttfamily \#include \char`\"{}jaegertracingc/common.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/protoc-\/gen/jaeger.\+pb-\/c.\+h\char`\"{}}\newline
+Include dependency graph for trace\+\_\+id.\+h\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{trace__id_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{trace__id_8h__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structjaeger__trace__id}{jaeger\+\_\+trace\+\_\+id}}
+\begin{DoxyCompactList}\small\item\em 128 bit unique ID for a given trace. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{trace__id_8h_a732f892ef9f04a3fe2e71c1acdd532d0}{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+T\+R\+A\+C\+E\+\_\+\+I\+D\+\_\+\+I\+N\+IT}}
+\begin{DoxyCompactList}\small\item\em Static initializer for trace ID struct. \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{trace__id_8h_a1683cb96bf0ab6e8f64b5c05c9be26b0}{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+U\+I\+N\+T64\+\_\+\+M\+A\+X\+\_\+\+S\+T\+R\+\_\+\+L\+EN}}~16
+\begin{DoxyCompactList}\small\item\em Max string length to represent uint64\+\_\+t as hex (not including null byte). \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{trace__id_8h_a37168d3dd11dd4695cc6b2cf1833067f}{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+T\+R\+A\+C\+E\+\_\+\+I\+D\+\_\+\+M\+A\+X\+\_\+\+S\+T\+R\+\_\+\+L\+EN}}~(\mbox{\hyperlink{trace__id_8h_a1683cb96bf0ab6e8f64b5c05c9be26b0}{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+U\+I\+N\+T64\+\_\+\+M\+A\+X\+\_\+\+S\+T\+R\+\_\+\+L\+EN}} $\ast$ 2)
+\begin{DoxyCompactList}\small\item\em Max string length to represent trace ID (not including null byte). \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{trace__id_8h_a3a9fca0d8c3aa92bc5885067a66b5a11}{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+H\+E\+X\+\_\+\+B\+A\+SE}}~16
+\begin{DoxyCompactList}\small\item\em Base number for hexadecimal (16). \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef struct \mbox{\hyperlink{structjaeger__trace__id}{jaeger\+\_\+trace\+\_\+id}} \mbox{\hyperlink{trace__id_8h_a52559bed65fca78dcba42ff2388a6a85}{jaeger\+\_\+trace\+\_\+id}}
+\begin{DoxyCompactList}\small\item\em 128 bit unique ID for a given trace. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Trace ID representation. 
+
+
+
+\subsection{Macro Definition Documentation}
+\mbox{\Hypertarget{trace__id_8h_a3a9fca0d8c3aa92bc5885067a66b5a11}\label{trace__id_8h_a3a9fca0d8c3aa92bc5885067a66b5a11}} 
+\index{trace\+\_\+id.\+h@{trace\+\_\+id.\+h}!J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+H\+E\+X\+\_\+\+B\+A\+SE@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+H\+E\+X\+\_\+\+B\+A\+SE}}
+\index{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+H\+E\+X\+\_\+\+B\+A\+SE@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+H\+E\+X\+\_\+\+B\+A\+SE}!trace\+\_\+id.\+h@{trace\+\_\+id.\+h}}
+\subsubsection{\texorpdfstring{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+H\+E\+X\+\_\+\+B\+A\+SE}{JAEGERTRACINGC\_HEX\_BASE}}
+{\footnotesize\ttfamily \#define J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+H\+E\+X\+\_\+\+B\+A\+SE~16}
+
+
+
+Base number for hexadecimal (16). 
+
+\mbox{\Hypertarget{trace__id_8h_a732f892ef9f04a3fe2e71c1acdd532d0}\label{trace__id_8h_a732f892ef9f04a3fe2e71c1acdd532d0}} 
+\index{trace\+\_\+id.\+h@{trace\+\_\+id.\+h}!J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+T\+R\+A\+C\+E\+\_\+\+I\+D\+\_\+\+I\+N\+IT@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+T\+R\+A\+C\+E\+\_\+\+I\+D\+\_\+\+I\+N\+IT}}
+\index{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+T\+R\+A\+C\+E\+\_\+\+I\+D\+\_\+\+I\+N\+IT@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+T\+R\+A\+C\+E\+\_\+\+I\+D\+\_\+\+I\+N\+IT}!trace\+\_\+id.\+h@{trace\+\_\+id.\+h}}
+\subsubsection{\texorpdfstring{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+T\+R\+A\+C\+E\+\_\+\+I\+D\+\_\+\+I\+N\+IT}{JAEGERTRACINGC\_TRACE\_ID\_INIT}}
+{\footnotesize\ttfamily \#define J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+T\+R\+A\+C\+E\+\_\+\+I\+D\+\_\+\+I\+N\+IT}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\DoxyCodeLine{\{                                \(\backslash\)}
+\DoxyCodeLine{        .high = 0, .low = 0          \(\backslash\)}
+\DoxyCodeLine{    \}}
+\end{DoxyCode}
+
+
+Static initializer for trace ID struct. 
+
+\mbox{\Hypertarget{trace__id_8h_a37168d3dd11dd4695cc6b2cf1833067f}\label{trace__id_8h_a37168d3dd11dd4695cc6b2cf1833067f}} 
+\index{trace\+\_\+id.\+h@{trace\+\_\+id.\+h}!J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+T\+R\+A\+C\+E\+\_\+\+I\+D\+\_\+\+M\+A\+X\+\_\+\+S\+T\+R\+\_\+\+L\+EN@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+T\+R\+A\+C\+E\+\_\+\+I\+D\+\_\+\+M\+A\+X\+\_\+\+S\+T\+R\+\_\+\+L\+EN}}
+\index{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+T\+R\+A\+C\+E\+\_\+\+I\+D\+\_\+\+M\+A\+X\+\_\+\+S\+T\+R\+\_\+\+L\+EN@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+T\+R\+A\+C\+E\+\_\+\+I\+D\+\_\+\+M\+A\+X\+\_\+\+S\+T\+R\+\_\+\+L\+EN}!trace\+\_\+id.\+h@{trace\+\_\+id.\+h}}
+\subsubsection{\texorpdfstring{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+T\+R\+A\+C\+E\+\_\+\+I\+D\+\_\+\+M\+A\+X\+\_\+\+S\+T\+R\+\_\+\+L\+EN}{JAEGERTRACINGC\_TRACE\_ID\_MAX\_STR\_LEN}}
+{\footnotesize\ttfamily \#define J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+T\+R\+A\+C\+E\+\_\+\+I\+D\+\_\+\+M\+A\+X\+\_\+\+S\+T\+R\+\_\+\+L\+EN~(\mbox{\hyperlink{trace__id_8h_a1683cb96bf0ab6e8f64b5c05c9be26b0}{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+U\+I\+N\+T64\+\_\+\+M\+A\+X\+\_\+\+S\+T\+R\+\_\+\+L\+EN}} $\ast$ 2)}
+
+
+
+Max string length to represent trace ID (not including null byte). 
+
+\mbox{\Hypertarget{trace__id_8h_a1683cb96bf0ab6e8f64b5c05c9be26b0}\label{trace__id_8h_a1683cb96bf0ab6e8f64b5c05c9be26b0}} 
+\index{trace\+\_\+id.\+h@{trace\+\_\+id.\+h}!J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+U\+I\+N\+T64\+\_\+\+M\+A\+X\+\_\+\+S\+T\+R\+\_\+\+L\+EN@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+U\+I\+N\+T64\+\_\+\+M\+A\+X\+\_\+\+S\+T\+R\+\_\+\+L\+EN}}
+\index{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+U\+I\+N\+T64\+\_\+\+M\+A\+X\+\_\+\+S\+T\+R\+\_\+\+L\+EN@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+U\+I\+N\+T64\+\_\+\+M\+A\+X\+\_\+\+S\+T\+R\+\_\+\+L\+EN}!trace\+\_\+id.\+h@{trace\+\_\+id.\+h}}
+\subsubsection{\texorpdfstring{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+U\+I\+N\+T64\+\_\+\+M\+A\+X\+\_\+\+S\+T\+R\+\_\+\+L\+EN}{JAEGERTRACINGC\_UINT64\_MAX\_STR\_LEN}}
+{\footnotesize\ttfamily \#define J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+U\+I\+N\+T64\+\_\+\+M\+A\+X\+\_\+\+S\+T\+R\+\_\+\+L\+EN~16}
+
+
+
+Max string length to represent uint64\+\_\+t as hex (not including null byte). 
+
+
+
+\subsection{Typedef Documentation}
+\mbox{\Hypertarget{trace__id_8h_a52559bed65fca78dcba42ff2388a6a85}\label{trace__id_8h_a52559bed65fca78dcba42ff2388a6a85}} 
+\index{trace\+\_\+id.\+h@{trace\+\_\+id.\+h}!jaeger\+\_\+trace\+\_\+id@{jaeger\+\_\+trace\+\_\+id}}
+\index{jaeger\+\_\+trace\+\_\+id@{jaeger\+\_\+trace\+\_\+id}!trace\+\_\+id.\+h@{trace\+\_\+id.\+h}}
+\subsubsection{\texorpdfstring{jaeger\+\_\+trace\+\_\+id}{jaeger\_trace\_id}}
+{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{structjaeger__trace__id}{jaeger\+\_\+trace\+\_\+id}}  \mbox{\hyperlink{structjaeger__trace__id}{jaeger\+\_\+trace\+\_\+id}}}
+
+
+
+128 bit unique ID for a given trace. 
+

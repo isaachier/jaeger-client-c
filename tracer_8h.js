@@ -6,7 +6,7 @@ var tracer_8h =
     [ "JAEGERTRACINGC_TRACER_INIT", "tracer_8h.html#ad7a6054b6b4bb4b57c129e7cc6935a1a", null ],
     [ "jaeger_tracer", "tracer_8h.html#aecb3ad27e5f06cfdc881d96ebec29783", null ],
     [ "jaeger_tracer_options", "tracer_8h.html#abe813aa7689a8224a1545960d0efce71", null ],
-    [ "jaeger_tracer_destroy", "tracer_8h.html#ac15d87245dc7a76a6d630c08499f4dde", null ],
+    [ "jaeger_tracer_destroy", "tracer_8h.html#adfec533c92e8550a67be7cfa3d4c2fa4", null ],
     [ "jaeger_tracer_extract_binary", "tracer_8h.html#a33faeb0e6c4e1598bf2219bcdfa6683a", null ],
     [ "jaeger_tracer_extract_custom", "tracer_8h.html#a3060407ee98c7f144ce4976230b33654", null ],
     [ "jaeger_tracer_extract_http_headers", "tracer_8h.html#a654a7cc799997eda2fed3d981f15851d", null ],

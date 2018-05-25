@@ -1,6 +1,6 @@
 var structjaeger__span__context =
 [
-    [ "baggage", "structjaeger__span__context.html#af30317425d6b678805199dc01f5a29b2", null ],
+    [ "baggage", "structjaeger__span__context.html#aedfb64b810e041a807dd6e0ea8274215", null ],
     [ "base", "structjaeger__span__context.html#a306504cd5d3064edc49c70e8d485a067", null ],
     [ "debug_id", "structjaeger__span__context.html#ac20ee048f523b07af732d686797fed17", null ],
     [ "flags", "structjaeger__span__context.html#a7b79bf9f7994b640a154665cce75ec68", null ],

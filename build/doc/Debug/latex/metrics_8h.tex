@@ -1,0 +1,282 @@
+\hypertarget{metrics_8h}{}\section{jaegertracingc/metrics.h File Reference}
+\label{metrics_8h}\index{jaegertracingc/metrics.\+h@{jaegertracingc/metrics.\+h}}
+
+
+Metrics interfaces to track various numbers while tracing.  
+
+
+{\ttfamily \#include \char`\"{}jaegertracingc/common.\+h\char`\"{}}\newline
+Include dependency graph for metrics.\+h\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{metrics_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{metrics_8h__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structjaeger__counter}{jaeger\+\_\+counter}}
+\begin{DoxyCompactList}\small\item\em Counter metric interface. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structjaeger__default__counter}{jaeger\+\_\+default\+\_\+counter}}
+\begin{DoxyCompactList}\small\item\em Implements the counter interface with basic 64 bit integer value. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structjaeger__gauge}{jaeger\+\_\+gauge}}
+\begin{DoxyCompactList}\small\item\em Gauge metric interface. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structjaeger__default__gauge}{jaeger\+\_\+default\+\_\+gauge}}
+\begin{DoxyCompactList}\small\item\em Implements gauge interface with basic 64 bit integer value. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structjaeger__metrics}{jaeger\+\_\+metrics}}
+\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+M\+E\+T\+R\+I\+C\+S\+\_\+\+C\+O\+U\+N\+T\+E\+RS}(X)
+\item 
+\mbox{\Hypertarget{metrics_8h_a1ed1e520dc7f714f9f5191e55c31a2dd}\label{metrics_8h_a1ed1e520dc7f714f9f5191e55c31a2dd}} 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+M\+E\+T\+R\+I\+C\+S\+\_\+\+G\+A\+U\+G\+ES}(X)~X(reporter\+\_\+queue\+\_\+length)
+\item 
+\mbox{\Hypertarget{metrics_8h_abec076aa9510952afeeb94960e3aa6c6}\label{metrics_8h_abec076aa9510952afeeb94960e3aa6c6}} 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+C\+O\+U\+N\+T\+E\+R\+\_\+\+D\+E\+CL}(member)~\mbox{\hyperlink{structjaeger__counter}{jaeger\+\_\+counter}}$\ast$ member;
+\item 
+\mbox{\Hypertarget{metrics_8h_ab2225e010ef07ff4f21d942fc145e38c}\label{metrics_8h_ab2225e010ef07ff4f21d942fc145e38c}} 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+G\+A\+U\+G\+E\+\_\+\+D\+E\+CL}(member)~\mbox{\hyperlink{structjaeger__gauge}{jaeger\+\_\+gauge}}$\ast$ member;
+\item 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+M\+E\+T\+R\+I\+C\+S\+\_\+\+D\+E\+S\+T\+R\+O\+Y\+\_\+\+I\+F\+\_\+\+N\+O\+T\+\_\+\+N\+U\+LL}(member)
+\item 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+M\+E\+T\+R\+I\+C\+S\+\_\+\+A\+L\+L\+O\+C\+\_\+\+I\+N\+IT}(member,  base\+\_\+type,  type,  init)
+\item 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+M\+E\+T\+R\+I\+C\+S\+\_\+\+I\+N\+I\+T\+\_\+\+I\+M\+PL}(counter\+\_\+init,  gauge\+\_\+init)
+\item 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+D\+E\+F\+A\+U\+L\+T\+\_\+\+C\+O\+U\+N\+T\+E\+R\+\_\+\+A\+L\+L\+O\+C\+\_\+\+I\+N\+IT}(member)
+\item 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+D\+E\+F\+A\+U\+L\+T\+\_\+\+G\+A\+U\+G\+E\+\_\+\+A\+L\+L\+O\+C\+\_\+\+I\+N\+IT}(member)
+\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef struct \mbox{\hyperlink{structjaeger__counter}{jaeger\+\_\+counter}} \mbox{\hyperlink{metrics_8h_a3db03a0fcd5a7e7eed36e7570576908f}{jaeger\+\_\+counter}}
+\begin{DoxyCompactList}\small\item\em Counter metric interface. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{metrics_8h_ac43bb648a3a165ec1e09041008771ce3}\label{metrics_8h_ac43bb648a3a165ec1e09041008771ce3}} 
+typedef struct \mbox{\hyperlink{structjaeger__default__counter}{jaeger\+\_\+default\+\_\+counter}} \mbox{\hyperlink{metrics_8h_ac43bb648a3a165ec1e09041008771ce3}{jaeger\+\_\+default\+\_\+counter}}
+\begin{DoxyCompactList}\small\item\em Implements the counter interface with basic 64 bit integer value. \end{DoxyCompactList}\item 
+typedef struct \mbox{\hyperlink{structjaeger__gauge}{jaeger\+\_\+gauge}} \mbox{\hyperlink{metrics_8h_a4e6ae6a29bd2e7d4a41aa1968e15a13a}{jaeger\+\_\+gauge}}
+\begin{DoxyCompactList}\small\item\em Gauge metric interface. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{metrics_8h_a910f3796c5fe04d7fda927096b30beb5}\label{metrics_8h_a910f3796c5fe04d7fda927096b30beb5}} 
+typedef struct \mbox{\hyperlink{structjaeger__default__gauge}{jaeger\+\_\+default\+\_\+gauge}} \mbox{\hyperlink{metrics_8h_a910f3796c5fe04d7fda927096b30beb5}{jaeger\+\_\+default\+\_\+gauge}}
+\begin{DoxyCompactList}\small\item\em Implements gauge interface with basic 64 bit integer value. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{metrics_8h_adae092e70a3aa82c8cdf6865996309ad}\label{metrics_8h_adae092e70a3aa82c8cdf6865996309ad}} 
+typedef struct \mbox{\hyperlink{structjaeger__metrics}{jaeger\+\_\+metrics}} {\bfseries jaeger\+\_\+metrics}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{structjaeger__counter}{jaeger\+\_\+counter}} $\ast$ \mbox{\hyperlink{metrics_8h_aeff8270c8b4a9200a3d80f6a03e9271e}{jaeger\+\_\+null\+\_\+counter}} ()
+\begin{DoxyCompactList}\small\item\em Shared instance of null counter. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{metrics_8h_a20133ddc6d04b70fa199bcd2399371bc}{jaeger\+\_\+default\+\_\+counter\+\_\+init}} (\mbox{\hyperlink{structjaeger__default__counter}{jaeger\+\_\+default\+\_\+counter}} $\ast$counter)
+\begin{DoxyCompactList}\small\item\em Initialize a default counter. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{metrics_8h_a304557430b295514cf0f6dc35320c41c}{jaeger\+\_\+default\+\_\+gauge\+\_\+init}} (\mbox{\hyperlink{structjaeger__default__gauge}{jaeger\+\_\+default\+\_\+gauge}} $\ast$gauge)
+\begin{DoxyCompactList}\small\item\em Initialize a default gauge. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{metrics_8h_a4aef5aa91fefd57be92c5219135efee2}\label{metrics_8h_a4aef5aa91fefd57be92c5219135efee2}} 
+\mbox{\hyperlink{structjaeger__gauge}{jaeger\+\_\+gauge}} $\ast$ {\bfseries jaeger\+\_\+null\+\_\+gauge} ()
+\item 
+\mbox{\Hypertarget{metrics_8h_a27408885f719d3c90dd4bb330862591f}\label{metrics_8h_a27408885f719d3c90dd4bb330862591f}} 
+\mbox{\hyperlink{structjaeger__metrics}{jaeger\+\_\+metrics}} $\ast$ {\bfseries jaeger\+\_\+null\+\_\+metrics} ()
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Metrics interfaces to track various numbers while tracing. 
+
+
+
+\subsection{Macro Definition Documentation}
+\mbox{\Hypertarget{metrics_8h_a4ea884496d18bcf4f34ae96a76b16a0e}\label{metrics_8h_a4ea884496d18bcf4f34ae96a76b16a0e}} 
+\index{metrics.\+h@{metrics.\+h}!J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+D\+E\+F\+A\+U\+L\+T\+\_\+\+C\+O\+U\+N\+T\+E\+R\+\_\+\+A\+L\+L\+O\+C\+\_\+\+I\+N\+IT@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+D\+E\+F\+A\+U\+L\+T\+\_\+\+C\+O\+U\+N\+T\+E\+R\+\_\+\+A\+L\+L\+O\+C\+\_\+\+I\+N\+IT}}
+\index{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+D\+E\+F\+A\+U\+L\+T\+\_\+\+C\+O\+U\+N\+T\+E\+R\+\_\+\+A\+L\+L\+O\+C\+\_\+\+I\+N\+IT@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+D\+E\+F\+A\+U\+L\+T\+\_\+\+C\+O\+U\+N\+T\+E\+R\+\_\+\+A\+L\+L\+O\+C\+\_\+\+I\+N\+IT}!metrics.\+h@{metrics.\+h}}
+\subsubsection{\texorpdfstring{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+D\+E\+F\+A\+U\+L\+T\+\_\+\+C\+O\+U\+N\+T\+E\+R\+\_\+\+A\+L\+L\+O\+C\+\_\+\+I\+N\+IT}{JAEGERTRACINGC\_DEFAULT\_COUNTER\_ALLOC\_INIT}}
+{\footnotesize\ttfamily \#define J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+D\+E\+F\+A\+U\+L\+T\+\_\+\+C\+O\+U\+N\+T\+E\+R\+\_\+\+A\+L\+L\+O\+C\+\_\+\+I\+N\+IT(\begin{DoxyParamCaption}\item[{}]{member }\end{DoxyParamCaption})}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\DoxyCodeLine{JAEGERTRACINGC\_METRICS\_ALLOC\_INIT(member,                 \(\backslash\)}
+\DoxyCodeLine{                                      \mbox{\hyperlink{structjaeger__counter}{jaeger\_counter}},         \(\backslash\)}
+\DoxyCodeLine{                                      \mbox{\hyperlink{structjaeger__default__counter}{jaeger\_default\_counter}}, \(\backslash\)}
+\DoxyCodeLine{                                      \mbox{\hyperlink{metrics_8h_a20133ddc6d04b70fa199bcd2399371bc}{jaeger\_default\_counter\_init}});}
+\end{DoxyCode}
+\mbox{\Hypertarget{metrics_8h_a31d5eed56111b44805b91762c7e6fcc3}\label{metrics_8h_a31d5eed56111b44805b91762c7e6fcc3}} 
+\index{metrics.\+h@{metrics.\+h}!J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+D\+E\+F\+A\+U\+L\+T\+\_\+\+G\+A\+U\+G\+E\+\_\+\+A\+L\+L\+O\+C\+\_\+\+I\+N\+IT@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+D\+E\+F\+A\+U\+L\+T\+\_\+\+G\+A\+U\+G\+E\+\_\+\+A\+L\+L\+O\+C\+\_\+\+I\+N\+IT}}
+\index{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+D\+E\+F\+A\+U\+L\+T\+\_\+\+G\+A\+U\+G\+E\+\_\+\+A\+L\+L\+O\+C\+\_\+\+I\+N\+IT@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+D\+E\+F\+A\+U\+L\+T\+\_\+\+G\+A\+U\+G\+E\+\_\+\+A\+L\+L\+O\+C\+\_\+\+I\+N\+IT}!metrics.\+h@{metrics.\+h}}
+\subsubsection{\texorpdfstring{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+D\+E\+F\+A\+U\+L\+T\+\_\+\+G\+A\+U\+G\+E\+\_\+\+A\+L\+L\+O\+C\+\_\+\+I\+N\+IT}{JAEGERTRACINGC\_DEFAULT\_GAUGE\_ALLOC\_INIT}}
+{\footnotesize\ttfamily \#define J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+D\+E\+F\+A\+U\+L\+T\+\_\+\+G\+A\+U\+G\+E\+\_\+\+A\+L\+L\+O\+C\+\_\+\+I\+N\+IT(\begin{DoxyParamCaption}\item[{}]{member }\end{DoxyParamCaption})}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\DoxyCodeLine{JAEGERTRACINGC\_METRICS\_ALLOC\_INIT(member,               \(\backslash\)}
+\DoxyCodeLine{                                      \mbox{\hyperlink{structjaeger__gauge}{jaeger\_gauge}},         \(\backslash\)}
+\DoxyCodeLine{                                      \mbox{\hyperlink{structjaeger__default__gauge}{jaeger\_default\_gauge}}, \(\backslash\)}
+\DoxyCodeLine{                                      \mbox{\hyperlink{metrics_8h_a304557430b295514cf0f6dc35320c41c}{jaeger\_default\_gauge\_init}});}
+\end{DoxyCode}
+\mbox{\Hypertarget{metrics_8h_aed3754eee1f58f0a694e9cd3ed4b3428}\label{metrics_8h_aed3754eee1f58f0a694e9cd3ed4b3428}} 
+\index{metrics.\+h@{metrics.\+h}!J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+M\+E\+T\+R\+I\+C\+S\+\_\+\+A\+L\+L\+O\+C\+\_\+\+I\+N\+IT@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+M\+E\+T\+R\+I\+C\+S\+\_\+\+A\+L\+L\+O\+C\+\_\+\+I\+N\+IT}}
+\index{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+M\+E\+T\+R\+I\+C\+S\+\_\+\+A\+L\+L\+O\+C\+\_\+\+I\+N\+IT@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+M\+E\+T\+R\+I\+C\+S\+\_\+\+A\+L\+L\+O\+C\+\_\+\+I\+N\+IT}!metrics.\+h@{metrics.\+h}}
+\subsubsection{\texorpdfstring{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+M\+E\+T\+R\+I\+C\+S\+\_\+\+A\+L\+L\+O\+C\+\_\+\+I\+N\+IT}{JAEGERTRACINGC\_METRICS\_ALLOC\_INIT}}
+{\footnotesize\ttfamily \#define J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+M\+E\+T\+R\+I\+C\+S\+\_\+\+A\+L\+L\+O\+C\+\_\+\+I\+N\+IT(\begin{DoxyParamCaption}\item[{}]{member,  }\item[{}]{base\+\_\+type,  }\item[{}]{type,  }\item[{}]{init }\end{DoxyParamCaption})}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\DoxyCodeLine{\textcolor{keywordflow}{do} \{                                                                     \(\backslash\)}
+\DoxyCodeLine{        if (success) \{                                                       \(\backslash\)}
+\DoxyCodeLine{            metrics->member = (base\_type*) \mbox{\hyperlink{alloc_8h_a8bf91f5b7b45e1e602d5a4079420bcd3}{jaeger\_malloc}}(\textcolor{keyword}{sizeof}(type));      \(\backslash\)}
+\DoxyCodeLine{            if (metrics->member == NULL) \{                                   \(\backslash\)}
+\DoxyCodeLine{                jaeger\_log\_error(\textcolor{stringliteral}{"Cannot allocate metrics member "} \#member); \(\backslash\)}
+\DoxyCodeLine{                success = \textcolor{keyword}{false};                                             \(\backslash\)}
+\DoxyCodeLine{            \}                                                                \(\backslash\)}
+\DoxyCodeLine{            else \{                                                           \(\backslash\)}
+\DoxyCodeLine{                init((type*) metrics->member);                               \(\backslash\)}
+\DoxyCodeLine{            \}                                                                \(\backslash\)}
+\DoxyCodeLine{        \}                                                                    \(\backslash\)}
+\DoxyCodeLine{    \} \textcolor{keywordflow}{while} (0)}
+\end{DoxyCode}
+\mbox{\Hypertarget{metrics_8h_ae3db83b0eb6e7791ce24204708bba117}\label{metrics_8h_ae3db83b0eb6e7791ce24204708bba117}} 
+\index{metrics.\+h@{metrics.\+h}!J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+M\+E\+T\+R\+I\+C\+S\+\_\+\+C\+O\+U\+N\+T\+E\+RS@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+M\+E\+T\+R\+I\+C\+S\+\_\+\+C\+O\+U\+N\+T\+E\+RS}}
+\index{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+M\+E\+T\+R\+I\+C\+S\+\_\+\+C\+O\+U\+N\+T\+E\+RS@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+M\+E\+T\+R\+I\+C\+S\+\_\+\+C\+O\+U\+N\+T\+E\+RS}!metrics.\+h@{metrics.\+h}}
+\subsubsection{\texorpdfstring{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+M\+E\+T\+R\+I\+C\+S\+\_\+\+C\+O\+U\+N\+T\+E\+RS}{JAEGERTRACINGC\_METRICS\_COUNTERS}}
+{\footnotesize\ttfamily \#define J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+M\+E\+T\+R\+I\+C\+S\+\_\+\+C\+O\+U\+N\+T\+E\+RS(\begin{DoxyParamCaption}\item[{}]{X }\end{DoxyParamCaption})}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\DoxyCodeLine{X(traces\_started\_sampled)              \(\backslash\)}
+\DoxyCodeLine{    X(traces\_started\_not\_sampled)          \(\backslash\)}
+\DoxyCodeLine{    X(traces\_joined\_sampled)               \(\backslash\)}
+\DoxyCodeLine{    X(traces\_joined\_not\_sampled)           \(\backslash\)}
+\DoxyCodeLine{    X(spans\_started)                       \(\backslash\)}
+\DoxyCodeLine{    X(spans\_finished)                      \(\backslash\)}
+\DoxyCodeLine{    X(spans\_sampled)                       \(\backslash\)}
+\DoxyCodeLine{    X(spans\_not\_sampled)                   \(\backslash\)}
+\DoxyCodeLine{    X(decoding\_errors)                     \(\backslash\)}
+\DoxyCodeLine{    X(reporter\_success)                    \(\backslash\)}
+\DoxyCodeLine{    X(reporter\_failure)                    \(\backslash\)}
+\DoxyCodeLine{    X(reporter\_dropped)                    \(\backslash\)}
+\DoxyCodeLine{    X(sampler\_retrieved)                   \(\backslash\)}
+\DoxyCodeLine{    X(sampler\_updated)                     \(\backslash\)}
+\DoxyCodeLine{    X(sampler\_update\_failure)              \(\backslash\)}
+\DoxyCodeLine{    X(sampler\_query\_failure)               \(\backslash\)}
+\DoxyCodeLine{    X(baggage\_update\_success)              \(\backslash\)}
+\DoxyCodeLine{    X(baggage\_update\_failure)              \(\backslash\)}
+\DoxyCodeLine{    X(baggage\_truncate)                    \(\backslash\)}
+\DoxyCodeLine{    X(baggage\_restrictions\_update\_success) \(\backslash\)}
+\DoxyCodeLine{    X(baggage\_restrictions\_update\_failure)}
+\end{DoxyCode}
+\mbox{\Hypertarget{metrics_8h_a582eb5b9082b3a4cf6c7e04e8d37f9f7}\label{metrics_8h_a582eb5b9082b3a4cf6c7e04e8d37f9f7}} 
+\index{metrics.\+h@{metrics.\+h}!J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+M\+E\+T\+R\+I\+C\+S\+\_\+\+D\+E\+S\+T\+R\+O\+Y\+\_\+\+I\+F\+\_\+\+N\+O\+T\+\_\+\+N\+U\+LL@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+M\+E\+T\+R\+I\+C\+S\+\_\+\+D\+E\+S\+T\+R\+O\+Y\+\_\+\+I\+F\+\_\+\+N\+O\+T\+\_\+\+N\+U\+LL}}
+\index{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+M\+E\+T\+R\+I\+C\+S\+\_\+\+D\+E\+S\+T\+R\+O\+Y\+\_\+\+I\+F\+\_\+\+N\+O\+T\+\_\+\+N\+U\+LL@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+M\+E\+T\+R\+I\+C\+S\+\_\+\+D\+E\+S\+T\+R\+O\+Y\+\_\+\+I\+F\+\_\+\+N\+O\+T\+\_\+\+N\+U\+LL}!metrics.\+h@{metrics.\+h}}
+\subsubsection{\texorpdfstring{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+M\+E\+T\+R\+I\+C\+S\+\_\+\+D\+E\+S\+T\+R\+O\+Y\+\_\+\+I\+F\+\_\+\+N\+O\+T\+\_\+\+N\+U\+LL}{JAEGERTRACINGC\_METRICS\_DESTROY\_IF\_NOT\_NULL}}
+{\footnotesize\ttfamily \#define J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+M\+E\+T\+R\+I\+C\+S\+\_\+\+D\+E\+S\+T\+R\+O\+Y\+\_\+\+I\+F\+\_\+\+N\+O\+T\+\_\+\+N\+U\+LL(\begin{DoxyParamCaption}\item[{}]{member }\end{DoxyParamCaption})}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\DoxyCodeLine{\textcolor{keywordflow}{do} \{                                                                     \(\backslash\)}
+\DoxyCodeLine{        if (metrics->member != NULL) \{                                       \(\backslash\)}
+\DoxyCodeLine{            jaeger\_destructible* d = (jaeger\_destructible*) metrics->member; \(\backslash\)}
+\DoxyCodeLine{            d->destroy(d);                                                   \(\backslash\)}
+\DoxyCodeLine{            jaeger\_free(metrics->member);                                    \(\backslash\)}
+\DoxyCodeLine{            metrics->member = NULL;                                          \(\backslash\)}
+\DoxyCodeLine{        \}                                                                    \(\backslash\)}
+\DoxyCodeLine{    \} \textcolor{keywordflow}{while} (0);}
+\end{DoxyCode}
+\mbox{\Hypertarget{metrics_8h_a1ca05d77d5bb6dcaa0d2b62c6eebe25d}\label{metrics_8h_a1ca05d77d5bb6dcaa0d2b62c6eebe25d}} 
+\index{metrics.\+h@{metrics.\+h}!J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+M\+E\+T\+R\+I\+C\+S\+\_\+\+I\+N\+I\+T\+\_\+\+I\+M\+PL@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+M\+E\+T\+R\+I\+C\+S\+\_\+\+I\+N\+I\+T\+\_\+\+I\+M\+PL}}
+\index{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+M\+E\+T\+R\+I\+C\+S\+\_\+\+I\+N\+I\+T\+\_\+\+I\+M\+PL@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+M\+E\+T\+R\+I\+C\+S\+\_\+\+I\+N\+I\+T\+\_\+\+I\+M\+PL}!metrics.\+h@{metrics.\+h}}
+\subsubsection{\texorpdfstring{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+M\+E\+T\+R\+I\+C\+S\+\_\+\+I\+N\+I\+T\+\_\+\+I\+M\+PL}{JAEGERTRACINGC\_METRICS\_INIT\_IMPL}}
+{\footnotesize\ttfamily \#define J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+M\+E\+T\+R\+I\+C\+S\+\_\+\+I\+N\+I\+T\+\_\+\+I\+M\+PL(\begin{DoxyParamCaption}\item[{}]{counter\+\_\+init,  }\item[{}]{gauge\+\_\+init }\end{DoxyParamCaption})}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\DoxyCodeLine{\textcolor{keywordflow}{do} \{                                                           \(\backslash\)}
+\DoxyCodeLine{        assert(metrics != NULL);                                   \(\backslash\)}
+\DoxyCodeLine{        memset(metrics, 0, \textcolor{keyword}{sizeof}(*metrics));                      \(\backslash\)}
+\DoxyCodeLine{        bool success = \textcolor{keyword}{true};                                       \(\backslash\)}
+\DoxyCodeLine{                                                                   \(\backslash\)}
+\DoxyCodeLine{        JAEGERTRACINGC\_METRICS\_COUNTERS(counter\_init)              \(\backslash\)}
+\DoxyCodeLine{        JAEGERTRACINGC\_METRICS\_GAUGES(gauge\_init)                  \(\backslash\)}
+\DoxyCodeLine{                                                                   \(\backslash\)}
+\DoxyCodeLine{        if (!success) \{                                            \(\backslash\)}
+\DoxyCodeLine{            jaeger\_metrics\_destroy(metrics);                       \(\backslash\)}
+\DoxyCodeLine{        \}                                                          \(\backslash\)}
+\DoxyCodeLine{                                                                   \(\backslash\)}
+\DoxyCodeLine{        return success;                                            \(\backslash\)}
+\DoxyCodeLine{    \} \textcolor{keywordflow}{while} (0)}
+\end{DoxyCode}
+
+
+\subsection{Typedef Documentation}
+\mbox{\Hypertarget{metrics_8h_a3db03a0fcd5a7e7eed36e7570576908f}\label{metrics_8h_a3db03a0fcd5a7e7eed36e7570576908f}} 
+\index{metrics.\+h@{metrics.\+h}!jaeger\+\_\+counter@{jaeger\+\_\+counter}}
+\index{jaeger\+\_\+counter@{jaeger\+\_\+counter}!metrics.\+h@{metrics.\+h}}
+\subsubsection{\texorpdfstring{jaeger\+\_\+counter}{jaeger\_counter}}
+{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{structjaeger__counter}{jaeger\+\_\+counter}}  \mbox{\hyperlink{structjaeger__counter}{jaeger\+\_\+counter}}}
+
+
+
+Counter metric interface. 
+
+Counters are used to keep track of a total number of events (i.\+e. number of spans reported). \mbox{\Hypertarget{metrics_8h_a4e6ae6a29bd2e7d4a41aa1968e15a13a}\label{metrics_8h_a4e6ae6a29bd2e7d4a41aa1968e15a13a}} 
+\index{metrics.\+h@{metrics.\+h}!jaeger\+\_\+gauge@{jaeger\+\_\+gauge}}
+\index{jaeger\+\_\+gauge@{jaeger\+\_\+gauge}!metrics.\+h@{metrics.\+h}}
+\subsubsection{\texorpdfstring{jaeger\+\_\+gauge}{jaeger\_gauge}}
+{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{structjaeger__gauge}{jaeger\+\_\+gauge}}  \mbox{\hyperlink{structjaeger__gauge}{jaeger\+\_\+gauge}}}
+
+
+
+Gauge metric interface. 
+
+Gauges are used to keep track of a changing number (i.\+e. number of items currently in a queue). 
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{metrics_8h_a20133ddc6d04b70fa199bcd2399371bc}\label{metrics_8h_a20133ddc6d04b70fa199bcd2399371bc}} 
+\index{metrics.\+h@{metrics.\+h}!jaeger\+\_\+default\+\_\+counter\+\_\+init@{jaeger\+\_\+default\+\_\+counter\+\_\+init}}
+\index{jaeger\+\_\+default\+\_\+counter\+\_\+init@{jaeger\+\_\+default\+\_\+counter\+\_\+init}!metrics.\+h@{metrics.\+h}}
+\subsubsection{\texorpdfstring{jaeger\+\_\+default\+\_\+counter\+\_\+init()}{jaeger\_default\_counter\_init()}}
+{\footnotesize\ttfamily void jaeger\+\_\+default\+\_\+counter\+\_\+init (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structjaeger__default__counter}{jaeger\+\_\+default\+\_\+counter}} $\ast$}]{counter }\end{DoxyParamCaption})}
+
+
+
+Initialize a default counter. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em counter} & Counter to initialize. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{metrics_8h_a304557430b295514cf0f6dc35320c41c}\label{metrics_8h_a304557430b295514cf0f6dc35320c41c}} 
+\index{metrics.\+h@{metrics.\+h}!jaeger\+\_\+default\+\_\+gauge\+\_\+init@{jaeger\+\_\+default\+\_\+gauge\+\_\+init}}
+\index{jaeger\+\_\+default\+\_\+gauge\+\_\+init@{jaeger\+\_\+default\+\_\+gauge\+\_\+init}!metrics.\+h@{metrics.\+h}}
+\subsubsection{\texorpdfstring{jaeger\+\_\+default\+\_\+gauge\+\_\+init()}{jaeger\_default\_gauge\_init()}}
+{\footnotesize\ttfamily void jaeger\+\_\+default\+\_\+gauge\+\_\+init (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structjaeger__default__gauge}{jaeger\+\_\+default\+\_\+gauge}} $\ast$}]{gauge }\end{DoxyParamCaption})}
+
+
+
+Initialize a default gauge. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em gauge} & Gauge object to be initialized. May not be N\+U\+LL. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{metrics_8h_aeff8270c8b4a9200a3d80f6a03e9271e}\label{metrics_8h_aeff8270c8b4a9200a3d80f6a03e9271e}} 
+\index{metrics.\+h@{metrics.\+h}!jaeger\+\_\+null\+\_\+counter@{jaeger\+\_\+null\+\_\+counter}}
+\index{jaeger\+\_\+null\+\_\+counter@{jaeger\+\_\+null\+\_\+counter}!metrics.\+h@{metrics.\+h}}
+\subsubsection{\texorpdfstring{jaeger\+\_\+null\+\_\+counter()}{jaeger\_null\_counter()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structjaeger__counter}{jaeger\+\_\+counter}}$\ast$ jaeger\+\_\+null\+\_\+counter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Shared instance of null counter. 
+
+The null counter does not do anything in its inc() function. DO N\+OT M\+O\+D\+I\+FY M\+E\+M\+B\+E\+R\+S! 

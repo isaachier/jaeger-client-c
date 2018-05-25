@@ -1,0 +1,112 @@
+\hypertarget{log__record_8h}{}\section{jaegertracingc/log\+\_\+record.h File Reference}
+\label{log__record_8h}\index{jaegertracingc/log\+\_\+record.\+h@{jaegertracingc/log\+\_\+record.\+h}}
+
+
+Log record representation for use in span.  
+
+
+{\ttfamily \#include \char`\"{}jaegertracingc/clock.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/common.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/tag.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/vector.\+h\char`\"{}}\newline
+Include dependency graph for log\+\_\+record.\+h\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{log__record_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{log__record_8h__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structjaeger__log__record}{jaeger\+\_\+log\+\_\+record}}
+\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+L\+O\+G\+\_\+\+R\+E\+C\+O\+R\+D\+\_\+\+I\+N\+IT}
+\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{log__record_8h_a2775b56d909b0eb7469859f2fe9038dd}\label{log__record_8h_a2775b56d909b0eb7469859f2fe9038dd}} 
+typedef struct \mbox{\hyperlink{structjaeger__log__record}{jaeger\+\_\+log\+\_\+record}} {\bfseries jaeger\+\_\+log\+\_\+record}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{log__record_8h_a747f0c9e947b279f169e7ab5909cbab8}\label{log__record_8h_a747f0c9e947b279f169e7ab5909cbab8}} 
+{\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+W\+R\+A\+P\+\_\+\+C\+O\+PY} (jaeger\+\_\+log\+\_\+record\+\_\+copy, \mbox{\hyperlink{structjaeger__log__record}{jaeger\+\_\+log\+\_\+record}}, \mbox{\hyperlink{structjaeger__log__record}{jaeger\+\_\+log\+\_\+record}}) static inline void jaeger\+\_\+log\+\_\+record\+\_\+protobuf\+\_\+destroy(\mbox{\hyperlink{struct__Jaegertracing____Protobuf____Log}{Jaegertracing\+\_\+\+\_\+\+Protobuf\+\_\+\+\_\+\+Log}} $\ast$log\+\_\+record)
+\item 
+\mbox{\Hypertarget{log__record_8h_a66639fb08190076d0418a7920cf215b4}\label{log__record_8h_a66639fb08190076d0418a7920cf215b4}} 
+{\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+W\+R\+A\+P\+\_\+\+D\+E\+S\+T\+R\+OY} (jaeger\+\_\+log\+\_\+record\+\_\+protobuf\+\_\+destroy, \mbox{\hyperlink{struct__Jaegertracing____Protobuf____Log}{Jaegertracing\+\_\+\+\_\+\+Protobuf\+\_\+\+\_\+\+Log}}) static inline bool jaeger\+\_\+log\+\_\+record\+\_\+to\+\_\+protobuf(\mbox{\hyperlink{struct__Jaegertracing____Protobuf____Log}{Jaegertracing\+\_\+\+\_\+\+Protobuf\+\_\+\+\_\+\+Log}} $\ast$restrict dst
+\item 
+\mbox{\Hypertarget{log__record_8h_a0440fa6f5f50f7902e34c21c4607bbb3}\label{log__record_8h_a0440fa6f5f50f7902e34c21c4607bbb3}} 
+{\bfseries assert} (src !=N\+U\+LL)
+\item 
+\mbox{\Hypertarget{log__record_8h_abd216a01334d3eb8334ba5ac4dd0299c}\label{log__record_8h_abd216a01334d3eb8334ba5ac4dd0299c}} 
+{\bfseries if} (!jaeger\+\_\+vector\+\_\+protobuf\+\_\+copy((void $\ast$$\ast$$\ast$) \&dst-\/$>$fields, \&dst-\/$>$n\+\_\+fields, \&src-\/$>$fields, sizeof(jaeger\+\_\+tag), \&jaeger\+\_\+tag\+\_\+copy\+\_\+wrapper, \&jaeger\+\_\+tag\+\_\+destroy\+\_\+wrapper, N\+U\+LL))
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+const \mbox{\hyperlink{structjaeger__log__record}{jaeger\+\_\+log\+\_\+record}} $\ast$restrict {\bfseries src}
+\item 
+\mbox{\Hypertarget{log__record_8h_ab30ce5929cacc46873c25a334765b9b3}\label{log__record_8h_ab30ce5929cacc46873c25a334765b9b3}} 
+$\ast$ {\bfseries dst} = (\mbox{\hyperlink{struct__Jaegertracing____Protobuf____Log}{Jaegertracing\+\_\+\+\_\+\+Protobuf\+\_\+\+\_\+\+Log}}) J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+\_\+\+\_\+\+P\+R\+O\+T\+O\+B\+U\+F\+\_\+\+\_\+\+L\+O\+G\+\_\+\+\_\+\+I\+N\+IT
+\item 
+\mbox{\Hypertarget{log__record_8h_a4d53016efc132c670a9487cbe21e99c6}\label{log__record_8h_a4d53016efc132c670a9487cbe21e99c6}} 
+dst {\bfseries timestamp} = jaeger\+\_\+timestamp\+\_\+microseconds(\&src-\/$>$timestamp)
+\item 
+\mbox{\Hypertarget{log__record_8h_a930920b2bc42824a5c03be681830f4b2}\label{log__record_8h_a930920b2bc42824a5c03be681830f4b2}} 
+return {\bfseries true}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Log record representation for use in span. 
+
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{structjaeger__span}{jaeger\+\_\+span}} 
+
+jaeger\+\_\+span\+\_\+log 
+\end{DoxySeeAlso}
+
+
+\subsection{Macro Definition Documentation}
+\mbox{\Hypertarget{log__record_8h_ab17e445e9cd5ab4a880c74669174ec9e}\label{log__record_8h_ab17e445e9cd5ab4a880c74669174ec9e}} 
+\index{log\+\_\+record.\+h@{log\+\_\+record.\+h}!J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+L\+O\+G\+\_\+\+R\+E\+C\+O\+R\+D\+\_\+\+I\+N\+IT@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+L\+O\+G\+\_\+\+R\+E\+C\+O\+R\+D\+\_\+\+I\+N\+IT}}
+\index{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+L\+O\+G\+\_\+\+R\+E\+C\+O\+R\+D\+\_\+\+I\+N\+IT@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+L\+O\+G\+\_\+\+R\+E\+C\+O\+R\+D\+\_\+\+I\+N\+IT}!log\+\_\+record.\+h@{log\+\_\+record.\+h}}
+\subsubsection{\texorpdfstring{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+L\+O\+G\+\_\+\+R\+E\+C\+O\+R\+D\+\_\+\+I\+N\+IT}{JAEGERTRACINGC\_LOG\_RECORD\_INIT}}
+{\footnotesize\ttfamily \#define J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+L\+O\+G\+\_\+\+R\+E\+C\+O\+R\+D\+\_\+\+I\+N\+IT}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\DoxyCodeLine{\{                                               \(\backslash\)}
+\DoxyCodeLine{        .timestamp = JAEGERTRACINGC\_TIMESTAMP\_INIT, \(\backslash\)}
+\DoxyCodeLine{        .fields = JAEGERTRACINGC\_VECTOR\_INIT        \(\backslash\)}
+\DoxyCodeLine{    \}}
+\end{DoxyCode}
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{log__record_8h_af3f762b50ae1a8700edd19d8d590fab8}\label{log__record_8h_af3f762b50ae1a8700edd19d8d590fab8}} 
+\index{log\+\_\+record.\+h@{log\+\_\+record.\+h}!src@{src}}
+\index{src@{src}!log\+\_\+record.\+h@{log\+\_\+record.\+h}}
+\subsubsection{\texorpdfstring{src}{src}}
+{\footnotesize\ttfamily const \mbox{\hyperlink{structjaeger__log__record}{jaeger\+\_\+log\+\_\+record}}$\ast$ restrict src}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{    assert(dst != NULL)}
+\end{DoxyCode}

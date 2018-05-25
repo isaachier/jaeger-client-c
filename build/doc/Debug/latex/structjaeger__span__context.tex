@@ -1,0 +1,136 @@
+\hypertarget{structjaeger__span__context}{}\section{jaeger\+\_\+span\+\_\+context Struct Reference}
+\label{structjaeger__span__context}\index{jaeger\+\_\+span\+\_\+context@{jaeger\+\_\+span\+\_\+context}}
+
+
+Span context represents propagated span identity and state.  
+
+
+
+
+{\ttfamily \#include $<$jaegertracingc/span.\+h$>$}
+
+
+
+Collaboration diagram for jaeger\+\_\+span\+\_\+context\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=310pt]{structjaeger__span__context__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item 
+opentracing\+\_\+span\+\_\+context \mbox{\hyperlink{structjaeger__span__context_a306504cd5d3064edc49c70e8d485a067}{base}}
+\begin{DoxyCompactList}\small\item\em Base class member. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structjaeger__trace__id}{jaeger\+\_\+trace\+\_\+id}} \mbox{\hyperlink{structjaeger__span__context_aecace9cbf8c8432cb8c2f5d5dc65b994}{trace\+\_\+id}}
+\begin{DoxyCompactList}\small\item\em Trace ID of the trace containing this span. \end{DoxyCompactList}\item 
+uint64\+\_\+t \mbox{\hyperlink{structjaeger__span__context_ad78982af52840b14a8bee7d3404755d3}{span\+\_\+id}}
+\begin{DoxyCompactList}\small\item\em Randomly generated unique ID. \end{DoxyCompactList}\item 
+uint64\+\_\+t \mbox{\hyperlink{structjaeger__span__context_a66ebaca50e8853b5fab9d4ebe82cfb32}{parent\+\_\+id}}
+\begin{DoxyCompactList}\small\item\em Span ID of parent span. \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{structjaeger__span__context_a7b79bf9f7994b640a154665cce75ec68}{flags}}
+\begin{DoxyCompactList}\small\item\em Sampling flags. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structjaeger__hashtable}{jaeger\+\_\+hashtable}} \mbox{\hyperlink{structjaeger__span__context_aedfb64b810e041a807dd6e0ea8274215}{baggage}}
+\begin{DoxyCompactList}\small\item\em Key-\/value pairs that are propagated along with the span. \end{DoxyCompactList}\item 
+char $\ast$ \mbox{\hyperlink{structjaeger__span__context_ac20ee048f523b07af732d686797fed17}{debug\+\_\+id}}
+\begin{DoxyCompactList}\small\item\em Can be set to correlation ID when the context is being extracted from a carrier. \end{DoxyCompactList}\item 
+jaeger\+\_\+mutex \mbox{\hyperlink{structjaeger__span__context_a56712a12a4461df451f26c91cad7a3e9}{mutex}}
+\begin{DoxyCompactList}\small\item\em Lock to protect mutable members. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Span context represents propagated span identity and state. 
+
+\subsection{Field Documentation}
+\mbox{\Hypertarget{structjaeger__span__context_aedfb64b810e041a807dd6e0ea8274215}\label{structjaeger__span__context_aedfb64b810e041a807dd6e0ea8274215}} 
+\index{jaeger\+\_\+span\+\_\+context@{jaeger\+\_\+span\+\_\+context}!baggage@{baggage}}
+\index{baggage@{baggage}!jaeger\+\_\+span\+\_\+context@{jaeger\+\_\+span\+\_\+context}}
+\subsubsection{\texorpdfstring{baggage}{baggage}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structjaeger__hashtable}{jaeger\+\_\+hashtable}} jaeger\+\_\+span\+\_\+context\+::baggage}
+
+
+
+Key-\/value pairs that are propagated along with the span. 
+
+\mbox{\Hypertarget{structjaeger__span__context_a306504cd5d3064edc49c70e8d485a067}\label{structjaeger__span__context_a306504cd5d3064edc49c70e8d485a067}} 
+\index{jaeger\+\_\+span\+\_\+context@{jaeger\+\_\+span\+\_\+context}!base@{base}}
+\index{base@{base}!jaeger\+\_\+span\+\_\+context@{jaeger\+\_\+span\+\_\+context}}
+\subsubsection{\texorpdfstring{base}{base}}
+{\footnotesize\ttfamily opentracing\+\_\+span\+\_\+context jaeger\+\_\+span\+\_\+context\+::base}
+
+
+
+Base class member. 
+
+\mbox{\Hypertarget{structjaeger__span__context_ac20ee048f523b07af732d686797fed17}\label{structjaeger__span__context_ac20ee048f523b07af732d686797fed17}} 
+\index{jaeger\+\_\+span\+\_\+context@{jaeger\+\_\+span\+\_\+context}!debug\+\_\+id@{debug\+\_\+id}}
+\index{debug\+\_\+id@{debug\+\_\+id}!jaeger\+\_\+span\+\_\+context@{jaeger\+\_\+span\+\_\+context}}
+\subsubsection{\texorpdfstring{debug\+\_\+id}{debug\_id}}
+{\footnotesize\ttfamily char$\ast$ jaeger\+\_\+span\+\_\+context\+::debug\+\_\+id}
+
+
+
+Can be set to correlation ID when the context is being extracted from a carrier. 
+
+\begin{DoxySeeAlso}{See also}
+J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+D\+E\+B\+U\+G\+\_\+\+H\+E\+A\+D\+ER 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{structjaeger__span__context_a7b79bf9f7994b640a154665cce75ec68}\label{structjaeger__span__context_a7b79bf9f7994b640a154665cce75ec68}} 
+\index{jaeger\+\_\+span\+\_\+context@{jaeger\+\_\+span\+\_\+context}!flags@{flags}}
+\index{flags@{flags}!jaeger\+\_\+span\+\_\+context@{jaeger\+\_\+span\+\_\+context}}
+\subsubsection{\texorpdfstring{flags}{flags}}
+{\footnotesize\ttfamily uint8\+\_\+t jaeger\+\_\+span\+\_\+context\+::flags}
+
+
+
+Sampling flags. 
+
+\mbox{\Hypertarget{structjaeger__span__context_a56712a12a4461df451f26c91cad7a3e9}\label{structjaeger__span__context_a56712a12a4461df451f26c91cad7a3e9}} 
+\index{jaeger\+\_\+span\+\_\+context@{jaeger\+\_\+span\+\_\+context}!mutex@{mutex}}
+\index{mutex@{mutex}!jaeger\+\_\+span\+\_\+context@{jaeger\+\_\+span\+\_\+context}}
+\subsubsection{\texorpdfstring{mutex}{mutex}}
+{\footnotesize\ttfamily jaeger\+\_\+mutex jaeger\+\_\+span\+\_\+context\+::mutex}
+
+
+
+Lock to protect mutable members. 
+
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{structjaeger__span__context_aedfb64b810e041a807dd6e0ea8274215}{baggage}} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{structjaeger__span__context_a66ebaca50e8853b5fab9d4ebe82cfb32}\label{structjaeger__span__context_a66ebaca50e8853b5fab9d4ebe82cfb32}} 
+\index{jaeger\+\_\+span\+\_\+context@{jaeger\+\_\+span\+\_\+context}!parent\+\_\+id@{parent\+\_\+id}}
+\index{parent\+\_\+id@{parent\+\_\+id}!jaeger\+\_\+span\+\_\+context@{jaeger\+\_\+span\+\_\+context}}
+\subsubsection{\texorpdfstring{parent\+\_\+id}{parent\_id}}
+{\footnotesize\ttfamily uint64\+\_\+t jaeger\+\_\+span\+\_\+context\+::parent\+\_\+id}
+
+
+
+Span ID of parent span. 
+
+Parent ID of zero represents root span. \mbox{\Hypertarget{structjaeger__span__context_ad78982af52840b14a8bee7d3404755d3}\label{structjaeger__span__context_ad78982af52840b14a8bee7d3404755d3}} 
+\index{jaeger\+\_\+span\+\_\+context@{jaeger\+\_\+span\+\_\+context}!span\+\_\+id@{span\+\_\+id}}
+\index{span\+\_\+id@{span\+\_\+id}!jaeger\+\_\+span\+\_\+context@{jaeger\+\_\+span\+\_\+context}}
+\subsubsection{\texorpdfstring{span\+\_\+id}{span\_id}}
+{\footnotesize\ttfamily uint64\+\_\+t jaeger\+\_\+span\+\_\+context\+::span\+\_\+id}
+
+
+
+Randomly generated unique ID. 
+
+Must be unique within its trace, but not necessarily globally unique. \mbox{\Hypertarget{structjaeger__span__context_aecace9cbf8c8432cb8c2f5d5dc65b994}\label{structjaeger__span__context_aecace9cbf8c8432cb8c2f5d5dc65b994}} 
+\index{jaeger\+\_\+span\+\_\+context@{jaeger\+\_\+span\+\_\+context}!trace\+\_\+id@{trace\+\_\+id}}
+\index{trace\+\_\+id@{trace\+\_\+id}!jaeger\+\_\+span\+\_\+context@{jaeger\+\_\+span\+\_\+context}}
+\subsubsection{\texorpdfstring{trace\+\_\+id}{trace\_id}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structjaeger__trace__id}{jaeger\+\_\+trace\+\_\+id}} jaeger\+\_\+span\+\_\+context\+::trace\+\_\+id}
+
+
+
+Trace ID of the trace containing this span. 
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+jaegertracingc/\mbox{\hyperlink{span_8h}{span.\+h}}\end{DoxyCompactItemize}

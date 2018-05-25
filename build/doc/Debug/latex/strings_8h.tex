@@ -1,0 +1,43 @@
+\hypertarget{strings_8h}{}\section{jaegertracingc/internal/strings.h File Reference}
+\label{strings_8h}\index{jaegertracingc/internal/strings.\+h@{jaegertracingc/internal/strings.\+h}}
+{\ttfamily \#include $<$assert.\+h$>$}\newline
+{\ttfamily \#include $<$ctype.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/hashtable.\+h\char`\"{}}\newline
+Include dependency graph for strings.\+h\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{strings_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=219pt]{strings_8h__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define {\bfseries A\+P\+P\+E\+N\+D\+\_\+\+C\+H\+AR}(x)
+\end{DoxyCompactItemize}
+
+
+\subsection{Macro Definition Documentation}
+\mbox{\Hypertarget{strings_8h_a23051ff9579890c9f6df36a71a71277c}\label{strings_8h_a23051ff9579890c9f6df36a71a71277c}} 
+\index{strings.\+h@{strings.\+h}!A\+P\+P\+E\+N\+D\+\_\+\+C\+H\+AR@{A\+P\+P\+E\+N\+D\+\_\+\+C\+H\+AR}}
+\index{A\+P\+P\+E\+N\+D\+\_\+\+C\+H\+AR@{A\+P\+P\+E\+N\+D\+\_\+\+C\+H\+AR}!strings.\+h@{strings.\+h}}
+\subsubsection{\texorpdfstring{A\+P\+P\+E\+N\+D\+\_\+\+C\+H\+AR}{APPEND\_CHAR}}
+{\footnotesize\ttfamily \#define A\+P\+P\+E\+N\+D\+\_\+\+C\+H\+AR(\begin{DoxyParamCaption}\item[{}]{x }\end{DoxyParamCaption})}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\DoxyCodeLine{\textcolor{keywordflow}{do} \{                                    \(\backslash\)}
+\DoxyCodeLine{        assert(dst\_len + 1 <= src\_len + 1); \(\backslash\)}
+\DoxyCodeLine{        assert((x) < 0x7f);                 \(\backslash\)}
+\DoxyCodeLine{        dst[dst\_len] = (x);                 \(\backslash\)}
+\DoxyCodeLine{        dst\_len++;                          \(\backslash\)}
+\DoxyCodeLine{    \} \textcolor{keywordflow}{while} (0)}
+\end{DoxyCode}

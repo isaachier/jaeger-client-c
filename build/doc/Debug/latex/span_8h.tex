@@ -1,0 +1,242 @@
+\hypertarget{span_8h}{}\section{jaegertracingc/span.h File Reference}
+\label{span_8h}\index{jaegertracingc/span.\+h@{jaegertracingc/span.\+h}}
+
+
+Span, span context, and span ref representations and functions.  
+
+
+{\ttfamily \#include \char`\"{}jaegertracingc/clock.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/common.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/hashtable.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/key\+\_\+value.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/log\+\_\+record.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/tag.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/threading.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/trace\+\_\+id.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/vector.\+h\char`\"{}}\newline
+Include dependency graph for span.\+h\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{span_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{span_8h__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structjaeger__span__context}{jaeger\+\_\+span\+\_\+context}}
+\begin{DoxyCompactList}\small\item\em Span context represents propagated span identity and state. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structjaeger__span__ref}{jaeger\+\_\+span\+\_\+ref}}
+\item 
+struct \mbox{\hyperlink{structjaeger__span}{jaeger\+\_\+span}}
+\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{span_8h_aeb8749527eb268509c1e6e09c54299c3}{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+S\+P\+A\+N\+\_\+\+C\+O\+N\+T\+E\+X\+T\+\_\+\+M\+A\+X\+\_\+\+S\+T\+R\+\_\+\+L\+EN}}~(\mbox{\hyperlink{trace__id_8h_a37168d3dd11dd4695cc6b2cf1833067f}{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+T\+R\+A\+C\+E\+\_\+\+I\+D\+\_\+\+M\+A\+X\+\_\+\+S\+T\+R\+\_\+\+L\+EN}} + 21)
+\begin{DoxyCompactList}\small\item\em Max number of characters needed for string representation of \mbox{\hyperlink{structjaeger__span__context}{jaeger\+\_\+span\+\_\+context}} (excluding null byte). \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{span_8h_a506ab74e10564fec528c0b9aca717928}\label{span_8h_a506ab74e10564fec528c0b9aca717928}} 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+S\+A\+M\+P\+L\+I\+N\+G\+\_\+\+P\+R\+I\+O\+R\+I\+TY}~\char`\"{}sampling.\+priority\char`\"{}
+\item 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+S\+P\+A\+N\+\_\+\+C\+O\+N\+T\+E\+X\+T\+\_\+\+I\+N\+IT}
+\item 
+\#define \mbox{\hyperlink{span_8h_a513ef5c88a082087b25c2d5ac77cf276}{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+F\+I\+N\+I\+S\+H\+\_\+\+S\+P\+A\+N\+\_\+\+O\+P\+T\+I\+O\+N\+S\+\_\+\+I\+N\+IT}}
+\begin{DoxyCompactList}\small\item\em Static initializer for opentracing\+\_\+finish\+\_\+span\+\_\+options. \end{DoxyCompactList}\item 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+S\+P\+A\+N\+\_\+\+I\+N\+IT}
+\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{span_8h_ae413911b9fc5d9af9e9895c90d3a34d7}\label{span_8h_ae413911b9fc5d9af9e9895c90d3a34d7}} 
+typedef struct \mbox{\hyperlink{structjaeger__span__context}{jaeger\+\_\+span\+\_\+context}} \mbox{\hyperlink{span_8h_ae413911b9fc5d9af9e9895c90d3a34d7}{jaeger\+\_\+span\+\_\+context}}
+\begin{DoxyCompactList}\small\item\em Span context represents propagated span identity and state. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{span_8h_a5c9c7d841ccf460403c10f18e7f6e4cf}\label{span_8h_a5c9c7d841ccf460403c10f18e7f6e4cf}} 
+typedef opentracing\+\_\+span\+\_\+reference\+\_\+type {\bfseries jaeger\+\_\+span\+\_\+ref\+\_\+type}
+\item 
+\mbox{\Hypertarget{span_8h_a9161c570f94bae081c26ad55f4a54dec}\label{span_8h_a9161c570f94bae081c26ad55f4a54dec}} 
+typedef struct \mbox{\hyperlink{structjaeger__span__ref}{jaeger\+\_\+span\+\_\+ref}} {\bfseries jaeger\+\_\+span\+\_\+ref}
+\item 
+\mbox{\Hypertarget{span_8h_ad34206836cd70ef2da90aad72bc4402b}\label{span_8h_ad34206836cd70ef2da90aad72bc4402b}} 
+typedef struct \mbox{\hyperlink{structjaeger__span}{jaeger\+\_\+span}} {\bfseries jaeger\+\_\+span}
+\end{DoxyCompactItemize}
+\subsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{span_8h_adf764cbdea00d65edcd07bb9953ad2b7}\label{span_8h_adf764cbdea00d65edcd07bb9953ad2b7}} 
+enum \{ {\bfseries jaeger\+\_\+sampling\+\_\+flag\+\_\+sampled} = 1u, 
+{\bfseries jaeger\+\_\+sampling\+\_\+flag\+\_\+debug} = (1u $<$$<$ 1u)
+ \}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{span_8h_a602ec5f6c779a6f8ad23848c9116dd3f}\label{span_8h_a602ec5f6c779a6f8ad23848c9116dd3f}} 
+{\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+W\+R\+A\+P\+\_\+\+D\+E\+S\+T\+R\+OY} (jaeger\+\_\+span\+\_\+ref\+\_\+protobuf\+\_\+destroy, \mbox{\hyperlink{struct__Jaegertracing____Protobuf____SpanRef}{Jaegertracing\+\_\+\+\_\+\+Protobuf\+\_\+\+\_\+\+Span\+Ref}}) static inline bool jaeger\+\_\+span\+\_\+ref\+\_\+to\+\_\+protobuf(\mbox{\hyperlink{struct__Jaegertracing____Protobuf____SpanRef}{Jaegertracing\+\_\+\+\_\+\+Protobuf\+\_\+\+\_\+\+Span\+Ref}} $\ast$restrict dst
+\item 
+\mbox{\Hypertarget{span_8h_a0440fa6f5f50f7902e34c21c4607bbb3}\label{span_8h_a0440fa6f5f50f7902e34c21c4607bbb3}} 
+{\bfseries assert} (src !=N\+U\+LL)
+\item 
+\mbox{\Hypertarget{span_8h_afc88e55d2f2a2e0de7fd9b045daca9ed}\label{span_8h_afc88e55d2f2a2e0de7fd9b045daca9ed}} 
+{\bfseries if} (dst-\/$>$trace\+\_\+id==N\+U\+LL)
+\item 
+\mbox{\Hypertarget{span_8h_a3f3e908fe3a449f53063b06e1cf4c049}\label{span_8h_a3f3e908fe3a449f53063b06e1cf4c049}} 
+{\bfseries jaeger\+\_\+mutex\+\_\+lock} ((jaeger\+\_\+mutex $\ast$) \&src-\/$>$context.\+mutex)
+\item 
+\mbox{\Hypertarget{span_8h_a2074fc04b05d7d8dda51da016ed09ed6}\label{span_8h_a2074fc04b05d7d8dda51da016ed09ed6}} 
+{\bfseries jaeger\+\_\+trace\+\_\+id\+\_\+to\+\_\+protobuf} (dst-\/$>$trace\+\_\+id, \&src-\/$>$context.\+trace\+\_\+id)
+\item 
+\mbox{\Hypertarget{span_8h_acd0b2274da629550f830bfe9b17d2f35}\label{span_8h_acd0b2274da629550f830bfe9b17d2f35}} 
+{\bfseries jaeger\+\_\+mutex\+\_\+unlock} ((jaeger\+\_\+mutex $\ast$) \&src-\/$>$context.\+mutex)
+\item 
+\mbox{\Hypertarget{span_8h_ab8cecf89062fb525a9bbb8fe8eb68589}\label{span_8h_ab8cecf89062fb525a9bbb8fe8eb68589}} 
+{\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+W\+R\+A\+P\+\_\+\+C\+O\+PY} (jaeger\+\_\+span\+\_\+ref\+\_\+to\+\_\+protobuf, \mbox{\hyperlink{struct__Jaegertracing____Protobuf____SpanRef}{Jaegertracing\+\_\+\+\_\+\+Protobuf\+\_\+\+\_\+\+Span\+Ref}}, \mbox{\hyperlink{structjaeger__span__ref}{jaeger\+\_\+span\+\_\+ref}}) struct \mbox{\hyperlink{structjaeger__tracer}{jaeger\+\_\+tracer}}
+\item 
+\mbox{\Hypertarget{span_8h_a2107bc90f5262311719751dd11a627ad}\label{span_8h_a2107bc90f5262311719751dd11a627ad}} 
+void {\bfseries jaeger\+\_\+tracer\+\_\+report\+\_\+span} (struct \mbox{\hyperlink{structjaeger__tracer}{jaeger\+\_\+tracer}} $\ast$tracer, \mbox{\hyperlink{structjaeger__span}{jaeger\+\_\+span}} $\ast$span)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+const \mbox{\hyperlink{structjaeger__span__ref}{jaeger\+\_\+span\+\_\+ref}} $\ast$restrict {\bfseries src}
+\item 
+$\ast$ {\bfseries dst}
+\item 
+dst {\bfseries trace\+\_\+id}
+\item 
+\mbox{\Hypertarget{span_8h_af87d22acd4bc66953aa36c4e0e0d0e04}\label{span_8h_af87d22acd4bc66953aa36c4e0e0d0e04}} 
+dst {\bfseries span\+\_\+id} = src-\/$>$context.\+span\+\_\+id
+\item 
+\mbox{\Hypertarget{span_8h_a7d917b3d27271d47a6f94e25bc79f1a7}\label{span_8h_a7d917b3d27271d47a6f94e25bc79f1a7}} 
+dst {\bfseries type} = (Jaegertracing\+\_\+\+\_\+\+Protobuf\+\_\+\+\_\+\+Span\+Ref\+\_\+\+\_\+\+Type) src-\/$>$type
+\item 
+\mbox{\Hypertarget{span_8h_a930920b2bc42824a5c03be681830f4b2}\label{span_8h_a930920b2bc42824a5c03be681830f4b2}} 
+return {\bfseries true}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Span, span context, and span ref representations and functions. 
+
+
+
+\subsection{Macro Definition Documentation}
+\mbox{\Hypertarget{span_8h_a513ef5c88a082087b25c2d5ac77cf276}\label{span_8h_a513ef5c88a082087b25c2d5ac77cf276}} 
+\index{span.\+h@{span.\+h}!J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+F\+I\+N\+I\+S\+H\+\_\+\+S\+P\+A\+N\+\_\+\+O\+P\+T\+I\+O\+N\+S\+\_\+\+I\+N\+IT@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+F\+I\+N\+I\+S\+H\+\_\+\+S\+P\+A\+N\+\_\+\+O\+P\+T\+I\+O\+N\+S\+\_\+\+I\+N\+IT}}
+\index{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+F\+I\+N\+I\+S\+H\+\_\+\+S\+P\+A\+N\+\_\+\+O\+P\+T\+I\+O\+N\+S\+\_\+\+I\+N\+IT@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+F\+I\+N\+I\+S\+H\+\_\+\+S\+P\+A\+N\+\_\+\+O\+P\+T\+I\+O\+N\+S\+\_\+\+I\+N\+IT}!span.\+h@{span.\+h}}
+\subsubsection{\texorpdfstring{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+F\+I\+N\+I\+S\+H\+\_\+\+S\+P\+A\+N\+\_\+\+O\+P\+T\+I\+O\+N\+S\+\_\+\+I\+N\+IT}{JAEGERTRACINGC\_FINISH\_SPAN\_OPTIONS\_INIT}}
+{\footnotesize\ttfamily \#define J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+F\+I\+N\+I\+S\+H\+\_\+\+S\+P\+A\+N\+\_\+\+O\+P\+T\+I\+O\+N\+S\+\_\+\+I\+N\+IT}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\DoxyCodeLine{\{                                                                      \(\backslash\)}
+\DoxyCodeLine{        .finish\_time = JAEGERTRACINGC\_TIMESTAMP\_INIT, .log\_records = NULL, \(\backslash\)}
+\DoxyCodeLine{        .num\_log\_records = 0                                               \(\backslash\)}
+\DoxyCodeLine{    \}}
+\end{DoxyCode}
+
+
+Static initializer for opentracing\+\_\+finish\+\_\+span\+\_\+options. 
+
+\mbox{\Hypertarget{span_8h_a4e4e850b29eb98dddb15efe24af54be7}\label{span_8h_a4e4e850b29eb98dddb15efe24af54be7}} 
+\index{span.\+h@{span.\+h}!J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+S\+P\+A\+N\+\_\+\+C\+O\+N\+T\+E\+X\+T\+\_\+\+I\+N\+IT@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+S\+P\+A\+N\+\_\+\+C\+O\+N\+T\+E\+X\+T\+\_\+\+I\+N\+IT}}
+\index{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+S\+P\+A\+N\+\_\+\+C\+O\+N\+T\+E\+X\+T\+\_\+\+I\+N\+IT@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+S\+P\+A\+N\+\_\+\+C\+O\+N\+T\+E\+X\+T\+\_\+\+I\+N\+IT}!span.\+h@{span.\+h}}
+\subsubsection{\texorpdfstring{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+S\+P\+A\+N\+\_\+\+C\+O\+N\+T\+E\+X\+T\+\_\+\+I\+N\+IT}{JAEGERTRACINGC\_SPAN\_CONTEXT\_INIT}}
+{\footnotesize\ttfamily \#define J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+S\+P\+A\+N\+\_\+\+C\+O\+N\+T\+E\+X\+T\+\_\+\+I\+N\+IT}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\DoxyCodeLine{\{                                                                         \(\backslash\)}
+\DoxyCodeLine{        .base = \{.base = \{.destroy = jaeger\_span\_context\_destroy\},            \(\backslash\)}
+\DoxyCodeLine{                 .foreach\_baggage\_item =                                      \(\backslash\)}
+\DoxyCodeLine{                     \&jaeger\_span\_context\_foreach\_baggage\_item,               \(\backslash\)}
+\DoxyCodeLine{                 .type\_descriptor = jaeger\_span\_context\_type\_descriptor,      \(\backslash\)}
+\DoxyCodeLine{                 .type\_descriptor\_length =                                    \(\backslash\)}
+\DoxyCodeLine{                     jaeger\_span\_context\_type\_descriptor\_length\},             \(\backslash\)}
+\DoxyCodeLine{        .trace\_id = \mbox{\hyperlink{trace__id_8h_a732f892ef9f04a3fe2e71c1acdd532d0}{JAEGERTRACINGC\_TRACE\_ID\_INIT}}, .span\_id = 0,               \(\backslash\)}
+\DoxyCodeLine{        .parent\_id = 0, .flags = 0, .baggage = \mbox{\hyperlink{hashtable_8h_a3763844cae3e82e4d62724f06d84699a}{JAEGERTRACINGC\_HASHTABLE\_INIT}}, \(\backslash\)}
+\DoxyCodeLine{        .debug\_id = NULL, .mutex = JAEGERTRACINGC\_MUTEX\_INIT                  \(\backslash\)}
+\DoxyCodeLine{    \}}
+\end{DoxyCode}
+\mbox{\Hypertarget{span_8h_aeb8749527eb268509c1e6e09c54299c3}\label{span_8h_aeb8749527eb268509c1e6e09c54299c3}} 
+\index{span.\+h@{span.\+h}!J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+S\+P\+A\+N\+\_\+\+C\+O\+N\+T\+E\+X\+T\+\_\+\+M\+A\+X\+\_\+\+S\+T\+R\+\_\+\+L\+EN@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+S\+P\+A\+N\+\_\+\+C\+O\+N\+T\+E\+X\+T\+\_\+\+M\+A\+X\+\_\+\+S\+T\+R\+\_\+\+L\+EN}}
+\index{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+S\+P\+A\+N\+\_\+\+C\+O\+N\+T\+E\+X\+T\+\_\+\+M\+A\+X\+\_\+\+S\+T\+R\+\_\+\+L\+EN@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+S\+P\+A\+N\+\_\+\+C\+O\+N\+T\+E\+X\+T\+\_\+\+M\+A\+X\+\_\+\+S\+T\+R\+\_\+\+L\+EN}!span.\+h@{span.\+h}}
+\subsubsection{\texorpdfstring{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+S\+P\+A\+N\+\_\+\+C\+O\+N\+T\+E\+X\+T\+\_\+\+M\+A\+X\+\_\+\+S\+T\+R\+\_\+\+L\+EN}{JAEGERTRACINGC\_SPAN\_CONTEXT\_MAX\_STR\_LEN}}
+{\footnotesize\ttfamily \#define J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+S\+P\+A\+N\+\_\+\+C\+O\+N\+T\+E\+X\+T\+\_\+\+M\+A\+X\+\_\+\+S\+T\+R\+\_\+\+L\+EN~(\mbox{\hyperlink{trace__id_8h_a37168d3dd11dd4695cc6b2cf1833067f}{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+T\+R\+A\+C\+E\+\_\+\+I\+D\+\_\+\+M\+A\+X\+\_\+\+S\+T\+R\+\_\+\+L\+EN}} + 21)}
+
+
+
+Max number of characters needed for string representation of \mbox{\hyperlink{structjaeger__span__context}{jaeger\+\_\+span\+\_\+context}} (excluding null byte). 
+
+3 delimiters, 2 uint64\+\_\+t hex (8 characters each), 1 short hex (2 characters). 3 + 16 + 2 = 21 \mbox{\Hypertarget{span_8h_aa85edf4f8ec8167968b6b7c9d6426059}\label{span_8h_aa85edf4f8ec8167968b6b7c9d6426059}} 
+\index{span.\+h@{span.\+h}!J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+S\+P\+A\+N\+\_\+\+I\+N\+IT@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+S\+P\+A\+N\+\_\+\+I\+N\+IT}}
+\index{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+S\+P\+A\+N\+\_\+\+I\+N\+IT@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+S\+P\+A\+N\+\_\+\+I\+N\+IT}!span.\+h@{span.\+h}}
+\subsubsection{\texorpdfstring{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+S\+P\+A\+N\+\_\+\+I\+N\+IT}{JAEGERTRACINGC\_SPAN\_INIT}}
+{\footnotesize\ttfamily \#define J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+S\+P\+A\+N\+\_\+\+I\+N\+IT}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\DoxyCodeLine{\{                                                                          \(\backslash\)}
+\DoxyCodeLine{        .base = \{.base = \{.destroy = \&jaeger\_span\_destroy\},                    \(\backslash\)}
+\DoxyCodeLine{                 .finish = \&jaeger\_span\_finish,                                \(\backslash\)}
+\DoxyCodeLine{                 .finish\_with\_options = \&jaeger\_span\_finish\_with\_options,      \(\backslash\)}
+\DoxyCodeLine{                 .set\_operation\_name = \&jaeger\_span\_set\_operation\_name,        \(\backslash\)}
+\DoxyCodeLine{                 .set\_tag = \&jaeger\_span\_set\_tag,                              \(\backslash\)}
+\DoxyCodeLine{                 .log\_fields = \&jaeger\_span\_log,                               \(\backslash\)}
+\DoxyCodeLine{                 .set\_baggage\_item = \&jaeger\_span\_set\_baggage\_item,            \(\backslash\)}
+\DoxyCodeLine{                 .baggage\_item = \&jaeger\_span\_baggage\_item\},                   \(\backslash\)}
+\DoxyCodeLine{        .tracer = NULL, .context = JAEGERTRACINGC\_SPAN\_CONTEXT\_INIT,           \(\backslash\)}
+\DoxyCodeLine{        .operation\_name = NULL,                                                \(\backslash\)}
+\DoxyCodeLine{        .start\_time\_system = JAEGERTRACINGC\_TIMESTAMP\_INIT,                    \(\backslash\)}
+\DoxyCodeLine{        .start\_time\_steady = JAEGERTRACINGC\_DURATION\_INIT,                     \(\backslash\)}
+\DoxyCodeLine{        .duration = JAEGERTRACINGC\_DURATION\_INIT,                              \(\backslash\)}
+\DoxyCodeLine{        .tags = JAEGERTRACINGC\_VECTOR\_INIT,                                    \(\backslash\)}
+\DoxyCodeLine{        .logs = JAEGERTRACINGC\_VECTOR\_INIT,                                    \(\backslash\)}
+\DoxyCodeLine{        .refs = JAEGERTRACINGC\_VECTOR\_INIT, .mutex = JAEGERTRACINGC\_MUTEX\_INIT \(\backslash\)}
+\DoxyCodeLine{    \}}
+\end{DoxyCode}
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{span_8h_ab30ce5929cacc46873c25a334765b9b3}\label{span_8h_ab30ce5929cacc46873c25a334765b9b3}} 
+\index{span.\+h@{span.\+h}!dst@{dst}}
+\index{dst@{dst}!span.\+h@{span.\+h}}
+\subsubsection{\texorpdfstring{dst}{dst}}
+{\footnotesize\ttfamily $\ast$ dst}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+\DoxyCodeLine{= (\mbox{\hyperlink{struct__Jaegertracing____Protobuf____SpanRef}{Jaegertracing\_\_Protobuf\_\_SpanRef}})}
+\DoxyCodeLine{        JAEGERTRACING\_\_PROTOBUF\_\_SPAN\_REF\_\_INIT}
+\end{DoxyCode}
+\mbox{\Hypertarget{span_8h_aa8775521832334bc0f7d639558cdd329}\label{span_8h_aa8775521832334bc0f7d639558cdd329}} 
+\index{span.\+h@{span.\+h}!src@{src}}
+\index{src@{src}!span.\+h@{span.\+h}}
+\subsubsection{\texorpdfstring{src}{src}}
+{\footnotesize\ttfamily const \mbox{\hyperlink{structjaeger__span__ref}{jaeger\+\_\+span\+\_\+ref}}$\ast$ restrict src}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{    assert(dst != NULL)}
+\end{DoxyCode}
+\mbox{\Hypertarget{span_8h_a530d962454b3b6d0ccec26743f67c7ab}\label{span_8h_a530d962454b3b6d0ccec26743f67c7ab}} 
+\index{span.\+h@{span.\+h}!trace\+\_\+id@{trace\+\_\+id}}
+\index{trace\+\_\+id@{trace\+\_\+id}!span.\+h@{span.\+h}}
+\subsubsection{\texorpdfstring{trace\+\_\+id}{trace\_id}}
+{\footnotesize\ttfamily $\ast$dst trace\+\_\+id}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+\DoxyCodeLine{= (\mbox{\hyperlink{struct__Jaegertracing____Protobuf____TraceID}{Jaegertracing\_\_Protobuf\_\_TraceID}}*) 
+      \mbox{\hyperlink{alloc_8h_a8bf91f5b7b45e1e602d5a4079420bcd3}{jaeger\_malloc}}(}
+\DoxyCodeLine{        \textcolor{keyword}{sizeof}(\mbox{\hyperlink{struct__Jaegertracing____Protobuf____TraceID}{Jaegertracing\_\_Protobuf\_\_TraceID}}))}
+\end{DoxyCode}

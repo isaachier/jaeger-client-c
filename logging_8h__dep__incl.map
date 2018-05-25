@@ -1,29 +1,30 @@
 <map id="jaegertracingc/logging.h" name="jaegertracingc/logging.h">
-<area shape="rect" id="node2" href="$alloc_8h.html" title="Allocator struct and functions. " alt="" coords="2003,80,2148,107"/>
-<area shape="rect" id="node3" href="$common_8h.html" title="Common headers, struct definitions, and macros. " alt="" coords="1320,155,1488,181"/>
-<area shape="rect" id="node9" href="$reporter_8h.html" title="Span reporter interface. " alt="" coords="1273,587,1436,613"/>
-<area shape="rect" id="node19" href="$key__value_8h.html" title="Key value pair representation. " alt="" coords="2497,319,2625,360"/>
-<area shape="rect" id="node26" href="$tag_8h.html" title="Tag representation and functions. " alt="" coords="1934,326,2070,353"/>
-<area shape="rect" id="node4" href="$clock_8h.html" title="Timestamp and duration representations. " alt="" coords="1217,237,1366,263"/>
-<area shape="rect" id="node5" href="$log__record_8h.html" title="Log record representation for use in span. " alt="" coords="1840,408,1964,449"/>
-<area shape="rect" id="node6" href="$span_8h.html" title="Span, span context, and span ref representations and functions. " alt="" coords="1738,505,1885,531"/>
-<area shape="rect" id="node8" href="$tracer_8h.html" title="Tracer implementation. " alt="" coords="1666,661,1816,688"/>
-<area shape="rect" id="node10" href="$sampler_8h.html" title="Span sampler interface. " alt="" coords="1010,415,1174,442"/>
-<area shape="rect" id="node11" href="$mock__agent_8h.html" title="Key value pair representation. " alt="" coords="944,497,1082,539"/>
-<area shape="rect" id="node12" href="$token__bucket_8h.html" title="Token bucket implementation. " alt="" coords="916,319,1054,360"/>
-<area shape="rect" id="node13" href="$constants_8h_source.html" title="jaegertracingc/constants.h" alt="" coords="2095,326,2270,353"/>
-<area shape="rect" id="node14" href="$options_8h.html" title="Configuration options. " alt="" coords="2102,587,2262,613"/>
-<area shape="rect" id="node15" href="$hashtable_8h.html" title="Hashtable data structure. " alt="" coords="2348,415,2523,442"/>
-<area shape="rect" id="node16" href="$internal_2random_8h_source.html" title="jaegertracingc/internal\l/random.h" alt="" coords="73,408,222,449"/>
-<area shape="rect" id="node17" href="$siphash_8h.html" title="Siphash implementation. " alt="" coords="94,237,257,263"/>
-<area shape="rect" id="node20" href="$list_8h_source.html" title="jaegertracingc/list.h" alt="" coords="2439,237,2574,263"/>
-<area shape="rect" id="node21" href="$threading_8h.html" title="Threading utilities. " alt="" coords="332,326,502,353"/>
-<area shape="rect" id="node22" href="$metrics_8h.html" title="Metrics interfaces to track various numbers while tracing. " alt="" coords="527,326,688,353"/>
-<area shape="rect" id="node23" href="$baggage_8h.html" title="Trace ID representation. " alt="" coords="572,415,739,442"/>
-<area shape="rect" id="node24" href="$net_8h.html" title="Network utilities. " alt="" coords="1129,326,1265,353"/>
-<area shape="rect" id="node25" href="$vector_8h.html" title="C generic vector implementation. " alt="" coords="1668,237,1822,263"/>
-<area shape="rect" id="node27" href="$trace__id_8h.html" title="Trace ID representation. " alt="" coords="1442,326,1606,353"/>
-<area shape="rect" id="node28" href="$sampling__strategy_8h.html" title="Sampling strategy type definitions. " alt="" coords="815,229,974,271"/>
-<area shape="rect" id="node7" href="$propagation_8c.html" title="Trace ID representation. " alt="" coords="1830,736,2015,763"/>
-<area shape="rect" id="node18" href="$siphash_8c.html" title="Siphash implementation. " alt="" coords="94,326,257,353"/>
+<area shape="rect" id="node2" href="$alloc_8h.html" title="Allocator struct and functions. " alt="" coords="114,80,259,107"/>
+<area shape="rect" id="node3" href="$common_8h.html" title="Common headers, struct definitions, and macros. " alt="" coords="1193,155,1361,181"/>
+<area shape="rect" id="node10" href="$reporter_8h.html" title="Span reporter interface. " alt="" coords="899,587,1061,613"/>
+<area shape="rect" id="node21" href="$key__value_8h.html" title="Key value pair representation. " alt="" coords="245,319,373,360"/>
+<area shape="rect" id="node26" href="$tag_8h.html" title="Tag representation and functions. " alt="" coords="499,326,635,353"/>
+<area shape="rect" id="node4" href="$baggage_8h.html" title="Baggage restriction utilities. " alt="" coords="2579,587,2746,613"/>
+<area shape="rect" id="node5" href="$tracer_8h.html" title="Tracer implementation. " alt="" coords="1571,669,1722,695"/>
+<area shape="rect" id="node7" href="$clock_8h.html" title="Timestamp and duration representations. " alt="" coords="1203,237,1352,263"/>
+<area shape="rect" id="node8" href="$log__record_8h.html" title="Log record representation for use in span. " alt="" coords="611,408,735,449"/>
+<area shape="rect" id="node9" href="$span_8h.html" title="Span, span context, and span ref representations and functions. " alt="" coords="645,505,792,531"/>
+<area shape="rect" id="node11" href="$sampler_8h.html" title="Span sampler interface. " alt="" coords="1470,415,1634,442"/>
+<area shape="rect" id="node12" href="$mock__agent_8h.html" title="Key value pair representation. " alt="" coords="1199,497,1337,539"/>
+<area shape="rect" id="node13" href="$token__bucket_8h.html" title="Token bucket implementation. " alt="" coords="1760,319,1899,360"/>
+<area shape="rect" id="node14" href="$constants_8h_source.html" title="jaegertracingc/constants.h" alt="" coords="2211,326,2386,353"/>
+<area shape="rect" id="node15" href="$options_8h.html" title="Configuration options. " alt="" coords="2344,505,2504,531"/>
+<area shape="rect" id="node16" href="$hashtable_8h.html" title="Hashtable data structure. " alt="" coords="121,415,295,442"/>
+<area shape="rect" id="node18" href="$internal_2random_8h_source.html" title="jaegertracingc/internal\l/random.h" alt="" coords="1709,408,1859,449"/>
+<area shape="rect" id="node19" href="$siphash_8h.html" title="Siphash implementation. " alt="" coords="2024,237,2187,263"/>
+<area shape="rect" id="node22" href="$list_8h_source.html" title="jaegertracingc/list.h" alt="" coords="246,237,381,263"/>
+<area shape="rect" id="node23" href="$threading_8h.html" title="Threading utilities. " alt="" coords="1413,326,1584,353"/>
+<area shape="rect" id="node24" href="$metrics_8h.html" title="Metrics interfaces to track various numbers while tracing. " alt="" coords="2513,326,2674,353"/>
+<area shape="rect" id="node25" href="$net_8h.html" title="Network utilities. " alt="" coords="1253,326,1389,353"/>
+<area shape="rect" id="node27" href="$vector_8h.html" title="C generic vector implementation. " alt="" coords="747,237,901,263"/>
+<area shape="rect" id="node28" href="$trace__id_8h.html" title="Trace ID representation. " alt="" coords="963,326,1127,353"/>
+<area shape="rect" id="node29" href="$sampling__strategy_8h.html" title="Sampling strategy type definitions. " alt="" coords="1733,229,1891,271"/>
+<area shape="rect" id="node6" href="$propagation_8c.html" title="Trace ID representation. " alt="" coords="1554,751,1739,777"/>
+<area shape="rect" id="node17" href="$strings_8h.html" title="jaegertracingc/internal\l/strings.h" alt="" coords="83,661,232,703"/>
+<area shape="rect" id="node20" href="$siphash_8c.html" title="Siphash implementation. " alt="" coords="2024,326,2187,353"/>
 </map>

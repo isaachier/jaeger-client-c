@@ -5,10 +5,10 @@
  -->
 <!-- Title: jaegertracingc/threading.h Pages: 1 -->
 <svg width="473pt" height="274pt"
- viewBox="0.00 0.00 472.83 274.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+ viewBox="0.00 0.00 472.71 274.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 270)">
 <title>jaegertracingc/threading.h</title>
-<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-270 468.8292,-270 468.8292,4 -4,4"/>
+<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-270 468.7072,-270 468.7072,4 -4,4"/>
 <!-- Node22 -->
 <g id="node1" class="node">
 <title>Node22</title>
@@ -77,80 +77,89 @@
 <path fill="none" stroke="#191970" d="M267.8457,-236.1733C267.6282,-208.2236 267.2397,-158.3037 267.076,-137.2705"/>
 <polygon fill="#191970" stroke="#191970" points="264.347,-236.3692 267.9248,-246.3416 271.3468,-236.3146 264.347,-236.3692"/>
 </g>
-<!-- Node29 -->
-<g id="node8" class="node">
-<title>Node29</title>
-<g id="a_node8"><a xlink:href="sampler_8h.html" target="_top" xlink:title="Span sampler interface. ">
+<!-- Node30 -->
+<g id="node9" class="node">
+<title>Node30</title>
+<g id="a_node9"><a xlink:href="sampler_8h.html" target="_top" xlink:title="Span sampler interface. ">
 <polygon fill="#ffffff" stroke="#000000" points="336.5,-185 336.5,-204 459.5,-204 459.5,-185 336.5,-185"/>
 <text text-anchor="middle" x="398" y="-192" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">jaegertracingc/sampler.h</text>
 </a>
 </g>
 </g>
-<!-- Node22&#45;&gt;Node29 -->
+<!-- Node22&#45;&gt;Node30 -->
 <g id="edge10" class="edge">
-<title>Node22&#45;&gt;Node29</title>
+<title>Node22&#45;&gt;Node30</title>
 <path fill="none" stroke="#191970" d="M297.5181,-242.0357C322.0577,-230.4265 356.3258,-214.2151 377.8301,-204.0419"/>
 <polygon fill="#191970" stroke="#191970" points="295.8553,-238.9504 288.3125,-246.3906 298.8488,-245.278 295.8553,-238.9504"/>
 </g>
 <!-- Node26 -->
 <g id="node5" class="node">
 <title>Node26</title>
-<g id="a_node5"><a xlink:href="propagation_8c.html" target="_top" xlink:title="Trace ID representation. ">
-<polygon fill="#ffffff" stroke="#000000" points="112.5,-.5 112.5,-19.5 251.5,-19.5 251.5,-.5 112.5,-.5"/>
-<text text-anchor="middle" x="182" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">jaegertracingc/propagation.c</text>
+<g id="a_node5"><a xlink:href="baggage_8h.html" target="_top" xlink:title="Baggage restriction utilities. ">
+<polygon fill="#ffffff" stroke="#000000" points="24.5,-118 24.5,-137 149.5,-137 149.5,-118 24.5,-118"/>
+<text text-anchor="middle" x="87" y="-125" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">jaegertracingc/baggage.h</text>
 </a>
 </g>
 </g>
 <!-- Node25&#45;&gt;Node26 -->
 <g id="edge4" class="edge">
 <title>Node25&#45;&gt;Node26</title>
-<path fill="none" stroke="#191970" d="M183.567,-174.7234C181.7845,-147.8531 179.0807,-98.307 180,-56 180.2744,-43.373 180.9719,-28.8101 181.4657,-19.5108"/>
-<polygon fill="#191970" stroke="#191970" points="180.0797,-175.029 184.2613,-184.7637 187.063,-174.546 180.0797,-175.029"/>
+<path fill="none" stroke="#191970" d="M162.6009,-179.1864C143.6517,-166.2312 117.0864,-148.0693 101.015,-137.0817"/>
+<polygon fill="#191970" stroke="#191970" points="160.7285,-182.146 170.959,-184.9005 164.6792,-176.3674 160.7285,-182.146"/>
 </g>
 <!-- Node27 -->
 <g id="node6" class="node">
 <title>Node27</title>
-<g id="a_node6"><a xlink:href="tracer_8h.html" target="_top" xlink:title="Tracer implementation. ">
-<polygon fill="#ffffff" stroke="#000000" points="189.5,-56.5 189.5,-75.5 302.5,-75.5 302.5,-56.5 189.5,-56.5"/>
-<text text-anchor="middle" x="246" y="-63.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">jaegertracingc/tracer.h</text>
+<g id="a_node6"><a xlink:href="propagation_8c.html" target="_top" xlink:title="Trace ID representation. ">
+<polygon fill="#ffffff" stroke="#000000" points="152.5,-.5 152.5,-19.5 291.5,-19.5 291.5,-.5 152.5,-.5"/>
+<text text-anchor="middle" x="222" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">jaegertracingc/propagation.c</text>
 </a>
 </g>
 </g>
 <!-- Node25&#45;&gt;Node27 -->
 <g id="edge5" class="edge">
 <title>Node25&#45;&gt;Node27</title>
-<path fill="none" stroke="#191970" d="M184.2903,-174.853C184.462,-157.402 186.7336,-131.6861 197,-112 204.8773,-96.8951 219.7071,-84.0575 230.9971,-75.8139"/>
-<polygon fill="#191970" stroke="#191970" points="180.7921,-175.0258 184.4178,-184.9809 187.7915,-174.9376 180.7921,-175.0258"/>
+<path fill="none" stroke="#191970" d="M185.3504,-174.7479C186.2658,-147.5391 189.521,-97.2137 201,-56 204.6746,-42.807 211.6688,-28.6114 216.5724,-19.5342"/>
+<polygon fill="#191970" stroke="#191970" points="181.8477,-174.8112 185.0843,-184.8996 188.8453,-174.9948 181.8477,-174.8112"/>
 </g>
 <!-- Node25&#45;&gt;Node28 -->
-<g id="edge7" class="edge">
+<g id="edge6" class="edge">
 <title>Node25&#45;&gt;Node28</title>
 <path fill="none" stroke="#191970" d="M204.8279,-178.2992C220.5989,-165.4131 242.1299,-147.8207 255.2732,-137.0817"/>
 <polygon fill="#191970" stroke="#191970" points="202.2779,-175.8629 196.7486,-184.9005 206.7069,-181.2836 202.2779,-175.8629"/>
 </g>
-<!-- Node27&#45;&gt;Node26 -->
-<g id="edge6" class="edge">
-<title>Node27&#45;&gt;Node26</title>
-<path fill="none" stroke="#191970" d="M227.3086,-49.645C216.1781,-39.9058 202.4337,-27.8795 193.0202,-19.6427"/>
-<polygon fill="#191970" stroke="#191970" points="225.0215,-52.2945 234.8521,-56.2455 229.631,-47.0264 225.0215,-52.2945"/>
+<!-- Node29 -->
+<g id="node8" class="node">
+<title>Node29</title>
+<g id="a_node8"><a xlink:href="tracer_8h.html" target="_top" xlink:title="Tracer implementation. ">
+<polygon fill="#ffffff" stroke="#000000" points="210.5,-56.5 210.5,-75.5 323.5,-75.5 323.5,-56.5 210.5,-56.5"/>
+<text text-anchor="middle" x="267" y="-63.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">jaegertracingc/tracer.h</text>
+</a>
 </g>
-<!-- Node28&#45;&gt;Node27 -->
+</g>
+<!-- Node28&#45;&gt;Node29 -->
+<g id="edge7" class="edge">
+<title>Node28&#45;&gt;Node29</title>
+<path fill="none" stroke="#191970" d="M267,-107.7462C267,-97.0519 267,-84.314 267,-75.7449"/>
+<polygon fill="#191970" stroke="#191970" points="263.5001,-107.8906 267,-117.8906 270.5001,-107.8907 263.5001,-107.8906"/>
+</g>
+<!-- Node29&#45;&gt;Node27 -->
 <g id="edge8" class="edge">
-<title>Node28&#45;&gt;Node27</title>
-<path fill="none" stroke="#191970" d="M260.4845,-108.4189C256.7869,-97.5901 252.3152,-84.4944 249.3275,-75.7449"/>
-<polygon fill="#191970" stroke="#191970" points="257.175,-109.5581 263.7188,-117.8906 263.7995,-107.2961 257.175,-109.5581"/>
+<title>Node29&#45;&gt;Node27</title>
+<path fill="none" stroke="#191970" d="M252.7054,-48.2112C245.1004,-38.7472 236.0462,-27.4797 229.7486,-19.6427"/>
+<polygon fill="#191970" stroke="#191970" points="250.1694,-50.6428 259.1616,-56.2455 255.6259,-46.2581 250.1694,-50.6428"/>
 </g>
-<!-- Node29&#45;&gt;Node24 -->
-<g id="edge11" class="edge">
-<title>Node29&#45;&gt;Node24</title>
+<!-- Node30&#45;&gt;Node24 -->
+<g id="edge12" class="edge">
+<title>Node30&#45;&gt;Node24</title>
 <path fill="none" stroke="#191970" d="M398,-174.7758C398,-164.4641 398,-152.0437 398,-142.5218"/>
 <polygon fill="#191970" stroke="#191970" points="394.5001,-174.9005 398,-184.9005 401.5001,-174.9006 394.5001,-174.9005"/>
 </g>
-<!-- Node29&#45;&gt;Node27 -->
-<g id="edge12" class="edge">
-<title>Node29&#45;&gt;Node27</title>
-<path fill="none" stroke="#191970" d="M422.7441,-179.236C446.8698,-162.4538 477.4331,-134.8389 459,-112 439.6947,-88.0804 359.0746,-75.9928 302.7593,-70.354"/>
-<polygon fill="#191970" stroke="#191970" points="420.628,-176.4402 414.2496,-184.8999 424.5114,-182.2643 420.628,-176.4402"/>
+<!-- Node30&#45;&gt;Node29 -->
+<g id="edge11" class="edge">
+<title>Node30&#45;&gt;Node29</title>
+<path fill="none" stroke="#191970" d="M422.646,-179.3143C446.6862,-162.6003 477.1755,-135.0444 459,-112 442.39,-90.9405 374.3337,-78.4383 323.9398,-71.9012"/>
+<polygon fill="#191970" stroke="#191970" points="420.5641,-176.4956 414.1829,-184.9531 424.4455,-182.321 420.5641,-176.4956"/>
 </g>
 </g>
 </svg>

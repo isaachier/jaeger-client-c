@@ -1,0 +1,67 @@
+\hypertarget{baggage_8h}{}\section{jaegertracingc/baggage.h File Reference}
+\label{baggage_8h}\index{jaegertracingc/baggage.\+h@{jaegertracingc/baggage.\+h}}
+
+
+Baggage restriction utilities.  
+
+
+{\ttfamily \#include \char`\"{}jaegertracingc/common.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/metrics.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/span.\+h\char`\"{}}\newline
+Include dependency graph for baggage.\+h\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{baggage_8h__incl}
+\end{center}
+\end{figure}
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structjaeger__baggage__restriction}{jaeger\+\_\+baggage\+\_\+restriction}}
+\begin{DoxyCompactList}\small\item\em Representation of baggage restriction for a given key and a given service. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structjaeger__baggage__restriction__manager}{jaeger\+\_\+baggage\+\_\+restriction\+\_\+manager}}
+\begin{DoxyCompactList}\small\item\em Interface for object that manages baggage restrictions. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structjaeger__default__baggage__restriction__manager}{jaeger\+\_\+default\+\_\+baggage\+\_\+restriction\+\_\+manager}}
+\begin{DoxyCompactList}\small\item\em Default implementation of \mbox{\hyperlink{structjaeger__baggage__restriction__manager}{jaeger\+\_\+baggage\+\_\+restriction\+\_\+manager}} interface. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structjaeger__baggage__setter}{jaeger\+\_\+baggage\+\_\+setter}}
+\begin{DoxyCompactList}\small\item\em Facade to enforce remote baggage restrictions in tracer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{baggage_8h_ada4c9c7abbbd019adc8cb34ac7c9fbb1}\label{baggage_8h_ada4c9c7abbbd019adc8cb34ac7c9fbb1}} 
+typedef struct \mbox{\hyperlink{structjaeger__baggage__restriction}{jaeger\+\_\+baggage\+\_\+restriction}} \mbox{\hyperlink{baggage_8h_ada4c9c7abbbd019adc8cb34ac7c9fbb1}{jaeger\+\_\+baggage\+\_\+restriction}}
+\begin{DoxyCompactList}\small\item\em Representation of baggage restriction for a given key and a given service. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{baggage_8h_a9a046fcbddca1d9350b8783fa8a7b6b9}\label{baggage_8h_a9a046fcbddca1d9350b8783fa8a7b6b9}} 
+typedef struct \mbox{\hyperlink{structjaeger__baggage__restriction__manager}{jaeger\+\_\+baggage\+\_\+restriction\+\_\+manager}} \mbox{\hyperlink{baggage_8h_a9a046fcbddca1d9350b8783fa8a7b6b9}{jaeger\+\_\+baggage\+\_\+restriction\+\_\+manager}}
+\begin{DoxyCompactList}\small\item\em Interface for object that manages baggage restrictions. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{baggage_8h_a7b7fa3edf0965250a6fed48c98edce0e}\label{baggage_8h_a7b7fa3edf0965250a6fed48c98edce0e}} 
+typedef struct \mbox{\hyperlink{structjaeger__default__baggage__restriction__manager}{jaeger\+\_\+default\+\_\+baggage\+\_\+restriction\+\_\+manager}} \mbox{\hyperlink{baggage_8h_a7b7fa3edf0965250a6fed48c98edce0e}{jaeger\+\_\+default\+\_\+baggage\+\_\+restriction\+\_\+manager}}
+\begin{DoxyCompactList}\small\item\em Default implementation of \mbox{\hyperlink{structjaeger__baggage__restriction__manager}{jaeger\+\_\+baggage\+\_\+restriction\+\_\+manager}} interface. \end{DoxyCompactList}\item 
+typedef struct \mbox{\hyperlink{structjaeger__baggage__setter}{jaeger\+\_\+baggage\+\_\+setter}} \mbox{\hyperlink{baggage_8h_a63a49536e4600e077a0e684d79a57706}{jaeger\+\_\+baggage\+\_\+setter}}
+\begin{DoxyCompactList}\small\item\em Facade to enforce remote baggage restrictions in tracer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{baggage_8h_aea3ddc7284cebc6d4979b628d59f54bd}\label{baggage_8h_aea3ddc7284cebc6d4979b628d59f54bd}} 
+void {\bfseries jaeger\+\_\+baggage\+\_\+setter\+\_\+set\+\_\+baggage} (\mbox{\hyperlink{structjaeger__baggage__setter}{jaeger\+\_\+baggage\+\_\+setter}} $\ast$setter, \mbox{\hyperlink{structjaeger__span}{jaeger\+\_\+span}} $\ast$span, const char $\ast$key, const char $\ast$value)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Baggage restriction utilities. 
+
+
+
+\subsection{Typedef Documentation}
+\mbox{\Hypertarget{baggage_8h_a63a49536e4600e077a0e684d79a57706}\label{baggage_8h_a63a49536e4600e077a0e684d79a57706}} 
+\index{baggage.\+h@{baggage.\+h}!jaeger\+\_\+baggage\+\_\+setter@{jaeger\+\_\+baggage\+\_\+setter}}
+\index{jaeger\+\_\+baggage\+\_\+setter@{jaeger\+\_\+baggage\+\_\+setter}!baggage.\+h@{baggage.\+h}}
+\subsubsection{\texorpdfstring{jaeger\+\_\+baggage\+\_\+setter}{jaeger\_baggage\_setter}}
+{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{structjaeger__baggage__setter}{jaeger\+\_\+baggage\+\_\+setter}}  \mbox{\hyperlink{structjaeger__baggage__setter}{jaeger\+\_\+baggage\+\_\+setter}}}
+
+
+
+Facade to enforce remote baggage restrictions in tracer. 
+

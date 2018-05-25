@@ -1,0 +1,76 @@
+\hypertarget{structjaeger__counter}{}\section{jaeger\+\_\+counter Struct Reference}
+\label{structjaeger__counter}\index{jaeger\+\_\+counter@{jaeger\+\_\+counter}}
+
+
+Counter metric interface.  
+
+
+
+
+{\ttfamily \#include $<$jaegertracingc/metrics.\+h$>$}
+
+
+
+Inheritance diagram for jaeger\+\_\+counter\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=178pt]{structjaeger__counter__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for jaeger\+\_\+counter\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=178pt]{structjaeger__counter__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item 
+jaeger\+\_\+destructible \mbox{\hyperlink{structjaeger__counter_abc889348825fd450db8b207dbfb17777}{base}}
+\begin{DoxyCompactList}\small\item\em Base class member. \end{DoxyCompactList}\item 
+void($\ast$ \mbox{\hyperlink{structjaeger__counter_a349dc48bc8872abe4b73246c8be49aca}{inc}} )(struct \mbox{\hyperlink{structjaeger__counter}{jaeger\+\_\+counter}} $\ast$counter, int64\+\_\+t delta)
+\begin{DoxyCompactList}\small\item\em Increment count. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Counter metric interface. 
+
+Counters are used to keep track of a total number of events (i.\+e. number of spans reported). 
+
+\subsection{Field Documentation}
+\mbox{\Hypertarget{structjaeger__counter_abc889348825fd450db8b207dbfb17777}\label{structjaeger__counter_abc889348825fd450db8b207dbfb17777}} 
+\index{jaeger\+\_\+counter@{jaeger\+\_\+counter}!base@{base}}
+\index{base@{base}!jaeger\+\_\+counter@{jaeger\+\_\+counter}}
+\subsubsection{\texorpdfstring{base}{base}}
+{\footnotesize\ttfamily jaeger\+\_\+destructible jaeger\+\_\+counter\+::base}
+
+
+
+Base class member. 
+
+\mbox{\Hypertarget{structjaeger__counter_a349dc48bc8872abe4b73246c8be49aca}\label{structjaeger__counter_a349dc48bc8872abe4b73246c8be49aca}} 
+\index{jaeger\+\_\+counter@{jaeger\+\_\+counter}!inc@{inc}}
+\index{inc@{inc}!jaeger\+\_\+counter@{jaeger\+\_\+counter}}
+\subsubsection{\texorpdfstring{inc}{inc}}
+{\footnotesize\ttfamily void($\ast$ jaeger\+\_\+counter\+::inc) (struct \mbox{\hyperlink{structjaeger__counter}{jaeger\+\_\+counter}} $\ast$counter, int64\+\_\+t delta)}
+
+
+
+Increment count. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em counter} & Counter to increment. \\
+\hline
+{\em delta} & Amount to increment. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+jaegertracingc/\mbox{\hyperlink{metrics_8h}{metrics.\+h}}\end{DoxyCompactItemize}

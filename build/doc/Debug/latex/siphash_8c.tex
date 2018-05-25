@@ -1,0 +1,36 @@
+\hypertarget{siphash_8c}{}\section{jaegertracingc/siphash.c File Reference}
+\label{siphash_8c}\index{jaegertracingc/siphash.\+c@{jaegertracingc/siphash.\+c}}
+
+
+Siphash implementation.  
+
+
+{\ttfamily \#include \char`\"{}jaegertracingc/siphash.\+h\char`\"{}}\newline
+Include dependency graph for siphash.\+c\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{siphash_8c__incl}
+\end{center}
+\end{figure}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{siphash_8c_a379b404d1ca777de515139d61ca1d498}\label{siphash_8c_a379b404d1ca777de515139d61ca1d498}} 
+\#define {\bfseries C\+\_\+\+R\+O\+U\+N\+DS}~2
+\item 
+\mbox{\Hypertarget{siphash_8c_a45b10bd6d95985bc270ccb93d403f5e6}\label{siphash_8c_a45b10bd6d95985bc270ccb93d403f5e6}} 
+\#define {\bfseries D\+\_\+\+R\+O\+U\+N\+DS}~4
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{siphash_8c_a62839d7c453a320a944f7bdf2e6817c2}\label{siphash_8c_a62839d7c453a320a944f7bdf2e6817c2}} 
+uint64\+\_\+t {\bfseries jaeger\+\_\+siphash} (const uint8\+\_\+t $\ast$buffer, size\+\_\+t size, const uint8\+\_\+t seed\mbox{[}16\mbox{]})
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Siphash implementation. 
+
+Based on \href{https://github.com/veorq/SipHash/blob/master/siphash.c}{\tt https\+://github.\+com/veorq/\+Sip\+Hash/blob/master/siphash.\+c}. 

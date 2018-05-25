@@ -1,0 +1,144 @@
+\hypertarget{propagation_8c}{}\section{jaegertracingc/propagation.c File Reference}
+\label{propagation_8c}\index{jaegertracingc/propagation.\+c@{jaegertracingc/propagation.\+c}}
+
+
+Trace ID representation.  
+
+
+{\ttfamily \#include \char`\"{}jaegertracingc/propagation.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/internal/endian.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/internal/strings.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/metrics.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/options.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/span.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/tracer.\+h\char`\"{}}\newline
+Include dependency graph for propagation.\+c\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{propagation_8c__incl}
+\end{center}
+\end{figure}
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structextract__text__map__arg}{extract\+\_\+text\+\_\+map\+\_\+arg}}
+\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define {\bfseries R\+E\+A\+D\+\_\+\+B\+I\+N\+A\+RY}(x)
+\item 
+\#define {\bfseries R\+E\+A\+D\+\_\+\+B\+U\+F\+F\+ER}(buffer,  len)
+\item 
+\#define {\bfseries R\+E\+A\+D\+\_\+\+B\+I\+N\+A\+RY}(x)
+\item 
+\#define {\bfseries W\+R\+I\+T\+E\+\_\+\+B\+I\+N\+A\+RY}(x,  bits)
+\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{propagation_8c_a5d1779a3abe4e910b2fea3260a8d7f0c}\label{propagation_8c_a5d1779a3abe4e910b2fea3260a8d7f0c}} 
+typedef struct \mbox{\hyperlink{structextract__text__map__arg}{extract\+\_\+text\+\_\+map\+\_\+arg}} {\bfseries extract\+\_\+text\+\_\+map\+\_\+arg}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{propagation_8c_a63f27f975a8ab199916ec0fd7449e412}\label{propagation_8c_a63f27f975a8ab199916ec0fd7449e412}} 
+opentracing\+\_\+propagation\+\_\+error\+\_\+code {\bfseries jaeger\+\_\+extract\+\_\+from\+\_\+text\+\_\+map} (opentracing\+\_\+text\+\_\+map\+\_\+reader $\ast$reader, \mbox{\hyperlink{structjaeger__span__context}{jaeger\+\_\+span\+\_\+context}} $\ast$$\ast$ctx, \mbox{\hyperlink{structjaeger__metrics}{jaeger\+\_\+metrics}} $\ast$metrics, const \mbox{\hyperlink{structjaeger__headers__config}{jaeger\+\_\+headers\+\_\+config}} $\ast$config)
+\item 
+\mbox{\Hypertarget{propagation_8c_adb4bd2dd72877ebc2468792961c03190}\label{propagation_8c_adb4bd2dd72877ebc2468792961c03190}} 
+opentracing\+\_\+propagation\+\_\+error\+\_\+code {\bfseries jaeger\+\_\+extract\+\_\+from\+\_\+http\+\_\+headers} (opentracing\+\_\+http\+\_\+headers\+\_\+reader $\ast$reader, \mbox{\hyperlink{structjaeger__span__context}{jaeger\+\_\+span\+\_\+context}} $\ast$$\ast$ctx, \mbox{\hyperlink{structjaeger__metrics}{jaeger\+\_\+metrics}} $\ast$metrics, const \mbox{\hyperlink{structjaeger__headers__config}{jaeger\+\_\+headers\+\_\+config}} $\ast$config)
+\item 
+\mbox{\Hypertarget{propagation_8c_acf52cea5b935414cd1f160b5bc57e5bd}\label{propagation_8c_acf52cea5b935414cd1f160b5bc57e5bd}} 
+opentracing\+\_\+propagation\+\_\+error\+\_\+code {\bfseries jaeger\+\_\+extract\+\_\+from\+\_\+binary} (int($\ast$callback)(void $\ast$, char $\ast$, size\+\_\+t), void $\ast$arg, \mbox{\hyperlink{structjaeger__span__context}{jaeger\+\_\+span\+\_\+context}} $\ast$$\ast$ctx, \mbox{\hyperlink{structjaeger__metrics}{jaeger\+\_\+metrics}} $\ast$metrics)
+\item 
+\mbox{\Hypertarget{propagation_8c_af918b5dc5701b0f469ffcd0beae0b04f}\label{propagation_8c_af918b5dc5701b0f469ffcd0beae0b04f}} 
+opentracing\+\_\+propagation\+\_\+error\+\_\+code {\bfseries jaeger\+\_\+extract\+\_\+from\+\_\+custom} (opentracing\+\_\+custom\+\_\+carrier\+\_\+reader $\ast$reader, \mbox{\hyperlink{structjaeger__tracer}{jaeger\+\_\+tracer}} $\ast$tracer, \mbox{\hyperlink{structjaeger__span__context}{jaeger\+\_\+span\+\_\+context}} $\ast$$\ast$ctx, \mbox{\hyperlink{structjaeger__metrics}{jaeger\+\_\+metrics}} $\ast$metrics)
+\item 
+\mbox{\Hypertarget{propagation_8c_a1687ddbc45b70659af2e26c1aa1ade53}\label{propagation_8c_a1687ddbc45b70659af2e26c1aa1ade53}} 
+opentracing\+\_\+propagation\+\_\+error\+\_\+code {\bfseries jaeger\+\_\+inject\+\_\+into\+\_\+text\+\_\+map} (opentracing\+\_\+text\+\_\+map\+\_\+writer $\ast$writer, const \mbox{\hyperlink{structjaeger__span__context}{jaeger\+\_\+span\+\_\+context}} $\ast$ctx, const \mbox{\hyperlink{structjaeger__headers__config}{jaeger\+\_\+headers\+\_\+config}} $\ast$config)
+\item 
+\mbox{\Hypertarget{propagation_8c_a413d831aae1248973de9a11dcd9dcebb}\label{propagation_8c_a413d831aae1248973de9a11dcd9dcebb}} 
+opentracing\+\_\+propagation\+\_\+error\+\_\+code {\bfseries jaeger\+\_\+inject\+\_\+into\+\_\+http\+\_\+headers} (opentracing\+\_\+http\+\_\+headers\+\_\+writer $\ast$writer, const \mbox{\hyperlink{structjaeger__span__context}{jaeger\+\_\+span\+\_\+context}} $\ast$ctx, const \mbox{\hyperlink{structjaeger__headers__config}{jaeger\+\_\+headers\+\_\+config}} $\ast$config)
+\item 
+\mbox{\Hypertarget{propagation_8c_a093b5863d4f149e6927ddf8ffcfa0457}\label{propagation_8c_a093b5863d4f149e6927ddf8ffcfa0457}} 
+opentracing\+\_\+propagation\+\_\+error\+\_\+code {\bfseries jaeger\+\_\+inject\+\_\+into\+\_\+binary} (int($\ast$callback)(void $\ast$, const char $\ast$, size\+\_\+t), void $\ast$arg, const \mbox{\hyperlink{structjaeger__span__context}{jaeger\+\_\+span\+\_\+context}} $\ast$ctx)
+\item 
+\mbox{\Hypertarget{propagation_8c_a44b2a9c4481023389aac11ff68cc4e0a}\label{propagation_8c_a44b2a9c4481023389aac11ff68cc4e0a}} 
+opentracing\+\_\+propagation\+\_\+error\+\_\+code {\bfseries jaeger\+\_\+inject\+\_\+into\+\_\+custom} (opentracing\+\_\+custom\+\_\+carrier\+\_\+writer $\ast$writer, \mbox{\hyperlink{structjaeger__tracer}{jaeger\+\_\+tracer}} $\ast$tracer, const \mbox{\hyperlink{structjaeger__span__context}{jaeger\+\_\+span\+\_\+context}} $\ast$ctx)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Trace ID representation. 
+
+
+
+\subsection{Macro Definition Documentation}
+\mbox{\Hypertarget{propagation_8c_a05901cb1c24052600ef31a664fa026d1}\label{propagation_8c_a05901cb1c24052600ef31a664fa026d1}} 
+\index{propagation.\+c@{propagation.\+c}!R\+E\+A\+D\+\_\+\+B\+I\+N\+A\+RY@{R\+E\+A\+D\+\_\+\+B\+I\+N\+A\+RY}}
+\index{R\+E\+A\+D\+\_\+\+B\+I\+N\+A\+RY@{R\+E\+A\+D\+\_\+\+B\+I\+N\+A\+RY}!propagation.\+c@{propagation.\+c}}
+\subsubsection{\texorpdfstring{R\+E\+A\+D\+\_\+\+B\+I\+N\+A\+RY}{READ\_BINARY}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \#define R\+E\+A\+D\+\_\+\+B\+I\+N\+A\+RY(\begin{DoxyParamCaption}\item[{}]{x }\end{DoxyParamCaption})}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\DoxyCodeLine{\textcolor{keywordflow}{do} \{                                                                      \(\backslash\)}
+\DoxyCodeLine{        if (!read\_binary(callback, arg, \&(x), \textcolor{keyword}{sizeof}((x)))) \{                 \(\backslash\)}
+\DoxyCodeLine{            return opentracing\_propagation\_error\_code\_span\_context\_corrupted; \(\backslash\)}
+\DoxyCodeLine{        \}                                                                     \(\backslash\)}
+\DoxyCodeLine{    \} \textcolor{keywordflow}{while} (0)}
+\end{DoxyCode}
+\mbox{\Hypertarget{propagation_8c_a05901cb1c24052600ef31a664fa026d1}\label{propagation_8c_a05901cb1c24052600ef31a664fa026d1}} 
+\index{propagation.\+c@{propagation.\+c}!R\+E\+A\+D\+\_\+\+B\+I\+N\+A\+RY@{R\+E\+A\+D\+\_\+\+B\+I\+N\+A\+RY}}
+\index{R\+E\+A\+D\+\_\+\+B\+I\+N\+A\+RY@{R\+E\+A\+D\+\_\+\+B\+I\+N\+A\+RY}!propagation.\+c@{propagation.\+c}}
+\subsubsection{\texorpdfstring{R\+E\+A\+D\+\_\+\+B\+I\+N\+A\+RY}{READ\_BINARY}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \#define R\+E\+A\+D\+\_\+\+B\+I\+N\+A\+RY(\begin{DoxyParamCaption}\item[{}]{x }\end{DoxyParamCaption})}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\DoxyCodeLine{\textcolor{keywordflow}{do} \{                                                                   \(\backslash\)}
+\DoxyCodeLine{        if (!read\_binary(callback, arg, \&(x), \textcolor{keyword}{sizeof}((x)))) \{              \(\backslash\)}
+\DoxyCodeLine{            result =                                                       \(\backslash\)}
+\DoxyCodeLine{                opentracing\_propagation\_error\_code\_span\_context\_corrupted; \(\backslash\)}
+\DoxyCodeLine{            goto cleanup;                                                  \(\backslash\)}
+\DoxyCodeLine{        \}                                                                  \(\backslash\)}
+\DoxyCodeLine{    \} \textcolor{keywordflow}{while} (0)}
+\end{DoxyCode}
+\mbox{\Hypertarget{propagation_8c_abbffd5c6c18ac644a1011a44231e74b8}\label{propagation_8c_abbffd5c6c18ac644a1011a44231e74b8}} 
+\index{propagation.\+c@{propagation.\+c}!R\+E\+A\+D\+\_\+\+B\+U\+F\+F\+ER@{R\+E\+A\+D\+\_\+\+B\+U\+F\+F\+ER}}
+\index{R\+E\+A\+D\+\_\+\+B\+U\+F\+F\+ER@{R\+E\+A\+D\+\_\+\+B\+U\+F\+F\+ER}!propagation.\+c@{propagation.\+c}}
+\subsubsection{\texorpdfstring{R\+E\+A\+D\+\_\+\+B\+U\+F\+F\+ER}{READ\_BUFFER}}
+{\footnotesize\ttfamily \#define R\+E\+A\+D\+\_\+\+B\+U\+F\+F\+ER(\begin{DoxyParamCaption}\item[{}]{buffer,  }\item[{}]{len }\end{DoxyParamCaption})}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\DoxyCodeLine{\textcolor{keywordflow}{do} \{                                                                      \(\backslash\)}
+\DoxyCodeLine{        if (callback(arg, (buffer), (len)) != (\textcolor{keywordtype}{int}) (len)) \{                  \(\backslash\)}
+\DoxyCodeLine{            return opentracing\_propagation\_error\_code\_span\_context\_corrupted; \(\backslash\)}
+\DoxyCodeLine{        \}                                                                     \(\backslash\)}
+\DoxyCodeLine{        (buffer)[len] = \textcolor{charliteral}{'\(\backslash\)0'};                                                 \(\backslash\)}
+\DoxyCodeLine{    \} \textcolor{keywordflow}{while} (0)}
+\end{DoxyCode}
+\mbox{\Hypertarget{propagation_8c_a0b0d417752acc4a68237802e2887e9d0}\label{propagation_8c_a0b0d417752acc4a68237802e2887e9d0}} 
+\index{propagation.\+c@{propagation.\+c}!W\+R\+I\+T\+E\+\_\+\+B\+I\+N\+A\+RY@{W\+R\+I\+T\+E\+\_\+\+B\+I\+N\+A\+RY}}
+\index{W\+R\+I\+T\+E\+\_\+\+B\+I\+N\+A\+RY@{W\+R\+I\+T\+E\+\_\+\+B\+I\+N\+A\+RY}!propagation.\+c@{propagation.\+c}}
+\subsubsection{\texorpdfstring{W\+R\+I\+T\+E\+\_\+\+B\+I\+N\+A\+RY}{WRITE\_BINARY}}
+{\footnotesize\ttfamily \#define W\+R\+I\+T\+E\+\_\+\+B\+I\+N\+A\+RY(\begin{DoxyParamCaption}\item[{}]{x,  }\item[{}]{bits }\end{DoxyParamCaption})}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\DoxyCodeLine{\textcolor{keywordflow}{do} \{                                                                       \(\backslash\)}
+\DoxyCodeLine{                                                                               \(\backslash\)}
+\DoxyCodeLine{        const uint\#\#bits\#\#\_t value =                                           \(\backslash\)}
+\DoxyCodeLine{            HOST\_TO\_BIG\_ENDIAN\_\#\#bits((x)); \textcolor{comment}{/* NOLINT(hicpp-signed-bitwise) */} \(\backslash\)}
+\DoxyCodeLine{        char value\_buffer[\textcolor{keyword}{sizeof}(value)];                                      \(\backslash\)}
+\DoxyCodeLine{        memcpy(value\_buffer, \&value, \textcolor{keyword}{sizeof}(value));                           \(\backslash\)}
+\DoxyCodeLine{        if (callback(arg, value\_buffer, \textcolor{keyword}{sizeof}(value\_buffer)) !=               \(\backslash\)}
+\DoxyCodeLine{            (\textcolor{keywordtype}{int}) \textcolor{keyword}{sizeof}(value\_buffer)) \{                                      \(\backslash\)}
+\DoxyCodeLine{            return opentracing\_propagation\_error\_code\_unknown;                 \(\backslash\)}
+\DoxyCodeLine{        \}                                                                      \(\backslash\)}
+\DoxyCodeLine{    \} \textcolor{keywordflow}{while} (0)}
+\end{DoxyCode}

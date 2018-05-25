@@ -1,0 +1,6 @@
+# Hashes of file build rules.
+26df5479e4a464645d4520d643f19dbd CMakeFiles/doc
+fddf1152b99de74b860d46027592f5c3 src/jaegertracingc/protoc-gen/agent.pb-c.h
+fe24eff1019b8eb7f8a950c9a9aa163f src/jaegertracingc/protoc-gen/baggage.pb-c.h
+1b36e0de3c5cfbe6ee277955976c064e src/jaegertracingc/protoc-gen/jaeger.pb-c.h
+1871b129291d533f9dd2d6c00f3564f6 src/jaegertracingc/protoc-gen/sampling.pb-c.h

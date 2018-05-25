@@ -1,6 +1,6 @@
 <map id="jaegertracingc/sampling_strategy.h" name="jaegertracingc/sampling_strategy.h">
-<area shape="rect" id="node2" href="$sampler_8h.html" title="Span sampler interface. " alt="" coords="77,95,241,121"/>
-<area shape="rect" id="node3" href="$mock__agent_8h.html" title="Key value pair representation. " alt="" coords="5,169,144,211"/>
-<area shape="rect" id="node4" href="$tracer_8h.html" title="Tracer implementation. " alt="" coords="169,177,319,203"/>
-<area shape="rect" id="node5" href="$propagation_8c.html" title="Trace ID representation. " alt="" coords="151,259,337,285"/>
+<area shape="rect" id="node2" href="$sampler_8h.html" title="Span sampler interface. " alt="" coords="100,95,264,121"/>
+<area shape="rect" id="node3" href="$tracer_8h.html" title="Tracer implementation. " alt="" coords="23,177,173,203"/>
+<area shape="rect" id="node5" href="$mock__agent_8h.html" title="Key value pair representation. " alt="" coords="198,169,337,211"/>
+<area shape="rect" id="node4" href="$propagation_8c.html" title="Trace ID representation. " alt="" coords="5,259,191,285"/>
 </map>

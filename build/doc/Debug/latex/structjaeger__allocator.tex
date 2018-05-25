@@ -1,0 +1,92 @@
+\hypertarget{structjaeger__allocator}{}\section{jaeger\+\_\+allocator Struct Reference}
+\label{structjaeger__allocator}\index{jaeger\+\_\+allocator@{jaeger\+\_\+allocator}}
+
+
+Interface to override default allocator.  
+
+
+
+
+{\ttfamily \#include $<$jaegertracingc/alloc.\+h$>$}
+
+\subsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item 
+void $\ast$($\ast$ \mbox{\hyperlink{structjaeger__allocator_a235caded5cb561736c69c28b47169864}{malloc}} )(struct \mbox{\hyperlink{structjaeger__allocator}{jaeger\+\_\+allocator}} $\ast$alloc, size\+\_\+t sz)
+\begin{DoxyCompactList}\small\item\em malloc function override. \end{DoxyCompactList}\item 
+void $\ast$($\ast$ \mbox{\hyperlink{structjaeger__allocator_a17a8373babb00b98a1303cafaf524676}{realloc}} )(struct \mbox{\hyperlink{structjaeger__allocator}{jaeger\+\_\+allocator}} $\ast$alloc, void $\ast$ptr, size\+\_\+t sz)
+\begin{DoxyCompactList}\small\item\em realloc function override. \end{DoxyCompactList}\item 
+void($\ast$ \mbox{\hyperlink{structjaeger__allocator_a740ff44da0e720a728593e26bf58acc4}{free}} )(struct \mbox{\hyperlink{structjaeger__allocator}{jaeger\+\_\+allocator}} $\ast$alloc, void $\ast$ptr)
+\begin{DoxyCompactList}\small\item\em free function override. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Interface to override default allocator. 
+
+
+
+\subsection{Field Documentation}
+\mbox{\Hypertarget{structjaeger__allocator_a740ff44da0e720a728593e26bf58acc4}\label{structjaeger__allocator_a740ff44da0e720a728593e26bf58acc4}} 
+\index{jaeger\+\_\+allocator@{jaeger\+\_\+allocator}!free@{free}}
+\index{free@{free}!jaeger\+\_\+allocator@{jaeger\+\_\+allocator}}
+\subsubsection{\texorpdfstring{free}{free}}
+{\footnotesize\ttfamily void($\ast$ jaeger\+\_\+allocator\+::free) (struct \mbox{\hyperlink{structjaeger__allocator}{jaeger\+\_\+allocator}} $\ast$alloc, void $\ast$ptr)}
+
+
+
+free function override. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em alloc} & Allocator instance. \\
+\hline
+{\em ptr} & Pointer to he allocated memory to free. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{structjaeger__allocator_a235caded5cb561736c69c28b47169864}\label{structjaeger__allocator_a235caded5cb561736c69c28b47169864}} 
+\index{jaeger\+\_\+allocator@{jaeger\+\_\+allocator}!malloc@{malloc}}
+\index{malloc@{malloc}!jaeger\+\_\+allocator@{jaeger\+\_\+allocator}}
+\subsubsection{\texorpdfstring{malloc}{malloc}}
+{\footnotesize\ttfamily void$\ast$($\ast$ jaeger\+\_\+allocator\+::malloc) (struct \mbox{\hyperlink{structjaeger__allocator}{jaeger\+\_\+allocator}} $\ast$alloc, size\+\_\+t sz)}
+
+
+
+malloc function override. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em alloc} & Allocator instance. \\
+\hline
+{\em sz} & Size to allocate. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Pointer to allocated memory on success, N\+U\+LL otherwise. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{structjaeger__allocator_a17a8373babb00b98a1303cafaf524676}\label{structjaeger__allocator_a17a8373babb00b98a1303cafaf524676}} 
+\index{jaeger\+\_\+allocator@{jaeger\+\_\+allocator}!realloc@{realloc}}
+\index{realloc@{realloc}!jaeger\+\_\+allocator@{jaeger\+\_\+allocator}}
+\subsubsection{\texorpdfstring{realloc}{realloc}}
+{\footnotesize\ttfamily void$\ast$($\ast$ jaeger\+\_\+allocator\+::realloc) (struct \mbox{\hyperlink{structjaeger__allocator}{jaeger\+\_\+allocator}} $\ast$alloc, void $\ast$ptr, size\+\_\+t sz)}
+
+
+
+realloc function override. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em alloc} & Allocator instance. \\
+\hline
+{\em ptr} & Pointer to previously allocated memory. \\
+\hline
+{\em sz} & New size to allocate. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Pointer to new allocated memory on success, N\+U\+LL otherwise. 
+\end{DoxyReturn}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+jaegertracingc/\mbox{\hyperlink{alloc_8h}{alloc.\+h}}\end{DoxyCompactItemize}

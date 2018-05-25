@@ -1,0 +1,180 @@
+\hypertarget{alloc_8h}{}\section{jaegertracingc/alloc.h File Reference}
+\label{alloc_8h}\index{jaegertracingc/alloc.\+h@{jaegertracingc/alloc.\+h}}
+
+
+Allocator struct and functions.  
+
+
+{\ttfamily \#include $<$assert.\+h$>$}\newline
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/logging.\+h\char`\"{}}\newline
+Include dependency graph for alloc.\+h\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{alloc_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{alloc_8h__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structjaeger__allocator}{jaeger\+\_\+allocator}}
+\begin{DoxyCompactList}\small\item\em Interface to override default allocator. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef struct \mbox{\hyperlink{structjaeger__allocator}{jaeger\+\_\+allocator}} \mbox{\hyperlink{alloc_8h_a2a438fd982df387349202a40bfca6050}{jaeger\+\_\+allocator}}
+\begin{DoxyCompactList}\small\item\em Interface to override default allocator. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{structjaeger__allocator}{jaeger\+\_\+allocator}} $\ast$ \mbox{\hyperlink{alloc_8h_abba0f94c3fc30d4184dd15706fff3879}{jaeger\+\_\+built\+\_\+in\+\_\+allocator}} (void)
+\begin{DoxyCompactList}\small\item\em Wrapper for built-\/in allocation functions. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structjaeger__allocator}{jaeger\+\_\+allocator}} $\ast$ \mbox{\hyperlink{alloc_8h_a312e479c128951e44cbfeab715691a82}{jaeger\+\_\+null\+\_\+allocator}} (void)
+\begin{DoxyCompactList}\small\item\em Wrapper for null allocation functions. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{alloc_8h_a028e4a5c56db3be5bd20496b1a64f920}{jaeger\+\_\+set\+\_\+allocator}} (\mbox{\hyperlink{structjaeger__allocator}{jaeger\+\_\+allocator}} $\ast$alloc)
+\begin{DoxyCompactList}\small\item\em Set the installed allocator. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structjaeger__allocator}{jaeger\+\_\+allocator}} $\ast$ \mbox{\hyperlink{alloc_8h_abd1b3422f9bfb294c07bcb44ec2c26e7}{jaeger\+\_\+get\+\_\+allocator}} (void)
+\begin{DoxyCompactList}\small\item\em Get the installed allocator. \end{DoxyCompactList}\item 
+void $\ast$ \mbox{\hyperlink{alloc_8h_a8bf91f5b7b45e1e602d5a4079420bcd3}{jaeger\+\_\+malloc}} (size\+\_\+t sz)
+\begin{DoxyCompactList}\small\item\em Returns result of call to malloc using installed allocator. \end{DoxyCompactList}\item 
+void $\ast$ \mbox{\hyperlink{alloc_8h_a2f9fd6513d1b13e8be7d42abf89ad140}{jaeger\+\_\+realloc}} (void $\ast$ptr, size\+\_\+t sz)
+\begin{DoxyCompactList}\small\item\em Returns result of call to realloc using installed allocator. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{alloc_8h_ad094b3d57aa0ee6af7b5d3d347a578e5}{jaeger\+\_\+free}} (void $\ast$ptr)
+\begin{DoxyCompactList}\small\item\em Calls free using installed allocator. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Allocator struct and functions. 
+
+
+
+\subsection{Typedef Documentation}
+\mbox{\Hypertarget{alloc_8h_a2a438fd982df387349202a40bfca6050}\label{alloc_8h_a2a438fd982df387349202a40bfca6050}} 
+\index{alloc.\+h@{alloc.\+h}!jaeger\+\_\+allocator@{jaeger\+\_\+allocator}}
+\index{jaeger\+\_\+allocator@{jaeger\+\_\+allocator}!alloc.\+h@{alloc.\+h}}
+\subsubsection{\texorpdfstring{jaeger\+\_\+allocator}{jaeger\_allocator}}
+{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{structjaeger__allocator}{jaeger\+\_\+allocator}}  \mbox{\hyperlink{structjaeger__allocator}{jaeger\+\_\+allocator}}}
+
+
+
+Interface to override default allocator. 
+
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{alloc_8h_abba0f94c3fc30d4184dd15706fff3879}\label{alloc_8h_abba0f94c3fc30d4184dd15706fff3879}} 
+\index{alloc.\+h@{alloc.\+h}!jaeger\+\_\+built\+\_\+in\+\_\+allocator@{jaeger\+\_\+built\+\_\+in\+\_\+allocator}}
+\index{jaeger\+\_\+built\+\_\+in\+\_\+allocator@{jaeger\+\_\+built\+\_\+in\+\_\+allocator}!alloc.\+h@{alloc.\+h}}
+\subsubsection{\texorpdfstring{jaeger\+\_\+built\+\_\+in\+\_\+allocator()}{jaeger\_built\_in\_allocator()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structjaeger__allocator}{jaeger\+\_\+allocator}}$\ast$ jaeger\+\_\+built\+\_\+in\+\_\+allocator (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Wrapper for built-\/in allocation functions. 
+
+\begin{DoxyReturn}{Returns}
+Shared instance of built-\/in allocator. DO N\+OT M\+O\+D\+I\+FY M\+E\+M\+B\+E\+R\+S! 
+\end{DoxyReturn}
+\mbox{\Hypertarget{alloc_8h_ad094b3d57aa0ee6af7b5d3d347a578e5}\label{alloc_8h_ad094b3d57aa0ee6af7b5d3d347a578e5}} 
+\index{alloc.\+h@{alloc.\+h}!jaeger\+\_\+free@{jaeger\+\_\+free}}
+\index{jaeger\+\_\+free@{jaeger\+\_\+free}!alloc.\+h@{alloc.\+h}}
+\subsubsection{\texorpdfstring{jaeger\+\_\+free()}{jaeger\_free()}}
+{\footnotesize\ttfamily void jaeger\+\_\+free (\begin{DoxyParamCaption}\item[{void $\ast$}]{ptr }\end{DoxyParamCaption})}
+
+
+
+Calls free using installed allocator. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ptr} & Allocated address. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{alloc_8h_abd1b3422f9bfb294c07bcb44ec2c26e7}\label{alloc_8h_abd1b3422f9bfb294c07bcb44ec2c26e7}} 
+\index{alloc.\+h@{alloc.\+h}!jaeger\+\_\+get\+\_\+allocator@{jaeger\+\_\+get\+\_\+allocator}}
+\index{jaeger\+\_\+get\+\_\+allocator@{jaeger\+\_\+get\+\_\+allocator}!alloc.\+h@{alloc.\+h}}
+\subsubsection{\texorpdfstring{jaeger\+\_\+get\+\_\+allocator()}{jaeger\_get\_allocator()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structjaeger__allocator}{jaeger\+\_\+allocator}}$\ast$ jaeger\+\_\+get\+\_\+allocator (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Get the installed allocator. 
+
+\begin{DoxyReturn}{Returns}
+alloc Allocator instance. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{alloc_8h_a8bf91f5b7b45e1e602d5a4079420bcd3}\label{alloc_8h_a8bf91f5b7b45e1e602d5a4079420bcd3}} 
+\index{alloc.\+h@{alloc.\+h}!jaeger\+\_\+malloc@{jaeger\+\_\+malloc}}
+\index{jaeger\+\_\+malloc@{jaeger\+\_\+malloc}!alloc.\+h@{alloc.\+h}}
+\subsubsection{\texorpdfstring{jaeger\+\_\+malloc()}{jaeger\_malloc()}}
+{\footnotesize\ttfamily void$\ast$ jaeger\+\_\+malloc (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{sz }\end{DoxyParamCaption})}
+
+
+
+Returns result of call to malloc using installed allocator. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em sz} & Size to be allocated. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Address to allocated memory on success, N\+U\+LL otherwise. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{alloc_8h_a312e479c128951e44cbfeab715691a82}\label{alloc_8h_a312e479c128951e44cbfeab715691a82}} 
+\index{alloc.\+h@{alloc.\+h}!jaeger\+\_\+null\+\_\+allocator@{jaeger\+\_\+null\+\_\+allocator}}
+\index{jaeger\+\_\+null\+\_\+allocator@{jaeger\+\_\+null\+\_\+allocator}!alloc.\+h@{alloc.\+h}}
+\subsubsection{\texorpdfstring{jaeger\+\_\+null\+\_\+allocator()}{jaeger\_null\_allocator()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structjaeger__allocator}{jaeger\+\_\+allocator}}$\ast$ jaeger\+\_\+null\+\_\+allocator (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Wrapper for null allocation functions. 
+
+Never allocates memory, all function are no-\/ops. Used for testing. \begin{DoxyReturn}{Returns}
+Shared instance of null allocator. DO N\+OT M\+O\+D\+I\+FY M\+E\+M\+B\+E\+R\+S! 
+\end{DoxyReturn}
+\mbox{\Hypertarget{alloc_8h_a2f9fd6513d1b13e8be7d42abf89ad140}\label{alloc_8h_a2f9fd6513d1b13e8be7d42abf89ad140}} 
+\index{alloc.\+h@{alloc.\+h}!jaeger\+\_\+realloc@{jaeger\+\_\+realloc}}
+\index{jaeger\+\_\+realloc@{jaeger\+\_\+realloc}!alloc.\+h@{alloc.\+h}}
+\subsubsection{\texorpdfstring{jaeger\+\_\+realloc()}{jaeger\_realloc()}}
+{\footnotesize\ttfamily void$\ast$ jaeger\+\_\+realloc (\begin{DoxyParamCaption}\item[{void $\ast$}]{ptr,  }\item[{size\+\_\+t}]{sz }\end{DoxyParamCaption})}
+
+
+
+Returns result of call to realloc using installed allocator. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ptr} & Pointer to previously allocated memory. \\
+\hline
+{\em sz} & New size to allocate. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Address to allocated memory on success, N\+U\+LL otherwise. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{alloc_8h_a028e4a5c56db3be5bd20496b1a64f920}\label{alloc_8h_a028e4a5c56db3be5bd20496b1a64f920}} 
+\index{alloc.\+h@{alloc.\+h}!jaeger\+\_\+set\+\_\+allocator@{jaeger\+\_\+set\+\_\+allocator}}
+\index{jaeger\+\_\+set\+\_\+allocator@{jaeger\+\_\+set\+\_\+allocator}!alloc.\+h@{alloc.\+h}}
+\subsubsection{\texorpdfstring{jaeger\+\_\+set\+\_\+allocator()}{jaeger\_set\_allocator()}}
+{\footnotesize\ttfamily void jaeger\+\_\+set\+\_\+allocator (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structjaeger__allocator}{jaeger\+\_\+allocator}} $\ast$}]{alloc }\end{DoxyParamCaption})}
+
+
+
+Set the installed allocator. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em alloc} & Allocator instance. \\
+\hline
+\end{DoxyParams}

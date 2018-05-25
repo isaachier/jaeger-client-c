@@ -1,0 +1,73 @@
+\hypertarget{sampling__strategy_8h}{}\section{jaegertracingc/sampling\+\_\+strategy.h File Reference}
+\label{sampling__strategy_8h}\index{jaegertracingc/sampling\+\_\+strategy.\+h@{jaegertracingc/sampling\+\_\+strategy.\+h}}
+
+
+Sampling strategy type definitions.  
+
+
+{\ttfamily \#include \char`\"{}jaegertracingc/common.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/protoc-\/gen/sampling.\+pb-\/c.\+h\char`\"{}}\newline
+Include dependency graph for sampling\+\_\+strategy.\+h\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{sampling__strategy_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=329pt]{sampling__strategy_8h__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{sampling__strategy_8h_ad6238850ed21bf1b2d63e66c7190a430}\label{sampling__strategy_8h_ad6238850ed21bf1b2d63e66c7190a430}} 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+P\+E\+R\+\_\+\+O\+P\+E\+R\+A\+T\+I\+O\+N\+\_\+\+S\+T\+R\+A\+T\+E\+G\+Y\+\_\+\+I\+N\+IT}~J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+\_\+\+\_\+\+P\+R\+O\+T\+O\+B\+U\+F\+\_\+\+\_\+\+S\+A\+M\+P\+L\+I\+N\+G\+\_\+\+M\+A\+N\+A\+G\+E\+R\+\_\+\+\_\+\+P\+E\+R\+\_\+\+O\+P\+E\+R\+A\+T\+I\+O\+N\+\_\+\+S\+A\+M\+P\+L\+I\+N\+G\+\_\+\+S\+T\+R\+A\+T\+E\+G\+Y\+\_\+\+\_\+\+I\+N\+IT
+\item 
+\mbox{\Hypertarget{sampling__strategy_8h_a7b08c74faa5ded24e8a2b7e8fa8ff6a2}\label{sampling__strategy_8h_a7b08c74faa5ded24e8a2b7e8fa8ff6a2}} 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+O\+P\+E\+R\+A\+T\+I\+O\+N\+\_\+\+S\+T\+R\+A\+T\+E\+G\+Y\+\_\+\+I\+N\+IT}~J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+\_\+\+\_\+\+P\+R\+O\+T\+O\+B\+U\+F\+\_\+\+\_\+\+S\+A\+M\+P\+L\+I\+N\+G\+\_\+\+M\+A\+N\+A\+G\+E\+R\+\_\+\+\_\+\+P\+E\+R\+\_\+\+O\+P\+E\+R\+A\+T\+I\+O\+N\+\_\+\+S\+A\+M\+P\+L\+I\+N\+G\+\_\+\+S\+T\+R\+A\+T\+E\+G\+Y\+\_\+\+\_\+\+O\+P\+E\+R\+A\+T\+I\+O\+N\+\_\+\+S\+A\+M\+P\+L\+I\+N\+G\+\_\+\+S\+T\+R\+A\+T\+E\+G\+Y\+\_\+\+\_\+\+I\+N\+IT
+\item 
+\mbox{\Hypertarget{sampling__strategy_8h_a406894757a913d45f1fd541d5285309a}\label{sampling__strategy_8h_a406894757a913d45f1fd541d5285309a}} 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+O\+P\+E\+R\+A\+T\+I\+O\+N\+\_\+\+S\+T\+R\+A\+T\+E\+G\+Y\+\_\+\+T\+Y\+PE}(type)~J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+\_\+\+\_\+\+P\+R\+O\+T\+O\+B\+U\+F\+\_\+\+\_\+\+S\+A\+M\+P\+L\+I\+N\+G\+\_\+\+M\+A\+N\+A\+G\+E\+R\+\_\+\+\_\+\+P\+E\+R\+\_\+\+O\+P\+E\+R\+A\+T\+I\+O\+N\+\_\+\+S\+A\+M\+P\+L\+I\+N\+G\+\_\+\+S\+T\+R\+A\+T\+E\+G\+Y\+\_\+\+\_\+\+O\+P\+E\+R\+A\+T\+I\+O\+N\+\_\+\+S\+A\+M\+P\+L\+I\+N\+G\+\_\+\+S\+T\+R\+A\+T\+E\+G\+Y\+\_\+\+\_\+\+S\+T\+R\+A\+T\+E\+G\+Y\+\_\+\#\#type
+\item 
+\mbox{\Hypertarget{sampling__strategy_8h_a0a72dc5eda7e7bf4b2feea452ddbeaa4}\label{sampling__strategy_8h_a0a72dc5eda7e7bf4b2feea452ddbeaa4}} 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+P\+R\+O\+B\+A\+B\+I\+L\+I\+S\+T\+I\+C\+\_\+\+S\+T\+R\+A\+T\+E\+G\+Y\+\_\+\+I\+N\+IT}~J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+\_\+\+\_\+\+P\+R\+O\+T\+O\+B\+U\+F\+\_\+\+\_\+\+S\+A\+M\+P\+L\+I\+N\+G\+\_\+\+M\+A\+N\+A\+G\+E\+R\+\_\+\+\_\+\+P\+R\+O\+B\+A\+B\+I\+L\+I\+S\+T\+I\+C\+\_\+\+S\+A\+M\+P\+L\+I\+N\+G\+\_\+\+S\+T\+R\+A\+T\+E\+G\+Y\+\_\+\+\_\+\+I\+N\+IT
+\item 
+\mbox{\Hypertarget{sampling__strategy_8h_ad648ccf7f96dfdf804a23226febc2050}\label{sampling__strategy_8h_ad648ccf7f96dfdf804a23226febc2050}} 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+R\+A\+T\+E\+\_\+\+L\+I\+M\+I\+T\+I\+N\+G\+\_\+\+S\+T\+R\+A\+T\+E\+G\+Y\+\_\+\+I\+N\+IT}~J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+\_\+\+\_\+\+P\+R\+O\+T\+O\+B\+U\+F\+\_\+\+\_\+\+S\+A\+M\+P\+L\+I\+N\+G\+\_\+\+M\+A\+N\+A\+G\+E\+R\+\_\+\+\_\+\+R\+A\+T\+E\+\_\+\+L\+I\+M\+I\+T\+I\+N\+G\+\_\+\+S\+A\+M\+P\+L\+I\+N\+G\+\_\+\+S\+T\+R\+A\+T\+E\+G\+Y\+\_\+\+\_\+\+I\+N\+IT
+\item 
+\mbox{\Hypertarget{sampling__strategy_8h_a4062db0e198f77c5b39c89111835d589}\label{sampling__strategy_8h_a4062db0e198f77c5b39c89111835d589}} 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+S\+T\+R\+A\+T\+E\+G\+Y\+\_\+\+R\+E\+S\+P\+O\+N\+S\+E\+\_\+\+I\+N\+IT}~J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+\_\+\+\_\+\+P\+R\+O\+T\+O\+B\+U\+F\+\_\+\+\_\+\+S\+A\+M\+P\+L\+I\+N\+G\+\_\+\+M\+A\+N\+A\+G\+E\+R\+\_\+\+\_\+\+S\+A\+M\+P\+L\+I\+N\+G\+\_\+\+S\+T\+R\+A\+T\+E\+G\+Y\+\_\+\+R\+E\+S\+P\+O\+N\+S\+E\+\_\+\+\_\+\+I\+N\+IT
+\item 
+\mbox{\Hypertarget{sampling__strategy_8h_a1fb522fed337e0dedbfe491b40ead5a3}\label{sampling__strategy_8h_a1fb522fed337e0dedbfe491b40ead5a3}} 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+S\+T\+R\+A\+T\+E\+G\+Y\+\_\+\+R\+E\+S\+P\+O\+N\+S\+E\+\_\+\+T\+Y\+PE}(x)~J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+\_\+\+\_\+\+P\+R\+O\+T\+O\+B\+U\+F\+\_\+\+\_\+\+S\+A\+M\+P\+L\+I\+N\+G\+\_\+\+M\+A\+N\+A\+G\+E\+R\+\_\+\+\_\+\+S\+A\+M\+P\+L\+I\+N\+G\+\_\+\+S\+T\+R\+A\+T\+E\+G\+Y\+\_\+\+R\+E\+S\+P\+O\+N\+S\+E\+\_\+\+\_\+\+S\+T\+R\+A\+T\+E\+G\+Y\+\_\+\#\#x
+\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{sampling__strategy_8h_a9b6fde5400b3f5b12ece8109195e804b}\label{sampling__strategy_8h_a9b6fde5400b3f5b12ece8109195e804b}} 
+typedef \mbox{\hyperlink{struct__Jaegertracing____Protobuf____SamplingManager____PerOperationSamplingStrategy}{Jaegertracing\+\_\+\+\_\+\+Protobuf\+\_\+\+\_\+\+Sampling\+Manager\+\_\+\+\_\+\+Per\+Operation\+Sampling\+Strategy}} {\bfseries jaeger\+\_\+per\+\_\+operation\+\_\+strategy}
+\item 
+\mbox{\Hypertarget{sampling__strategy_8h_a7b3e29fe689df6cd9c3298830cb89c9a}\label{sampling__strategy_8h_a7b3e29fe689df6cd9c3298830cb89c9a}} 
+typedef \mbox{\hyperlink{struct__Jaegertracing____Protobuf____SamplingManager____PerOperationSamplingStrategy____OperationSamplingStrategy}{Jaegertracing\+\_\+\+\_\+\+Protobuf\+\_\+\+\_\+\+Sampling\+Manager\+\_\+\+\_\+\+Per\+Operation\+Sampling\+Strategy\+\_\+\+\_\+\+Operation\+Sampling\+Strategy}} {\bfseries jaeger\+\_\+operation\+\_\+strategy}
+\item 
+\mbox{\Hypertarget{sampling__strategy_8h_af1fe03be6105771d5d689ccd439069e7}\label{sampling__strategy_8h_af1fe03be6105771d5d689ccd439069e7}} 
+typedef Jaegertracing\+\_\+\+\_\+\+Protobuf\+\_\+\+\_\+\+Sampling\+Manager\+\_\+\+\_\+\+Probabilistic\+Sampling\+Strategy {\bfseries jaeger\+\_\+probabilistic\+\_\+strategy}
+\item 
+\mbox{\Hypertarget{sampling__strategy_8h_a0a1670fe7be13902e9302cb3ca086772}\label{sampling__strategy_8h_a0a1670fe7be13902e9302cb3ca086772}} 
+typedef \mbox{\hyperlink{struct__Jaegertracing____Protobuf____SamplingManager____RateLimitingSamplingStrategy}{Jaegertracing\+\_\+\+\_\+\+Protobuf\+\_\+\+\_\+\+Sampling\+Manager\+\_\+\+\_\+\+Rate\+Limiting\+Sampling\+Strategy}} {\bfseries jaeger\+\_\+rate\+\_\+limiting\+\_\+strategy}
+\item 
+\mbox{\Hypertarget{sampling__strategy_8h_a3edadcada4dd4d0da719b49782b4ee12}\label{sampling__strategy_8h_a3edadcada4dd4d0da719b49782b4ee12}} 
+typedef \mbox{\hyperlink{struct__Jaegertracing____Protobuf____SamplingManager____SamplingStrategyResponse}{Jaegertracing\+\_\+\+\_\+\+Protobuf\+\_\+\+\_\+\+Sampling\+Manager\+\_\+\+\_\+\+Sampling\+Strategy\+Response}} {\bfseries jaeger\+\_\+strategy\+\_\+response}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Sampling strategy type definitions. 
+
+Mostly aliases protobuf-\/c generated types. 

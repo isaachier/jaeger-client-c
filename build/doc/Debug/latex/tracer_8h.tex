@@ -1,0 +1,239 @@
+\hypertarget{tracer_8h}{}\section{jaegertracingc/tracer.h File Reference}
+\label{tracer_8h}\index{jaegertracingc/tracer.\+h@{jaegertracingc/tracer.\+h}}
+
+
+Tracer implementation.  
+
+
+{\ttfamily \#include $<$opentracing-\/c/tracer.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/common.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/options.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/reporter.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/sampler.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/tag.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/vector.\+h\char`\"{}}\newline
+Include dependency graph for tracer.\+h\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{tracer_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=219pt]{tracer_8h__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structjaeger__tracer__options}{jaeger\+\_\+tracer\+\_\+options}}
+\begin{DoxyCompactList}\small\item\em Options that can be used to customize the tracer. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structjaeger__tracer}{jaeger\+\_\+tracer}}
+\begin{DoxyCompactList}\small\item\em Tracer implementation. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+\_\+\+T\+R\+A\+C\+E\+R\+\_\+\+O\+P\+T\+I\+O\+N\+S\+\_\+\+I\+N\+IT}
+\item 
+\#define \mbox{\hyperlink{tracer_8h_ad7a6054b6b4bb4b57c129e7cc6935a1a}{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+T\+R\+A\+C\+E\+R\+\_\+\+I\+N\+IT}}
+\begin{DoxyCompactList}\small\item\em Static initializer for \mbox{\hyperlink{structjaeger__tracer}{jaeger\+\_\+tracer}}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{tracer_8h_abe813aa7689a8224a1545960d0efce71}\label{tracer_8h_abe813aa7689a8224a1545960d0efce71}} 
+typedef struct \mbox{\hyperlink{structjaeger__tracer__options}{jaeger\+\_\+tracer\+\_\+options}} \mbox{\hyperlink{tracer_8h_abe813aa7689a8224a1545960d0efce71}{jaeger\+\_\+tracer\+\_\+options}}
+\begin{DoxyCompactList}\small\item\em Options that can be used to customize the tracer. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{tracer_8h_aecb3ad27e5f06cfdc881d96ebec29783}\label{tracer_8h_aecb3ad27e5f06cfdc881d96ebec29783}} 
+typedef struct \mbox{\hyperlink{structjaeger__tracer}{jaeger\+\_\+tracer}} \mbox{\hyperlink{tracer_8h_aecb3ad27e5f06cfdc881d96ebec29783}{jaeger\+\_\+tracer}}
+\begin{DoxyCompactList}\small\item\em Tracer implementation. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{tracer_8h_adfec533c92e8550a67be7cfa3d4c2fa4}{jaeger\+\_\+tracer\+\_\+destroy}} (jaeger\+\_\+destructible $\ast$d)
+\begin{DoxyCompactList}\small\item\em Close and free resources associated with the tracer. \end{DoxyCompactList}\item 
+J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+E\+X\+P\+O\+RT bool \mbox{\hyperlink{tracer_8h_a71950927a6d00a35e261c342349b62ec}{jaeger\+\_\+tracer\+\_\+init}} (\mbox{\hyperlink{structjaeger__tracer}{jaeger\+\_\+tracer}} $\ast$tracer, const char $\ast$service\+\_\+name, \mbox{\hyperlink{structjaeger__sampler}{jaeger\+\_\+sampler}} $\ast$sampler, \mbox{\hyperlink{structjaeger__reporter}{jaeger\+\_\+reporter}} $\ast$reporter, \mbox{\hyperlink{structjaeger__metrics}{jaeger\+\_\+metrics}} $\ast$metrics, const \mbox{\hyperlink{structjaeger__tracer__options}{jaeger\+\_\+tracer\+\_\+options}} $\ast$options, const \mbox{\hyperlink{structjaeger__headers__config}{jaeger\+\_\+headers\+\_\+config}} $\ast$headers)
+\begin{DoxyCompactList}\small\item\em Initialize a new tracer. \end{DoxyCompactList}\item 
+opentracing\+\_\+span $\ast$ \mbox{\hyperlink{tracer_8h_a09d9489c006a43c9e95bd353fe9a3c3d}{jaeger\+\_\+tracer\+\_\+start\+\_\+span\+\_\+with\+\_\+options}} (opentracing\+\_\+tracer $\ast$tracer, const char $\ast$operation\+\_\+name, const opentracing\+\_\+start\+\_\+span\+\_\+options $\ast$options)
+\begin{DoxyCompactList}\small\item\em Start a new span. \end{DoxyCompactList}\item 
+J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+E\+X\+P\+O\+RT bool \mbox{\hyperlink{tracer_8h_ad8c03a75f8f3773b18847d8d83253e82}{jaeger\+\_\+tracer\+\_\+flush}} (\mbox{\hyperlink{structjaeger__tracer}{jaeger\+\_\+tracer}} $\ast$tracer)
+\begin{DoxyCompactList}\small\item\em Flush any pending spans in tracer. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{tracer_8h_ab1c38f1b4e905dc2d474399d7e87b533}\label{tracer_8h_ab1c38f1b4e905dc2d474399d7e87b533}} 
+void {\bfseries jaeger\+\_\+tracer\+\_\+report\+\_\+span} (\mbox{\hyperlink{structjaeger__tracer}{jaeger\+\_\+tracer}} $\ast$tracer, \mbox{\hyperlink{structjaeger__span}{jaeger\+\_\+span}} $\ast$span)
+\item 
+\mbox{\Hypertarget{tracer_8h_aded521244264c0a2d6aa88b5270f6941}\label{tracer_8h_aded521244264c0a2d6aa88b5270f6941}} 
+opentracing\+\_\+propagation\+\_\+error\+\_\+code \mbox{\hyperlink{tracer_8h_aded521244264c0a2d6aa88b5270f6941}{jaeger\+\_\+tracer\+\_\+inject\+\_\+text\+\_\+map}} (opentracing\+\_\+tracer $\ast$tracer, opentracing\+\_\+text\+\_\+map\+\_\+writer $\ast$writer, const opentracing\+\_\+span\+\_\+context $\ast$span\+\_\+context)
+\begin{DoxyCompactList}\small\item\em Implements opentracing-\/c tracer inject\+\_\+text\+\_\+map method. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{tracer_8h_ac0c9d6b85def099fdac61ee188e0c728}\label{tracer_8h_ac0c9d6b85def099fdac61ee188e0c728}} 
+opentracing\+\_\+propagation\+\_\+error\+\_\+code \mbox{\hyperlink{tracer_8h_ac0c9d6b85def099fdac61ee188e0c728}{jaeger\+\_\+tracer\+\_\+inject\+\_\+http\+\_\+headers}} (opentracing\+\_\+tracer $\ast$tracer, opentracing\+\_\+http\+\_\+headers\+\_\+writer $\ast$writer, const opentracing\+\_\+span\+\_\+context $\ast$span\+\_\+context)
+\begin{DoxyCompactList}\small\item\em Implements opentracing-\/c tracer inject\+\_\+http\+\_\+headers method. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{tracer_8h_a8b2cb7d9622f0b220f742d1b9a1900b1}\label{tracer_8h_a8b2cb7d9622f0b220f742d1b9a1900b1}} 
+opentracing\+\_\+propagation\+\_\+error\+\_\+code \mbox{\hyperlink{tracer_8h_a8b2cb7d9622f0b220f742d1b9a1900b1}{jaeger\+\_\+tracer\+\_\+inject\+\_\+binary}} (opentracing\+\_\+tracer $\ast$tracer, int($\ast$callback)(void $\ast$, const char $\ast$, size\+\_\+t), void $\ast$arg, const opentracing\+\_\+span\+\_\+context $\ast$span\+\_\+context)
+\begin{DoxyCompactList}\small\item\em Implements opentracing-\/c tracer inject\+\_\+binary method. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{tracer_8h_a7fcd9f490af3c586b989ec18d1e3dadb}\label{tracer_8h_a7fcd9f490af3c586b989ec18d1e3dadb}} 
+opentracing\+\_\+propagation\+\_\+error\+\_\+code \mbox{\hyperlink{tracer_8h_a7fcd9f490af3c586b989ec18d1e3dadb}{jaeger\+\_\+tracer\+\_\+inject\+\_\+custom}} (opentracing\+\_\+tracer $\ast$tracer, opentracing\+\_\+custom\+\_\+carrier\+\_\+writer $\ast$carrier, const opentracing\+\_\+span\+\_\+context $\ast$span\+\_\+context)
+\begin{DoxyCompactList}\small\item\em Implements opentracing-\/c tracer inject\+\_\+custom method. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{tracer_8h_a47c41c5e366ca03ec8296dc56fe283f7}\label{tracer_8h_a47c41c5e366ca03ec8296dc56fe283f7}} 
+opentracing\+\_\+propagation\+\_\+error\+\_\+code \mbox{\hyperlink{tracer_8h_a47c41c5e366ca03ec8296dc56fe283f7}{jaeger\+\_\+tracer\+\_\+extract\+\_\+text\+\_\+map}} (struct opentracing\+\_\+tracer $\ast$tracer, opentracing\+\_\+text\+\_\+map\+\_\+reader $\ast$carrier, opentracing\+\_\+span\+\_\+context $\ast$$\ast$span\+\_\+context)
+\begin{DoxyCompactList}\small\item\em Implements opentracing-\/c tracer extract\+\_\+text\+\_\+map method. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{tracer_8h_a654a7cc799997eda2fed3d981f15851d}\label{tracer_8h_a654a7cc799997eda2fed3d981f15851d}} 
+opentracing\+\_\+propagation\+\_\+error\+\_\+code \mbox{\hyperlink{tracer_8h_a654a7cc799997eda2fed3d981f15851d}{jaeger\+\_\+tracer\+\_\+extract\+\_\+http\+\_\+headers}} (opentracing\+\_\+tracer $\ast$tracer, opentracing\+\_\+http\+\_\+headers\+\_\+reader $\ast$carrier, opentracing\+\_\+span\+\_\+context $\ast$$\ast$span\+\_\+context)
+\begin{DoxyCompactList}\small\item\em Implements opentracing-\/c tracer extract\+\_\+http\+\_\+headers method. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{tracer_8h_a33faeb0e6c4e1598bf2219bcdfa6683a}\label{tracer_8h_a33faeb0e6c4e1598bf2219bcdfa6683a}} 
+opentracing\+\_\+propagation\+\_\+error\+\_\+code \mbox{\hyperlink{tracer_8h_a33faeb0e6c4e1598bf2219bcdfa6683a}{jaeger\+\_\+tracer\+\_\+extract\+\_\+binary}} (opentracing\+\_\+tracer $\ast$tracer, int($\ast$callback)(void $\ast$, char $\ast$, size\+\_\+t), void $\ast$arg, opentracing\+\_\+span\+\_\+context $\ast$$\ast$span\+\_\+context)
+\begin{DoxyCompactList}\small\item\em Implements opentracing-\/c tracer extract\+\_\+binary method. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{tracer_8h_a3060407ee98c7f144ce4976230b33654}\label{tracer_8h_a3060407ee98c7f144ce4976230b33654}} 
+opentracing\+\_\+propagation\+\_\+error\+\_\+code \mbox{\hyperlink{tracer_8h_a3060407ee98c7f144ce4976230b33654}{jaeger\+\_\+tracer\+\_\+extract\+\_\+custom}} (opentracing\+\_\+tracer $\ast$tracer, opentracing\+\_\+custom\+\_\+carrier\+\_\+reader $\ast$carrier, opentracing\+\_\+span\+\_\+context $\ast$$\ast$span\+\_\+context)
+\begin{DoxyCompactList}\small\item\em Implements opentracing-\/c tracer extract\+\_\+custom method. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Tracer implementation. 
+
+
+
+\subsection{Macro Definition Documentation}
+\mbox{\Hypertarget{tracer_8h_a7c0027c81aa5510e7e6ca12a52ad85cd}\label{tracer_8h_a7c0027c81aa5510e7e6ca12a52ad85cd}} 
+\index{tracer.\+h@{tracer.\+h}!J\+A\+E\+G\+E\+R\+\_\+\+T\+R\+A\+C\+E\+R\+\_\+\+O\+P\+T\+I\+O\+N\+S\+\_\+\+I\+N\+IT@{J\+A\+E\+G\+E\+R\+\_\+\+T\+R\+A\+C\+E\+R\+\_\+\+O\+P\+T\+I\+O\+N\+S\+\_\+\+I\+N\+IT}}
+\index{J\+A\+E\+G\+E\+R\+\_\+\+T\+R\+A\+C\+E\+R\+\_\+\+O\+P\+T\+I\+O\+N\+S\+\_\+\+I\+N\+IT@{J\+A\+E\+G\+E\+R\+\_\+\+T\+R\+A\+C\+E\+R\+\_\+\+O\+P\+T\+I\+O\+N\+S\+\_\+\+I\+N\+IT}!tracer.\+h@{tracer.\+h}}
+\subsubsection{\texorpdfstring{J\+A\+E\+G\+E\+R\+\_\+\+T\+R\+A\+C\+E\+R\+\_\+\+O\+P\+T\+I\+O\+N\+S\+\_\+\+I\+N\+IT}{JAEGER\_TRACER\_OPTIONS\_INIT}}
+{\footnotesize\ttfamily \#define J\+A\+E\+G\+E\+R\+\_\+\+T\+R\+A\+C\+E\+R\+\_\+\+O\+P\+T\+I\+O\+N\+S\+\_\+\+I\+N\+IT}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\DoxyCodeLine{\{                              \(\backslash\)}
+\DoxyCodeLine{        .gen\_128\_bit = \textcolor{keyword}{false}       \(\backslash\)}
+\DoxyCodeLine{    \}}
+\end{DoxyCode}
+\mbox{\Hypertarget{tracer_8h_ad7a6054b6b4bb4b57c129e7cc6935a1a}\label{tracer_8h_ad7a6054b6b4bb4b57c129e7cc6935a1a}} 
+\index{tracer.\+h@{tracer.\+h}!J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+T\+R\+A\+C\+E\+R\+\_\+\+I\+N\+IT@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+T\+R\+A\+C\+E\+R\+\_\+\+I\+N\+IT}}
+\index{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+T\+R\+A\+C\+E\+R\+\_\+\+I\+N\+IT@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+T\+R\+A\+C\+E\+R\+\_\+\+I\+N\+IT}!tracer.\+h@{tracer.\+h}}
+\subsubsection{\texorpdfstring{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+T\+R\+A\+C\+E\+R\+\_\+\+I\+N\+IT}{JAEGERTRACINGC\_TRACER\_INIT}}
+{\footnotesize\ttfamily \#define J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+T\+R\+A\+C\+E\+R\+\_\+\+I\+N\+IT}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\DoxyCodeLine{\{                                                                         \(\backslash\)}
+\DoxyCodeLine{                                                                              \(\backslash\)}
+\DoxyCodeLine{        .base = \{.base = \{.destroy = \&\mbox{\hyperlink{tracer_8h_adfec533c92e8550a67be7cfa3d4c2fa4}{jaeger\_tracer\_destroy}}\},                 \(\backslash\)}
+\DoxyCodeLine{                 .close = \&jaeger\_tracer\_close,                               \(\backslash\)}
+\DoxyCodeLine{                 .start\_span = \&jaeger\_tracer\_start\_span,                     \(\backslash\)}
+\DoxyCodeLine{                 .start\_span\_with\_options =                                   \(\backslash\)}
+\DoxyCodeLine{                     \&\mbox{\hyperlink{tracer_8h_a09d9489c006a43c9e95bd353fe9a3c3d}{jaeger\_tracer\_start\_span\_with\_options}},                  \(\backslash\)}
+\DoxyCodeLine{                 .inject\_text\_map = \&\mbox{\hyperlink{tracer_8h_aded521244264c0a2d6aa88b5270f6941}{jaeger\_tracer\_inject\_text\_map}},           \(\backslash\)}
+\DoxyCodeLine{                 .inject\_http\_headers = \&\mbox{\hyperlink{tracer_8h_ac0c9d6b85def099fdac61ee188e0c728}{jaeger\_tracer\_inject\_http\_headers}},   \(\backslash\)}
+\DoxyCodeLine{                 .inject\_binary = \&\mbox{\hyperlink{tracer_8h_a8b2cb7d9622f0b220f742d1b9a1900b1}{jaeger\_tracer\_inject\_binary}},               \(\backslash\)}
+\DoxyCodeLine{                 .inject\_custom = \&\mbox{\hyperlink{tracer_8h_a7fcd9f490af3c586b989ec18d1e3dadb}{jaeger\_tracer\_inject\_custom}},               \(\backslash\)}
+\DoxyCodeLine{                 .extract\_text\_map = \&\mbox{\hyperlink{tracer_8h_a47c41c5e366ca03ec8296dc56fe283f7}{jaeger\_tracer\_extract\_text\_map}},         \(\backslash\)}
+\DoxyCodeLine{                 .extract\_http\_headers = \&\mbox{\hyperlink{tracer_8h_a654a7cc799997eda2fed3d981f15851d}{jaeger\_tracer\_extract\_http\_headers}}, \(\backslash\)}
+\DoxyCodeLine{                 .extract\_binary = \&\mbox{\hyperlink{tracer_8h_a33faeb0e6c4e1598bf2219bcdfa6683a}{jaeger\_tracer\_extract\_binary}},             \(\backslash\)}
+\DoxyCodeLine{                 .extract\_custom = \&\mbox{\hyperlink{tracer_8h_a3060407ee98c7f144ce4976230b33654}{jaeger\_tracer\_extract\_custom}}\},            \(\backslash\)}
+\DoxyCodeLine{        .service\_name = NULL, .metrics = NULL, .sampler = NULL,               \(\backslash\)}
+\DoxyCodeLine{        .reporter = NULL, .options = JAEGER\_TRACER\_OPTIONS\_INIT,              \(\backslash\)}
+\DoxyCodeLine{        .headers = JAEGERTRACINGC\_HEADERS\_CONFIG\_INIT,                        \(\backslash\)}
+\DoxyCodeLine{        .tags = JAEGERTRACINGC\_VECTOR\_INIT, .allocated = \{                    \(\backslash\)}
+\DoxyCodeLine{            .metrics = \textcolor{keyword}{false},                                                 \(\backslash\)}
+\DoxyCodeLine{            .sampler = \textcolor{keyword}{false},                                                 \(\backslash\)}
+\DoxyCodeLine{            .reporter = \textcolor{keyword}{false}                                                 \(\backslash\)}
+\DoxyCodeLine{        \}                                                                     \(\backslash\)}
+\DoxyCodeLine{    \}}
+\end{DoxyCode}
+
+
+Static initializer for \mbox{\hyperlink{structjaeger__tracer}{jaeger\+\_\+tracer}}. 
+
+May be used to initialize an empty tracer, but the caller must also invoke jaeger\+\_\+tracer\+\_\+init to fully construct the tracer. \begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{tracer_8h_a71950927a6d00a35e261c342349b62ec}{jaeger\+\_\+tracer\+\_\+init}} 
+\end{DoxySeeAlso}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{tracer_8h_adfec533c92e8550a67be7cfa3d4c2fa4}\label{tracer_8h_adfec533c92e8550a67be7cfa3d4c2fa4}} 
+\index{tracer.\+h@{tracer.\+h}!jaeger\+\_\+tracer\+\_\+destroy@{jaeger\+\_\+tracer\+\_\+destroy}}
+\index{jaeger\+\_\+tracer\+\_\+destroy@{jaeger\+\_\+tracer\+\_\+destroy}!tracer.\+h@{tracer.\+h}}
+\subsubsection{\texorpdfstring{jaeger\+\_\+tracer\+\_\+destroy()}{jaeger\_tracer\_destroy()}}
+{\footnotesize\ttfamily void jaeger\+\_\+tracer\+\_\+destroy (\begin{DoxyParamCaption}\item[{jaeger\+\_\+destructible $\ast$}]{d }\end{DoxyParamCaption})}
+
+
+
+Close and free resources associated with the tracer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em tracer} & Tracer to destroy \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{tracer_8h_ad8c03a75f8f3773b18847d8d83253e82}\label{tracer_8h_ad8c03a75f8f3773b18847d8d83253e82}} 
+\index{tracer.\+h@{tracer.\+h}!jaeger\+\_\+tracer\+\_\+flush@{jaeger\+\_\+tracer\+\_\+flush}}
+\index{jaeger\+\_\+tracer\+\_\+flush@{jaeger\+\_\+tracer\+\_\+flush}!tracer.\+h@{tracer.\+h}}
+\subsubsection{\texorpdfstring{jaeger\+\_\+tracer\+\_\+flush()}{jaeger\_tracer\_flush()}}
+{\footnotesize\ttfamily J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+E\+X\+P\+O\+RT bool jaeger\+\_\+tracer\+\_\+flush (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structjaeger__tracer}{jaeger\+\_\+tracer}} $\ast$}]{tracer }\end{DoxyParamCaption})}
+
+
+
+Flush any pending spans in tracer. 
+
+Only effective when using remote reporter, which is the default reporter. 
+\begin{DoxyParams}{Parameters}
+{\em tracer} & Tracer instance to flush. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True on success, false otherwise. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{tracer_8h_a71950927a6d00a35e261c342349b62ec}\label{tracer_8h_a71950927a6d00a35e261c342349b62ec}} 
+\index{tracer.\+h@{tracer.\+h}!jaeger\+\_\+tracer\+\_\+init@{jaeger\+\_\+tracer\+\_\+init}}
+\index{jaeger\+\_\+tracer\+\_\+init@{jaeger\+\_\+tracer\+\_\+init}!tracer.\+h@{tracer.\+h}}
+\subsubsection{\texorpdfstring{jaeger\+\_\+tracer\+\_\+init()}{jaeger\_tracer\_init()}}
+{\footnotesize\ttfamily J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+E\+X\+P\+O\+RT bool jaeger\+\_\+tracer\+\_\+init (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structjaeger__tracer}{jaeger\+\_\+tracer}} $\ast$}]{tracer,  }\item[{const char $\ast$}]{service\+\_\+name,  }\item[{\mbox{\hyperlink{structjaeger__sampler}{jaeger\+\_\+sampler}} $\ast$}]{sampler,  }\item[{\mbox{\hyperlink{structjaeger__reporter}{jaeger\+\_\+reporter}} $\ast$}]{reporter,  }\item[{\mbox{\hyperlink{structjaeger__metrics}{jaeger\+\_\+metrics}} $\ast$}]{metrics,  }\item[{const \mbox{\hyperlink{structjaeger__tracer__options}{jaeger\+\_\+tracer\+\_\+options}} $\ast$}]{options,  }\item[{const \mbox{\hyperlink{structjaeger__headers__config}{jaeger\+\_\+headers\+\_\+config}} $\ast$}]{headers }\end{DoxyParamCaption})}
+
+
+
+Initialize a new tracer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em tracer} & Tracer to initialize. \\
+\hline
+{\em service\+\_\+name} & Name of the current service. May not be N\+U\+LL. Tracer copies this string internally so it need not be allocated upfront. \\
+\hline
+{\em sampler} & Sampler for tracer to use. May be N\+U\+LL. \\
+\hline
+{\em reporter} & Reporter for tracer to use. May be N\+U\+LL. \\
+\hline
+{\em metrics} & Metrics object to use. May be N\+U\+LL. \\
+\hline
+{\em options} & Options for tracer to use. May be N\+U\+LL. \\
+\hline
+{\em headers} & Headers config for span context propagation. May be N\+U\+LL. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True on success, false otherwise. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{tracer_8h_a09d9489c006a43c9e95bd353fe9a3c3d}\label{tracer_8h_a09d9489c006a43c9e95bd353fe9a3c3d}} 
+\index{tracer.\+h@{tracer.\+h}!jaeger\+\_\+tracer\+\_\+start\+\_\+span\+\_\+with\+\_\+options@{jaeger\+\_\+tracer\+\_\+start\+\_\+span\+\_\+with\+\_\+options}}
+\index{jaeger\+\_\+tracer\+\_\+start\+\_\+span\+\_\+with\+\_\+options@{jaeger\+\_\+tracer\+\_\+start\+\_\+span\+\_\+with\+\_\+options}!tracer.\+h@{tracer.\+h}}
+\subsubsection{\texorpdfstring{jaeger\+\_\+tracer\+\_\+start\+\_\+span\+\_\+with\+\_\+options()}{jaeger\_tracer\_start\_span\_with\_options()}}
+{\footnotesize\ttfamily opentracing\+\_\+span$\ast$ jaeger\+\_\+tracer\+\_\+start\+\_\+span\+\_\+with\+\_\+options (\begin{DoxyParamCaption}\item[{opentracing\+\_\+tracer $\ast$}]{tracer,  }\item[{const char $\ast$}]{operation\+\_\+name,  }\item[{const opentracing\+\_\+start\+\_\+span\+\_\+options $\ast$}]{options }\end{DoxyParamCaption})}
+
+
+
+Start a new span. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em tracer} & Tracer instance. May not be N\+U\+LL. \\
+\hline
+{\em operation\+\_\+name} & Operation name associated with this span. May not be N\+U\+LL. \\
+\hline
+{\em options} & Additional options for starting span. May be N\+U\+LL. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+New span on success, N\+U\+LL otherwise. 
+\end{DoxyReturn}

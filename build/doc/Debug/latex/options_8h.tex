@@ -1,0 +1,122 @@
+\hypertarget{options_8h}{}\section{jaegertracingc/options.h File Reference}
+\label{options_8h}\index{jaegertracingc/options.\+h@{jaegertracingc/options.\+h}}
+
+
+Configuration options.  
+
+
+{\ttfamily \#include \char`\"{}jaegertracingc/common.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/constants.\+h\char`\"{}}\newline
+Include dependency graph for options.\+h\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{options_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=248pt]{options_8h__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structjaeger__headers__config}{jaeger\+\_\+headers\+\_\+config}}
+\begin{DoxyCompactList}\small\item\em H\+T\+TP headers to use for span context propagation. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structjaeger__sampler__config}{jaeger\+\_\+sampler\+\_\+config}}
+\begin{DoxyCompactList}\small\item\em Sampler config. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structjaeger__reporter__config}{jaeger\+\_\+reporter\+\_\+config}}
+\begin{DoxyCompactList}\small\item\em Reporter config. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structjaeger__baggage__restrictions__config}{jaeger\+\_\+baggage\+\_\+restrictions\+\_\+config}}
+\begin{DoxyCompactList}\small\item\em Baggage restrictions config. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structjaeger__config}{jaeger\+\_\+config}}
+\begin{DoxyCompactList}\small\item\em Overall Jaeger configuration object. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+H\+E\+A\+D\+E\+R\+S\+\_\+\+C\+O\+N\+F\+I\+G\+\_\+\+I\+N\+IT}
+\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{options_8h_a5e1baa35e921aa2513ade36d05a0b71a}\label{options_8h_a5e1baa35e921aa2513ade36d05a0b71a}} 
+typedef struct \mbox{\hyperlink{structjaeger__headers__config}{jaeger\+\_\+headers\+\_\+config}} \mbox{\hyperlink{options_8h_a5e1baa35e921aa2513ade36d05a0b71a}{jaeger\+\_\+headers\+\_\+config}}
+\begin{DoxyCompactList}\small\item\em H\+T\+TP headers to use for span context propagation. \end{DoxyCompactList}\item 
+typedef struct \mbox{\hyperlink{structjaeger__sampler__config}{jaeger\+\_\+sampler\+\_\+config}} \mbox{\hyperlink{options_8h_ae1fd7e62d5dd74b19c71243d023857de}{jaeger\+\_\+sampler\+\_\+config}}
+\begin{DoxyCompactList}\small\item\em Sampler config. \end{DoxyCompactList}\item 
+typedef struct \mbox{\hyperlink{structjaeger__reporter__config}{jaeger\+\_\+reporter\+\_\+config}} \mbox{\hyperlink{options_8h_a9fbaf6e373ec9192757c02d701a2f3f2}{jaeger\+\_\+reporter\+\_\+config}}
+\begin{DoxyCompactList}\small\item\em Reporter config. \end{DoxyCompactList}\item 
+typedef struct \mbox{\hyperlink{structjaeger__baggage__restrictions__config}{jaeger\+\_\+baggage\+\_\+restrictions\+\_\+config}} \mbox{\hyperlink{options_8h_ac5d03dfae0cacef2c61aab60e1dc3c08}{jaeger\+\_\+baggage\+\_\+restrictions\+\_\+config}}
+\begin{DoxyCompactList}\small\item\em Baggage restrictions config. \end{DoxyCompactList}\item 
+typedef struct \mbox{\hyperlink{structjaeger__config}{jaeger\+\_\+config}} \mbox{\hyperlink{options_8h_a5b843c1433f7add35b94c8ca6df6c70c}{jaeger\+\_\+config}}
+\begin{DoxyCompactList}\small\item\em Overall Jaeger configuration object. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Configuration options. 
+
+
+
+\subsection{Macro Definition Documentation}
+\mbox{\Hypertarget{options_8h_a7106a412a508ec634809516f9852c3e7}\label{options_8h_a7106a412a508ec634809516f9852c3e7}} 
+\index{options.\+h@{options.\+h}!J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+H\+E\+A\+D\+E\+R\+S\+\_\+\+C\+O\+N\+F\+I\+G\+\_\+\+I\+N\+IT@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+H\+E\+A\+D\+E\+R\+S\+\_\+\+C\+O\+N\+F\+I\+G\+\_\+\+I\+N\+IT}}
+\index{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+H\+E\+A\+D\+E\+R\+S\+\_\+\+C\+O\+N\+F\+I\+G\+\_\+\+I\+N\+IT@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+H\+E\+A\+D\+E\+R\+S\+\_\+\+C\+O\+N\+F\+I\+G\+\_\+\+I\+N\+IT}!options.\+h@{options.\+h}}
+\subsubsection{\texorpdfstring{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+H\+E\+A\+D\+E\+R\+S\+\_\+\+C\+O\+N\+F\+I\+G\+\_\+\+I\+N\+IT}{JAEGERTRACINGC\_HEADERS\_CONFIG\_INIT}}
+{\footnotesize\ttfamily \#define J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+H\+E\+A\+D\+E\+R\+S\+\_\+\+C\+O\+N\+F\+I\+G\+\_\+\+I\+N\+IT}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\DoxyCodeLine{\{                                                                     \(\backslash\)}
+\DoxyCodeLine{        .debug\_header = JAEGERTRACINGC\_DEBUG\_HEADER,                      \(\backslash\)}
+\DoxyCodeLine{        .baggage\_header = JAEGERTRACINGC\_BAGGAGE\_HEADER,                  \(\backslash\)}
+\DoxyCodeLine{        .trace\_context\_header = JAEGERTRACINGC\_TRACE\_CONTEXT\_HEADER\_NAME, \(\backslash\)}
+\DoxyCodeLine{        .trace\_baggage\_header\_prefix =                                    \(\backslash\)}
+\DoxyCodeLine{            JAEGERTRACINGC\_TRACE\_BAGGAGE\_HEADER\_PREFIX                    \(\backslash\)}
+\DoxyCodeLine{    \}}
+\end{DoxyCode}
+
+
+\subsection{Typedef Documentation}
+\mbox{\Hypertarget{options_8h_ac5d03dfae0cacef2c61aab60e1dc3c08}\label{options_8h_ac5d03dfae0cacef2c61aab60e1dc3c08}} 
+\index{options.\+h@{options.\+h}!jaeger\+\_\+baggage\+\_\+restrictions\+\_\+config@{jaeger\+\_\+baggage\+\_\+restrictions\+\_\+config}}
+\index{jaeger\+\_\+baggage\+\_\+restrictions\+\_\+config@{jaeger\+\_\+baggage\+\_\+restrictions\+\_\+config}!options.\+h@{options.\+h}}
+\subsubsection{\texorpdfstring{jaeger\+\_\+baggage\+\_\+restrictions\+\_\+config}{jaeger\_baggage\_restrictions\_config}}
+{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{structjaeger__baggage__restrictions__config}{jaeger\+\_\+baggage\+\_\+restrictions\+\_\+config}}  \mbox{\hyperlink{structjaeger__baggage__restrictions__config}{jaeger\+\_\+baggage\+\_\+restrictions\+\_\+config}}}
+
+
+
+Baggage restrictions config. 
+
+\mbox{\Hypertarget{options_8h_a5b843c1433f7add35b94c8ca6df6c70c}\label{options_8h_a5b843c1433f7add35b94c8ca6df6c70c}} 
+\index{options.\+h@{options.\+h}!jaeger\+\_\+config@{jaeger\+\_\+config}}
+\index{jaeger\+\_\+config@{jaeger\+\_\+config}!options.\+h@{options.\+h}}
+\subsubsection{\texorpdfstring{jaeger\+\_\+config}{jaeger\_config}}
+{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{structjaeger__config}{jaeger\+\_\+config}}  \mbox{\hyperlink{structjaeger__config}{jaeger\+\_\+config}}}
+
+
+
+Overall Jaeger configuration object. 
+
+\mbox{\Hypertarget{options_8h_a9fbaf6e373ec9192757c02d701a2f3f2}\label{options_8h_a9fbaf6e373ec9192757c02d701a2f3f2}} 
+\index{options.\+h@{options.\+h}!jaeger\+\_\+reporter\+\_\+config@{jaeger\+\_\+reporter\+\_\+config}}
+\index{jaeger\+\_\+reporter\+\_\+config@{jaeger\+\_\+reporter\+\_\+config}!options.\+h@{options.\+h}}
+\subsubsection{\texorpdfstring{jaeger\+\_\+reporter\+\_\+config}{jaeger\_reporter\_config}}
+{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{structjaeger__reporter__config}{jaeger\+\_\+reporter\+\_\+config}}  \mbox{\hyperlink{structjaeger__reporter__config}{jaeger\+\_\+reporter\+\_\+config}}}
+
+
+
+Reporter config. 
+
+\mbox{\Hypertarget{options_8h_ae1fd7e62d5dd74b19c71243d023857de}\label{options_8h_ae1fd7e62d5dd74b19c71243d023857de}} 
+\index{options.\+h@{options.\+h}!jaeger\+\_\+sampler\+\_\+config@{jaeger\+\_\+sampler\+\_\+config}}
+\index{jaeger\+\_\+sampler\+\_\+config@{jaeger\+\_\+sampler\+\_\+config}!options.\+h@{options.\+h}}
+\subsubsection{\texorpdfstring{jaeger\+\_\+sampler\+\_\+config}{jaeger\_sampler\_config}}
+{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{structjaeger__sampler__config}{jaeger\+\_\+sampler\+\_\+config}}  \mbox{\hyperlink{structjaeger__sampler__config}{jaeger\+\_\+sampler\+\_\+config}}}
+
+
+
+Sampler config. 
+

@@ -1,0 +1,22 @@
+Found 2 issues
+
+/home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/baggage.c:59: error: DEAD_STORE
+  The value written to &prev_item (type _Bool) is never used.
+  57.       const jaeger_key_value* kv =
+  58.           jaeger_hashtable_find(&span->context.baggage, key);
+  59. >     prev_item = (kv != NULL);
+  60.       if (truncated) {
+  61.           char value_copy[restriction.max_value_len + 1];
+
+/home/ihier/proj/c/jaeger-client-c/src/jaegertracingc/reporter.c:261: error: UNINITIALIZED_VALUE
+  The value read from batch_packed_size was never initialized.
+  259.           jaegertracing__protobuf__batch__get_packed_size(batch);
+  260.       if (batch_packed_size > max_packet_size) {
+  261. >         jaeger_log_error("Detected batch with zero spans exceeds maximum "
+  262.                            "packet size, "
+  263.                            "batch size (zero spans) = %d, "
+
+Summary of the reports
+
+  UNINITIALIZED_VALUE: 1
+           DEAD_STORE: 1

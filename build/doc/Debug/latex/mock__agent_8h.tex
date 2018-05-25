@@ -1,0 +1,98 @@
+\hypertarget{mock__agent_8h}{}\section{jaegertracingc/mock\+\_\+agent.h File Reference}
+\label{mock__agent_8h}\index{jaegertracingc/mock\+\_\+agent.\+h@{jaegertracingc/mock\+\_\+agent.\+h}}
+
+
+Key value pair representation.  
+
+
+{\ttfamily \#include $<$errno.\+h$>$}\newline
+{\ttfamily \#include $<$http\+\_\+parser.\+h$>$}\newline
+{\ttfamily \#include $<$netinet/in.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$sys/socket.\+h$>$}\newline
+{\ttfamily \#include $<$sys/time.\+h$>$}\newline
+{\ttfamily \#include $<$sys/types.\+h$>$}\newline
+{\ttfamily \#include $<$unistd.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/common.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/sampler.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/threading.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/vector.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}unity.\+h\char`\"{}}\newline
+Include dependency graph for mock\+\_\+agent.\+h\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{mock__agent_8h__incl}
+\end{center}
+\end{figure}
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structmock__http__server}{mock\+\_\+http\+\_\+server}}
+\item 
+struct \mbox{\hyperlink{structmock__http__response}{mock\+\_\+http\+\_\+response}}
+\item 
+struct \mbox{\hyperlink{structmock__http__server__context}{mock\+\_\+http\+\_\+server\+\_\+context}}
+\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{mock__agent_8h_a39ccfcd7724c9ddd02b591a9d97ba4dc}\label{mock__agent_8h_a39ccfcd7724c9ddd02b591a9d97ba4dc}} 
+\#define {\bfseries M\+O\+C\+K\+\_\+\+H\+T\+T\+P\+\_\+\+B\+A\+C\+K\+L\+OG}~1
+\item 
+\mbox{\Hypertarget{mock__agent_8h_ac1e721c545f127d71198ee390d248a06}\label{mock__agent_8h_ac1e721c545f127d71198ee390d248a06}} 
+\#define {\bfseries M\+O\+C\+K\+\_\+\+H\+T\+T\+P\+\_\+\+M\+A\+X\+\_\+\+U\+RL}~256
+\item 
+\#define {\bfseries M\+O\+C\+K\+\_\+\+H\+T\+T\+P\+\_\+\+S\+E\+R\+V\+E\+R\+\_\+\+I\+N\+IT}
+\item 
+\#define {\bfseries M\+O\+C\+K\+\_\+\+H\+T\+T\+P\+\_\+\+S\+E\+R\+V\+E\+R\+\_\+\+C\+O\+N\+T\+E\+X\+T\+\_\+\+I\+N\+IT}
+\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{mock__agent_8h_ae9c91e67e1635e8e618f306d98e37abb}\label{mock__agent_8h_ae9c91e67e1635e8e618f306d98e37abb}} 
+typedef struct \mbox{\hyperlink{structmock__http__server}{mock\+\_\+http\+\_\+server}} {\bfseries mock\+\_\+http\+\_\+server}
+\item 
+\mbox{\Hypertarget{mock__agent_8h_ac7dd5c01d8f2e98a7a0ca2d015d2314d}\label{mock__agent_8h_ac7dd5c01d8f2e98a7a0ca2d015d2314d}} 
+typedef struct \mbox{\hyperlink{structmock__http__response}{mock\+\_\+http\+\_\+response}} {\bfseries mock\+\_\+http\+\_\+response}
+\item 
+\mbox{\Hypertarget{mock__agent_8h_ab45555f21a40436cd3da11d5e5108c17}\label{mock__agent_8h_ab45555f21a40436cd3da11d5e5108c17}} 
+typedef struct \mbox{\hyperlink{structmock__http__server__context}{mock\+\_\+http\+\_\+server\+\_\+context}} {\bfseries mock\+\_\+http\+\_\+server\+\_\+context}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Key value pair representation. 
+
+
+
+\subsection{Macro Definition Documentation}
+\mbox{\Hypertarget{mock__agent_8h_a1279dac71d50cb68957e799a1009da85}\label{mock__agent_8h_a1279dac71d50cb68957e799a1009da85}} 
+\index{mock\+\_\+agent.\+h@{mock\+\_\+agent.\+h}!M\+O\+C\+K\+\_\+\+H\+T\+T\+P\+\_\+\+S\+E\+R\+V\+E\+R\+\_\+\+C\+O\+N\+T\+E\+X\+T\+\_\+\+I\+N\+IT@{M\+O\+C\+K\+\_\+\+H\+T\+T\+P\+\_\+\+S\+E\+R\+V\+E\+R\+\_\+\+C\+O\+N\+T\+E\+X\+T\+\_\+\+I\+N\+IT}}
+\index{M\+O\+C\+K\+\_\+\+H\+T\+T\+P\+\_\+\+S\+E\+R\+V\+E\+R\+\_\+\+C\+O\+N\+T\+E\+X\+T\+\_\+\+I\+N\+IT@{M\+O\+C\+K\+\_\+\+H\+T\+T\+P\+\_\+\+S\+E\+R\+V\+E\+R\+\_\+\+C\+O\+N\+T\+E\+X\+T\+\_\+\+I\+N\+IT}!mock\+\_\+agent.\+h@{mock\+\_\+agent.\+h}}
+\subsubsection{\texorpdfstring{M\+O\+C\+K\+\_\+\+H\+T\+T\+P\+\_\+\+S\+E\+R\+V\+E\+R\+\_\+\+C\+O\+N\+T\+E\+X\+T\+\_\+\+I\+N\+IT}{MOCK\_HTTP\_SERVER\_CONTEXT\_INIT}}
+{\footnotesize\ttfamily \#define M\+O\+C\+K\+\_\+\+H\+T\+T\+P\+\_\+\+S\+E\+R\+V\+E\+R\+\_\+\+C\+O\+N\+T\+E\+X\+T\+\_\+\+I\+N\+IT}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\DoxyCodeLine{\{                                                  \(\backslash\)}
+\DoxyCodeLine{        .server = NULL, .cv = JAEGERTRACINGC\_COND\_INIT \(\backslash\)}
+\DoxyCodeLine{    \}}
+\end{DoxyCode}
+\mbox{\Hypertarget{mock__agent_8h_aa940a0bc747d3607e0198987602a0026}\label{mock__agent_8h_aa940a0bc747d3607e0198987602a0026}} 
+\index{mock\+\_\+agent.\+h@{mock\+\_\+agent.\+h}!M\+O\+C\+K\+\_\+\+H\+T\+T\+P\+\_\+\+S\+E\+R\+V\+E\+R\+\_\+\+I\+N\+IT@{M\+O\+C\+K\+\_\+\+H\+T\+T\+P\+\_\+\+S\+E\+R\+V\+E\+R\+\_\+\+I\+N\+IT}}
+\index{M\+O\+C\+K\+\_\+\+H\+T\+T\+P\+\_\+\+S\+E\+R\+V\+E\+R\+\_\+\+I\+N\+IT@{M\+O\+C\+K\+\_\+\+H\+T\+T\+P\+\_\+\+S\+E\+R\+V\+E\+R\+\_\+\+I\+N\+IT}!mock\+\_\+agent.\+h@{mock\+\_\+agent.\+h}}
+\subsubsection{\texorpdfstring{M\+O\+C\+K\+\_\+\+H\+T\+T\+P\+\_\+\+S\+E\+R\+V\+E\+R\+\_\+\+I\+N\+IT}{MOCK\_HTTP\_SERVER\_INIT}}
+{\footnotesize\ttfamily \#define M\+O\+C\+K\+\_\+\+H\+T\+T\+P\+\_\+\+S\+E\+R\+V\+E\+R\+\_\+\+I\+N\+IT}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\DoxyCodeLine{\{                                                                  \(\backslash\)}
+\DoxyCodeLine{        .server\_fd = -1, .addr = \{\}, .thread = 0,                      \(\backslash\)}
+\DoxyCodeLine{        .mutex = JAEGERTRACINGC\_MUTEX\_INIT, .url\_len = 0,              \(\backslash\)}
+\DoxyCodeLine{        .url\_buffer = \{\textcolor{charliteral}{'\(\backslash\)0'}\}, .responses = JAEGERTRACINGC\_VECTOR\_INIT, \(\backslash\)}
+\DoxyCodeLine{        .running = \textcolor{keyword}{false}                                               \(\backslash\)}
+\DoxyCodeLine{    \}}
+\end{DoxyCode}

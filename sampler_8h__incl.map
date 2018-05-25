@@ -1,19 +1,19 @@
 <map id="jaegertracingc/sampler.h" name="jaegertracingc/sampler.h">
-<area shape="rect" id="node2" href="$clock_8h.html" title="Timestamp and duration representations. " alt="" coords="842,177,991,203"/>
-<area shape="rect" id="node3" href="$common_8h.html" title="Common headers, struct definitions, and macros. " alt="" coords="973,259,1141,285"/>
-<area shape="rect" id="node21" href="$constants_8h_source.html" title="jaegertracingc/constants.h" alt="" coords="463,87,637,114"/>
-<area shape="rect" id="node22" href="$metrics_8h.html" title="Metrics interfaces to track various numbers while tracing. " alt="" coords="661,87,823,114"/>
-<area shape="rect" id="node23" href="$net_8h.html" title="Network utilities. " alt="" coords="357,177,493,203"/>
-<area shape="rect" id="node30" href="$sampling__strategy_8h.html" title="Sampling strategy type definitions. " alt="" coords="1855,80,2013,121"/>
-<area shape="rect" id="node33" href="$tag_8h.html" title="Tag representation and functions. " alt="" coords="1506,87,1642,114"/>
-<area shape="rect" id="node35" href="$vector_8h.html" title="C generic vector implementation. " alt="" coords="1397,177,1551,203"/>
-<area shape="rect" id="node36" href="$threading_8h.html" title="Threading utilities. " alt="" coords="1111,87,1282,114"/>
-<area shape="rect" id="node40" href="$token__bucket_8h.html" title="Token bucket implementation. " alt="" coords="847,80,986,121"/>
-<area shape="rect" id="node41" href="$trace__id_8h.html" title="Trace ID representation. " alt="" coords="1667,87,1831,114"/>
-<area shape="rect" id="node4" href="$config_8h_source.html" title="jaegertracingc/config.h" alt="" coords="980,333,1133,360"/>
-<area shape="rect" id="node19" href="$alloc_8h.html" title="Allocator struct and functions. " alt="" coords="1567,333,1712,360"/>
-<area shape="rect" id="node20" href="$logging_8h.html" title="Logging interface and initialization functions. " alt="" coords="1223,408,1381,435"/>
-<area shape="rect" id="node5" href="$visibility_8h_source.html" title="jaegertracingc/visibility.h" alt="" coords="974,408,1139,435"/>
-<area shape="rect" id="node31" href="$sampling_8pb-c_8h_source.html" title="jaegertracingc/protoc\l&#45;gen/sampling.pb&#45;c.h" alt="" coords="1947,169,2089,211"/>
-<area shape="rect" id="node34" href="$jaeger_8pb-c_8h_source.html" title="jaegertracingc/protoc\l&#45;gen/jaeger.pb&#45;c.h" alt="" coords="1677,169,1820,211"/>
+<area shape="rect" id="node2" href="$clock_8h.html" title="Timestamp and duration representations. " alt="" coords="858,177,1007,203"/>
+<area shape="rect" id="node3" href="$common_8h.html" title="Common headers, struct definitions, and macros. " alt="" coords="989,259,1157,285"/>
+<area shape="rect" id="node21" href="$constants_8h_source.html" title="jaegertracingc/constants.h" alt="" coords="479,87,653,114"/>
+<area shape="rect" id="node22" href="$metrics_8h.html" title="Metrics interfaces to track various numbers while tracing. " alt="" coords="677,87,839,114"/>
+<area shape="rect" id="node23" href="$net_8h.html" title="Network utilities. " alt="" coords="373,177,509,203"/>
+<area shape="rect" id="node30" href="$sampling__strategy_8h.html" title="Sampling strategy type definitions. " alt="" coords="1871,80,2029,121"/>
+<area shape="rect" id="node33" href="$tag_8h.html" title="Tag representation and functions. " alt="" coords="1522,87,1658,114"/>
+<area shape="rect" id="node35" href="$vector_8h.html" title="C generic vector implementation. " alt="" coords="1413,177,1567,203"/>
+<area shape="rect" id="node36" href="$threading_8h.html" title="Threading utilities. " alt="" coords="1127,87,1298,114"/>
+<area shape="rect" id="node40" href="$token__bucket_8h.html" title="Token bucket implementation. " alt="" coords="863,80,1002,121"/>
+<area shape="rect" id="node41" href="$trace__id_8h.html" title="Trace ID representation. " alt="" coords="1683,87,1847,114"/>
+<area shape="rect" id="node4" href="$config_8h_source.html" title="jaegertracingc/config.h" alt="" coords="996,333,1149,360"/>
+<area shape="rect" id="node19" href="$alloc_8h.html" title="Allocator struct and functions. " alt="" coords="1583,333,1728,360"/>
+<area shape="rect" id="node20" href="$logging_8h.html" title="Logging interface and initialization functions. " alt="" coords="1239,408,1397,435"/>
+<area shape="rect" id="node5" href="$visibility_8h_source.html" title="jaegertracingc/visibility.h" alt="" coords="990,408,1155,435"/>
+<area shape="rect" id="node31" href="$sampling_8pb-c_8h_source.html" title="jaegertracingc/protoc\l&#45;gen/sampling.pb&#45;c.h" alt="" coords="1963,169,2105,211"/>
+<area shape="rect" id="node34" href="$jaeger_8pb-c_8h_source.html" title="jaegertracingc/protoc\l&#45;gen/jaeger.pb&#45;c.h" alt="" coords="1693,169,1836,211"/>
 </map>

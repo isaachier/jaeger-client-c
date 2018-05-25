@@ -1,0 +1,54 @@
+\hypertarget{propagation_8h}{}\section{jaegertracingc/propagation.h File Reference}
+\label{propagation_8h}\index{jaegertracingc/propagation.\+h@{jaegertracingc/propagation.\+h}}
+
+
+Span context propagation functions and types.  
+
+
+{\ttfamily \#include $<$opentracing-\/c/propagation.\+h$>$}\newline
+Include dependency graph for propagation.\+h\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=219pt]{propagation_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=219pt]{propagation_8h__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{propagation_8h_ae5b0e87603e16680b45f2255d79ca3d7}\label{propagation_8h_ae5b0e87603e16680b45f2255d79ca3d7}} 
+opentracing\+\_\+propagation\+\_\+error\+\_\+code {\bfseries jaeger\+\_\+extract\+\_\+from\+\_\+text\+\_\+map} (opentracing\+\_\+text\+\_\+map\+\_\+reader $\ast$reader, struct \mbox{\hyperlink{structjaeger__span__context}{jaeger\+\_\+span\+\_\+context}} $\ast$$\ast$ctx, struct \mbox{\hyperlink{structjaeger__metrics}{jaeger\+\_\+metrics}} $\ast$metrics, const struct \mbox{\hyperlink{structjaeger__headers__config}{jaeger\+\_\+headers\+\_\+config}} $\ast$config)
+\item 
+\mbox{\Hypertarget{propagation_8h_a63cd9d6cd9e08fff5d11493323f78980}\label{propagation_8h_a63cd9d6cd9e08fff5d11493323f78980}} 
+opentracing\+\_\+propagation\+\_\+error\+\_\+code {\bfseries jaeger\+\_\+extract\+\_\+from\+\_\+http\+\_\+headers} (opentracing\+\_\+http\+\_\+headers\+\_\+reader $\ast$reader, struct \mbox{\hyperlink{structjaeger__span__context}{jaeger\+\_\+span\+\_\+context}} $\ast$$\ast$ctx, struct \mbox{\hyperlink{structjaeger__metrics}{jaeger\+\_\+metrics}} $\ast$metrics, const struct \mbox{\hyperlink{structjaeger__headers__config}{jaeger\+\_\+headers\+\_\+config}} $\ast$config)
+\item 
+\mbox{\Hypertarget{propagation_8h_a4548053e446cfe1875db1851a88ac9ac}\label{propagation_8h_a4548053e446cfe1875db1851a88ac9ac}} 
+opentracing\+\_\+propagation\+\_\+error\+\_\+code {\bfseries jaeger\+\_\+extract\+\_\+from\+\_\+binary} (int($\ast$callback)(void $\ast$, char $\ast$, size\+\_\+t), void $\ast$arg, struct \mbox{\hyperlink{structjaeger__span__context}{jaeger\+\_\+span\+\_\+context}} $\ast$$\ast$ctx, struct \mbox{\hyperlink{structjaeger__metrics}{jaeger\+\_\+metrics}} $\ast$metrics)
+\item 
+\mbox{\Hypertarget{propagation_8h_a5a0d580291915bb756563715d9e0d0a7}\label{propagation_8h_a5a0d580291915bb756563715d9e0d0a7}} 
+opentracing\+\_\+propagation\+\_\+error\+\_\+code {\bfseries jaeger\+\_\+extract\+\_\+from\+\_\+custom} (opentracing\+\_\+custom\+\_\+carrier\+\_\+reader $\ast$reader, struct \mbox{\hyperlink{structjaeger__tracer}{jaeger\+\_\+tracer}} $\ast$tracer, struct \mbox{\hyperlink{structjaeger__span__context}{jaeger\+\_\+span\+\_\+context}} $\ast$$\ast$ctx, struct \mbox{\hyperlink{structjaeger__metrics}{jaeger\+\_\+metrics}} $\ast$metrics)
+\item 
+\mbox{\Hypertarget{propagation_8h_ab2fd1a96ba4b9092fc57f46b889470a1}\label{propagation_8h_ab2fd1a96ba4b9092fc57f46b889470a1}} 
+opentracing\+\_\+propagation\+\_\+error\+\_\+code {\bfseries jaeger\+\_\+inject\+\_\+into\+\_\+text\+\_\+map} (opentracing\+\_\+text\+\_\+map\+\_\+writer $\ast$writer, const struct \mbox{\hyperlink{structjaeger__span__context}{jaeger\+\_\+span\+\_\+context}} $\ast$ctx, const struct \mbox{\hyperlink{structjaeger__headers__config}{jaeger\+\_\+headers\+\_\+config}} $\ast$config)
+\item 
+\mbox{\Hypertarget{propagation_8h_aae07b3b45887b657e5f0d55ecfc2fae3}\label{propagation_8h_aae07b3b45887b657e5f0d55ecfc2fae3}} 
+opentracing\+\_\+propagation\+\_\+error\+\_\+code {\bfseries jaeger\+\_\+inject\+\_\+into\+\_\+http\+\_\+headers} (opentracing\+\_\+http\+\_\+headers\+\_\+writer $\ast$writer, const struct \mbox{\hyperlink{structjaeger__span__context}{jaeger\+\_\+span\+\_\+context}} $\ast$ctx, const struct \mbox{\hyperlink{structjaeger__headers__config}{jaeger\+\_\+headers\+\_\+config}} $\ast$config)
+\item 
+\mbox{\Hypertarget{propagation_8h_a40a58b11a89b7fe785542c93b72b2d9e}\label{propagation_8h_a40a58b11a89b7fe785542c93b72b2d9e}} 
+opentracing\+\_\+propagation\+\_\+error\+\_\+code {\bfseries jaeger\+\_\+inject\+\_\+into\+\_\+binary} (int($\ast$callback)(void $\ast$, const char $\ast$, size\+\_\+t), void $\ast$arg, const struct \mbox{\hyperlink{structjaeger__span__context}{jaeger\+\_\+span\+\_\+context}} $\ast$ctx)
+\item 
+\mbox{\Hypertarget{propagation_8h_a9b7994bad9a51614ea72b2ebef7abdcc}\label{propagation_8h_a9b7994bad9a51614ea72b2ebef7abdcc}} 
+opentracing\+\_\+propagation\+\_\+error\+\_\+code {\bfseries jaeger\+\_\+inject\+\_\+into\+\_\+custom} (opentracing\+\_\+custom\+\_\+carrier\+\_\+writer $\ast$writer, struct \mbox{\hyperlink{structjaeger__tracer}{jaeger\+\_\+tracer}} $\ast$tracer, const struct \mbox{\hyperlink{structjaeger__span__context}{jaeger\+\_\+span\+\_\+context}} $\ast$ctx)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Span context propagation functions and types. 
+

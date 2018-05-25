@@ -1,0 +1,154 @@
+\hypertarget{structjaeger__span}{}\section{jaeger\+\_\+span Struct Reference}
+\label{structjaeger__span}\index{jaeger\+\_\+span@{jaeger\+\_\+span}}
+
+
+Collaboration diagram for jaeger\+\_\+span\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{structjaeger__span__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item 
+opentracing\+\_\+span \mbox{\hyperlink{structjaeger__span_a4d784dc9f217e068159cccc5f0f480e9}{base}}
+\begin{DoxyCompactList}\small\item\em Base class member. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structjaeger__tracer}{jaeger\+\_\+tracer}} $\ast$ \mbox{\hyperlink{structjaeger__span_a7cff74ecb3637cba8038d0d600d4acff}{tracer}}
+\begin{DoxyCompactList}\small\item\em Tracer that creates this span. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structjaeger__span__context}{jaeger\+\_\+span\+\_\+context}} \mbox{\hyperlink{structjaeger__span_a2c2ee45174f03b8453d60accd018a001}{context}}
+\begin{DoxyCompactList}\small\item\em Span context. \end{DoxyCompactList}\item 
+char $\ast$ \mbox{\hyperlink{structjaeger__span_afacbb7789eb032da0f25933737b61093}{operation\+\_\+name}}
+\begin{DoxyCompactList}\small\item\em Operation represented by this span. \end{DoxyCompactList}\item 
+jaeger\+\_\+timestamp \mbox{\hyperlink{structjaeger__span_ad3c4f8aaffedbcb41697529a486d8c96}{start\+\_\+time\+\_\+system}}
+\begin{DoxyCompactList}\small\item\em Start time using system clock. \end{DoxyCompactList}\item 
+jaeger\+\_\+duration \mbox{\hyperlink{structjaeger__span_a5adeeb2e496220890ec3a7f5fbb69543}{start\+\_\+time\+\_\+steady}}
+\begin{DoxyCompactList}\small\item\em Start time using monotonic/steady clock. \end{DoxyCompactList}\item 
+jaeger\+\_\+duration \mbox{\hyperlink{structjaeger__span_a4486fea569d2256c8e33a8b445c3f4fc}{duration}}
+\begin{DoxyCompactList}\small\item\em Overall duration of span (set on span finish). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structjaeger__vector}{jaeger\+\_\+vector}} \mbox{\hyperlink{structjaeger__span_ae3812e107e701876ca824427ebdddbde}{tags}}
+\begin{DoxyCompactList}\small\item\em Span tags. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structjaeger__vector}{jaeger\+\_\+vector}} \mbox{\hyperlink{structjaeger__span_ab5b68679359d40f6821fffdbbb9cce01}{logs}}
+\begin{DoxyCompactList}\small\item\em Span log records. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structjaeger__vector}{jaeger\+\_\+vector}} \mbox{\hyperlink{structjaeger__span_a043c406e757c68b4c862d36d6b729cba}{refs}}
+\begin{DoxyCompactList}\small\item\em Span context references (i.\+e. \end{DoxyCompactList}\item 
+jaeger\+\_\+mutex \mbox{\hyperlink{structjaeger__span_a84d3f190ba0bb7106efdfe9d8e47beeb}{mutex}}
+\begin{DoxyCompactList}\small\item\em Mutex to guard mutable members. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Field Documentation}
+\mbox{\Hypertarget{structjaeger__span_a4d784dc9f217e068159cccc5f0f480e9}\label{structjaeger__span_a4d784dc9f217e068159cccc5f0f480e9}} 
+\index{jaeger\+\_\+span@{jaeger\+\_\+span}!base@{base}}
+\index{base@{base}!jaeger\+\_\+span@{jaeger\+\_\+span}}
+\subsubsection{\texorpdfstring{base}{base}}
+{\footnotesize\ttfamily opentracing\+\_\+span jaeger\+\_\+span\+::base}
+
+
+
+Base class member. 
+
+\mbox{\Hypertarget{structjaeger__span_a2c2ee45174f03b8453d60accd018a001}\label{structjaeger__span_a2c2ee45174f03b8453d60accd018a001}} 
+\index{jaeger\+\_\+span@{jaeger\+\_\+span}!context@{context}}
+\index{context@{context}!jaeger\+\_\+span@{jaeger\+\_\+span}}
+\subsubsection{\texorpdfstring{context}{context}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structjaeger__span__context}{jaeger\+\_\+span\+\_\+context}} jaeger\+\_\+span\+::context}
+
+
+
+Span context. 
+
+\mbox{\Hypertarget{structjaeger__span_a4486fea569d2256c8e33a8b445c3f4fc}\label{structjaeger__span_a4486fea569d2256c8e33a8b445c3f4fc}} 
+\index{jaeger\+\_\+span@{jaeger\+\_\+span}!duration@{duration}}
+\index{duration@{duration}!jaeger\+\_\+span@{jaeger\+\_\+span}}
+\subsubsection{\texorpdfstring{duration}{duration}}
+{\footnotesize\ttfamily jaeger\+\_\+duration jaeger\+\_\+span\+::duration}
+
+
+
+Overall duration of span (set on span finish). 
+
+\mbox{\Hypertarget{structjaeger__span_ab5b68679359d40f6821fffdbbb9cce01}\label{structjaeger__span_ab5b68679359d40f6821fffdbbb9cce01}} 
+\index{jaeger\+\_\+span@{jaeger\+\_\+span}!logs@{logs}}
+\index{logs@{logs}!jaeger\+\_\+span@{jaeger\+\_\+span}}
+\subsubsection{\texorpdfstring{logs}{logs}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structjaeger__vector}{jaeger\+\_\+vector}} jaeger\+\_\+span\+::logs}
+
+
+
+Span log records. 
+
+\mbox{\Hypertarget{structjaeger__span_a84d3f190ba0bb7106efdfe9d8e47beeb}\label{structjaeger__span_a84d3f190ba0bb7106efdfe9d8e47beeb}} 
+\index{jaeger\+\_\+span@{jaeger\+\_\+span}!mutex@{mutex}}
+\index{mutex@{mutex}!jaeger\+\_\+span@{jaeger\+\_\+span}}
+\subsubsection{\texorpdfstring{mutex}{mutex}}
+{\footnotesize\ttfamily jaeger\+\_\+mutex jaeger\+\_\+span\+::mutex}
+
+
+
+Mutex to guard mutable members. 
+
+\mbox{\Hypertarget{structjaeger__span_afacbb7789eb032da0f25933737b61093}\label{structjaeger__span_afacbb7789eb032da0f25933737b61093}} 
+\index{jaeger\+\_\+span@{jaeger\+\_\+span}!operation\+\_\+name@{operation\+\_\+name}}
+\index{operation\+\_\+name@{operation\+\_\+name}!jaeger\+\_\+span@{jaeger\+\_\+span}}
+\subsubsection{\texorpdfstring{operation\+\_\+name}{operation\_name}}
+{\footnotesize\ttfamily char$\ast$ jaeger\+\_\+span\+::operation\+\_\+name}
+
+
+
+Operation represented by this span. 
+
+\mbox{\Hypertarget{structjaeger__span_a043c406e757c68b4c862d36d6b729cba}\label{structjaeger__span_a043c406e757c68b4c862d36d6b729cba}} 
+\index{jaeger\+\_\+span@{jaeger\+\_\+span}!refs@{refs}}
+\index{refs@{refs}!jaeger\+\_\+span@{jaeger\+\_\+span}}
+\subsubsection{\texorpdfstring{refs}{refs}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structjaeger__vector}{jaeger\+\_\+vector}} jaeger\+\_\+span\+::refs}
+
+
+
+Span context references (i.\+e. 
+
+C\+H\+I\+L\+D\+\_\+\+OF and/or F\+O\+L\+L\+O\+W\+S\+\_\+\+F\+R\+OM). \mbox{\Hypertarget{structjaeger__span_a5adeeb2e496220890ec3a7f5fbb69543}\label{structjaeger__span_a5adeeb2e496220890ec3a7f5fbb69543}} 
+\index{jaeger\+\_\+span@{jaeger\+\_\+span}!start\+\_\+time\+\_\+steady@{start\+\_\+time\+\_\+steady}}
+\index{start\+\_\+time\+\_\+steady@{start\+\_\+time\+\_\+steady}!jaeger\+\_\+span@{jaeger\+\_\+span}}
+\subsubsection{\texorpdfstring{start\+\_\+time\+\_\+steady}{start\_time\_steady}}
+{\footnotesize\ttfamily jaeger\+\_\+duration jaeger\+\_\+span\+::start\+\_\+time\+\_\+steady}
+
+
+
+Start time using monotonic/steady clock. 
+
+\mbox{\Hypertarget{structjaeger__span_ad3c4f8aaffedbcb41697529a486d8c96}\label{structjaeger__span_ad3c4f8aaffedbcb41697529a486d8c96}} 
+\index{jaeger\+\_\+span@{jaeger\+\_\+span}!start\+\_\+time\+\_\+system@{start\+\_\+time\+\_\+system}}
+\index{start\+\_\+time\+\_\+system@{start\+\_\+time\+\_\+system}!jaeger\+\_\+span@{jaeger\+\_\+span}}
+\subsubsection{\texorpdfstring{start\+\_\+time\+\_\+system}{start\_time\_system}}
+{\footnotesize\ttfamily jaeger\+\_\+timestamp jaeger\+\_\+span\+::start\+\_\+time\+\_\+system}
+
+
+
+Start time using system clock. 
+
+\mbox{\Hypertarget{structjaeger__span_ae3812e107e701876ca824427ebdddbde}\label{structjaeger__span_ae3812e107e701876ca824427ebdddbde}} 
+\index{jaeger\+\_\+span@{jaeger\+\_\+span}!tags@{tags}}
+\index{tags@{tags}!jaeger\+\_\+span@{jaeger\+\_\+span}}
+\subsubsection{\texorpdfstring{tags}{tags}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structjaeger__vector}{jaeger\+\_\+vector}} jaeger\+\_\+span\+::tags}
+
+
+
+Span tags. 
+
+\mbox{\Hypertarget{structjaeger__span_a7cff74ecb3637cba8038d0d600d4acff}\label{structjaeger__span_a7cff74ecb3637cba8038d0d600d4acff}} 
+\index{jaeger\+\_\+span@{jaeger\+\_\+span}!tracer@{tracer}}
+\index{tracer@{tracer}!jaeger\+\_\+span@{jaeger\+\_\+span}}
+\subsubsection{\texorpdfstring{tracer}{tracer}}
+{\footnotesize\ttfamily struct \mbox{\hyperlink{structjaeger__tracer}{jaeger\+\_\+tracer}}$\ast$ jaeger\+\_\+span\+::tracer}
+
+
+
+Tracer that creates this span. 
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+jaegertracingc/\mbox{\hyperlink{span_8h}{span.\+h}}\end{DoxyCompactItemize}

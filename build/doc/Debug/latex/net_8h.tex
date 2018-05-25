@@ -1,0 +1,90 @@
+\hypertarget{net_8h}{}\section{jaegertracingc/net.h File Reference}
+\label{net_8h}\index{jaegertracingc/net.\+h@{jaegertracingc/net.\+h}}
+
+
+Network utilities.  
+
+
+{\ttfamily \#include $<$netdb.\+h$>$}\newline
+{\ttfamily \#include $<$netinet/in.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$sys/socket.\+h$>$}\newline
+{\ttfamily \#include $<$sys/types.\+h$>$}\newline
+{\ttfamily \#include $<$unistd.\+h$>$}\newline
+{\ttfamily \#include $<$http\+\_\+parser.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/common.\+h\char`\"{}}\newline
+Include dependency graph for net.\+h\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{net_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=345pt]{net_8h__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structjaeger__host__port}{jaeger\+\_\+host\+\_\+port}}
+\item 
+struct \mbox{\hyperlink{structjaeger__url}{jaeger\+\_\+url}}
+\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{net_8h_ac8c78047239131f7b627bdce348c5833}\label{net_8h_ac8c78047239131f7b627bdce348c5833}} 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+M\+A\+X\+\_\+\+P\+O\+R\+T\+\_\+\+S\+T\+R\+\_\+\+L\+EN}~6
+\item 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+H\+O\+S\+T\+\_\+\+P\+O\+R\+T\+\_\+\+I\+N\+IT}
+\item 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+U\+R\+L\+\_\+\+I\+N\+IT}
+\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{net_8h_a96820c5d7e4d64d10c0d0c469e0dda0d}\label{net_8h_a96820c5d7e4d64d10c0d0c469e0dda0d}} 
+typedef struct \mbox{\hyperlink{structjaeger__host__port}{jaeger\+\_\+host\+\_\+port}} {\bfseries jaeger\+\_\+host\+\_\+port}
+\item 
+\mbox{\Hypertarget{net_8h_a44ce10b176cd8641c2e03fd83921840e}\label{net_8h_a44ce10b176cd8641c2e03fd83921840e}} 
+typedef struct \mbox{\hyperlink{structjaeger__url}{jaeger\+\_\+url}} {\bfseries jaeger\+\_\+url}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Network utilities. 
+
+
+
+\subsection{Macro Definition Documentation}
+\mbox{\Hypertarget{net_8h_adab59f7a503ea8f8b4a73dab85a4b6af}\label{net_8h_adab59f7a503ea8f8b4a73dab85a4b6af}} 
+\index{net.\+h@{net.\+h}!J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+H\+O\+S\+T\+\_\+\+P\+O\+R\+T\+\_\+\+I\+N\+IT@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+H\+O\+S\+T\+\_\+\+P\+O\+R\+T\+\_\+\+I\+N\+IT}}
+\index{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+H\+O\+S\+T\+\_\+\+P\+O\+R\+T\+\_\+\+I\+N\+IT@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+H\+O\+S\+T\+\_\+\+P\+O\+R\+T\+\_\+\+I\+N\+IT}!net.\+h@{net.\+h}}
+\subsubsection{\texorpdfstring{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+H\+O\+S\+T\+\_\+\+P\+O\+R\+T\+\_\+\+I\+N\+IT}{JAEGERTRACINGC\_HOST\_PORT\_INIT}}
+{\footnotesize\ttfamily \#define J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+H\+O\+S\+T\+\_\+\+P\+O\+R\+T\+\_\+\+I\+N\+IT}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\DoxyCodeLine{\{                                 \(\backslash\)}
+\DoxyCodeLine{        .host = NULL, .port = 0       \(\backslash\)}
+\DoxyCodeLine{    \}}
+\end{DoxyCode}
+\mbox{\Hypertarget{net_8h_a6c0cc85769714f86cc235bdabc336837}\label{net_8h_a6c0cc85769714f86cc235bdabc336837}} 
+\index{net.\+h@{net.\+h}!J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+U\+R\+L\+\_\+\+I\+N\+IT@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+U\+R\+L\+\_\+\+I\+N\+IT}}
+\index{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+U\+R\+L\+\_\+\+I\+N\+IT@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+U\+R\+L\+\_\+\+I\+N\+IT}!net.\+h@{net.\+h}}
+\subsubsection{\texorpdfstring{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+U\+R\+L\+\_\+\+I\+N\+IT}{JAEGERTRACINGC\_URL\_INIT}}
+{\footnotesize\ttfamily \#define J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+U\+R\+L\+\_\+\+I\+N\+IT}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\DoxyCodeLine{\{                                             \(\backslash\)}
+\DoxyCodeLine{        .str = NULL, .parts = \{                   \(\backslash\)}
+\DoxyCodeLine{            .field\_set = 0,                       \(\backslash\)}
+\DoxyCodeLine{            .field\_data = \{\{.len = 0, .off = -1\}\} \(\backslash\)}
+\DoxyCodeLine{        \}                                         \(\backslash\)}
+\DoxyCodeLine{    \}}
+\end{DoxyCode}

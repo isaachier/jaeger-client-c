@@ -1,9 +1,10 @@
 <map id="jaegertracingc/tag.h" name="jaegertracingc/tag.h">
-<area shape="rect" id="node2" href="$log__record_8h.html" title="Log record representation for use in span. " alt="" coords="89,80,213,121"/>
-<area shape="rect" id="node3" href="$span_8h.html" title="Span, span context, and span ref representations and functions. " alt="" coords="78,177,225,203"/>
-<area shape="rect" id="node5" href="$tracer_8h.html" title="Tracer implementation. " alt="" coords="108,333,259,360"/>
-<area shape="rect" id="node7" href="$sampler_8h.html" title="Span sampler interface. " alt="" coords="340,87,504,114"/>
-<area shape="rect" id="node4" href="$propagation_8c.html" title="Trace ID representation. " alt="" coords="5,408,191,435"/>
-<area shape="rect" id="node6" href="$reporter_8h.html" title="Span reporter interface. " alt="" coords="102,259,265,285"/>
-<area shape="rect" id="node8" href="$mock__agent_8h.html" title="Key value pair representation. " alt="" coords="390,169,529,211"/>
+<area shape="rect" id="node2" href="$tracer_8h.html" title="Tracer implementation. " alt="" coords="24,333,175,360"/>
+<area shape="rect" id="node4" href="$log__record_8h.html" title="Log record representation for use in span. " alt="" coords="276,80,400,121"/>
+<area shape="rect" id="node5" href="$span_8h.html" title="Span, span context, and span ref representations and functions. " alt="" coords="265,177,412,203"/>
+<area shape="rect" id="node8" href="$sampler_8h.html" title="Span sampler interface. " alt="" coords="36,87,200,114"/>
+<area shape="rect" id="node3" href="$propagation_8c.html" title="Trace ID representation. " alt="" coords="191,408,376,435"/>
+<area shape="rect" id="node6" href="$baggage_8h.html" title="Baggage restriction utilities. " alt="" coords="264,259,431,285"/>
+<area shape="rect" id="node7" href="$reporter_8h.html" title="Span reporter interface. " alt="" coords="77,259,240,285"/>
+<area shape="rect" id="node9" href="$mock__agent_8h.html" title="Key value pair representation. " alt="" coords="77,169,216,211"/>
 </map>

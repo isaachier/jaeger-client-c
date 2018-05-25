@@ -1,0 +1,63 @@
+\hypertarget{common_8h}{}\section{jaegertracingc/common.h File Reference}
+\label{common_8h}\index{jaegertracingc/common.\+h@{jaegertracingc/common.\+h}}
+
+
+Common headers, struct definitions, and macros.  
+
+
+{\ttfamily \#include \char`\"{}jaegertracingc/config.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$assert.\+h$>$}\newline
+{\ttfamily \#include $<$ctype.\+h$>$}\newline
+{\ttfamily \#include $<$inttypes.\+h$>$}\newline
+{\ttfamily \#include $<$limits.\+h$>$}\newline
+{\ttfamily \#include $<$stdarg.\+h$>$}\newline
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+{\ttfamily \#include $<$stddef.\+h$>$}\newline
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$time.\+h$>$}\newline
+{\ttfamily \#include $<$opentracing-\/c/tracer.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/alloc.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/logging.\+h\char`\"{}}\newline
+Include dependency graph for common.\+h\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{common_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{common_8h__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{common_8h_a13c0d0867a4b947c42da396748a5904c}\label{common_8h_a13c0d0867a4b947c42da396748a5904c}} 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+M\+IN}(a,  b)~((b) $<$ (a) ? (b) \+: (a))
+\item 
+\mbox{\Hypertarget{common_8h_ac7c1ab8a78f50c841ce04e6ad138bb39}\label{common_8h_ac7c1ab8a78f50c841ce04e6ad138bb39}} 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+M\+AX}(a,  b)~((b) $>$ (a) ? (b) \+: (a))
+\item 
+\mbox{\Hypertarget{common_8h_a16a48930251e58744abe552322bf429a}\label{common_8h_a16a48930251e58744abe552322bf429a}} 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+C\+L\+A\+MP}(x,  low,  high)~J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+M\+IN(J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+M\+AX((x), (low)), (high))
+\item 
+\mbox{\Hypertarget{common_8h_ae739cfd0f1af79e3e53d62aff875eaae}\label{common_8h_ae739cfd0f1af79e3e53d62aff875eaae}} 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+C\+O\+N\+T\+A\+I\+N\+E\+R\+\_\+\+OF}(ptr,  type,  member)~(type$\ast$) (((char$\ast$) (ptr)) -\/ offsetof(type, member))
+\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{common_8h_ac181b00dbfc4357a9b4e2c5908a8a425}\label{common_8h_ac181b00dbfc4357a9b4e2c5908a8a425}} 
+typedef opentracing\+\_\+destructible {\bfseries jaeger\+\_\+destructible}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Common headers, struct definitions, and macros. 
+

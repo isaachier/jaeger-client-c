@@ -1,0 +1,76 @@
+\hypertarget{structjaeger__gauge}{}\section{jaeger\+\_\+gauge Struct Reference}
+\label{structjaeger__gauge}\index{jaeger\+\_\+gauge@{jaeger\+\_\+gauge}}
+
+
+Gauge metric interface.  
+
+
+
+
+{\ttfamily \#include $<$jaegertracingc/metrics.\+h$>$}
+
+
+
+Inheritance diagram for jaeger\+\_\+gauge\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=178pt]{structjaeger__gauge__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for jaeger\+\_\+gauge\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=178pt]{structjaeger__gauge__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item 
+jaeger\+\_\+destructible \mbox{\hyperlink{structjaeger__gauge_a542160d18e7ee06a0ed466e4e0dfa9bd}{base}}
+\begin{DoxyCompactList}\small\item\em Base class member. \end{DoxyCompactList}\item 
+void($\ast$ \mbox{\hyperlink{structjaeger__gauge_a0463c13cf633754ea4cfe7588d1445a5}{update}} )(struct \mbox{\hyperlink{structjaeger__gauge}{jaeger\+\_\+gauge}} $\ast$gauge, int64\+\_\+t amount)
+\begin{DoxyCompactList}\small\item\em Update current value of gauge. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Gauge metric interface. 
+
+Gauges are used to keep track of a changing number (i.\+e. number of items currently in a queue). 
+
+\subsection{Field Documentation}
+\mbox{\Hypertarget{structjaeger__gauge_a542160d18e7ee06a0ed466e4e0dfa9bd}\label{structjaeger__gauge_a542160d18e7ee06a0ed466e4e0dfa9bd}} 
+\index{jaeger\+\_\+gauge@{jaeger\+\_\+gauge}!base@{base}}
+\index{base@{base}!jaeger\+\_\+gauge@{jaeger\+\_\+gauge}}
+\subsubsection{\texorpdfstring{base}{base}}
+{\footnotesize\ttfamily jaeger\+\_\+destructible jaeger\+\_\+gauge\+::base}
+
+
+
+Base class member. 
+
+\mbox{\Hypertarget{structjaeger__gauge_a0463c13cf633754ea4cfe7588d1445a5}\label{structjaeger__gauge_a0463c13cf633754ea4cfe7588d1445a5}} 
+\index{jaeger\+\_\+gauge@{jaeger\+\_\+gauge}!update@{update}}
+\index{update@{update}!jaeger\+\_\+gauge@{jaeger\+\_\+gauge}}
+\subsubsection{\texorpdfstring{update}{update}}
+{\footnotesize\ttfamily void($\ast$ jaeger\+\_\+gauge\+::update) (struct \mbox{\hyperlink{structjaeger__gauge}{jaeger\+\_\+gauge}} $\ast$gauge, int64\+\_\+t amount)}
+
+
+
+Update current value of gauge. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em gauge} & Gauge to update. \\
+\hline
+{\em amount} & New amount. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+jaegertracingc/\mbox{\hyperlink{metrics_8h}{metrics.\+h}}\end{DoxyCompactItemize}

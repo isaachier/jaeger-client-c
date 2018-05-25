@@ -1,0 +1,66 @@
+\hypertarget{threading_8h}{}\section{jaegertracingc/threading.h File Reference}
+\label{threading_8h}\index{jaegertracingc/threading.\+h@{jaegertracingc/threading.\+h}}
+
+
+Threading utilities.  
+
+
+{\ttfamily \#include \char`\"{}jaegertracingc/common.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$errno.\+h$>$}\newline
+{\ttfamily \#include $<$pthread.\+h$>$}\newline
+{\ttfamily \#include $<$sched.\+h$>$}\newline
+Include dependency graph for threading.\+h\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{threading_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{threading_8h__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structjaeger__thread__local}{jaeger\+\_\+thread\+\_\+local}}
+\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{threading_8h_a0192a1544767da470d468ef6238869b7}\label{threading_8h_a0192a1544767da470d468ef6238869b7}} 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+M\+U\+T\+E\+X\+\_\+\+I\+N\+IT}~P\+T\+H\+R\+E\+A\+D\+\_\+\+M\+U\+T\+E\+X\+\_\+\+I\+N\+I\+T\+I\+A\+L\+I\+Z\+ER
+\item 
+\mbox{\Hypertarget{threading_8h_a88fdf34de875247a6e2f63e216b0be6d}\label{threading_8h_a88fdf34de875247a6e2f63e216b0be6d}} 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+C\+O\+N\+D\+\_\+\+I\+N\+IT}~P\+T\+H\+R\+E\+A\+D\+\_\+\+C\+O\+N\+D\+\_\+\+I\+N\+I\+T\+I\+A\+L\+I\+Z\+ER
+\item 
+\mbox{\Hypertarget{threading_8h_a4b18c141b636b949b5e3106c3ad70155}\label{threading_8h_a4b18c141b636b949b5e3106c3ad70155}} 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+O\+N\+C\+E\+\_\+\+I\+N\+IT}~P\+T\+H\+R\+E\+A\+D\+\_\+\+O\+N\+C\+E\+\_\+\+I\+N\+IT
+\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{threading_8h_aef480211b8accacf3389c81acfd547c4}\label{threading_8h_aef480211b8accacf3389c81acfd547c4}} 
+typedef pthread\+\_\+t {\bfseries jaeger\+\_\+thread}
+\item 
+\mbox{\Hypertarget{threading_8h_a5f3e554c206cc65a2dc9f880ed01322e}\label{threading_8h_a5f3e554c206cc65a2dc9f880ed01322e}} 
+typedef pthread\+\_\+mutex\+\_\+t {\bfseries jaeger\+\_\+mutex}
+\item 
+\mbox{\Hypertarget{threading_8h_a7d99df41b20e8f6533a42b03be13dc42}\label{threading_8h_a7d99df41b20e8f6533a42b03be13dc42}} 
+typedef pthread\+\_\+cond\+\_\+t {\bfseries jaeger\+\_\+cond}
+\item 
+\mbox{\Hypertarget{threading_8h_a962f0ddbf6ac02893717d73595597993}\label{threading_8h_a962f0ddbf6ac02893717d73595597993}} 
+typedef pthread\+\_\+once\+\_\+t {\bfseries jaeger\+\_\+once}
+\item 
+\mbox{\Hypertarget{threading_8h_a2570cfce402acae73a52e1f92337e436}\label{threading_8h_a2570cfce402acae73a52e1f92337e436}} 
+typedef struct \mbox{\hyperlink{structjaeger__thread__local}{jaeger\+\_\+thread\+\_\+local}} {\bfseries jaeger\+\_\+thread\+\_\+local}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Threading utilities. 
+
+Should work on single-\/threaded builds if J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+MT is not defined. 

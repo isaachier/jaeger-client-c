@@ -1,0 +1,101 @@
+\hypertarget{hashtable_8h}{}\section{jaegertracingc/hashtable.h File Reference}
+\label{hashtable_8h}\index{jaegertracingc/hashtable.\+h@{jaegertracingc/hashtable.\+h}}
+
+
+Hashtable data structure.  
+
+
+{\ttfamily \#include \char`\"{}jaegertracingc/common.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/key\+\_\+value.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/list.\+h\char`\"{}}\newline
+Include dependency graph for hashtable.\+h\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{hashtable_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{hashtable_8h__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structjaeger__hashtable}{jaeger\+\_\+hashtable}}
+\begin{DoxyCompactList}\small\item\em Hashtable data structure. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structjaeger__key__value__node}{jaeger\+\_\+key\+\_\+value\+\_\+node}}
+\begin{DoxyCompactList}\small\item\em Define link list node for key-\/value pairs. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structjaeger__hashtable__lookup__result}{jaeger\+\_\+hashtable\+\_\+lookup\+\_\+result}}
+\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{hashtable_8h_a6153a13e003c25cfdf828cc58413b377}\label{hashtable_8h_a6153a13e003c25cfdf828cc58413b377}} 
+\#define \mbox{\hyperlink{hashtable_8h_a6153a13e003c25cfdf828cc58413b377}{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+H\+A\+S\+H\+T\+A\+B\+L\+E\+\_\+\+I\+N\+I\+T\+\_\+\+O\+R\+D\+ER}}~4u
+\begin{DoxyCompactList}\small\item\em Initial order of new hashtable. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{hashtable_8h_aa201d83aa9bd09cdc682c6ba45e7522e}\label{hashtable_8h_aa201d83aa9bd09cdc682c6ba45e7522e}} 
+\#define \mbox{\hyperlink{hashtable_8h_aa201d83aa9bd09cdc682c6ba45e7522e}{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+H\+A\+S\+H\+T\+A\+B\+L\+E\+\_\+\+T\+H\+R\+E\+S\+H\+O\+LD}}~1.\+0
+\begin{DoxyCompactList}\small\item\em Threshold of size to bucket count ratio at which point the hashtable will rehash into a larger table. \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{hashtable_8h_a3763844cae3e82e4d62724f06d84699a}{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+H\+A\+S\+H\+T\+A\+B\+L\+E\+\_\+\+I\+N\+IT}}
+\begin{DoxyCompactList}\small\item\em Static initializer for hashtable. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{hashtable_8h_aa3b27c1f551b5b7027567043389c2c27}\label{hashtable_8h_aa3b27c1f551b5b7027567043389c2c27}} 
+typedef struct \mbox{\hyperlink{structjaeger__hashtable}{jaeger\+\_\+hashtable}} \mbox{\hyperlink{hashtable_8h_aa3b27c1f551b5b7027567043389c2c27}{jaeger\+\_\+hashtable}}
+\begin{DoxyCompactList}\small\item\em Hashtable data structure. \end{DoxyCompactList}\item 
+typedef struct \mbox{\hyperlink{structjaeger__key__value__node}{jaeger\+\_\+key\+\_\+value\+\_\+node}} \mbox{\hyperlink{hashtable_8h_a5c403e8fe72ed0ed67b77a4cae29cfd1}{jaeger\+\_\+key\+\_\+value\+\_\+node}}
+\begin{DoxyCompactList}\small\item\em Define link list node for key-\/value pairs. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{hashtable_8h_acc18a8c1466117cb5f17e0bb4a040ff3}\label{hashtable_8h_acc18a8c1466117cb5f17e0bb4a040ff3}} 
+typedef struct \mbox{\hyperlink{structjaeger__hashtable__lookup__result}{jaeger\+\_\+hashtable\+\_\+lookup\+\_\+result}} {\bfseries jaeger\+\_\+hashtable\+\_\+lookup\+\_\+result}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{hashtable_8h_ac6818f125682681819bf6cc762293198}\label{hashtable_8h_ac6818f125682681819bf6cc762293198}} 
+size\+\_\+t {\bfseries jaeger\+\_\+hashtable\+\_\+hash} (const char $\ast$key)
+\item 
+\mbox{\Hypertarget{hashtable_8h_a75a51e612240ea78e5ec6a7060233019}\label{hashtable_8h_a75a51e612240ea78e5ec6a7060233019}} 
+uint32\+\_\+t {\bfseries jaeger\+\_\+hashtable\+\_\+minimal\+\_\+order} (uint32\+\_\+t size)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Hashtable data structure. 
+
+
+
+\subsection{Macro Definition Documentation}
+\mbox{\Hypertarget{hashtable_8h_a3763844cae3e82e4d62724f06d84699a}\label{hashtable_8h_a3763844cae3e82e4d62724f06d84699a}} 
+\index{hashtable.\+h@{hashtable.\+h}!J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+H\+A\+S\+H\+T\+A\+B\+L\+E\+\_\+\+I\+N\+IT@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+H\+A\+S\+H\+T\+A\+B\+L\+E\+\_\+\+I\+N\+IT}}
+\index{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+H\+A\+S\+H\+T\+A\+B\+L\+E\+\_\+\+I\+N\+IT@{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+H\+A\+S\+H\+T\+A\+B\+L\+E\+\_\+\+I\+N\+IT}!hashtable.\+h@{hashtable.\+h}}
+\subsubsection{\texorpdfstring{J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+H\+A\+S\+H\+T\+A\+B\+L\+E\+\_\+\+I\+N\+IT}{JAEGERTRACINGC\_HASHTABLE\_INIT}}
+{\footnotesize\ttfamily \#define J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+H\+A\+S\+H\+T\+A\+B\+L\+E\+\_\+\+I\+N\+IT}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\DoxyCodeLine{\{                                          \(\backslash\)}
+\DoxyCodeLine{        .size = 0, .order = 0, .buckets = NULL \(\backslash\)}
+\DoxyCodeLine{    \}}
+\end{DoxyCode}
+
+
+Static initializer for hashtable. 
+
+
+
+\subsection{Typedef Documentation}
+\mbox{\Hypertarget{hashtable_8h_a5c403e8fe72ed0ed67b77a4cae29cfd1}\label{hashtable_8h_a5c403e8fe72ed0ed67b77a4cae29cfd1}} 
+\index{hashtable.\+h@{hashtable.\+h}!jaeger\+\_\+key\+\_\+value\+\_\+node@{jaeger\+\_\+key\+\_\+value\+\_\+node}}
+\index{jaeger\+\_\+key\+\_\+value\+\_\+node@{jaeger\+\_\+key\+\_\+value\+\_\+node}!hashtable.\+h@{hashtable.\+h}}
+\subsubsection{\texorpdfstring{jaeger\+\_\+key\+\_\+value\+\_\+node}{jaeger\_key\_value\_node}}
+{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{structjaeger__key__value__node}{jaeger\+\_\+key\+\_\+value\+\_\+node}}  \mbox{\hyperlink{structjaeger__key__value__node}{jaeger\+\_\+key\+\_\+value\+\_\+node}}}
+
+
+
+Define link list node for key-\/value pairs. 
+

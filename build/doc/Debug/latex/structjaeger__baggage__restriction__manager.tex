@@ -1,0 +1,67 @@
+\hypertarget{structjaeger__baggage__restriction__manager}{}\section{jaeger\+\_\+baggage\+\_\+restriction\+\_\+manager Struct Reference}
+\label{structjaeger__baggage__restriction__manager}\index{jaeger\+\_\+baggage\+\_\+restriction\+\_\+manager@{jaeger\+\_\+baggage\+\_\+restriction\+\_\+manager}}
+
+
+Interface for object that manages baggage restrictions.  
+
+
+
+
+{\ttfamily \#include $<$jaegertracingc/baggage.\+h$>$}
+
+
+
+Inheritance diagram for jaeger\+\_\+baggage\+\_\+restriction\+\_\+manager\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=213pt]{structjaeger__baggage__restriction__manager__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for jaeger\+\_\+baggage\+\_\+restriction\+\_\+manager\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=213pt]{structjaeger__baggage__restriction__manager__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{structjaeger__baggage__restriction}{jaeger\+\_\+baggage\+\_\+restriction}}($\ast$ \mbox{\hyperlink{structjaeger__baggage__restriction__manager_a1b451e0b12cecf51714f8760831fcc40}{get\+\_\+restriction}} )(struct \mbox{\hyperlink{structjaeger__baggage__restriction__manager}{jaeger\+\_\+baggage\+\_\+restriction\+\_\+manager}} $\ast$manager, const char $\ast$service, const char $\ast$key)
+\begin{DoxyCompactList}\small\item\em Get restriction regarding a given key for a given service. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Interface for object that manages baggage restrictions. 
+
+\subsection{Field Documentation}
+\mbox{\Hypertarget{structjaeger__baggage__restriction__manager_a1b451e0b12cecf51714f8760831fcc40}\label{structjaeger__baggage__restriction__manager_a1b451e0b12cecf51714f8760831fcc40}} 
+\index{jaeger\+\_\+baggage\+\_\+restriction\+\_\+manager@{jaeger\+\_\+baggage\+\_\+restriction\+\_\+manager}!get\+\_\+restriction@{get\+\_\+restriction}}
+\index{get\+\_\+restriction@{get\+\_\+restriction}!jaeger\+\_\+baggage\+\_\+restriction\+\_\+manager@{jaeger\+\_\+baggage\+\_\+restriction\+\_\+manager}}
+\subsubsection{\texorpdfstring{get\+\_\+restriction}{get\_restriction}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structjaeger__baggage__restriction}{jaeger\+\_\+baggage\+\_\+restriction}}($\ast$ jaeger\+\_\+baggage\+\_\+restriction\+\_\+manager\+::get\+\_\+restriction) (struct \mbox{\hyperlink{structjaeger__baggage__restriction__manager}{jaeger\+\_\+baggage\+\_\+restriction\+\_\+manager}} $\ast$manager, const char $\ast$service, const char $\ast$key)}
+
+
+
+Get restriction regarding a given key for a given service. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em manager} & Manager instance. \\
+\hline
+{\em service} & Service name. \\
+\hline
+{\em key} & Baggage key. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Baggage restriction value. 
+\end{DoxyReturn}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+jaegertracingc/\mbox{\hyperlink{baggage_8h}{baggage.\+h}}\end{DoxyCompactItemize}

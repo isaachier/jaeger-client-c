@@ -1,7 +1,7 @@
 <map id="jaegertracingc/net.h" name="jaegertracingc/net.h">
-<area shape="rect" id="node9" href="$common_8h.html" title="Common headers, struct definitions, and macros. " alt="" coords="761,80,929,107"/>
-<area shape="rect" id="node10" href="$config_8h_source.html" title="jaegertracingc/config.h" alt="" coords="1411,155,1565,181"/>
-<area shape="rect" id="node24" href="$alloc_8h.html" title="Allocator struct and functions. " alt="" coords="883,155,1029,181"/>
-<area shape="rect" id="node25" href="$logging_8h.html" title="Logging interface and initialization functions. " alt="" coords="1197,229,1355,256"/>
-<area shape="rect" id="node11" href="$visibility_8h_source.html" title="jaegertracingc/visibility.h" alt="" coords="1400,229,1565,256"/>
+<area shape="rect" id="node9" href="$common_8h.html" title="Common headers, struct definitions, and macros. " alt="" coords="710,80,878,107"/>
+<area shape="rect" id="node10" href="$config_8h_source.html" title="jaegertracingc/config.h" alt="" coords="1340,155,1493,181"/>
+<area shape="rect" id="node24" href="$alloc_8h.html" title="Allocator struct and functions. " alt="" coords="812,155,957,181"/>
+<area shape="rect" id="node25" href="$logging_8h.html" title="Logging interface and initialization functions. " alt="" coords="1125,229,1284,256"/>
+<area shape="rect" id="node11" href="$visibility_8h_source.html" title="jaegertracingc/visibility.h" alt="" coords="1329,229,1494,256"/>
 </map>

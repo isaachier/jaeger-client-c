@@ -1,0 +1,8 @@
+/home/ihier/proj/c/jaeger-client-c/build/CMakeFiles/install/local.dir
+/home/ihier/proj/c/jaeger-client-c/build/CMakeFiles/install/strip.dir
+/home/ihier/proj/c/jaeger-client-c/build/CMakeFiles/doc.dir
+/home/ihier/proj/c/jaeger-client-c/build/CMakeFiles/install.dir
+/home/ihier/proj/c/jaeger-client-c/build/CMakeFiles/jaegertracingc.dir
+/home/ihier/proj/c/jaeger-client-c/build/CMakeFiles/edit_cache.dir
+/home/ihier/proj/c/jaeger-client-c/build/CMakeFiles/rebuild_cache.dir
+/home/ihier/proj/c/jaeger-client-c/build/CMakeFiles/list_install_components.dir

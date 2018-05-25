@@ -1,9 +1,11 @@
 <map id="extract_text_map_arg" name="extract_text_map_arg">
-<area shape="rect" id="node2" href="$structjaeger__metrics.html" title="jaeger_metrics" alt="" coords="143,332,249,359"/>
-<area shape="rect" id="node3" href="$structjaeger__counter.html" title="Counter metric interface. " alt="" coords="5,81,112,108"/>
-<area shape="rect" id="node5" href="$structjaeger__gauge.html" title="Gauge metric interface. " alt="" coords="171,81,269,108"/>
-<area shape="rect" id="node6" href="$structjaeger__headers__config.html" title="HTTP headers to use for span context propagation. " alt="" coords="273,332,425,359"/>
-<area shape="rect" id="node7" href="$structjaeger__span__context.html" title="Span context represents propagated span identity and state. " alt="" coords="450,332,593,359"/>
-<area shape="rect" id="node8" href="$structjaeger__vector.html" title="jaeger_vector" alt="" coords="431,81,531,108"/>
-<area shape="rect" id="node9" href="$structjaeger__trace__id.html" title="128 bit unique ID for a given trace. " alt="" coords="555,81,666,108"/>
+<area shape="rect" id="node2" href="$structjaeger__metrics.html" title="jaeger_metrics" alt="" coords="167,335,273,361"/>
+<area shape="rect" id="node3" href="$structjaeger__counter.html" title="Counter metric interface. " alt="" coords="5,83,112,109"/>
+<area shape="rect" id="node5" href="$structjaeger__gauge.html" title="Gauge metric interface. " alt="" coords="171,83,269,109"/>
+<area shape="rect" id="node11" href="$structjaeger__list__node.html" title="Base class for list elements. " alt="" coords="310,83,426,109"/>
+<area shape="rect" id="node6" href="$structjaeger__headers__config.html" title="HTTP headers to use for span context propagation. " alt="" coords="443,513,595,540"/>
+<area shape="rect" id="node7" href="$structjaeger__span__context.html" title="Span context represents propagated span identity and state. " alt="" coords="275,513,418,540"/>
+<area shape="rect" id="node8" href="$structjaeger__trace__id.html" title="128 bit unique ID for a given trace. " alt="" coords="431,424,542,451"/>
+<area shape="rect" id="node9" href="$structjaeger__hashtable.html" title="Hashtable data structure. " alt="" coords="287,424,407,451"/>
+<area shape="rect" id="node10" href="$structjaeger__list.html" title="Linked list implementation. " alt="" coords="321,335,402,361"/>
 </map>

@@ -1,0 +1,124 @@
+\hypertarget{logging_8h}{}\section{jaegertracingc/logging.h File Reference}
+\label{logging_8h}\index{jaegertracingc/logging.\+h@{jaegertracingc/logging.\+h}}
+
+
+Logging interface and initialization functions.  
+
+
+{\ttfamily \#include $<$stdarg.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+Include dependency graph for logging.\+h\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=199pt]{logging_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{logging_8h__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structjaeger__logger}{jaeger\+\_\+logger}}
+\begin{DoxyCompactList}\small\item\em Logger interface to customize log output. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{logging_8h_a2e78622018154f10bcfb38ccdc5c7880}\label{logging_8h_a2e78622018154f10bcfb38ccdc5c7880}} 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+F\+O\+R\+M\+A\+T\+\_\+\+A\+T\+T\+R\+I\+B\+U\+TE}(archetype,  string\+\_\+index,  first\+\_\+to\+\_\+check)
+\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef struct \mbox{\hyperlink{structjaeger__logger}{jaeger\+\_\+logger}} \mbox{\hyperlink{logging_8h_ad1d12d8cc063a770d4feea4dfec02785}{jaeger\+\_\+logger}}
+\begin{DoxyCompactList}\small\item\em Logger interface to customize log output. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{logging_8h_ac01da6c9df20fe92039d247c05bfdbef}{jaeger\+\_\+std\+\_\+logger\+\_\+init}} (\mbox{\hyperlink{structjaeger__logger}{jaeger\+\_\+logger}} $\ast$logger)
+\begin{DoxyCompactList}\small\item\em Initialze a logger that prints stdout/stderr. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structjaeger__logger}{jaeger\+\_\+logger}} $\ast$ \mbox{\hyperlink{logging_8h_ad043d24bb8ef0d4d53e01664ed1647fd}{jaeger\+\_\+null\+\_\+logger}} ()
+\begin{DoxyCompactList}\small\item\em Shared instance of null logger. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{logging_8h_ab67748c4ba5d8b37d6ba8b48dd5e61c0}{jaeger\+\_\+set\+\_\+logger}} (\mbox{\hyperlink{structjaeger__logger}{jaeger\+\_\+logger}} $\ast$logger)
+\begin{DoxyCompactList}\small\item\em Install shared logger instance. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structjaeger__logger}{jaeger\+\_\+logger}} $\ast$ \mbox{\hyperlink{logging_8h_a8332533878c9d71f29e663eb81264d38}{jaeger\+\_\+get\+\_\+logger}} (void)
+\begin{DoxyCompactList}\small\item\em Get instance of installed logger. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Logging interface and initialization functions. 
+
+
+
+\subsection{Typedef Documentation}
+\mbox{\Hypertarget{logging_8h_ad1d12d8cc063a770d4feea4dfec02785}\label{logging_8h_ad1d12d8cc063a770d4feea4dfec02785}} 
+\index{logging.\+h@{logging.\+h}!jaeger\+\_\+logger@{jaeger\+\_\+logger}}
+\index{jaeger\+\_\+logger@{jaeger\+\_\+logger}!logging.\+h@{logging.\+h}}
+\subsubsection{\texorpdfstring{jaeger\+\_\+logger}{jaeger\_logger}}
+{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{structjaeger__logger}{jaeger\+\_\+logger}}  \mbox{\hyperlink{structjaeger__logger}{jaeger\+\_\+logger}}}
+
+
+
+Logger interface to customize log output. 
+
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{logging_8h_a8332533878c9d71f29e663eb81264d38}\label{logging_8h_a8332533878c9d71f29e663eb81264d38}} 
+\index{logging.\+h@{logging.\+h}!jaeger\+\_\+get\+\_\+logger@{jaeger\+\_\+get\+\_\+logger}}
+\index{jaeger\+\_\+get\+\_\+logger@{jaeger\+\_\+get\+\_\+logger}!logging.\+h@{logging.\+h}}
+\subsubsection{\texorpdfstring{jaeger\+\_\+get\+\_\+logger()}{jaeger\_get\_logger()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structjaeger__logger}{jaeger\+\_\+logger}}$\ast$ jaeger\+\_\+get\+\_\+logger (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Get instance of installed logger. 
+
+DO N\+OT M\+O\+D\+I\+FY M\+E\+M\+B\+E\+R\+S! \begin{DoxyReturn}{Returns}
+Installed logger instance. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{logging_8h_ad043d24bb8ef0d4d53e01664ed1647fd}\label{logging_8h_ad043d24bb8ef0d4d53e01664ed1647fd}} 
+\index{logging.\+h@{logging.\+h}!jaeger\+\_\+null\+\_\+logger@{jaeger\+\_\+null\+\_\+logger}}
+\index{jaeger\+\_\+null\+\_\+logger@{jaeger\+\_\+null\+\_\+logger}!logging.\+h@{logging.\+h}}
+\subsubsection{\texorpdfstring{jaeger\+\_\+null\+\_\+logger()}{jaeger\_null\_logger()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structjaeger__logger}{jaeger\+\_\+logger}}$\ast$ jaeger\+\_\+null\+\_\+logger (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Shared instance of null logger. 
+
+All methods are no-\/ops. DO N\+OT M\+O\+D\+I\+FY M\+E\+M\+B\+E\+R\+S! \mbox{\Hypertarget{logging_8h_ab67748c4ba5d8b37d6ba8b48dd5e61c0}\label{logging_8h_ab67748c4ba5d8b37d6ba8b48dd5e61c0}} 
+\index{logging.\+h@{logging.\+h}!jaeger\+\_\+set\+\_\+logger@{jaeger\+\_\+set\+\_\+logger}}
+\index{jaeger\+\_\+set\+\_\+logger@{jaeger\+\_\+set\+\_\+logger}!logging.\+h@{logging.\+h}}
+\subsubsection{\texorpdfstring{jaeger\+\_\+set\+\_\+logger()}{jaeger\_set\_logger()}}
+{\footnotesize\ttfamily void jaeger\+\_\+set\+\_\+logger (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structjaeger__logger}{jaeger\+\_\+logger}} $\ast$}]{logger }\end{DoxyParamCaption})}
+
+
+
+Install shared logger instance. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Logger} & to install. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{logging_8h_ac01da6c9df20fe92039d247c05bfdbef}\label{logging_8h_ac01da6c9df20fe92039d247c05bfdbef}} 
+\index{logging.\+h@{logging.\+h}!jaeger\+\_\+std\+\_\+logger\+\_\+init@{jaeger\+\_\+std\+\_\+logger\+\_\+init}}
+\index{jaeger\+\_\+std\+\_\+logger\+\_\+init@{jaeger\+\_\+std\+\_\+logger\+\_\+init}!logging.\+h@{logging.\+h}}
+\subsubsection{\texorpdfstring{jaeger\+\_\+std\+\_\+logger\+\_\+init()}{jaeger\_std\_logger\_init()}}
+{\footnotesize\ttfamily void jaeger\+\_\+std\+\_\+logger\+\_\+init (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structjaeger__logger}{jaeger\+\_\+logger}} $\ast$}]{logger }\end{DoxyParamCaption})}
+
+
+
+Initialze a logger that prints stdout/stderr. 
+
+Error and warn functions print to stderr. Info function prints to stdout. Logger locks to avoid races in multithreaded environments. 
+\begin{DoxyParams}{Parameters}
+{\em logger} & Uninitialized logger. \\
+\hline
+\end{DoxyParams}

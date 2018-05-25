@@ -1,0 +1,88 @@
+\hypertarget{reporter_8h}{}\section{jaegertracingc/reporter.h File Reference}
+\label{reporter_8h}\index{jaegertracingc/reporter.\+h@{jaegertracingc/reporter.\+h}}
+
+
+Span reporter interface.  
+
+
+{\ttfamily \#include \char`\"{}jaegertracingc/common.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/logging.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/metrics.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/net.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/span.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/threading.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jaegertracingc/vector.\+h\char`\"{}}\newline
+Include dependency graph for reporter.\+h\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{reporter_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=219pt]{reporter_8h__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structjaeger__reporter}{jaeger\+\_\+reporter}}
+\item 
+struct \mbox{\hyperlink{structjaeger__in__memory__reporter}{jaeger\+\_\+in\+\_\+memory\+\_\+reporter}}
+\item 
+struct \mbox{\hyperlink{structjaeger__composite__reporter}{jaeger\+\_\+composite\+\_\+reporter}}
+\item 
+struct \mbox{\hyperlink{structjaeger__remote__reporter}{jaeger\+\_\+remote\+\_\+reporter}}
+\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{reporter_8h_afb601672f1d1777fb3cca8db4a021b29}\label{reporter_8h_afb601672f1d1777fb3cca8db4a021b29}} 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+D\+E\+F\+A\+U\+L\+T\+\_\+\+U\+D\+P\+\_\+\+S\+P\+A\+N\+\_\+\+S\+E\+R\+V\+E\+R\+\_\+\+H\+O\+S\+T\+\_\+\+P\+O\+RT}~\char`\"{}localhost\+:6831\char`\"{}
+\item 
+\mbox{\Hypertarget{reporter_8h_adb4f51b833d7e45f8074da1798674503}\label{reporter_8h_adb4f51b833d7e45f8074da1798674503}} 
+\#define {\bfseries J\+A\+E\+G\+E\+R\+T\+R\+A\+C\+I\+N\+G\+C\+\_\+\+D\+E\+F\+A\+U\+L\+T\+\_\+\+U\+D\+P\+\_\+\+B\+U\+F\+F\+E\+R\+\_\+\+S\+I\+ZE}~U\+S\+H\+R\+T\+\_\+\+M\+AX
+\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{reporter_8h_a1bd5a6feda92a6a127a8d3aee2cf273a}\label{reporter_8h_a1bd5a6feda92a6a127a8d3aee2cf273a}} 
+typedef struct \mbox{\hyperlink{structjaeger__reporter}{jaeger\+\_\+reporter}} {\bfseries jaeger\+\_\+reporter}
+\item 
+\mbox{\Hypertarget{reporter_8h_afc4b14f7178f166baca885aea83dff04}\label{reporter_8h_afc4b14f7178f166baca885aea83dff04}} 
+typedef struct \mbox{\hyperlink{structjaeger__in__memory__reporter}{jaeger\+\_\+in\+\_\+memory\+\_\+reporter}} {\bfseries jaeger\+\_\+in\+\_\+memory\+\_\+reporter}
+\item 
+\mbox{\Hypertarget{reporter_8h_a474f815550ebf3183d7ce99de693c891}\label{reporter_8h_a474f815550ebf3183d7ce99de693c891}} 
+typedef struct \mbox{\hyperlink{structjaeger__composite__reporter}{jaeger\+\_\+composite\+\_\+reporter}} {\bfseries jaeger\+\_\+composite\+\_\+reporter}
+\item 
+\mbox{\Hypertarget{reporter_8h_a654864cc63645948293a6f26381240b1}\label{reporter_8h_a654864cc63645948293a6f26381240b1}} 
+typedef struct \mbox{\hyperlink{structjaeger__remote__reporter}{jaeger\+\_\+remote\+\_\+reporter}} {\bfseries jaeger\+\_\+remote\+\_\+reporter}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{reporter_8h_ac55084184207b8552438c3142f00b877}\label{reporter_8h_ac55084184207b8552438c3142f00b877}} 
+\mbox{\hyperlink{structjaeger__reporter}{jaeger\+\_\+reporter}} $\ast$ {\bfseries jaeger\+\_\+null\+\_\+reporter} ()
+\item 
+\mbox{\Hypertarget{reporter_8h_a6b1b2dc017426244f2986867981f6c18}\label{reporter_8h_a6b1b2dc017426244f2986867981f6c18}} 
+void {\bfseries jaeger\+\_\+logging\+\_\+reporter\+\_\+init} (\mbox{\hyperlink{structjaeger__reporter}{jaeger\+\_\+reporter}} $\ast$reporter)
+\item 
+\mbox{\Hypertarget{reporter_8h_ab348b89e85a9eb6487b28ac8be08dd38}\label{reporter_8h_ab348b89e85a9eb6487b28ac8be08dd38}} 
+bool {\bfseries jaeger\+\_\+in\+\_\+memory\+\_\+reporter\+\_\+init} (\mbox{\hyperlink{structjaeger__in__memory__reporter}{jaeger\+\_\+in\+\_\+memory\+\_\+reporter}} $\ast$reporter)
+\item 
+\mbox{\Hypertarget{reporter_8h_a943eedaf7c7dec3d6810d538fc083b4d}\label{reporter_8h_a943eedaf7c7dec3d6810d538fc083b4d}} 
+bool {\bfseries jaeger\+\_\+composite\+\_\+reporter\+\_\+init} (\mbox{\hyperlink{structjaeger__composite__reporter}{jaeger\+\_\+composite\+\_\+reporter}} $\ast$reporter)
+\item 
+\mbox{\Hypertarget{reporter_8h_aaecd8799b8f091e6dea46b45ab6aae9d}\label{reporter_8h_aaecd8799b8f091e6dea46b45ab6aae9d}} 
+bool {\bfseries jaeger\+\_\+remote\+\_\+reporter\+\_\+init} (\mbox{\hyperlink{structjaeger__remote__reporter}{jaeger\+\_\+remote\+\_\+reporter}} $\ast$reporter, const char $\ast$host\+\_\+port\+\_\+str, int max\+\_\+packet\+\_\+size, \mbox{\hyperlink{structjaeger__metrics}{jaeger\+\_\+metrics}} $\ast$metrics)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Span reporter interface. 
+

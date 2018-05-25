@@ -34,7 +34,7 @@
 <!-- Node3 -->
 <g id="node3" class="node">
 <title>Node3</title>
-<g id="a_node3"><a xlink:href="structjaeger__list__node.html" target="_top" xlink:title="Base class for list elems. ">
+<g id="a_node3"><a xlink:href="structjaeger__list__node.html" target="_top" xlink:title="Base class for list elements. ">
 <polygon fill="#ffffff" stroke="#000000" points="5.5,-135.5 5.5,-154.5 92.5,-154.5 92.5,-135.5 5.5,-135.5"/>
 <text text-anchor="middle" x="49" y="-142.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">jaeger_list_node</text>
 </a>
