@@ -404,6 +404,16 @@ if(JAEGERTRACINGC_FUZZ)
   endforeach()
 endif()
 
+option(JAEGERTRACINGC_BUILD_CROSSDOCK "Build crossdock test" OFF)
+if(JAEGERTRACINGC_BUILD_CROSSDOCK)
+  hunter_add_package(libevhtp)
+  find_package(libevhtp CONFIG REQUIRED)
+  list(APPEND package_deps libevhtp)
+
+  add_executable(crossdock crossdock/main.c)
+  target_link_libraries(crossdock PUBLIC jaegertracingc libevhtp::evhtp)
+endif()
+
 generate_documentation()
 
 # Installation (https://github.com/forexample/package-example)
