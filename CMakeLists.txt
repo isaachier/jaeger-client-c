@@ -73,6 +73,7 @@ if(JAEGERTRACINGC_COVERAGE)
   include(CodeCoverage)
   append_coverage_compiler_flags(jaegertracingc_flags)
   set(COVERAGE_EXCLUDES
+    "${CMAKE_CURRENT_SOURCE_DIR}/crossdock/main.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/jaegertracingc/mock_agent.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/jaegertracingc/mock_agent.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/jaegertracingc/*_test.c"
@@ -474,6 +475,8 @@ install(
     DIRECTORY "src/jaegertracingc"
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
     FILES_MATCHING PATTERN "*.h"
+                   PATTERN "mock_agent.h" EXCLUDE
+                   PATTERN "internal" EXCLUDE
 )
 
 # Export headers:
