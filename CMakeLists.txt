@@ -28,8 +28,8 @@ cmake_dependent_option(HUNTER_BUILD_SHARED_LIBS
 
 include(HunterGate)
 HunterGate(
-    URL "https://github.com/ruslo/hunter/archive/v0.20.74.tar.gz"
-    SHA1 "88e3c806f0ff640c0e3cbc32b340ae2c370b31f5"
+    URL "https://github.com/ruslo/hunter/archive/v0.21.19.tar.gz"
+    SHA1 "5ead1e069b437930d0de8a21824b20fb52b37b50"
     LOCAL
 )
 
@@ -406,12 +406,8 @@ endif()
 
 option(JAEGERTRACINGC_BUILD_CROSSDOCK "Build crossdock test" OFF)
 if(JAEGERTRACINGC_BUILD_CROSSDOCK)
-  hunter_add_package(libevhtp)
-  find_package(libevhtp CONFIG REQUIRED)
-  list(APPEND package_deps libevhtp)
-
   add_executable(crossdock crossdock/main.c)
-  target_link_libraries(crossdock PUBLIC jaegertracingc libevhtp::evhtp)
+  target_link_libraries(crossdock PUBLIC jaegertracingc)
 endif()
 
 generate_documentation()
