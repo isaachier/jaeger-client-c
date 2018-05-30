@@ -118,7 +118,7 @@ static inline bool parse_transport_type(const char* transport_type_name,
 
 #define ERR_FMT                                                   \
     "message = \"%s\", source = \"%s\", line = %d, column = %d, " \
-    "position = %d"
+    "position = %d\n"
 
 #define ERR_ARGS(source) err.text, (source), err.line, err.column, err.position
 
@@ -265,41 +265,150 @@ static inline bool parse_start_trace_request(start_trace_request* req,
     return true;
 }
 
-static void* serve(void* arg)
-{
-    enum { buffer_size = 1024, path_size = 64 };
-    int status_code = 200;
-    const char* status_line = "OK";
-    const int client_fd = *(const int*) arg;
-    char buffer[buffer_size];
-    const int num_read = read(client_fd, buffer, buffer_size - 1);
-    if (num_read + 1 >= buffer_size) {
-        fprintf(stderr, "Request too large for buffer\n");
-        goto cleanup;
-    }
-    buffer[num_read + 1] = '\0';
+#define HTTP_STATUS_CODES(X)           \
+    X(200, ok, "OK")                   \
+    X(400, bad_request, "Bad Request") \
+    X(404, not_found, "Not Found")     \
+    X(500, internal_server_error, "Internal Server Error")
 
-    char path[path_size];
-    sscanf(buffer, "GET %s HTTP/1.1\r\n", path);
-    if (strcmp(path, "/start_trace") == 0) {
-        printf("START TRACE REQUEST\n");
-        /* TODO */
+typedef enum http_status_code {
+#define X(num, name, str) http_status_code_##name = num,
+    HTTP_STATUS_CODES(X)
+#undef X
+} http_status_code;
+
+static inline const char* status_line(const http_status_code code)
+{
+#define X(code, name, str) \
+    case (code):           \
+        return str;
+
+    switch (code) {
+        HTTP_STATUS_CODES(X)
+    default:
+        assert(false);
+    }
+
+#undef X
+}
+
+static inline void start_trace(json_t* json, int client_fd)
+{
+    /* TODO */
+    (void) json;
+    (void) client_fd;
+}
+
+static inline void join_trace(json_t* json, int client_fd)
+{
+    /* TODO */
+    (void) json;
+    (void) client_fd;
+}
+
+static inline int parse_content_length(const char* request)
+{
+    int value = 0;
+    const char* line = strstr(request, "Content-Length: ");
+    if (line != NULL) {
+        sscanf(line, "Content-Length: %d", &value);
+    }
+    return value;
+}
+
+static inline void handle_request(const char* request, int client_fd)
+{
+#define SHORT_SIZE 64
+#define SHORT_FMT "%64s"
+
+    char method[SHORT_SIZE];
+    char path[SHORT_SIZE];
+    sscanf(request, SHORT_FMT " " SHORT_FMT " HTTP/1.1\r\n", method, path);
+    http_status_code code = http_status_code_ok;
+    enum { body_size = 512 };
+    char body[body_size];
+    const char* body_pos = strstr(request, "\r\n\r\n");
+    if (body_pos != NULL) {
+        body_pos += strlen("\r\n\r\n");
+        const int content_length = parse_content_length(request);
+        if (content_length == 0) {
+            strncpy(body, body_pos, sizeof(body) - 1);
+        }
+        else {
+            if (sizeof(body) - 1 < content_length) {
+                code = http_status_code_internal_server_error;
+                goto cleanup;
+            }
+            strncpy(body, body_pos, content_length);
+        }
+    }
+
+    printf("path = %s\n", path);
+    if (strcmp(path, "/start_trace") == 0 || strcmp(path, "/join_trace") == 0) {
+        if (body_pos == NULL) {
+            code = http_status_code_bad_request;
+            goto cleanup;
+        }
+        json_error_t err;
+        json_t* json_body = json_loads(body, 0, &err);
+        if (json_body == NULL) {
+            PRINT_ERR_MSG(body);
+            code = http_status_code_bad_request;
+            goto cleanup;
+        }
+
+        if (strcmp(path, "/start_trace") == 0) {
+            start_trace(json_body, client_fd);
+        }
+        else {
+            assert(strcmp(path, "/join_trace") == 0);
+            join_trace(json_body, client_fd);
+        }
+        free(json_body);
+        close(client_fd);
+        return;
     }
     else if (strcmp(path, "/") != 0) {
-        status_code = 404;
-        status_line = "Not Found";
+        code = http_status_code_not_found;
     }
 
 cleanup:
     do {
+        enum { buffer_size = 64 };
+        char buffer[buffer_size];
         const int len = snprintf(buffer,
                                  sizeof(buffer),
                                  "HTTP/1.1 %d %s\r\n\r\n",
-                                 status_code,
-                                 status_line);
+                                 code,
+                                 status_line(code));
         (void) write(client_fd, buffer, len);
         close(client_fd);
     } while (0);
+}
+
+static void* serve(void* arg)
+{
+    enum {
+        buffer_size = 1024,
+    };
+    const int client_fd = *(const int*) arg;
+    char buffer[buffer_size];
+    const int num_read = read(client_fd, buffer, buffer_size - 1);
+    if (num_read + 1 >= buffer_size) {
+        http_status_code code = http_status_code_internal_server_error;
+        fprintf(stderr, "Request too large for buffer\n");
+        const int len = snprintf(buffer,
+                                 sizeof(buffer),
+                                 "HTTP/1.1 %d %s\r\n\r\n",
+                                 code,
+                                 status_line(code));
+        (void) write(client_fd, buffer, len);
+        close(client_fd);
+    }
+    buffer[num_read + 1] = '\0';
+
+    handle_request(buffer, client_fd);
+
     return NULL;
 }
 
