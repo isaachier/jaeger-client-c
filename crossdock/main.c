@@ -319,11 +319,13 @@ static inline int parse_content_length(const char* request)
 static inline void handle_request(const char* request, int client_fd)
 {
 #define SHORT_SIZE 64
-#define SHORT_FMT "%64s"
+#define STR_(X) #X
+#define STR(X) STR_(X)
+#define SHORT_FMT STR(SHORT_SIZE) "s"
 
     char method[SHORT_SIZE];
     char path[SHORT_SIZE];
-    sscanf(request, SHORT_FMT " " SHORT_FMT " HTTP/1.1\r\n", method, path);
+    sscanf(request, "%" SHORT_FMT " %" SHORT_FMT " HTTP/1.1\r\n", method, path);
     http_status_code code = http_status_code_ok;
     enum { body_size = 512 };
     char body[body_size];
