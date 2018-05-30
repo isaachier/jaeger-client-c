@@ -261,6 +261,7 @@ target_include_directories(jaegertracingc PUBLIC
   $<INSTALL_INTERFACE:include>)
 
 target_link_libraries(jaegertracingc PUBLIC
+  opentracing-c::opentracingc
 	pcg::pcg_random
   http-parser::http_parser
   jansson::jansson
