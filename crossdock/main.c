@@ -15,6 +15,7 @@
  */
 
 #include <arpa/inet.h>
+#include <assert.h>
 #include <netinet/in.h>
 #include <pthread.h>
 #include <stdbool.h>
@@ -28,8 +29,6 @@
 #include <http_parser.h>
 #include <jansson.h>
 #include <opentracing-c/tracer.h>
-
-#include <jaegertracingc/hashtable.h>
 
 #define ASSERT_PERROR(cond, msg) \
     do {                         \
@@ -64,44 +63,6 @@ static inline const char* status_line(const http_status_code code)
     }
 
 #undef X
-}
-
-static inline http_status_code
-json_obj_to_hashtable(jaeger_hashtable* hashtable, json_t* json)
-{
-    if (hashtable == NULL || json == NULL || !json_is_object(json)) {
-        return http_status_code_bad_request;
-    }
-    if (!jaeger_hashtable_init(hashtable)) {
-        return http_status_code_internal_server_error;
-    }
-
-    http_status_code code = http_status_code_ok;
-    const char* key;
-    json_t* value;
-    json_object_foreach(json, key, value)
-    {
-        if (!json_is_string(value)) {
-            fprintf(stderr, "Invalid value: ");
-            json_dumpf(value, stderr, 0);
-            fprintf(stderr, "\n");
-            code = http_status_code_bad_request;
-            goto cleanup;
-        }
-        if (!jaeger_hashtable_put(hashtable, key, json_string_value(value))) {
-            fprintf(stderr, "Not enough memory for hashtable, object = ");
-            json_dumpf(value, stderr, 0);
-            fprintf(stderr, "\n");
-            code = http_status_code_internal_server_error;
-            goto cleanup;
-        }
-    }
-
-    return code;
-
-cleanup:
-    jaeger_hashtable_destroy(hashtable);
-    return code;
 }
 
 typedef enum transport_type {
@@ -241,7 +202,7 @@ cleanup:
 typedef struct start_trace_request {
     char* server_role;
     bool sampled;
-    jaeger_hashtable baggage;
+    char* baggage;
     downstream_message downstream;
 } start_trace_request;
 
@@ -251,7 +212,7 @@ static inline void start_trace_request_destroy(start_trace_request* req)
         return;
     }
     free(req->server_role);
-    jaeger_hashtable_destroy(&req->baggage);
+    free(req->baggage);
     downstream_message_destroy(&req->downstream);
     memset(req, 0, sizeof(*req));
 }
@@ -266,12 +227,12 @@ static inline http_status_code parse_start_trace_request(
     json_error_t err;
     char* server_role;
     int sampled;
-    json_t* baggage;
+    char* baggage;
     json_t* downstream;
     const int result = json_unpack_ex(json,
                                       &err,
                                       0,
-                                      "{ss sb so so}",
+                                      "{ss sb ss so}",
                                       "serverRole",
                                       &server_role,
                                       "sampled",
@@ -286,14 +247,13 @@ static inline http_status_code parse_start_trace_request(
     }
     *req = (start_trace_request){.server_role = strdup(server_role),
                                  .sampled = (sampled != 0),
-                                 .baggage = JAEGERTRACINGC_HASHTABLE_INIT,
+                                 .baggage = strdup(baggage),
                                  .downstream = {0}};
     http_status_code code = http_status_code_ok;
-    if (req->server_role == NULL) {
+    if (req->server_role == NULL || req->baggage == NULL) {
         code = http_status_code_internal_server_error;
         goto cleanup;
     }
-    code = json_obj_to_hashtable(&req->baggage, baggage);
     if (code != http_status_code_ok) {
         goto cleanup;
     }
@@ -308,6 +268,17 @@ static inline http_status_code parse_start_trace_request(
 cleanup:
     start_trace_request_destroy(req);
     return code;
+}
+
+static inline void prepare_response(const opentracing_span_context* context,
+                                    const char* server_role,
+                                    const downstream_message* downstream,
+                                    int client_fd)
+{
+    /* TODO */
+    (void) context;
+    (void) server_role;
+    (void) downstream;
 }
 
 static inline void start_trace(json_t* json, const char* source, int client_fd)
@@ -327,6 +298,18 @@ static inline void start_trace(json_t* json, const char* source, int client_fd)
         code = http_status_code_internal_server_error;
         goto cleanup;
     }
+    opentracing_span* span = tracer->start_span(tracer, req.server_role);
+    if (req.sampled) {
+        const opentracing_value value = {
+            .type = opentracing_value_uint64,
+            .value = {.uint64_value = 1},
+        };
+        span->set_tag(span, "sampling.priority", &value);
+    }
+    span->set_baggage_item(span, "crossdock-baggage-key", req.baggage);
+    prepare_response(
+        span->span_context(span), req.server_role, &req.downstream, client_fd);
+    return;
 
 cleanup:
     do {
