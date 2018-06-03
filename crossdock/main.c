@@ -15,20 +15,17 @@
  */
 
 #include <arpa/inet.h>
-#include <assert.h>
 #include <netinet/in.h>
 #include <pthread.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
 
-#include <http_parser.h>
-#include <jansson.h>
+#include <jaegertracingc/span.h>
+#include <jaegertracingc/trace_id.h>
 #include <opentracing-c/tracer.h>
+
+#include "messages.h"
 
 #define ASSERT_PERROR(cond, msg) \
     do {                         \
@@ -38,239 +35,38 @@
         }                        \
     } while (0)
 
-#define HTTP_STATUS_CODES(X)           \
-    X(200, ok, "OK")                   \
-    X(400, bad_request, "Bad Request") \
-    X(404, not_found, "Not Found")     \
-    X(500, internal_server_error, "Internal Server Error")
+static const char baggage_key[] = "crossdock-baggage-key";
 
-typedef enum http_status_code {
-#define X(num, name, str) http_status_code_##name = num,
-    HTTP_STATUS_CODES(X)
-#undef X
-} http_status_code;
-
-static inline const char* status_line(const http_status_code code)
+static inline bool make_observed_span(observed_span* span,
+                                      opentracing_span_context* context)
 {
-#define X(code, _, str) \
-    case (code):        \
-        return (str);
-
-    switch (code) {
-        HTTP_STATUS_CODES(X)
-    default:
-        assert(false);
+    if (context->type_descriptor_length !=
+            jaeger_span_context_type_descriptor_length ||
+        !strcmp(context->type_descriptor,
+                jaeger_span_context_type_descriptor)) {
+        fprintf(stderr, "Invalid span context type\n");
+        return false;
     }
+    jaeger_span_context* ctx = (jaeger_span_context*) context;
 
-#undef X
+    const size_t trace_id_len = JAEGERTRACINGC_TRACE_ID_MAX_STR_LEN + 1;
+    span->trace_id = malloc(trace_id_len);
+    if (span->trace_id == NULL) {
+        return false;
+    }
+    jaeger_mutex_lock(&ctx->mutex);
+    jaeger_trace_id_format(&ctx->trace_id, span->trace_id, trace_id_len);
+    span->sampled =
+        ((ctx->flags & ((uint8_t) jaeger_sampling_flag_sampled)) != 0);
+    const jaeger_key_value* kv =
+        jaeger_hashtable_find(&ctx->baggage, baggage_key);
+    assert(kv != NULL);
+    span->baggage = strdup(kv->value);
+    jaeger_mutex_unlock(&ctx->mutex);
+    return true;
 }
 
-typedef enum transport_type {
-    transport_type_http,
-    transport_type_tchannel,
-    transport_type_dummy
-} transport_type;
-
-static inline http_status_code
-parse_transport_type(const char* transport_type_name, transport_type* result)
-{
-    if (result == NULL || transport_type_name == NULL ||
-        strlen(transport_type_name) == 0) {
-        return http_status_code_bad_request;
-    }
-
-#define TRANSPORT_CMP(name, type)                       \
-    do {                                                \
-        if (strcmp(transport_type_name, (name)) == 0) { \
-            *result = transport_type_##type;            \
-            return http_status_code_ok;                 \
-        }                                               \
-    } while (0)
-
-    switch (transport_type_name[0]) {
-    case 'D':
-        TRANSPORT_CMP("DUMMY", dummy);
-        break;
-    case 'H':
-        TRANSPORT_CMP("HTTP", http);
-        break;
-    case 'T':
-        TRANSPORT_CMP("TCHANNEL", tchannel);
-        break;
-    default:
-        break;
-    }
-    return http_status_code_bad_request;
-
-#undef TRANSPORT_CMP
-
-    return http_status_code_bad_request;
-}
-
-#define ERR_FMT                                                   \
-    "message = \"%s\", source = \"%s\", line = %d, column = %d, " \
-    "position = %d\n"
-
-#define ERR_ARGS(source) err.text, (source), err.line, err.column, err.position
-
-#define PRINT_ERR_MSG(source)                       \
-    do {                                            \
-        fprintf(stderr, ERR_FMT, ERR_ARGS(source)); \
-    } while (0)
-
-typedef struct downstream_message {
-    char* service_name;
-    char* server_role;
-    char* host;
-    char* port;
-    transport_type transport;
-    struct downstream_message* downstream;
-} downstream_message;
-
-static inline void downstream_message_destroy(downstream_message* downstream)
-{
-    if (downstream == NULL) {
-        return;
-    }
-    free(downstream->service_name);
-    free(downstream->server_role);
-    free(downstream->host);
-    free(downstream->port);
-    free(downstream->downstream);
-    memset(downstream, 0, sizeof(*downstream));
-}
-
-static inline http_status_code parse_downstream_message(
-    downstream_message* downstream, json_t* json, const char* source)
-{
-    if (downstream == NULL || json == NULL) {
-        return http_status_code_bad_request;
-    }
-    json_error_t err;
-    downstream_message tmp;
-    json_t* downstream_child = NULL;
-    const int result = json_unpack_ex(json,
-                                      &err,
-                                      0,
-                                      "{ss ss ss ss ss s?o}",
-                                      "serviceName",
-                                      &tmp.service_name,
-                                      "serverRole",
-                                      &tmp.server_role,
-                                      "host",
-                                      &tmp.host,
-                                      "port",
-                                      &tmp.port,
-                                      "transport",
-                                      &tmp.transport,
-                                      "downstream",
-                                      &downstream_child);
-
-    if (result != 0) {
-        PRINT_ERR_MSG(source);
-        return http_status_code_bad_request;
-    }
-
-    http_status_code code = http_status_code_ok;
-    *downstream = (downstream_message){.service_name = strdup(tmp.service_name),
-                                       .server_role = strdup(tmp.server_role),
-                                       .host = strdup(tmp.host),
-                                       .port = strdup(tmp.port),
-                                       .transport = tmp.transport,
-                                       .downstream = NULL};
-    if (downstream_child != NULL) {
-        code = parse_downstream_message(
-            downstream->downstream, downstream_child, source);
-        if (code != http_status_code_ok) {
-            goto cleanup;
-        }
-    }
-
-    if (downstream->service_name == NULL || downstream->server_role == NULL ||
-        downstream->host == NULL || downstream->port == NULL) {
-        code = http_status_code_internal_server_error;
-        goto cleanup;
-    }
-
-    return code;
-
-cleanup:
-    downstream_message_destroy(downstream);
-    return code;
-}
-
-typedef struct start_trace_request {
-    char* server_role;
-    bool sampled;
-    char* baggage;
-    downstream_message downstream;
-} start_trace_request;
-
-static inline void start_trace_request_destroy(start_trace_request* req)
-{
-    if (req == NULL) {
-        return;
-    }
-    free(req->server_role);
-    free(req->baggage);
-    downstream_message_destroy(&req->downstream);
-    memset(req, 0, sizeof(*req));
-}
-
-static inline http_status_code parse_start_trace_request(
-    start_trace_request* req, json_t* json, const char* source)
-{
-    if (req == NULL || json == NULL) {
-        return http_status_code_bad_request;
-    }
-
-    json_error_t err;
-    char* server_role;
-    int sampled;
-    char* baggage;
-    json_t* downstream;
-    const int result = json_unpack_ex(json,
-                                      &err,
-                                      0,
-                                      "{ss sb ss so}",
-                                      "serverRole",
-                                      &server_role,
-                                      "sampled",
-                                      &sampled,
-                                      "baggage",
-                                      &baggage,
-                                      "downstream",
-                                      &downstream);
-    if (result != 0) {
-        PRINT_ERR_MSG(source);
-        return http_status_code_bad_request;
-    }
-    *req = (start_trace_request){.server_role = strdup(server_role),
-                                 .sampled = (sampled != 0),
-                                 .baggage = strdup(baggage),
-                                 .downstream = {0}};
-    http_status_code code = http_status_code_ok;
-    if (req->server_role == NULL || req->baggage == NULL) {
-        code = http_status_code_internal_server_error;
-        goto cleanup;
-    }
-    if (code != http_status_code_ok) {
-        goto cleanup;
-    }
-    code = parse_downstream_message(&req->downstream, downstream, source);
-    if (code != http_status_code_ok) {
-        goto cleanup;
-    }
-
-    assert(code == http_status_code_ok);
-    return code;
-
-cleanup:
-    start_trace_request_destroy(req);
-    return code;
-}
-
-static inline void prepare_response(const opentracing_span_context* context,
+static inline void prepare_response(opentracing_span_context* context,
                                     const char* server_role,
                                     const downstream_message* downstream,
                                     int client_fd)
@@ -286,8 +82,8 @@ static inline void start_trace(json_t* json, const char* source, int client_fd)
     /* TODO */
     (void) client_fd;
     start_trace_request req;
-    http_status_code code = parse_start_trace_request(&req, json, source);
-    if (code != http_status_code_ok) {
+    enum http_status code = parse_start_trace_request(&req, json, source);
+    if (code != HTTP_STATUS_OK) {
         goto cleanup;
     }
 
@@ -295,7 +91,7 @@ static inline void start_trace(json_t* json, const char* source, int client_fd)
     char buffer[buffer_size];
     opentracing_tracer* tracer = opentracing_global_tracer();
     if (tracer == NULL) {
-        code = http_status_code_internal_server_error;
+        code = HTTP_STATUS_INTERNAL_SERVER_ERROR;
         goto cleanup;
     }
     opentracing_span* span = tracer->start_span(tracer, req.server_role);
@@ -306,7 +102,7 @@ static inline void start_trace(json_t* json, const char* source, int client_fd)
         };
         span->set_tag(span, "sampling.priority", &value);
     }
-    span->set_baggage_item(span, "crossdock-baggage-key", req.baggage);
+    span->set_baggage_item(span, baggage_key, req.baggage);
     prepare_response(
         span->span_context(span), req.server_role, &req.downstream, client_fd);
     return;
@@ -317,7 +113,7 @@ cleanup:
                                  sizeof(buffer) - 1,
                                  "HTTP/1.1 %d %s\r\n\r\n",
                                  code,
-                                 status_line(code));
+                                 http_status_line(code));
         (void) write(client_fd, buffer, len);
         close(client_fd);
     } while (0);
@@ -350,7 +146,7 @@ static inline void handle_request(const char* request, int client_fd)
     char method[SHORT_SIZE];
     char path[SHORT_SIZE];
     sscanf(request, "%" SHORT_FMT " %" SHORT_FMT " HTTP/1.1\r\n", method, path);
-    http_status_code code = http_status_code_ok;
+    enum http_status code = HTTP_STATUS_OK;
     enum { body_size = 512 };
     char body[body_size];
     const char* body_pos = strstr(request, "\r\n\r\n");
@@ -363,7 +159,7 @@ static inline void handle_request(const char* request, int client_fd)
         }
         else {
             if (sizeof(body) - 1 < content_length) {
-                code = http_status_code_internal_server_error;
+                code = HTTP_STATUS_INTERNAL_SERVER_ERROR;
                 goto cleanup;
             }
             strncpy(body, body_pos, content_length);
@@ -374,14 +170,14 @@ static inline void handle_request(const char* request, int client_fd)
     printf("path = %s\n", path);
     if (strcmp(path, "/start_trace") == 0 || strcmp(path, "/join_trace") == 0) {
         if (body_pos == NULL) {
-            code = http_status_code_bad_request;
+            code = HTTP_STATUS_BAD_REQUEST;
             goto cleanup;
         }
         json_error_t err;
         json_t* json_body = json_loads(body, 0, &err);
         if (json_body == NULL) {
             PRINT_ERR_MSG(body);
-            code = http_status_code_bad_request;
+            code = HTTP_STATUS_BAD_REQUEST;
             goto cleanup;
         }
 
@@ -397,7 +193,7 @@ static inline void handle_request(const char* request, int client_fd)
         return;
     }
     else if (strcmp(path, "/") != 0) {
-        code = http_status_code_not_found;
+        code = HTTP_STATUS_NOT_FOUND;
     }
 
 cleanup:
@@ -408,7 +204,7 @@ cleanup:
                                  sizeof(buffer),
                                  "HTTP/1.1 %d %s\r\n\r\n",
                                  code,
-                                 status_line(code));
+                                 http_status_line(code));
         (void) write(client_fd, buffer, len);
         close(client_fd);
     } while (0);
@@ -423,13 +219,13 @@ static void* serve(void* arg)
     char buffer[buffer_size];
     const int num_read = read(client_fd, buffer, buffer_size - 1);
     if (num_read + 1 >= buffer_size) {
-        http_status_code code = http_status_code_internal_server_error;
+        enum http_status code = HTTP_STATUS_INTERNAL_SERVER_ERROR;
         fprintf(stderr, "Request too large for buffer\n");
         const int len = snprintf(buffer,
                                  sizeof(buffer),
                                  "HTTP/1.1 %d %s\r\n\r\n",
                                  code,
-                                 status_line(code));
+                                 http_status_line(code));
         (void) write(client_fd, buffer, len);
         close(client_fd);
     }
