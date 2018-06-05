@@ -206,16 +206,26 @@ function(generate_protobuf_c gen_src)
     set(protoc_out_files
         "${generated_src_dir}/protoc-gen/${component}.pb-c.h"
         "${generated_src_dir}/protoc-gen/${component}.pb-c.c")
-    add_custom_command(
-      OUTPUT ${protoc_out_files}
-      COMMAND ${protoc_exe}
-      ARGS --plugin=$<TARGET_FILE:protobuf-c::protoc-gen-c>
-           --c_out "${generated_src_dir}/protoc-gen"
-           -I. "${component}.proto"
-      WORKING_DIRECTORY ${dir}
-      MAIN_DEPENDENCY ${proto_src}
-      VERBATIM
-      USES_TERMINAL)
+
+		# protobuf-c-compiler 1.3 + has protoc-gen-c --plugin instead of
+		# protoc-c
+		if (TARGET protobuf-c::protoc-gen-c)
+			SET(protoc_plugin --plugin=$<TARGET_FILE:protobuf-c::protoc-gen-c>)
+		else()
+			# Use the 1.2-compatible protoc-c
+			SET(protoc_exe protobuf-c::protoc-c)
+			SET(protoc_plugin)
+		endif()
+		add_custom_command(
+			OUTPUT ${protoc_out_files}
+			COMMAND ${protoc_exe}
+			ARGS ${protoc_plugin}
+					 --c_out "${generated_src_dir}/protoc-gen"
+					 -I. "${component}.proto"
+			WORKING_DIRECTORY ${dir}
+			MAIN_DEPENDENCY ${proto_src}
+			VERBATIM
+			USES_TERMINAL)
     list(APPEND out_files ${protoc_out_files})
   endforeach()
   set(${gen_src} ${out_files} PARENT_SCOPE)

@@ -14,20 +14,20 @@
 # limitations under the License.
 #
 # .rst
-# FindProtobufC
+# Findprotobuf-c
 # -------------
 #
 # Finds the protobuf-c library
 #
 # This wil define the following variables::
 #
-# PROTOBUF_C_FOUND      - True if the system has the ProtobufC library
-# PROTOBUF_C_VERSION    - The version of the ProtobufC library which was found
+# PROTOBUF_C_FOUND      - True if the system has the protobuf-c library
+# PROTOBUF_C_VERSION    - The version of the protobuf-c library which was found
 # PROTOC_C_EXECUTABLE   - The protoc-c executable, protoc-c-NOTFOUND otherwise
 #
 # and the following imported targets::
 #
-# ProtobufC::ProtobufC    - The ProtobufC library
+# protobuf-c::protobuf-c    - The protobuf-c library
 #
 # Based on https://cmake.org/cmake/help/v3.10/manual/cmake-developer.7.html#a-sample-find-module
 
@@ -55,12 +55,27 @@ if(PROTOBUF_C_FOUND)
   set(PROTOBUF_C_DEFINITIONS ${PC_PROTOBUF_C_CFLAGS_OTHER})
 endif()
 
-if(PROTOBUF_C_FOUND AND NOT TARGET ProtobufC::ProtobufC)
-  add_library(ProtobufC::ProtobufC UNKNOWN IMPORTED)
-  set_target_properties(ProtobufC::ProtobufC PROPERTIES
+if(PROTOBUF_C_FOUND AND NOT TARGET protobuf-c::protobuf-c)
+  add_library(protobuf-c::protobuf-c UNKNOWN IMPORTED)
+  set_target_properties(protobuf-c::protobuf-c PROPERTIES
     IMPORTED_LOCATION "${PROTOBUF_C_LIBRARY}"
     INTERFACE_COMPILE_OPTIONS "${PC_PROTOBUF_C_CFLAGS_OTHER}"
     INTERFACE_INCLUDE_DIRECTORIES "${PROTOBUF_C_INCLUDE_DIR}")
 endif()
 
 find_program(PROTOC_C_EXECUTABLE NAMES protoc-c)
+
+if (PROTOC_C_EXECUTABLE AND NOT TARGET protobuf-c::protoc-c)
+  add_executable(protobuf-c::protoc-c IMPORTED)
+  set_target_properties(protobuf-c::protoc-c PROPERTIES
+    IMPORTED_LOCATION "${PROTOC_C_EXECUTABLE}")
+endif()
+
+find_program(PROTOC_GEN_C_EXECUTABLE NAMES protoc-gen-c)
+
+# 1.3 only
+if (PROTOC_GEN_C_EXECUTABLE AND NOT TARGET protobuf-c::protoc-gen-c)
+  add_executable(protobuf-c::protoc-gen-c IMPORTED)
+  set_target_properties(protobuf-c::protoc-gen-c PROPERTIES
+    IMPORTED_LOCATION "${PROTOC_GEN_C_EXECUTABLE}")
+endif()
