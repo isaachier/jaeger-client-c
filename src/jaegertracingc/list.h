@@ -105,7 +105,7 @@ jaeger_list_insert(jaeger_list* list, size_t index, jaeger_list_node* elem)
 
 static inline void jaeger_list_append(jaeger_list* list, jaeger_list_node* elem)
 {
-    return jaeger_list_insert(list, list->size, elem);
+    jaeger_list_insert(list, list->size, elem);
 }
 
 static inline void jaeger_list_node_remove(jaeger_list* list,
