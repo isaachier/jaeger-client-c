@@ -126,9 +126,12 @@ hunter_add_package(protobuf-c)
 find_package(protobuf-c ${hunter_config} REQUIRED)
 list(APPEND package_deps protobuf-c)
 
-hunter_add_package(pcg)
-find_package(pcg ${hunter_config} REQUIRED)
-list(APPEND package_deps pcg)
+option(JAEGERTRACINGC_USE_PCG "Use pcg random number generation" ON)
+if(JAEGERTRACINGC_USE_PCG)
+  hunter_add_package(pcg)
+  find_package(pcg ${hunter_config} REQUIRED)
+  list(APPEND package_deps pcg)
+endif()
 
 option(JAEGERTRACINGC_MT "Enable multithreading support" ON)
 if(JAEGERTRACINGC_MT)
@@ -262,10 +265,12 @@ target_include_directories(jaegertracingc PUBLIC
 
 target_link_libraries(jaegertracingc PUBLIC
   opentracing-c::opentracingc
-	pcg::pcg_random
   http-parser::http_parser
   jansson::jansson
   protobuf-c::protobuf-c)
+if(JAEGERTRACINGC_USE_PCG)
+  target_link_libraries(jaegertracingc PUBLIC pcg::pcg_random)
+endif()
 if(JAEGERTRACINGC_MT)
   target_link_libraries(jaegertracingc PUBLIC Threads::Threads)
   target_compile_definitions(jaegertracingc PUBLIC JAEGERTRACINGC_MT)
@@ -273,25 +278,27 @@ endif()
 
 check_atomics(have_atomics)
 if(have_atomics)
-  target_compile_definitions(jaegertracingc PUBLIC
-    "JAEGERTRACINGC_HAVE_ATOMICS")
+  target_compile_definitions(jaegertracingc PUBLIC JAEGERTRACINGC_HAVE_ATOMICS)
 else()
 endif()
 
+if(JAEGERTRACINGC_USE_PCG)
+  list(APPEND private_defs USE_PCG)
+endif()
 check_symbol_exists(
   "SYS_getrandom" "linux/random.h;sys/syscall.h;unistd.h" have_getrandom)
 if(have_getrandom)
-  target_compile_definitions(jaegertracingc PRIVATE "HAVE_GETRANDOM")
+  list(APPEND private_defs HAVE_GETRANDOM)
 else()
   check_symbol_exists("arc4random_buf" "stdlib.h" have_arc4random_buf)
   if(have_arc4random_buf)
-    target_compile_definitions(jaegertracingc PRIVATE "HAVE_ARC4RANDOM_BUF")
+    list(APPEND private_defs HAVE_ARC4RANDOM)
   endif()
 endif()
 
 test_big_endian(big_endian)
 if(NOT big_endian)
-  target_compile_definitions(jaegertracingc PRIVATE "LITTLE_ENDIAN")
+  list(APPEND private_defs LITTLE_ENDIAN)
 
   if(WIN32)
     set(swap_func "_byteswap_uint64")
@@ -313,13 +320,14 @@ check_attributes()
 
 check_builtin(have_builtin)
 if(have_builtin)
-  target_compile_definitions(jaegertracingc PRIVATE HAVE_BUILTIN)
+  list(APPEND private_defs HAVE_BUILTIN)
 endif()
 
 if(JAEGERTRACINGC_VERBOSE_ALLOC)
-  target_compile_definitions(
-    jaegertracingc PRIVATE JAEGERTRACINGC_VERBOSE_ALLOC)
+  list(APPEND private_defs VERBOSE_ALLOC)
 endif()
+
+target_compile_definitions(jaegertracingc PRIVATE ${private_defs})
 
 if(BUILD_TESTING)
   add_library(unity "third_party/unity/src/unity.c")
@@ -372,7 +380,7 @@ if(BUILD_TESTING)
     "src/jaegertracingc" $<BUILD_INTERFACE:${generated_src_dir}>)
   target_link_libraries(jaegertracingc_test PUBLIC jaegertracingc unity)
   target_compile_definitions(jaegertracingc_test PUBLIC
-    UNITY_USE_COMMAND_LINE_ARGS)
+    UNITY_USE_COMMAND_LINE_ARGS ${private_defs})
   target_compile_options(jaegertracingc_test PUBLIC ${jaegertracingc_flags})
   target_link_libraries(jaegertracingc_test PUBLIC ${sanitizer_flags})
 

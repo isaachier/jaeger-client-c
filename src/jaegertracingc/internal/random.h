@@ -31,23 +31,23 @@
 #include <sys/syscall.h>
 #include <unistd.h>
 
-#define RANDOM_SEED(seed)                                            \
-    do {                                                             \
-        syscall(SYS_getrandom, (seed), sizeof(seed), GRND_NONBLOCK); \
+#define RANDOM_SEED(seed, size)                                \
+    do {                                                       \
+        syscall(SYS_getrandom, (seed), (size), GRND_NONBLOCK); \
     } while (0)
 
 #elif defined(HAVE_ARC4RANDOM_BUF)
 
-#define RANDOM_SEED(seed)                     \
-    do {                                      \
-        arc4random_buf((seed), sizeof(seed)); \
+#define RANDOM_SEED(seed, size)         \
+    do {                                \
+        arc4random_buf((seed), (size)); \
     } while (0)
 
 #else
 
-#define RANDOM_SEED(seed)                                    \
-    do {                                                     \
-        read_random_seed(seed, sizeof(seed), "/dev/random"); \
+#define RANDOM_SEED(seed, size)                          \
+    do {                                                 \
+        read_random_seed((seed), (size), "/dev/random"); \
     } while (0)
 
 #endif /* HAVE_GETRANDOM */
@@ -56,7 +56,11 @@ extern jaeger_thread_local rng_storage;
 
 typedef struct jaeger_rng {
     jaeger_destructible base;
+#ifdef USE_PCG
     struct pcg_state_setseq_64 state;
+#else
+    unsigned int state;
+#endif /* USE_PCG */
 } jaeger_rng;
 
 static inline void
@@ -100,10 +104,14 @@ static inline void jaeger_rng_init(jaeger_rng* rng)
 {
     assert(rng != NULL);
     ((jaeger_destructible*) rng)->destroy = &rng_destroy;
+#ifdef USE_PCG
     uint64_t seed[NUM_UINT64_IN_SEED];
     memset(seed, 0, sizeof(seed));
-    RANDOM_SEED(seed);
+    RANDOM_SEED(seed, sizeof(seed));
     pcg32_srandom_r(&rng->state, seed[0], seed[1]);
+#else
+    RANDOM_SEED(&rng->state, sizeof(rng->state));
+#endif /* USE_PCG */
 }
 
 static inline jaeger_rng* jaeger_rng_alloc(void)
