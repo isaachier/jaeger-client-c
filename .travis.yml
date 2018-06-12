@@ -5,8 +5,6 @@ addons:
   apt:
     update: true
     packages: &1
-    - libhttp-parser-dev
-    - libjansson-dev
     - pkg-config
     - autoconf
     - automake
@@ -22,12 +20,30 @@ matrix:
   - os: linux
     addons:
       apt:
-        update: true
+        update: false
         packages:
         - *1
         - g++-4.8
     env:
     - MATRIX_EVAL="CC=gcc-4.8 && CXX=g++-4.8"
+  - os: linux
+    addons:
+      apt:
+        update: true
+        packages:
+        - *1
+        - cmake
+        - g++-4.8
+        - libhttp-parser-dev
+        - libjansson-dev
+        #Can't use these, no suitable package source (see scripts/install-deps.sh
+        #and ppa:maarten-fonville/protobuf
+        #- libprotobuf-c-dev
+        #- protobuf-c-compiler
+    env:
+    - MATRIX_EVAL="CC=gcc-4.8 && CXX=g++-4.8"
+    - USE_HUNTER=off
+    - USE_LOCAL_CMAKE=on
   - os: linux
     addons:
       apt:
@@ -144,6 +160,8 @@ script:
 - ./scripts/build.sh "$HOME/install"
 after_success:
 - ./scripts/upload-coverage.sh
+after_failure:
+- cat CMakeCache.txt
 env:
   global:
   - LANG="en_US.UTF-8"
