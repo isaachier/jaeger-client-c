@@ -22,10 +22,10 @@ function build_from_tar() {
     rm -rf "$dir"
     tar -xvzf "$file"
     pushd "$dir"
-    ./configure --prefix="$prefix"
-    make -j3
-    make check -j3
-    make install
+    ./configure --quiet --prefix="$prefix"
+    make -s -j3
+    make -s check -j3
+    make -s install
     popd
     rm -rf "$dir"
 }
