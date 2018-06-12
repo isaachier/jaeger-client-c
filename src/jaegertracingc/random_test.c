@@ -22,6 +22,10 @@
 #include "jaegertracingc/alloc.h"
 #include "jaegertracingc/threading.h"
 
+#if !defined(USE_PCG)
+#include <time.h>
+#endif
+
 #define NUM_THREADS 5
 
 static void* random_func(void* arg)
@@ -34,6 +38,14 @@ static void* random_func(void* arg)
 
 void test_random()
 {
+#if !defined(USE_PCG)
+	/*
+     * Init the system RNG. We could use our seed from RANDOM_SEED, but there's
+     * not much benefit when we're just generating request and span IDs, etc.
+     */
+    srand(time(NULL));
+#endif
+
     /* Test allocation failure. */
     jaeger_set_allocator(jaeger_null_allocator());
     TEST_ASSERT_EQUAL(0, jaeger_random64());
