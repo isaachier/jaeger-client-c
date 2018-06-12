@@ -113,18 +113,23 @@ if(HUNTER_ENABLED)
   hunter_add_package(Protobuf)
   find_package(Protobuf ${hunter_config} REQUIRED)
   list(APPEND package_deps Protobuf)
-  set(protoc_exe protobuf::protoc)
-else()
-  find_program(protoc_exe protoc)
-  if(NOT protoc_exe)
-    message(FATAL_ERROR
-            "Cannot find protoc executable, please install Protobuf")
-  endif()
 endif()
 
 hunter_add_package(protobuf-c)
 find_package(protobuf-c ${hunter_config} REQUIRED)
 list(APPEND package_deps protobuf-c)
+
+if(TARGET protobuf-c::protoc-gen-c AND TARGET protobuf::protoc)
+  message(STATUS "using protoc and protoc-gen-c")
+  set(protoc_exe $<TARGET_FILE:protobuf::protoc>)
+  set(protoc_plugin_arg --plugin=$<TARGET_FILE:protobuf-c::protoc-gen-c>)
+elseif(TARGET protobuf-c::protoc-c)
+  # 1.2-style protoc-c
+  # the CMake files don't report the version properly
+  message(FATAL_ERROR "could only find protoc-c not protoc-gen-c; you must have protobuf 1.2 or older, which is not supported")
+else()
+  message(FATAL_ERROR "neither protoc and protoc-gen-c, nor the standalone protoc-c, were found")
+endif()
 
 option(JAEGERTRACINGC_USE_PCG "Use pcg random number generation" ON)
 if(JAEGERTRACINGC_USE_PCG)
@@ -207,21 +212,12 @@ function(generate_protobuf_c gen_src)
         "${generated_src_dir}/protoc-gen/${component}.pb-c.h"
         "${generated_src_dir}/protoc-gen/${component}.pb-c.c")
 
-		# protobuf-c-compiler 1.3 + has protoc-gen-c --plugin instead of
-		# protoc-c
-		if (TARGET protobuf-c::protoc-gen-c)
-			SET(protoc_plugin --plugin=$<TARGET_FILE:protobuf-c::protoc-gen-c>)
-		else()
-			# Use the 1.2-compatible protoc-c
-			SET(protoc_exe protobuf-c::protoc-c)
-			SET(protoc_plugin)
-		endif()
 		add_custom_command(
 			OUTPUT ${protoc_out_files}
 			COMMAND ${protoc_exe}
-			ARGS ${protoc_plugin}
-					 --c_out "${generated_src_dir}/protoc-gen"
-					 -I. "${component}.proto"
+			ARGS ${protoc_plugin_arg}
+				 --c_out "${generated_src_dir}/protoc-gen"
+				 -I. "${component}.proto"
 			WORKING_DIRECTORY ${dir}
 			MAIN_DEPENDENCY ${proto_src}
 			VERBATIM

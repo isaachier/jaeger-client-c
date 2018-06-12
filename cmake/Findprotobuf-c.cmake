@@ -24,10 +24,14 @@
 # PROTOBUF_C_FOUND      - True if the system has the protobuf-c library
 # PROTOBUF_C_VERSION    - The version of the protobuf-c library which was found
 # PROTOC_C_EXECUTABLE   - The protoc-c executable, protoc-c-NOTFOUND otherwise
+# PROTOC_GEN_C_EXECUTABLE
 #
 # and the following imported targets::
 #
 # protobuf-c::protobuf-c    - The protobuf-c library
+# protobuf-c::protoc-c      - The protoc-c utility executable
+# protobuf-c::protoc-gen-c  - The protoc gen-c plugin utility executable (1.3 only)
+# protobuf:protoc           - The protoc command (for compatibility with other CMake scripts)
 #
 # Based on https://cmake.org/cmake/help/v3.10/manual/cmake-developer.7.html#a-sample-find-module
 
@@ -69,6 +73,14 @@ if (PROTOC_C_EXECUTABLE AND NOT TARGET protobuf-c::protoc-c)
   add_executable(protobuf-c::protoc-c IMPORTED)
   set_target_properties(protobuf-c::protoc-c PROPERTIES
     IMPORTED_LOCATION "${PROTOC_C_EXECUTABLE}")
+endif()
+
+find_program(PROTOC_EXECUTABLE NAMES protoc)
+
+if (PROTOC_EXECUTABLE AND NOT TARGET protobuf::protoc)
+  add_executable(protobuf::protoc IMPORTED)
+  set_target_properties(protobuf::protoc PROPERTIES
+    IMPORTED_LOCATION "${PROTOC_EXECUTABLE}")
 endif()
 
 find_program(PROTOC_GEN_C_EXECUTABLE NAMES protoc-gen-c)
