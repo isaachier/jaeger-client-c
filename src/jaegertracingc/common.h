@@ -53,8 +53,19 @@ extern "C" {
 #define JAEGERTRACINGC_CLAMP(x, low, high) \
     JAEGERTRACINGC_MIN(JAEGERTRACINGC_MAX((x), (low)), (high))
 
-#define JAEGERTRACINGC_CONTAINER_OF(ptr, type, member) \
-    (type*) (((char*) (ptr)) - offsetof(type, member))
+#define JAEGERTRACINGC_WRAP_COPY(copy, dst_type, src_type)       \
+    static inline bool copy##_wrapper(                           \
+        void* arg, void* restrict dst, const void* restrict src) \
+    {                                                            \
+        (void) arg;                                              \
+        return copy((dst_type*) dst, (src_type*) src);           \
+    }
+
+#define JAEGERTRACINGC_WRAP_DESTROY(destroy, type) \
+    static inline void destroy##_wrapper(void* x)  \
+    {                                              \
+        destroy((type*) x);                        \
+    }
 
 typedef opentracing_destructible jaeger_destructible;
 

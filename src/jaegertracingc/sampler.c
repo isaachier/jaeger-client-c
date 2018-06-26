@@ -255,6 +255,18 @@ void jaeger_guaranteed_throughput_probabilistic_sampler_update(
     }
 }
 
+void jaeger_operation_sampler_destroy(jaeger_operation_sampler* op_sampler)
+{
+    if (op_sampler == NULL) {
+        return;
+    }
+
+    if (op_sampler->operation_name != NULL) {
+        jaeger_free(op_sampler->operation_name);
+        op_sampler->operation_name = NULL;
+    }
+}
+
 static int op_name_cmp(const void* lhs, const void* rhs)
 {
     assert(lhs != NULL);
@@ -1045,6 +1057,38 @@ static inline bool jaeger_http_sampling_manager_get_sampling_strategies(
     *null_byte_ptr = '\0';
 
     return jaeger_http_sampling_manager_parse_response_json(manager, response);
+}
+
+jaeger_sampler*
+jaeger_sampler_choice_get_sampler(jaeger_sampler_choice* sampler)
+{
+#define JAEGERTRACINGC_SAMPLER_TYPE_CASE(type) \
+    case jaeger_##type##_sampler_type:         \
+        return (jaeger_sampler*) &sampler->type##_sampler
+
+    switch (sampler->type) {
+        JAEGERTRACINGC_SAMPLER_TYPE_CASE(const);
+        JAEGERTRACINGC_SAMPLER_TYPE_CASE(probabilistic);
+        JAEGERTRACINGC_SAMPLER_TYPE_CASE(rate_limiting);
+        JAEGERTRACINGC_SAMPLER_TYPE_CASE(guaranteed_throughput_probabilistic);
+        JAEGERTRACINGC_SAMPLER_TYPE_CASE(adaptive);
+    default:
+        jaeger_log_warn(
+            "Invalid sampler type in sampler choice, sampler type = %d",
+            sampler->type);
+        return NULL;
+    }
+
+#undef JAEGERTRACINGC_SAMPLER_TYPE_CASE
+}
+
+void jaeger_sampler_choice_destroy(jaeger_sampler_choice* sampler)
+{
+    assert(sampler != NULL);
+    jaeger_sampler* s = jaeger_sampler_choice_get_sampler(sampler);
+    if (s != NULL) {
+        ((jaeger_destructible*) s)->destroy((jaeger_destructible*) s);
+    }
 }
 
 static bool

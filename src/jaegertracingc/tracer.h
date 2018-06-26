@@ -166,14 +166,13 @@ void jaeger_tracer_destroy(jaeger_destructible* d);
  * @param headers Headers config for span context propagation. May be NULL.
  * @return True on success, false otherwise.
  */
-JAEGERTRACINGC_EXPORT bool
-jaeger_tracer_init(jaeger_tracer* tracer,
-                   const char* service_name,
-                   jaeger_sampler* sampler,
-                   jaeger_reporter* reporter,
-                   jaeger_metrics* metrics,
-                   const jaeger_tracer_options* options,
-                   const jaeger_headers_config* headers);
+bool jaeger_tracer_init(jaeger_tracer* tracer,
+                        const char* service_name,
+                        jaeger_sampler* sampler,
+                        jaeger_reporter* reporter,
+                        jaeger_metrics* metrics,
+                        const jaeger_tracer_options* options,
+                        const jaeger_headers_config* headers);
 
 /**
  * Start a new span.
@@ -195,11 +194,8 @@ opentracing_span* jaeger_tracer_start_span_with_options(
  *                       May not be NULL.
  * @return New span on success, NULL otherwise.
  */
-static inline opentracing_span*
-jaeger_tracer_start_span(opentracing_tracer* tracer, const char* operation_name)
-{
-    return jaeger_tracer_start_span_with_options(tracer, operation_name, NULL);
-}
+opentracing_span* jaeger_tracer_start_span(opentracing_tracer* tracer,
+                                           const char* operation_name);
 
 /**
  * Flush any pending spans in tracer. Only effective when using remote reporter,
@@ -207,15 +203,12 @@ jaeger_tracer_start_span(opentracing_tracer* tracer, const char* operation_name)
  * @param tracer Tracer instance to flush.
  * @return True on success, false otherwise.
  */
-JAEGERTRACINGC_EXPORT bool jaeger_tracer_flush(jaeger_tracer* tracer);
+bool jaeger_tracer_flush(jaeger_tracer* tracer);
 
 /**
  * Implements opentracing-c tracer close method.
  */
-static inline void jaeger_tracer_close(opentracing_tracer* tracer)
-{
-    jaeger_tracer_flush((jaeger_tracer*) tracer);
-}
+void jaeger_tracer_close(opentracing_tracer* tracer);
 
 /**
  * @internal

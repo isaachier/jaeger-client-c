@@ -15,3 +15,67 @@
  */
 
 #include "jaegertracingc/trace_id.h"
+
+void jaeger_trace_id_to_protobuf(Jaegertracing__Protobuf__TraceID* dst,
+                                 const jaeger_trace_id* src)
+{
+    assert(dst != NULL);
+    assert(src != NULL);
+#ifdef JAEGERTRACINGC_HAVE_PROTOBUF_OPTIONAL_FIELDS
+    dst->has_high = true;
+    dst->has_low = true;
+#endif /* JAEGERTRACINGC_HAVE_PROTOBUF_OPTIONAL_FIELDS */
+    dst->high = src->high;
+    dst->low = src->low;
+}
+
+int jaeger_trace_id_format(const jaeger_trace_id* trace_id,
+                           char* buffer,
+                           int buffer_len)
+{
+    assert(trace_id != NULL);
+    assert(buffer != NULL);
+    assert(buffer_len >= 0);
+    if (trace_id->high == 0) {
+        return snprintf(buffer, buffer_len, "%" PRIx64, trace_id->low);
+    }
+    return snprintf(buffer,
+                    buffer_len,
+                    "%" PRIx64 "%016" PRIx64,
+                    trace_id->high,
+                    trace_id->low);
+}
+
+bool jaeger_trace_id_scan(jaeger_trace_id* trace_id, const char* str)
+{
+    assert(trace_id != NULL);
+    assert(str != NULL);
+    const int len = strlen(str);
+    if (len > JAEGERTRACINGC_UINT64_MAX_STR_LEN * 2) {
+        return false;
+    }
+    uint64_t high = 0;
+    uint64_t low = 0;
+    char* iter = NULL;
+    if (len > JAEGERTRACINGC_UINT64_MAX_STR_LEN) {
+        const char* low_start = str + len - JAEGERTRACINGC_UINT64_MAX_STR_LEN;
+        const int high_len = low_start - str;
+        char buffer[high_len + 1];
+        memcpy(buffer, str, high_len);
+        buffer[high_len] = '\0';
+        high = strtoull(buffer, &iter, JAEGERTRACINGC_HEX_BASE);
+        assert(iter != NULL);
+        if (*iter != '\0') {
+            return false;
+        }
+        iter = NULL;
+        str = low_start;
+    }
+    low = strtoull(str, &iter, JAEGERTRACINGC_HEX_BASE);
+    assert(iter != NULL);
+    if (*iter != '\0') {
+        return false;
+    }
+    *trace_id = (jaeger_trace_id){.high = high, .low = low};
+    return true;
+}

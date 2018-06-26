@@ -53,103 +53,17 @@ typedef struct jaeger_list {
         .head = NULL, .size = 0  \
     }
 
-static inline jaeger_list_node* jaeger_list_get(jaeger_list* list, size_t index)
-{
-    assert(list != NULL);
-    if (index >= list->size) {
-        return NULL;
-    }
+jaeger_list_node* jaeger_list_get(jaeger_list* list, size_t index);
 
-    jaeger_list_node* node = list->head;
-    for (size_t i = 0; i < index; i++) {
-        node = node->next;
-    }
-    return node;
-}
+void jaeger_list_insert(jaeger_list* list,
+                        size_t index,
+                        jaeger_list_node* elem);
 
-static inline void
-jaeger_list_insert(jaeger_list* list, size_t index, jaeger_list_node* elem)
-{
-    assert(list != NULL);
-    assert(elem != NULL);
-    assert(index <= list->size);
+void jaeger_list_append(jaeger_list* list, jaeger_list_node* elem);
 
-    if (index == 0) {
-        if (list->head == NULL) {
-            elem->next = NULL;
-            elem->prev = NULL;
-        }
-        else {
-            assert(list->head->prev == NULL);
-            elem->prev = NULL;
-            elem->next = list->head;
-            list->head->prev = elem;
-        }
-        list->head = elem;
-        list->size++;
-        return;
-    }
+void jaeger_list_node_remove(jaeger_list* list, jaeger_list_node* node);
 
-    assert(index > 0);
-    jaeger_list_node* node = jaeger_list_get(list, index - 1);
-    assert(node != NULL);
-    elem->next = node->next;
-    if (elem->next != NULL) {
-        elem->next->prev = elem;
-    }
-    node->next = elem;
-    elem->prev = node;
-
-    list->size++;
-}
-
-static inline void jaeger_list_append(jaeger_list* list, jaeger_list_node* elem)
-{
-    jaeger_list_insert(list, list->size, elem);
-}
-
-static inline void jaeger_list_node_remove(jaeger_list* list,
-                                           jaeger_list_node* node)
-{
-    assert(list != NULL);
-    assert(node != NULL);
-
-    if (list->head == node) {
-        if (node->next != NULL) {
-            list->head = node->next;
-        }
-        else {
-            list->head = NULL;
-        }
-    }
-
-    if (node->next != NULL) {
-        node->next->prev = node->prev;
-    }
-    if (node->prev != NULL) {
-        node->prev->next = node->next;
-    }
-    node->next = NULL;
-    node->prev = NULL;
-
-    list->size--;
-}
-
-static inline void jaeger_list_clear(jaeger_list* list)
-{
-    if (list == NULL) {
-        return;
-    }
-
-    for (jaeger_list_node *node = list->head, *next_node; node != NULL;
-         node = next_node) {
-        next_node = node->next;
-        ((jaeger_destructible*) node)->destroy((jaeger_destructible*) node);
-    }
-
-    list->head = NULL;
-    list->size = 0;
-}
+void jaeger_list_clear(jaeger_list* list);
 
 #ifdef __cplusplus
 } /* extern "C" */

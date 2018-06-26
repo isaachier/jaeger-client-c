@@ -41,50 +41,14 @@ typedef struct jaeger_key_value {
         .key = NULL, .value = NULL    \
     }
 
-static inline void jaeger_key_value_destroy(jaeger_key_value* kv)
-{
-    if (kv == NULL) {
-        return;
-    }
-    if (kv->key != NULL) {
-        jaeger_free(kv->key);
-        kv->key = NULL;
-    }
-    if (kv->value != NULL) {
-        jaeger_free(kv->value);
-        kv->value = NULL;
-    }
-}
+void jaeger_key_value_destroy(jaeger_key_value* kv);
 
-static inline bool
-jaeger_key_value_init(jaeger_key_value* kv, const char* key, const char* value)
-{
-    assert(kv != NULL);
-    assert(key != NULL);
-    assert(value != NULL);
-    *kv = (jaeger_key_value) JAEGERTRACINGC_KEY_VALUE_INIT;
-    kv->key = jaeger_strdup(key);
-    if (kv->key == NULL) {
-        goto cleanup;
-    }
-    kv->value = jaeger_strdup(value);
-    if (kv->value == NULL) {
-        goto cleanup;
-    }
-    return true;
+bool jaeger_key_value_init(jaeger_key_value* kv,
+                           const char* key,
+                           const char* value);
 
-cleanup:
-    jaeger_key_value_destroy(kv);
-    return false;
-}
-
-static inline bool jaeger_key_value_copy(jaeger_key_value* restrict dst,
-                                         const jaeger_key_value* restrict src)
-{
-    assert(dst != NULL);
-    assert(src != NULL);
-    return jaeger_key_value_init(dst, src->key, src->value);
-}
+bool jaeger_key_value_copy(jaeger_key_value* restrict dst,
+                           const jaeger_key_value* restrict src);
 
 JAEGERTRACINGC_WRAP_COPY(jaeger_key_value_copy,
                          jaeger_key_value,

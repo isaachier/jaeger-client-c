@@ -94,18 +94,7 @@ typedef struct jaeger_operation_sampler {
     jaeger_guaranteed_throughput_probabilistic_sampler sampler;
 } jaeger_operation_sampler;
 
-static inline void
-jaeger_operation_sampler_destroy(jaeger_operation_sampler* op_sampler)
-{
-    if (op_sampler == NULL) {
-        return;
-    }
-
-    if (op_sampler->operation_name != NULL) {
-        jaeger_free(op_sampler->operation_name);
-        op_sampler->operation_name = NULL;
-    }
-}
+void jaeger_operation_sampler_destroy(jaeger_operation_sampler* op_sampler);
 
 typedef struct jaeger_adaptive_sampler {
     jaeger_sampler base;
@@ -149,37 +138,10 @@ typedef struct jaeger_sampler_choice {
         }                                                            \
     }
 
-static inline jaeger_sampler*
-jaeger_sampler_choice_get_sampler(jaeger_sampler_choice* sampler)
-{
-#define JAEGERTRACINGC_SAMPLER_TYPE_CASE(type) \
-    case jaeger_##type##_sampler_type:         \
-        return (jaeger_sampler*) &sampler->type##_sampler
+jaeger_sampler*
+jaeger_sampler_choice_get_sampler(jaeger_sampler_choice* sampler);
 
-    switch (sampler->type) {
-        JAEGERTRACINGC_SAMPLER_TYPE_CASE(const);
-        JAEGERTRACINGC_SAMPLER_TYPE_CASE(probabilistic);
-        JAEGERTRACINGC_SAMPLER_TYPE_CASE(rate_limiting);
-        JAEGERTRACINGC_SAMPLER_TYPE_CASE(guaranteed_throughput_probabilistic);
-        JAEGERTRACINGC_SAMPLER_TYPE_CASE(adaptive);
-    default:
-        jaeger_log_warn(
-            "Invalid sampler type in sampler choice, sampler type = %d",
-            sampler->type);
-        return NULL;
-    }
-
-#undef JAEGERTRACINGC_SAMPLER_TYPE_CASE
-}
-
-static inline void jaeger_sampler_choice_destroy(jaeger_sampler_choice* sampler)
-{
-    assert(sampler != NULL);
-    jaeger_sampler* s = jaeger_sampler_choice_get_sampler(sampler);
-    if (s != NULL) {
-        ((jaeger_destructible*) s)->destroy((jaeger_destructible*) s);
-    }
-}
+void jaeger_sampler_choice_destroy(jaeger_sampler_choice* sampler);
 
 #define JAEGERTRACINGC_HTTP_SAMPLING_MANAGER_REQUEST_MAX_LEN 256
 

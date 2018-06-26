@@ -75,19 +75,8 @@ typedef struct jaeger_composite_reporter {
 
 bool jaeger_composite_reporter_init(jaeger_composite_reporter* reporter);
 
-static inline bool
-jaeger_composite_reporter_add(jaeger_composite_reporter* reporter,
-                              jaeger_reporter* new_reporter)
-{
-    assert(reporter != NULL);
-    assert(new_reporter != NULL);
-    jaeger_reporter** reporter_ptr = jaeger_vector_append(&reporter->reporters);
-    if (reporter_ptr == NULL) {
-        return false;
-    }
-    *reporter_ptr = new_reporter;
-    return true;
-}
+bool jaeger_composite_reporter_add(jaeger_composite_reporter* reporter,
+                                   jaeger_reporter* new_reporter);
 
 typedef struct jaeger_remote_reporter {
     jaeger_reporter base;

@@ -149,82 +149,14 @@ typedef struct jaeger_metrics {
 #undef JAEGERTRACINGC_COUNTER_DECL
 #undef JAEGERTRACINGC_GAUGE_DECL
 
-static inline void jaeger_metrics_destroy(jaeger_metrics* metrics)
-{
-    if (metrics == NULL) {
-        return;
-    }
-
-#define JAEGERTRACINGC_METRICS_DESTROY_IF_NOT_NULL(member)                   \
-    do {                                                                     \
-        if (metrics->member != NULL) {                                       \
-            jaeger_destructible* d = (jaeger_destructible*) metrics->member; \
-            d->destroy(d);                                                   \
-            jaeger_free(metrics->member);                                    \
-            metrics->member = NULL;                                          \
-        }                                                                    \
-    } while (0);
-
-    JAEGERTRACINGC_METRICS_COUNTERS(JAEGERTRACINGC_METRICS_DESTROY_IF_NOT_NULL)
-    JAEGERTRACINGC_METRICS_GAUGES(JAEGERTRACINGC_METRICS_DESTROY_IF_NOT_NULL)
-
-#undef JAEGERTRACINGC_METRICS_DESTROY_IF_NOT_NULL
-}
-
-#define JAEGERTRACINGC_METRICS_ALLOC_INIT(member, base_type, type, init)     \
-    do {                                                                     \
-        if (success) {                                                       \
-            metrics->member = (base_type*) jaeger_malloc(sizeof(type));      \
-            if (metrics->member == NULL) {                                   \
-                jaeger_log_error("Cannot allocate metrics member " #member); \
-                success = false;                                             \
-            }                                                                \
-            else {                                                           \
-                init((type*) metrics->member);                               \
-            }                                                                \
-        }                                                                    \
-    } while (0)
-
-#define JAEGERTRACINGC_METRICS_INIT_IMPL(counter_init, gauge_init) \
-    do {                                                           \
-        assert(metrics != NULL);                                   \
-        memset(metrics, 0, sizeof(*metrics));                      \
-        bool success = true;                                       \
-                                                                   \
-        JAEGERTRACINGC_METRICS_COUNTERS(counter_init)              \
-        JAEGERTRACINGC_METRICS_GAUGES(gauge_init)                  \
-                                                                   \
-        if (!success) {                                            \
-            jaeger_metrics_destroy(metrics);                       \
-        }                                                          \
-                                                                   \
-        return success;                                            \
-    } while (0)
+void jaeger_metrics_destroy(jaeger_metrics* metrics);
 
 /**
  * Initialize a new metrics container with default metric implementations.
  * @param metrics Metrics instance to initialize.
  * @return True on success, false otherwise.
  */
-static inline bool jaeger_default_metrics_init(jaeger_metrics* metrics)
-{
-#define JAEGERTRACINGC_DEFAULT_COUNTER_ALLOC_INIT(member)     \
-    JAEGERTRACINGC_METRICS_ALLOC_INIT(member,                 \
-                                      jaeger_counter,         \
-                                      jaeger_default_counter, \
-                                      jaeger_default_counter_init);
-#define JAEGERTRACINGC_DEFAULT_GAUGE_ALLOC_INIT(member)     \
-    JAEGERTRACINGC_METRICS_ALLOC_INIT(member,               \
-                                      jaeger_gauge,         \
-                                      jaeger_default_gauge, \
-                                      jaeger_default_gauge_init);
-
-    JAEGERTRACINGC_METRICS_INIT_IMPL(JAEGERTRACINGC_DEFAULT_COUNTER_ALLOC_INIT,
-                                     JAEGERTRACINGC_DEFAULT_GAUGE_ALLOC_INIT);
-
-#undef JAEGERTRACINGC_DEFAULT_COUNTER_ALLOC_INIT
-#undef JAEGERTRACINGC_DEFAULT_GAUGE_ALLOC_INIT
-}
+bool jaeger_default_metrics_init(jaeger_metrics* metrics);
 
 /* Shared instance of null metrics. DO NOT MODIFY MEMBERS! */
 jaeger_metrics* jaeger_null_metrics();

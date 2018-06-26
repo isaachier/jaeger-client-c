@@ -191,6 +191,19 @@ bool jaeger_composite_reporter_init(jaeger_composite_reporter* reporter)
     return true;
 }
 
+bool jaeger_composite_reporter_add(jaeger_composite_reporter* reporter,
+                                   jaeger_reporter* new_reporter)
+{
+    assert(reporter != NULL);
+    assert(new_reporter != NULL);
+    jaeger_reporter** reporter_ptr = jaeger_vector_append(&reporter->reporters);
+    if (reporter_ptr == NULL) {
+        return false;
+    }
+    *reporter_ptr = new_reporter;
+    return true;
+}
+
 static inline void process_destroy(Jaegertracing__Protobuf__Process* process)
 {
     assert(process != NULL);

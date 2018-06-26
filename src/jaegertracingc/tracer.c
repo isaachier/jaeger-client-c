@@ -200,6 +200,17 @@ static inline jaeger_reporter* default_reporter(jaeger_metrics* metrics)
     return (jaeger_reporter*) reporter;
 }
 
+opentracing_span* jaeger_tracer_start_span(opentracing_tracer* tracer,
+                                           const char* operation_name)
+{
+    return jaeger_tracer_start_span_with_options(tracer, operation_name, NULL);
+}
+
+void jaeger_tracer_close(opentracing_tracer* tracer)
+{
+    jaeger_tracer_flush((jaeger_tracer*) tracer);
+}
+
 void jaeger_tracer_destroy(jaeger_destructible* d)
 {
     if (d == NULL) {

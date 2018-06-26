@@ -37,42 +37,11 @@ typedef struct jaeger_token_bucket {
     jaeger_duration last_tick;
 } jaeger_token_bucket;
 
-static inline void jaeger_token_bucket_init(jaeger_token_bucket* tok,
-                                            double credits_per_second,
-                                            double max_balance)
-{
-    assert(tok != NULL);
-    tok->balance = max_balance;
-    tok->credits_per_second = credits_per_second;
-    tok->max_balance = max_balance;
-    jaeger_duration_now(&tok->last_tick);
-}
+void jaeger_token_bucket_init(jaeger_token_bucket* tok,
+                              double credits_per_second,
+                              double max_balance);
 
-static inline bool jaeger_token_bucket_check_credit(jaeger_token_bucket* tok,
-                                                    double cost)
-{
-    assert(tok != NULL);
-    jaeger_duration current_time;
-    jaeger_duration_now(&current_time);
-    jaeger_duration interval;
-    const bool result = jaeger_time_subtract(
-        current_time.value, tok->last_tick.value, &interval.value);
-    (void) result;
-    assert(result);
-    const double diff = (((double) interval.value.tv_nsec) /
-                             JAEGERTRACINGC_NANOSECONDS_PER_SECOND +
-                         interval.value.tv_sec) *
-                        tok->credits_per_second;
-    const double new_balance = tok->balance + diff;
-    tok->balance =
-        (tok->max_balance < new_balance) ? tok->max_balance : new_balance;
-    tok->last_tick = current_time;
-    if (tok->balance < cost) {
-        return 0;
-    }
-    tok->balance -= cost;
-    return 1;
-}
+bool jaeger_token_bucket_check_credit(jaeger_token_bucket* tok, double cost);
 
 #ifdef __cplusplus
 } /* extern C */
