@@ -28,6 +28,30 @@
 
 #define BOOL_STR(x) ((x) ? "true" : "false")
 
+jaeger_baggage_restriction
+jaeger_default_baggage_restriction_manager_get_restriction(
+    jaeger_baggage_restriction_manager* manager,
+    const char* service,
+    const char* key)
+{
+    (void) service;
+    (void) key;
+    jaeger_default_baggage_restriction_manager* default_manager =
+        (jaeger_default_baggage_restriction_manager*) manager;
+    return (jaeger_baggage_restriction){
+        .key_allowed = true, .max_value_len = default_manager->max_value_len};
+}
+
+void jaeger_default_baggage_restriction_manager_init(
+    jaeger_default_baggage_restriction_manager* manager, size_t max_value_len)
+{
+    *manager = (jaeger_default_baggage_restriction_manager){
+        .base =
+            {.get_restriction =
+                 jaeger_default_baggage_restriction_manager_get_restriction},
+        .max_value_len = max_value_len};
+}
+
 void jaeger_baggage_setter_set_baggage(jaeger_baggage_setter* setter,
                                        jaeger_span* span,
                                        const char* key,

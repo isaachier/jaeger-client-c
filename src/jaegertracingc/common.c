@@ -15,3 +15,16 @@
  */
 
 #include "jaegertracingc/common.h"
+
+void jaeger_destructible_destroy(jaeger_destructible* d)
+{
+    if (d == NULL) {
+        return;
+    }
+    d->destroy(d);
+}
+
+void jaeger_destructible_destroy_wrapper(void* d)
+{
+    jaeger_destructible_destroy((jaeger_destructible*) d);
+}

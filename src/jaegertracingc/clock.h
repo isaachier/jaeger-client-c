@@ -54,62 +54,19 @@ typedef opentracing_timestamp jaeger_timestamp;
         .value = {.tv_sec = 0, .tv_nsec = 0 } \
     }
 
-static inline void jaeger_timestamp_now(jaeger_timestamp* timestamp)
-{
-    assert(timestamp != NULL);
-    struct timespec t;
-    clock_gettime(CLOCK_REALTIME, &t);
-    timestamp->value.tv_sec = t.tv_sec;
-    timestamp->value.tv_nsec = t.tv_nsec;
-}
+void jaeger_timestamp_now(jaeger_timestamp* timestamp);
 
-static inline int64_t
-jaeger_timestamp_microseconds(const jaeger_timestamp* const timestamp)
-{
-    assert(timestamp != NULL);
-    return timestamp->value.tv_sec * JAEGERTRACINGC_MICROSECONDS_PER_SECOND +
-           timestamp->value.tv_nsec *
-               JAEGERTRACINGC_NANOSECONDS_PER_MICROSECOND;
-}
+int64_t jaeger_timestamp_microseconds(const jaeger_timestamp* const timestamp);
 
 #define JAEGERTRACINGC_DURATION_INIT JAEGERTRACINGC_TIMESTAMP_INIT
 
-static inline void jaeger_duration_now(jaeger_duration* duration)
-{
-    assert(duration != NULL);
-    struct timespec t;
-    clock_gettime(CLOCK_MONOTONIC, &t);
-    duration->value.tv_sec = t.tv_sec;
-    duration->value.tv_nsec = t.tv_nsec;
-}
+void jaeger_duration_now(jaeger_duration* duration);
 
 // Algorithm based on
 // http://www.gnu.org/software/libc/manual/html_node/Elapsed-Time.html.
-static inline bool jaeger_time_subtract(opentracing_time_value lhs,
-                                        opentracing_time_value rhs,
-                                        opentracing_time_value* result)
-{
-    assert(result != NULL);
-
-    if (lhs.tv_nsec < rhs.tv_nsec) {
-        const int64_t nsec = (rhs.tv_nsec - lhs.tv_nsec) /
-                                 JAEGERTRACINGC_NANOSECONDS_PER_SECOND +
-                             1;
-        rhs.tv_nsec -= JAEGERTRACINGC_NANOSECONDS_PER_SECOND * nsec;
-        rhs.tv_sec += nsec;
-    }
-
-    if (lhs.tv_nsec - rhs.tv_nsec > JAEGERTRACINGC_NANOSECONDS_PER_SECOND) {
-        const int64_t nsec =
-            (lhs.tv_nsec - rhs.tv_nsec) / JAEGERTRACINGC_NANOSECONDS_PER_SECOND;
-        rhs.tv_nsec += JAEGERTRACINGC_NANOSECONDS_PER_SECOND * nsec;
-        rhs.tv_sec -= nsec;
-    }
-
-    result->tv_sec = lhs.tv_sec - rhs.tv_sec;
-    result->tv_nsec = lhs.tv_nsec - rhs.tv_nsec;
-    return lhs.tv_sec >= rhs.tv_sec;
-}
+bool jaeger_time_subtract(opentracing_time_value lhs,
+                          opentracing_time_value rhs,
+                          opentracing_time_value* result);
 
 #ifdef __cplusplus
 } /* extern C */

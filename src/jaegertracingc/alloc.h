@@ -110,18 +110,7 @@ void jaeger_free(void* ptr);
  * @param str String to duplicate.
  * @return New string copy on success, NULL on failure.
  */
-static inline char* jaeger_strdup(const char* str)
-{
-    assert(str != NULL);
-    const int size = strlen(str) + 1;
-    char* copy = (char*) jaeger_malloc(size);
-    if (copy == NULL) {
-        jaeger_log_error("Cannot allocate string copy, size = %d", size);
-        return NULL;
-    }
-    memcpy(copy, str, size);
-    return copy;
-}
+char* jaeger_strdup(const char* str);
 
 #ifdef __cplusplus
 } /* extern C */

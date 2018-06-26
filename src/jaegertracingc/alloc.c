@@ -131,3 +131,16 @@ void jaeger_free(void* ptr)
     jaeger_allocator* alloc = jaeger_get_allocator();
     alloc->free(alloc, ptr);
 }
+
+char* jaeger_strdup(const char* str)
+{
+    assert(str != NULL);
+    const int size = strlen(str) + 1;
+    char* copy = (char*) jaeger_malloc(size);
+    if (copy == NULL) {
+        jaeger_log_error("Cannot allocate string copy, size = %d", size);
+        return NULL;
+    }
+    memcpy(copy, str, size);
+    return copy;
+}

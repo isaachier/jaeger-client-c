@@ -73,34 +73,19 @@ typedef struct jaeger_default_baggage_restriction_manager {
  * Implementation of get_restriction for
  * jaeger_default_baggage_restriction_manager.
  */
-static inline jaeger_baggage_restriction
+jaeger_baggage_restriction
 jaeger_default_baggage_restriction_manager_get_restriction(
     jaeger_baggage_restriction_manager* manager,
     const char* service,
-    const char* key)
-{
-    (void) service;
-    (void) key;
-    jaeger_default_baggage_restriction_manager* default_manager =
-        (jaeger_default_baggage_restriction_manager*) manager;
-    return (jaeger_baggage_restriction){
-        .key_allowed = true, .max_value_len = default_manager->max_value_len};
-}
+    const char* key);
 
 /**
  * Initialize an instance of jaeger_default_baggage_restriction_manager.
  * @param manager Manager instance.
  * @param max_value_len Maximum value length for all keys.
  */
-static inline void jaeger_default_baggage_restriction_manager_init(
-    jaeger_default_baggage_restriction_manager* manager, size_t max_value_len)
-{
-    *manager = (jaeger_default_baggage_restriction_manager){
-        .base =
-            {.get_restriction =
-                 jaeger_default_baggage_restriction_manager_get_restriction},
-        .max_value_len = max_value_len};
-}
+void jaeger_default_baggage_restriction_manager_init(
+    jaeger_default_baggage_restriction_manager* manager, size_t max_value_len);
 
 /** Facade to enforce remote baggage restrictions in tracer. */
 typedef struct jaeger_baggage_setter {
