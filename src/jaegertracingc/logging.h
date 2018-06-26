@@ -98,51 +98,24 @@ jaeger_logger* jaeger_get_logger(void);
  * @param format Format string.
  * @param[in] ... Arguments to format.
  */
-static inline void jaeger_log_error(const char* format, ...)
+void jaeger_log_error(const char* format, ...)
     JAEGERTRACINGC_FORMAT_ATTRIBUTE(printf, 1, 2);
-
-static inline void jaeger_log_error(const char* format, ...)
-{
-    va_list args;
-    va_start(args, format);
-    jaeger_logger* logger = jaeger_get_logger();
-    logger->error(logger, format, args);
-    va_end(args);
-}
 
 /**
  * Log warning to installed logger.
  * @param format Format string.
  * @param[in] ... Arguments to format.
  */
-static inline void jaeger_log_warn(const char* format, ...)
+void jaeger_log_warn(const char* format, ...)
     JAEGERTRACINGC_FORMAT_ATTRIBUTE(printf, 1, 2);
-
-static inline void jaeger_log_warn(const char* format, ...)
-{
-    va_list args;
-    va_start(args, format);
-    jaeger_logger* logger = jaeger_get_logger();
-    logger->warn(logger, format, args);
-    va_end(args);
-}
 
 /**
  * Log info to installed logger.
  * @param format Format string.
  * @param[in] ... Arguments to format.
  */
-static inline void jaeger_log_info(const char* format, ...)
+void jaeger_log_info(const char* format, ...)
     JAEGERTRACINGC_FORMAT_ATTRIBUTE(printf, 1, 2);
-
-static inline void jaeger_log_info(const char* format, ...)
-{
-    va_list args;
-    va_start(args, format);
-    jaeger_logger* logger = jaeger_get_logger();
-    logger->info(logger, format, args);
-    va_end(args);
-}
 
 #ifdef __cplusplus
 } /* extern C */

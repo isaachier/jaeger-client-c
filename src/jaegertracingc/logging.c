@@ -75,3 +75,30 @@ void jaeger_set_logger(jaeger_logger* logger)
     assert(logger != NULL);
     *jaeger_get_logger() = *logger;
 }
+
+void jaeger_log_error(const char* format, ...)
+{
+    va_list args;
+    va_start(args, format);
+    jaeger_logger* logger = jaeger_get_logger();
+    logger->error(logger, format, args);
+    va_end(args);
+}
+
+void jaeger_log_warn(const char* format, ...)
+{
+    va_list args;
+    va_start(args, format);
+    jaeger_logger* logger = jaeger_get_logger();
+    logger->warn(logger, format, args);
+    va_end(args);
+}
+
+void jaeger_log_info(const char* format, ...)
+{
+    va_list args;
+    va_start(args, format);
+    jaeger_logger* logger = jaeger_get_logger();
+    logger->info(logger, format, args);
+    va_end(args);
+}
