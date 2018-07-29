@@ -133,8 +133,7 @@ bool jaeger_span_ref_copy(void* arg,
     return true;
 }
 
-void jaeger_span_ref_protobuf_destroy(
-    Jaegertracing__Protobuf__SpanRef* span_ref)
+void jaeger_span_ref_protobuf_destroy(Jaeger__Model__SpanRef* span_ref)
 {
     if (span_ref == NULL || span_ref->trace_id == NULL) {
         return;
@@ -144,29 +143,33 @@ void jaeger_span_ref_protobuf_destroy(
     span_ref->trace_id = NULL;
 }
 
-bool jaeger_span_ref_to_protobuf(Jaegertracing__Protobuf__SpanRef* restrict dst,
+bool jaeger_span_ref_to_protobuf(Jaeger__Model__SpanRef* restrict dst,
                                  const jaeger_span_ref* restrict src)
 {
     assert(dst != NULL);
     assert(src != NULL);
-    *dst = (Jaegertracing__Protobuf__SpanRef)
-        JAEGERTRACING__PROTOBUF__SPAN_REF__INIT;
-    dst->trace_id = (Jaegertracing__Protobuf__TraceID*) jaeger_malloc(
-        sizeof(Jaegertracing__Protobuf__TraceID));
-    if (dst->trace_id == NULL) {
+    *dst = (Jaeger__Model__SpanRef) JAEGER__MODEL__SPAN_REF__INIT;
+    dst->trace_id = (ProtobufCBinaryData){
+        .len = sizeof(uint64_t), .data = jaeger_malloc(sizeof(uint64_t))};
+    if (dst->trace_id.data == NULL) {
         jaeger_log_error("Cannot allocate trace ID for span ref message");
         return false;
     }
-    *dst->trace_id = (Jaegertracing__Protobuf__TraceID)
-        JAEGERTRACING__PROTOBUF__TRACE_ID__INIT;
+    dst->span_id = (ProtobufCBinaryData){
+        .len = sizeof(src->context.span_id),
+        .data = jaeger_malloc(sizeof(src->context.span_id))};
+    if (dst->span_id.data == NULL) {
+        jaeger_log_error("Cannot allocate trace ID for span ref message");
+        jaeger_free(dst->trace_id.data);
+        dst->trace_id.data = NULL;
+        return false;
+    }
     jaeger_mutex_lock((jaeger_mutex*) &src->context.mutex);
-    jaeger_trace_id_to_protobuf(dst->trace_id, &src->context.trace_id);
-    dst->span_id = src->context.span_id;
+    memcpy(dst->trace_id.data,
+           &src->context.trace_id,
+           sizeof(src->context.trace_id));
     jaeger_mutex_unlock((jaeger_mutex*) &src->context.mutex);
-#ifdef JAEGERTRACINGC_HAVE_PROTOBUF_OPTIONAL_FIELDS
-    dst->has_type = true;
-#endif /* JAEGERTRACINGC_HAVE_PROTOBUF_OPTIONAL_FIELDS */
-    dst->type = (Jaegertracing__Protobuf__SpanRef__Type) src->type;
+    dst->ref_type = (Jaeger__Model__SpanRefType) src->type;
     return true;
 }
 
@@ -505,7 +508,7 @@ void jaeger_protobuf_list_destroy(void** data, int num, void (*destroy)(void*))
     jaeger_free(data);
 }
 
-void jaeger_span_protobuf_destroy(Jaegertracing__Protobuf__Span* span)
+void jaeger_span_protobuf_destroy(Jaeger__Model__Span* span)
 {
     if (span == NULL) {
         return;
@@ -538,20 +541,19 @@ void jaeger_span_protobuf_destroy(Jaegertracing__Protobuf__Span* span)
     }
 }
 
-bool jaeger_span_to_protobuf(Jaegertracing__Protobuf__Span* restrict dst,
+bool jaeger_span_to_protobuf(Jaeger__Model__Span* restrict dst,
                              const jaeger_span* restrict src)
 {
     assert(dst != NULL);
     assert(src != NULL);
-    *dst = (Jaegertracing__Protobuf__Span) JAEGERTRACING__PROTOBUF__SPAN__INIT;
-    dst->trace_id = (Jaegertracing__Protobuf__TraceID*) jaeger_malloc(
-        sizeof(Jaegertracing__Protobuf__TraceID));
+    *dst = (Jaeger__Model__Span) JAEGER__MODEL__SPAN__INIT;
+    dst->trace_id =
+        (Jaeger__Model__TraceID*) jaeger_malloc(sizeof(Jaeger__Model__TraceID));
     if (dst->trace_id == NULL) {
         jaeger_log_error("Cannot allocate trace ID for span message");
         return false;
     }
-    *dst->trace_id = (Jaegertracing__Protobuf__TraceID)
-        JAEGERTRACING__PROTOBUF__TRACE_ID__INIT;
+    *dst->trace_id = (Jaeger__Model__TraceID) JAEGER__MODEL__TRACE_ID__INIT;
 #ifdef JAEGERTRACINGC_HAVE_PROTOBUF_OPTIONAL_FIELDS
     dst->has_span_id = true;
     dst->has_parent_span_id = true;
@@ -579,7 +581,7 @@ bool jaeger_span_to_protobuf(Jaegertracing__Protobuf__Span* restrict dst,
             (void***) &dst->logs,
             &dst->n_logs,
             &src->logs,
-            sizeof(Jaegertracing__Protobuf__Log),
+            sizeof(Jaeger__Model__Log),
             &jaeger_log_record_to_protobuf_wrapper,
             &jaeger_log_record_protobuf_destroy_wrapper,
             NULL)) {
@@ -588,7 +590,7 @@ bool jaeger_span_to_protobuf(Jaegertracing__Protobuf__Span* restrict dst,
     if (!jaeger_vector_protobuf_copy((void***) &dst->references,
                                      &dst->n_references,
                                      &src->refs,
-                                     sizeof(Jaegertracing__Protobuf__SpanRef),
+                                     sizeof(Jaeger__Model__SpanRef),
                                      &jaeger_span_ref_to_protobuf_wrapper,
                                      &jaeger_span_ref_protobuf_destroy_wrapper,
                                      NULL)) {
@@ -602,7 +604,7 @@ cleanup:
     jaeger_mutex_unlock((jaeger_mutex*) &src->mutex);
     jaeger_mutex_unlock((jaeger_mutex*) &src->context.mutex);
     jaeger_span_protobuf_destroy(dst);
-    *dst = (Jaegertracing__Protobuf__Span) JAEGERTRACING__PROTOBUF__SPAN__INIT;
+    *dst = (Jaeger__Model__Span) JAEGER__MODEL__SPAN__INIT;
     return false;
 }
 

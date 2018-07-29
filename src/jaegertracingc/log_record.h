@@ -61,17 +61,16 @@ JAEGERTRACINGC_WRAP_COPY(jaeger_log_record_copy,
                          jaeger_log_record,
                          jaeger_log_record)
 
-void jaeger_log_record_protobuf_destroy(
-    Jaegertracing__Protobuf__Log* log_record);
+void jaeger_log_record_protobuf_destroy(Jaeger__Model__Log* log_record);
 
 JAEGERTRACINGC_WRAP_DESTROY(jaeger_log_record_protobuf_destroy,
-                            Jaegertracing__Protobuf__Log)
+                            Jaeger__Model__Log)
 
-bool jaeger_log_record_to_protobuf(Jaegertracing__Protobuf__Log* restrict dst,
+bool jaeger_log_record_to_protobuf(Jaeger__Model__Log* restrict dst,
                                    const jaeger_log_record* restrict src);
 
 JAEGERTRACINGC_WRAP_COPY(jaeger_log_record_to_protobuf,
-                         Jaegertracing__Protobuf__Log,
+                         Jaeger__Model__Log,
                          jaeger_log_record)
 
 #ifdef __cplusplus

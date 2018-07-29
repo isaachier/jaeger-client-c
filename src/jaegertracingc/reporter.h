@@ -83,7 +83,7 @@ typedef struct jaeger_remote_reporter {
     int max_packet_size;
     int fd;
     jaeger_metrics* metrics;
-    Jaegertracing__Protobuf__Process process;
+    Jaeger__Model__Process process;
     jaeger_vector spans;
     struct addrinfo* candidates;
     struct sockaddr_in addr;

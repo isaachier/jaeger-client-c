@@ -24,16 +24,16 @@
 
 #include "jaegertracingc/alloc.h"
 #include "jaegertracingc/common.h"
-#include "jaegertracingc/protoc-gen/jaeger.pb-c.h"
+#include "jaegertracingc/protoc-gen/model.pb-c.h"
 #include "jaegertracingc/vector.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-typedef Jaegertracing__Protobuf__Tag jaeger_tag;
+typedef Jaeger__Model__KeyValue jaeger_tag;
 
-#define JAEGERTRACINGC_TAG_INIT JAEGERTRACING__PROTOBUF__TAG__INIT
+#define JAEGERTRACINGC_TAG_INIT JAEGER__MODEL__KEY_VALUE__INIT
 
 #define JAEGERTRACINGC_TAG_TYPE(type) \
     JAEGERTRACING__PROTOBUF__TAG__VALUE_##type##_VALUE

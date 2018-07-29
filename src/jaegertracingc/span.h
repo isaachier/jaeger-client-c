@@ -158,17 +158,16 @@ bool jaeger_span_ref_copy(void* arg,
                           void* restrict dst,
                           const void* restrict src);
 
-void jaeger_span_ref_protobuf_destroy(
-    Jaegertracing__Protobuf__SpanRef* span_ref);
+void jaeger_span_ref_protobuf_destroy(Jaeger__Model__SpanRef* span_ref);
 
 JAEGERTRACINGC_WRAP_DESTROY(jaeger_span_ref_protobuf_destroy,
-                            Jaegertracing__Protobuf__SpanRef)
+                            Jaeger__Model__SpanRef)
 
-bool jaeger_span_ref_to_protobuf(Jaegertracing__Protobuf__SpanRef* restrict dst,
+bool jaeger_span_ref_to_protobuf(Jaeger__Model__SpanRef* restrict dst,
                                  const jaeger_span_ref* restrict src);
 
 JAEGERTRACINGC_WRAP_COPY(jaeger_span_ref_to_protobuf,
-                         Jaegertracing__Protobuf__SpanRef,
+                         Jaeger__Model__SpanRef,
                          jaeger_span_ref)
 
 /* Forward declaration */
@@ -358,9 +357,9 @@ bool jaeger_span_copy(jaeger_span* restrict dst,
 
 void jaeger_protobuf_list_destroy(void** data, int num, void (*destroy)(void*));
 
-void jaeger_span_protobuf_destroy(Jaegertracing__Protobuf__Span* span);
+void jaeger_span_protobuf_destroy(Jaeger__Model__Span* span);
 
-bool jaeger_span_to_protobuf(Jaegertracing__Protobuf__Span* restrict dst,
+bool jaeger_span_to_protobuf(Jaeger__Model__Span* restrict dst,
                              const jaeger_span* restrict src);
 
 int jaeger_span_context_format(const jaeger_span_context* ctx,

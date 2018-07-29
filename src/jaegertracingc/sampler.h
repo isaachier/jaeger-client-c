@@ -38,8 +38,6 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#define JAEGERTRACINGC_DOUBLE_STR_SIZE 16
-
 typedef struct jaeger_sampler {
     jaeger_destructible base;
     bool (*is_sampled)(struct jaeger_sampler* sampler,

@@ -70,3 +70,6 @@ SpacesInSquareBrackets: false
 Standard:        C++03
 TabWidth:        8
 UseTab:          Never
+...
+Language: Proto
+DisableFormat: true

@@ -204,7 +204,7 @@ bool jaeger_composite_reporter_add(jaeger_composite_reporter* reporter,
     return true;
 }
 
-static inline void process_destroy(Jaegertracing__Protobuf__Process* process)
+static inline void process_destroy(Jaeger__Model__Process* process)
 {
     assert(process != NULL);
     if (process->tags != NULL) {
@@ -224,7 +224,7 @@ static inline void process_destroy(Jaegertracing__Protobuf__Process* process)
     }
 }
 
-static inline bool build_process(Jaegertracing__Protobuf__Process* process,
+static inline bool build_process(Jaeger__Model__Process* process,
                                  const jaeger_tracer* tracer)
 {
     assert(process != NULL);
@@ -253,23 +253,22 @@ cleanup:
     return false;
 }
 
-static inline void large_batch_error(Jaegertracing__Protobuf__Batch* batch,
+static inline void large_batch_error(Jaeger__Model__Batch* batch,
                                      jaeger_vector* spans,
                                      int initial_num_spans,
                                      int max_packet_size,
                                      jaeger_metrics* metrics)
 {
-    Jaegertracing__Protobuf__Batch tmp = *batch;
+    Jaeger__Model__Batch tmp = *batch;
     memcpy(&tmp, batch, sizeof(tmp));
     tmp.n_spans = 1;
     jaeger_log_error("Message is too large to send in a single packet, "
                      "minimum message size = %zu, "
                      "maximum packet size = %d",
-                     jaegertracing__protobuf__batch__get_packed_size(&tmp),
+                     jaeger__model__batch__get_packed_size(&tmp),
                      max_packet_size);
 
-    const int batch_packed_size =
-        jaegertracing__protobuf__batch__get_packed_size(batch);
+    const int batch_packed_size = jaeger__model__batch__get_packed_size(batch);
     if (batch_packed_size > max_packet_size) {
         jaeger_log_error("Detected batch with zero spans exceeds maximum "
                          "packet size, "
@@ -283,9 +282,8 @@ static inline void large_batch_error(Jaegertracing__Protobuf__Batch* batch,
 
     spans->data = (char*) batch->spans;
     spans->len = initial_num_spans;
-    *batch =
-        (Jaegertracing__Protobuf__Batch) JAEGERTRACING__PROTOBUF__BATCH__INIT;
-    Jaegertracing__Protobuf__Span** span = jaeger_vector_get(spans, 0);
+    *batch = (Jaeger__Model__Batch) JAEGER__MODEL__BATCH__INIT;
+    Jaeger__Model__Span** span = jaeger_vector_get(spans, 0);
     jaeger_span_protobuf_destroy(*span);
     jaeger_free(*span);
     jaeger_vector_remove(spans, 0);
@@ -297,8 +295,8 @@ static inline void large_batch_error(Jaegertracing__Protobuf__Batch* batch,
     }
 }
 
-static inline bool build_batch(Jaegertracing__Protobuf__Batch* batch,
-                               Jaegertracing__Protobuf__Process* process,
+static inline bool build_batch(Jaeger__Model__Batch* batch,
+                               Jaeger__Model__Process* process,
                                jaeger_vector* spans,
                                int max_packet_size,
                                jaeger_metrics* metrics)
@@ -310,13 +308,12 @@ static inline bool build_batch(Jaegertracing__Protobuf__Batch* batch,
 
     const int num_spans = jaeger_vector_length(spans);
     batch->n_spans = num_spans;
-    batch->spans = (Jaegertracing__Protobuf__Span**) spans->data;
+    batch->spans = (Jaeger__Model__Span**) spans->data;
     spans->len = 0;
     spans->data = NULL;
 
     for (; batch->n_spans > 0 &&
-           (int) jaegertracing__protobuf__batch__get_packed_size(batch) >
-               max_packet_size;
+           (int) jaeger__model__batch__get_packed_size(batch) > max_packet_size;
          batch->n_spans--) {
     }
     if (batch->n_spans == 0) {
@@ -326,10 +323,10 @@ static inline bool build_batch(Jaegertracing__Protobuf__Batch* batch,
 
     const int remaining_spans = num_spans - batch->n_spans;
     if (remaining_spans > 0 &&
-        jaeger_vector_init(spans, sizeof(Jaegertracing__Protobuf__Span*)) &&
+        jaeger_vector_init(spans, sizeof(Jaeger__Model__Span*)) &&
         jaeger_vector_reserve(spans, remaining_spans)) {
         for (int i = 0; i < remaining_spans; i++) {
-            Jaegertracing__Protobuf__Span** span = jaeger_vector_append(spans);
+            Jaeger__Model__Span** span = jaeger_vector_append(spans);
             assert(span != NULL);
             *span = batch->spans[batch->n_spans + i];
         }
@@ -374,8 +371,7 @@ static void remote_reporter_destroy(jaeger_destructible* destructible)
     process_destroy(&r->process);
 
     for (int i = 0, len = jaeger_vector_length(&r->spans); i < len; i++) {
-        Jaegertracing__Protobuf__Span** span =
-            jaeger_vector_offset(&r->spans, i);
+        Jaeger__Model__Span** span = jaeger_vector_offset(&r->spans, i);
         assert(span != NULL);
         if (*span == NULL) {
             continue;
@@ -416,19 +412,17 @@ static void remote_reporter_report(jaeger_reporter* reporter,
         goto unlock;
     }
 
-    Jaegertracing__Protobuf__Span* span_copy =
-        jaeger_malloc(sizeof(Jaegertracing__Protobuf__Span));
+    Jaeger__Model__Span* span_copy = jaeger_malloc(sizeof(Jaeger__Model__Span));
     if (span_copy == NULL) {
         jaeger_log_error("Cannot allocate span for reporter batch");
         goto unlock;
     }
 
-    *span_copy =
-        (Jaegertracing__Protobuf__Span) JAEGERTRACING__PROTOBUF__SPAN__INIT;
+    *span_copy = (Jaeger__Model__Span) JAEGER__MODEL__SPAN__INIT;
     if (!jaeger_span_to_protobuf(span_copy, span)) {
         goto cleanup;
     }
-    Jaegertracing__Protobuf__Span** span_ptr = jaeger_vector_append(&r->spans);
+    Jaeger__Model__Span** span_ptr = jaeger_vector_append(&r->spans);
     assert(span_ptr != NULL);
     *span_ptr = span_copy;
     remote_reporter_update_queue_length(r);
@@ -512,7 +506,7 @@ static bool remote_reporter_flush_batch(jaeger_remote_reporter* reporter)
     const int num_spans = jaeger_vector_length(&reporter->spans);
     assert(num_spans > 0);
 
-    Jaegertracing__Protobuf__Batch batch = JAEGERTRACING__PROTOBUF__BATCH__INIT;
+    Jaeger__Model__Batch batch = JAEGER__MODEL__BATCH__INIT;
     if (!build_batch(&batch,
                      &reporter->process,
                      &reporter->spans,
@@ -523,8 +517,7 @@ static bool remote_reporter_flush_batch(jaeger_remote_reporter* reporter)
 
     uint8_t buffer[reporter->max_packet_size];
     ProtobufCBufferSimple simple = PROTOBUF_C_BUFFER_SIMPLE_INIT(buffer);
-    jaegertracing__protobuf__batch__pack_to_buffer(&batch,
-                                                   (ProtobufCBuffer*) &simple);
+    jaeger__model__batch__pack_to_buffer(&batch, (ProtobufCBuffer*) &simple);
     assert((int) simple.len <= reporter->max_packet_size);
     const bool write_succeeded =
         remote_reporter_write_to_socket(reporter, simple.data, simple.len);
@@ -593,13 +586,11 @@ bool jaeger_remote_reporter_init(jaeger_remote_reporter* reporter,
     }
     reporter->fd = fd;
 
-    reporter->process = (Jaegertracing__Protobuf__Process)
-        JAEGERTRACING__PROTOBUF__PROCESS__INIT;
+    reporter->process = (Jaeger__Model__Process) JAEGER__MODEL__PROCESS__INIT;
     reporter->max_packet_size = (max_packet_size > 0)
                                     ? max_packet_size
                                     : JAEGERTRACINGC_DEFAULT_UDP_BUFFER_SIZE;
-    if (!jaeger_vector_init(&reporter->spans,
-                            sizeof(Jaegertracing__Protobuf__Span*))) {
+    if (!jaeger_vector_init(&reporter->spans, sizeof(Jaeger__Model__Span*))) {
         goto cleanup;
     }
 

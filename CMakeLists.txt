@@ -223,10 +223,9 @@ endfunction()
 
 generate_protobuf_c(
   protoc_gen_src
-  "${CMAKE_CURRENT_SOURCE_DIR}/idl/protobuf/agent.proto"
-  "${CMAKE_CURRENT_SOURCE_DIR}/idl/protobuf/baggage.proto"
-  "${CMAKE_CURRENT_SOURCE_DIR}/idl/protobuf/jaeger.proto"
-  "${CMAKE_CURRENT_SOURCE_DIR}/idl/protobuf/sampling.proto")
+  "${CMAKE_CURRENT_SOURCE_DIR}/idl/duration.proto"
+  "${CMAKE_CURRENT_SOURCE_DIR}/idl/model.proto"
+  "${CMAKE_CURRENT_SOURCE_DIR}/idl/timestamp.proto")
 
 add_library(jaegertracingc ${src} ${protoc_gen_src})
 if(BUILD_SHARED_LIBS AND NOT BUILD_TESTING)

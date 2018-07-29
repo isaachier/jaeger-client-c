@@ -23,7 +23,7 @@
 #define JAEGERTRACINGC_TRACE_ID_H
 
 #include "jaegertracingc/common.h"
-#include "jaegertracingc/protoc-gen/jaeger.pb-c.h"
+#include "jaegertracingc/protoc-gen/model.pb-c.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -56,7 +56,7 @@ typedef struct jaeger_trace_id {
  * @param dst Protobuf-C output argument.
  * @param src jaeger_trace_id source argument.
  */
-void jaeger_trace_id_to_protobuf(Jaegertracing__Protobuf__TraceID* dst,
+void jaeger_trace_id_to_protobuf(ProtobufCBinaryData* dst,
                                  const jaeger_trace_id* src);
 
 /**

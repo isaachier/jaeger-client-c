@@ -24,47 +24,52 @@
 #define JAEGERTRACINGC_SAMPLING_STRATEGY_H
 
 #include "jaegertracingc/common.h"
-#include "jaegertracingc/protoc-gen/sampling.pb-c.h"
+#include "jaegertracingc/protoc-gen/model.pb-c.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-typedef Jaegertracing__Protobuf__SamplingManager__PerOperationSamplingStrategy
-    jaeger_per_operation_strategy;
+typedef enum jaeger_strategy_type {
+    jaeger_probabilistic_strategy_type,
+    jaeger_rate_limiting_strategy_type,
+    jaeger_per_operation_strategy_type,
+} jaeger_strategy_type;
 
-#define JAEGERTRACINGC_PER_OPERATION_STRATEGY_INIT \
-    JAEGERTRACING__PROTOBUF__SAMPLING_MANAGER__PER_OPERATION_SAMPLING_STRATEGY__INIT
+typedef struct jaeger_probabilistic_strategy {
+    double sampling_rate;
+} jaeger_probabilistic_strategy;
 
-typedef Jaegertracing__Protobuf__SamplingManager__PerOperationSamplingStrategy__OperationSamplingStrategy
-    jaeger_operation_strategy;
+typedef struct jaeger_rate_limiting_strategy {
+    double max_traces_per_second;
+} jaeger_rate_limiting_strategy;
 
-#define JAEGERTRACINGC_OPERATION_STRATEGY_INIT \
-    JAEGERTRACING__PROTOBUF__SAMPLING_MANAGER__PER_OPERATION_SAMPLING_STRATEGY__OPERATION_SAMPLING_STRATEGY__INIT
+typedef struct jaeger_operation_strategy {
+    char* operation;
+    jaeger_probabilistic_strategy* probabilistic;
+} jaeger_operation_strategy;
 
-#define JAEGERTRACINGC_OPERATION_STRATEGY_TYPE(type) \
-    JAEGERTRACING__PROTOBUF__SAMPLING_MANAGER__PER_OPERATION_SAMPLING_STRATEGY__OPERATION_SAMPLING_STRATEGY__STRATEGY_##type
-
-typedef Jaegertracing__Protobuf__SamplingManager__ProbabilisticSamplingStrategy
-    jaeger_probabilistic_strategy;
+typedef struct jaeger_per_operation_strategy {
+    jaeger_operation_strategy* per_operation_strategy;
+    size_t n_per_operation_strategy;
+    double default_sampling_probability;
+    double default_lower_bound_traces_per_second;
+} jaeger_per_operation_strategy;
 
 #define JAEGERTRACINGC_PROBABILISTIC_STRATEGY_INIT \
-    JAEGERTRACING__PROTOBUF__SAMPLING_MANAGER__PROBABILISTIC_SAMPLING_STRATEGY__INIT
-
-typedef Jaegertracing__Protobuf__SamplingManager__RateLimitingSamplingStrategy
-    jaeger_rate_limiting_strategy;
+    {                                              \
+        .sampling_rate = 0                         \
+    }
 
 #define JAEGERTRACINGC_RATE_LIMITING_STRATEGY_INIT \
-    JAEGERTRACING__PROTOBUF__SAMPLING_MANAGER__RATE_LIMITING_SAMPLING_STRATEGY__INIT
+    JAEGER__MODEL__SAMPLING_MANAGER__RATE_LIMITING_SAMPLING_STRATEGY__INIT
 
-typedef Jaegertracing__Protobuf__SamplingManager__SamplingStrategyResponse
-    jaeger_strategy_response;
-
-#define JAEGERTRACINGC_STRATEGY_RESPONSE_INIT \
-    JAEGERTRACING__PROTOBUF__SAMPLING_MANAGER__SAMPLING_STRATEGY_RESPONSE__INIT
-
-#define JAEGERTRACINGC_STRATEGY_RESPONSE_TYPE(x) \
-    JAEGERTRACING__PROTOBUF__SAMPLING_MANAGER__SAMPLING_STRATEGY_RESPONSE__STRATEGY_##x
+typedef struct jaeger_strategy_response {
+    jaeger_strategy_type strategy_case;
+    jaeger_probabilistic_strategy* probabilistic;
+    jaeger_rate_limiting_strategy* rate_limiting;
+    jaeger_per_operation_strategy* per_operation;
+} jaeger_strategy_response;
 
 static inline void
 jaeger_operation_strategy_destroy(jaeger_operation_strategy* strategy)
@@ -78,10 +83,6 @@ jaeger_operation_strategy_destroy(jaeger_operation_strategy* strategy)
         jaeger_free(strategy->probabilistic);
         strategy->probabilistic = NULL;
     }
-    if (strategy->rate_limiting != NULL) {
-        jaeger_free(strategy->rate_limiting);
-        strategy->rate_limiting = NULL;
-    }
 }
 
 static inline void
@@ -89,12 +90,9 @@ jaeger_per_operation_strategy_destroy(jaeger_per_operation_strategy* strategy)
 {
     assert(strategy != NULL);
     if (strategy->per_operation_strategy != NULL) {
-        for (int i = 0; i < (int) strategy->n_per_operation_strategy; i++) {
-            if (strategy->per_operation_strategy[i] != NULL) {
-                jaeger_operation_strategy_destroy(
-                    strategy->per_operation_strategy[i]);
-                jaeger_free(strategy->per_operation_strategy[i]);
-            }
+        for (size_t i = 0; i < strategy->n_per_operation_strategy; i++) {
+            jaeger_operation_strategy_destroy(
+                &strategy->per_operation_strategy[i]);
         }
         jaeger_free(strategy->per_operation_strategy);
         strategy->per_operation_strategy = NULL;
@@ -106,20 +104,20 @@ jaeger_strategy_response_destroy(jaeger_strategy_response* response)
 {
     assert(response != NULL);
     switch (response->strategy_case) {
-    case JAEGERTRACINGC_STRATEGY_RESPONSE_TYPE(PER_OPERATION): {
+    case jaeger_per_operation_strategy_type: {
         if (response->per_operation != NULL) {
             jaeger_per_operation_strategy_destroy(response->per_operation);
             jaeger_free(response->per_operation);
             response->per_operation = NULL;
         }
     } break;
-    case JAEGERTRACINGC_STRATEGY_RESPONSE_TYPE(PROBABILISTIC): {
+    case jaeger_probabilistic_strategy_type: {
         if (response->probabilistic != NULL) {
             jaeger_free(response->probabilistic);
             response->probabilistic = NULL;
         }
     } break;
-    case JAEGERTRACINGC_STRATEGY_RESPONSE_TYPE(RATE_LIMITING): {
+    case jaeger_rate_limiting_strategy_type: {
         if (response->rate_limiting != NULL) {
             jaeger_free(response->rate_limiting);
             response->rate_limiting = NULL;

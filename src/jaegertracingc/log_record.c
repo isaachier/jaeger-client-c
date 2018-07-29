@@ -71,8 +71,7 @@ cleanup:
     return false;
 }
 
-void jaeger_log_record_protobuf_destroy(
-    Jaegertracing__Protobuf__Log* log_record)
+void jaeger_log_record_protobuf_destroy(Jaeger__Model__Log* log_record)
 {
     if (log_record == NULL || log_record->fields == NULL) {
         return;
@@ -85,20 +84,22 @@ void jaeger_log_record_protobuf_destroy(
         }
     }
     jaeger_free(log_record->fields);
-    *log_record =
-        (Jaegertracing__Protobuf__Log) JAEGERTRACING__PROTOBUF__LOG__INIT;
+    jaeger_free(log_record->timestamp);
+    *log_record = (Jaeger__Model__Log) JAEGER__MODEL__LOG__INIT;
 }
 
-bool jaeger_log_record_to_protobuf(Jaegertracing__Protobuf__Log* restrict dst,
+bool jaeger_log_record_to_protobuf(Jaeger__Model__Log* restrict dst,
                                    const jaeger_log_record* restrict src)
 {
     assert(dst != NULL);
     assert(src != NULL);
-    *dst = (Jaegertracing__Protobuf__Log) JAEGERTRACING__PROTOBUF__LOG__INIT;
-#ifdef JAEGERTRACINGC_HAVE_PROTOBUF_OPTIONAL_FIELDS
-    dst->has_timestamp = true;
-#endif /* JAEGERTRACINGC_HAVE_PROTOBUF_OPTIONAL_FIELDS */
-    dst->timestamp = jaeger_timestamp_microseconds(&src->timestamp);
+    *dst = (Jaeger__Model__Log) JAEGER__MODEL__LOG__INIT;
+    dst->timestamp = jaeger_malloc(sizeof(Google__Protobuf__Timestamp));
+    if (dst->timestamp == NULL) {
+        goto cleanup;
+    }
+    dst->timestamp->seconds = src->timestamp.value.tv_sec;
+    dst->timestamp->nanos = src->timestamp.value.tv_nsec;
     if (!jaeger_vector_protobuf_copy((void***) &dst->fields,
                                      &dst->n_fields,
                                      &src->fields,
@@ -106,10 +107,12 @@ bool jaeger_log_record_to_protobuf(Jaegertracing__Protobuf__Log* restrict dst,
                                      &jaeger_tag_copy_wrapper,
                                      &jaeger_tag_destroy_wrapper,
                                      NULL)) {
-        jaeger_log_record_protobuf_destroy(dst);
-        *dst =
-            (Jaegertracing__Protobuf__Log) JAEGERTRACING__PROTOBUF__LOG__INIT;
-        return false;
+        goto cleanup;
     }
     return true;
+
+cleanup:
+    jaeger_log_record_protobuf_destroy(dst);
+    *dst = (Jaeger__Model__Log) JAEGER__MODEL__LOG__INIT;
+    return false;
 }
