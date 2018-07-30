@@ -135,12 +135,12 @@ bool jaeger_span_ref_copy(void* arg,
 
 void jaeger_span_ref_protobuf_destroy(Jaeger__Model__SpanRef* span_ref)
 {
-    if (span_ref == NULL || span_ref->trace_id == NULL) {
+    if (span_ref == NULL || span_ref->trace_id.data == NULL) {
         return;
     }
 
-    jaeger_free(span_ref->trace_id);
-    span_ref->trace_id = NULL;
+    jaeger_free(span_ref->trace_id.data);
+    span_ref->trace_id = (ProtobufCBinaryData){.data = NULL, .len = 0};
 }
 
 bool jaeger_span_ref_to_protobuf(Jaeger__Model__SpanRef* restrict dst,
@@ -149,8 +149,9 @@ bool jaeger_span_ref_to_protobuf(Jaeger__Model__SpanRef* restrict dst,
     assert(dst != NULL);
     assert(src != NULL);
     *dst = (Jaeger__Model__SpanRef) JAEGER__MODEL__SPAN_REF__INIT;
-    dst->trace_id = (ProtobufCBinaryData){
-        .len = sizeof(uint64_t), .data = jaeger_malloc(sizeof(uint64_t))};
+    dst->trace_id =
+        (ProtobufCBinaryData){.len = sizeof(uint64_t) * 2,
+                              .data = jaeger_malloc(sizeof(uint64_t) * 2)};
     if (dst->trace_id.data == NULL) {
         jaeger_log_error("Cannot allocate trace ID for span ref message");
         return false;
@@ -161,13 +162,12 @@ bool jaeger_span_ref_to_protobuf(Jaeger__Model__SpanRef* restrict dst,
     if (dst->span_id.data == NULL) {
         jaeger_log_error("Cannot allocate trace ID for span ref message");
         jaeger_free(dst->trace_id.data);
-        dst->trace_id.data = NULL;
+        dst->trace_id = (ProtobufCBinaryData){.data = NULL, .len = 0};
+        dst->span_id = (ProtobufCBinaryData){.data = NULL, .len = 0};
         return false;
     }
     jaeger_mutex_lock((jaeger_mutex*) &src->context.mutex);
-    memcpy(dst->trace_id.data,
-           &src->context.trace_id,
-           sizeof(src->context.trace_id));
+    jaeger_trace_id_to_protobuf(&dst->trace_id, &src->context.trace_id);
     jaeger_mutex_unlock((jaeger_mutex*) &src->context.mutex);
     dst->ref_type = (Jaeger__Model__SpanRefType) src->type;
     return true;
@@ -513,9 +513,9 @@ void jaeger_span_protobuf_destroy(Jaeger__Model__Span* span)
     if (span == NULL) {
         return;
     }
-    if (span->trace_id != NULL) {
-        jaeger_free(span->trace_id);
-        span->trace_id = NULL;
+    if (span->trace_id.data != NULL) {
+        jaeger_free(span->trace_id.data);
+        span->trace_id = (ProtobufCBinaryData){.data = NULL, .len = 0};
     }
     if (span->operation_name != NULL) {
         jaeger_free(span->operation_name);
@@ -547,22 +547,34 @@ bool jaeger_span_to_protobuf(Jaeger__Model__Span* restrict dst,
     assert(dst != NULL);
     assert(src != NULL);
     *dst = (Jaeger__Model__Span) JAEGER__MODEL__SPAN__INIT;
-    dst->trace_id =
-        (Jaeger__Model__TraceID*) jaeger_malloc(sizeof(Jaeger__Model__TraceID));
-    if (dst->trace_id == NULL) {
-        jaeger_log_error("Cannot allocate trace ID for span message");
-        return false;
+    dst->trace_id = (ProtobufCBinaryData){
+        .data = jaeger_malloc(sizeof(src->context.trace_id)),
+        .len = sizeof(src->context.trace_id)};
+    if (dst->trace_id.data == NULL) {
+        goto cleanup;
     }
-    *dst->trace_id = (Jaeger__Model__TraceID) JAEGER__MODEL__TRACE_ID__INIT;
-#ifdef JAEGERTRACINGC_HAVE_PROTOBUF_OPTIONAL_FIELDS
-    dst->has_span_id = true;
-    dst->has_parent_span_id = true;
-#endif /* JAEGERTRACINGC_HAVE_PROTOBUF_OPTIONAL_FIELDS */
+    dst->span_id = (ProtobufCBinaryData){
+        .data = jaeger_malloc(sizeof(src->context.span_id)),
+        .len = sizeof(src->context.trace_id)};
+    if (dst->span_id.data == NULL) {
+        goto cleanup;
+    }
     jaeger_lock((jaeger_mutex*) &src->mutex,
                 (jaeger_mutex*) &src->context.mutex);
-    jaeger_trace_id_to_protobuf(dst->trace_id, &src->context.trace_id);
-    dst->span_id = src->context.span_id;
-    dst->parent_span_id = src->context.parent_id;
+    jaeger_trace_id_to_protobuf(&dst->trace_id, &src->context.trace_id);
+    memcpy(
+        dst->span_id.data, &src->context.span_id, sizeof(src->context.span_id));
+    dst->references = jaeger_malloc(sizeof(*dst->references));
+    if (dst->references == NULL) {
+        goto cleanup;
+    }
+    dst->n_references = 1;
+    dst->references[0] = jaeger_malloc(sizeof(*dst->references[0]));
+    if (dst->references[0] == NULL) {
+        goto cleanup;
+    }
+    *dst->references[0] =
+        (Jaeger__Model__SpanRef) JAEGER__MODEL__SPAN_REF__INIT;
     dst->operation_name = jaeger_strdup(src->operation_name);
     if (dst->operation_name == NULL) {
         goto cleanup;

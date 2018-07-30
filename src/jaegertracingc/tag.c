@@ -27,17 +27,17 @@ void jaeger_tag_destroy(jaeger_tag* tag)
         tag->key = NULL;
     }
 
-    switch (tag->value_case) {
-    case JAEGERTRACINGC_TAG_TYPE(STR): {
-        if (tag->str_value != NULL) {
-            jaeger_free(tag->str_value);
-            tag->str_value = NULL;
+    switch (tag->v_type) {
+    case JAEGER__MODEL__VALUE_TYPE__STRING: {
+        if (tag->v_str != NULL) {
+            jaeger_free(tag->v_str);
+            tag->v_str = NULL;
         }
     } break;
-    case JAEGERTRACINGC_TAG_TYPE(BINARY): {
-        if (tag->binary_value.data != NULL) {
-            jaeger_free(tag->binary_value.data);
-            tag->binary_value.data = NULL;
+    case JAEGER__MODEL__VALUE_TYPE__BINARY: {
+        if (tag->v_binary.data != NULL) {
+            jaeger_free(tag->v_binary.data);
+            tag->v_binary.data = NULL;
         }
     } break;
     default:
@@ -54,7 +54,6 @@ bool jaeger_tag_init(jaeger_tag* tag, const char* key)
     if (tag->key == NULL) {
         return false;
     }
-    tag->value_case = JAEGERTRACING__PROTOBUF__TAG__VALUE__NOT_SET;
     return true;
 }
 
@@ -67,37 +66,34 @@ bool jaeger_tag_copy(jaeger_tag* dst, const jaeger_tag* src)
         return false;
     }
 
-    dst->value_case = src->value_case;
-    switch (src->value_case) {
-    case JAEGERTRACINGC_TAG_TYPE(STR): {
-        if (src->str_value != NULL) {
-            dst->str_value = jaeger_strdup(src->str_value);
-            if (dst->str_value == NULL) {
+    dst->v_type = src->v_type;
+    switch (src->v_type) {
+    case JAEGER__MODEL__VALUE_TYPE__STRING: {
+        if (src->v_str != NULL) {
+            dst->v_str = jaeger_strdup(src->v_str);
+            if (dst->v_str == NULL) {
                 goto cleanup;
             }
         }
     } break;
-    case JAEGERTRACINGC_TAG_TYPE(BINARY): {
-        if (src->binary_value.len > 0 && src->binary_value.data != NULL) {
-            dst->binary_value.data =
-                (uint8_t*) jaeger_malloc(src->binary_value.len);
-            if (dst->binary_value.data == NULL) {
+    case JAEGER__MODEL__VALUE_TYPE__BINARY: {
+        if (src->v_binary.len > 0 && src->v_binary.data != NULL) {
+            dst->v_binary.data = (uint8_t*) jaeger_malloc(src->v_binary.len);
+            if (dst->v_binary.data == NULL) {
                 goto cleanup;
             }
-            memcpy(dst->binary_value.data,
-                   src->binary_value.data,
-                   src->binary_value.len);
+            memcpy(dst->v_binary.data, src->v_binary.data, src->v_binary.len);
         }
     } break;
-    case JAEGERTRACINGC_TAG_TYPE(DOUBLE): {
-        dst->double_value = src->double_value;
+    case JAEGER__MODEL__VALUE_TYPE__FLOAT64: {
+        dst->v_float64 = src->v_float64;
     } break;
-    case JAEGERTRACINGC_TAG_TYPE(BOOL): {
-        dst->bool_value = src->bool_value;
+    case JAEGER__MODEL__VALUE_TYPE__BOOL: {
+        dst->v_bool = src->v_bool;
     } break;
     default: {
-        assert(dst->value_case == JAEGERTRACINGC_TAG_TYPE(LONG));
-        dst->long_value = src->long_value;
+        assert(dst->v_type == JAEGER__MODEL__VALUE_TYPE__INT64);
+        dst->v_int64 = src->v_int64;
     } break;
     }
 
@@ -124,25 +120,25 @@ bool jaeger_tag_from_key_value(jaeger_tag* restrict dst,
     case opentracing_value_null:
         break;
     case opentracing_value_bool:
-        src.value_case = JAEGERTRACINGC_TAG_TYPE(BOOL);
-        src.bool_value = (value->value.bool_value == opentracing_true);
+        src.v_type = JAEGER__MODEL__VALUE_TYPE__BOOL;
+        src.v_bool = (value->value.bool_value == opentracing_true);
         break;
     case opentracing_value_uint64:
-        src.value_case = JAEGERTRACINGC_TAG_TYPE(LONG);
-        src.long_value = value->value.uint64_value;
+        src.v_type = JAEGER__MODEL__VALUE_TYPE__INT64;
+        src.v_int64 = value->value.uint64_value;
         break;
     case opentracing_value_int64:
-        src.value_case = JAEGERTRACINGC_TAG_TYPE(LONG);
-        src.long_value = value->value.int64_value;
+        src.v_type = JAEGER__MODEL__VALUE_TYPE__INT64;
+        src.v_int64 = value->value.int64_value;
         break;
     case opentracing_value_double:
-        src.value_case = JAEGERTRACINGC_TAG_TYPE(DOUBLE);
-        src.double_value = value->value.double_value;
+        src.v_type = JAEGER__MODEL__VALUE_TYPE__FLOAT64;
+        src.v_float64 = value->value.double_value;
         break;
     case opentracing_value_string:
-        src.value_case = JAEGERTRACINGC_TAG_TYPE(STR);
-        src.str_value = jaeger_strdup(value->value.string_value);
-        if (src.str_value == NULL) {
+        src.v_type = JAEGER__MODEL__VALUE_TYPE__STRING;
+        src.v_str = jaeger_strdup(value->value.string_value);
+        if (src.v_str == NULL) {
             return false;
         }
         break;

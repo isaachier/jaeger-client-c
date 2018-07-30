@@ -47,7 +47,7 @@ void test_log_record()
         jaeger_free((char*) ot_log_record.fields[i].key);
     }
 
-    Jaegertracing__Protobuf__Log log_record_pb;
+    Jaeger__Model__Log log_record_pb;
     TEST_ASSERT_TRUE(
         jaeger_log_record_to_protobuf(&log_record_pb, &log_record));
     jaeger_log_record_protobuf_destroy_wrapper(&log_record_pb);

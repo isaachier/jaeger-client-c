@@ -41,8 +41,8 @@ void test_vector()
 
     TEST_ASSERT_TRUE(jaeger_vector_init(&vec, sizeof(jaeger_tag)));
     jaeger_tag tag = JAEGERTRACINGC_TAG_INIT;
-    tag.value_case = JAEGERTRACINGC_TAG_TYPE(LONG);
-    tag.long_value = 0;
+    tag.v_type = JAEGERTRACINGC_TAG_TYPE(INT64);
+    tag.v_int64 = 0;
     TEST_ASSERT_TRUE(
         jaeger_vector_extend(&vec, 0, JAEGERTRACINGC_VECTOR_INIT_CAPACITY));
     jaeger_set_allocator(jaeger_null_allocator());

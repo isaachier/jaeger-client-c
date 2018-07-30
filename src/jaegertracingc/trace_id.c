@@ -16,17 +16,14 @@
 
 #include "jaegertracingc/trace_id.h"
 
-void jaeger_trace_id_to_protobuf(Jaegertracing__Protobuf__TraceID* dst,
+void jaeger_trace_id_to_protobuf(ProtobufCBinaryData* dst,
                                  const jaeger_trace_id* src)
 {
     assert(dst != NULL);
+    assert(dst->data != NULL);
     assert(src != NULL);
-#ifdef JAEGERTRACINGC_HAVE_PROTOBUF_OPTIONAL_FIELDS
-    dst->has_high = true;
-    dst->has_low = true;
-#endif /* JAEGERTRACINGC_HAVE_PROTOBUF_OPTIONAL_FIELDS */
-    dst->high = src->high;
-    dst->low = src->low;
+    memcpy(dst->data, &src->high, sizeof(src->high));
+    memcpy(dst->data, &src->low, sizeof(src->low));
 }
 
 int jaeger_trace_id_format(const jaeger_trace_id* trace_id,

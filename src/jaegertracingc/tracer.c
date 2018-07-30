@@ -140,8 +140,8 @@ static inline bool append_tag(jaeger_vector* tags, const char* key, char* value)
     if (!jaeger_tag_init(tag, (key))) {
         goto cleanup;
     }
-    tag->value_case = JAEGERTRACINGC_TAG_TYPE(STR);
-    tag->str_value = value;
+    tag->v_type = JAEGER__MODEL__VALUE_TYPE__STRING;
+    tag->v_str = value;
     return true;
 
 cleanup:
@@ -513,7 +513,7 @@ opentracing_span* jaeger_tracer_start_span_with_options(
         const opentracing_value value = {};
 
         if (strcmp(src_tag.key, SAMPLING_PRIORITY_TAG_KEY) == 0 &&
-            src_tag.value_case == JAEGERTRACINGC_TAG_TYPE(LONG)) {
+            src_tag.v_type == JAEGER__MODEL__VALUE_TYPE__INT64) {
             if (jaeger_span_set_sampling_priority(span, &value)) {
                 continue;
             }

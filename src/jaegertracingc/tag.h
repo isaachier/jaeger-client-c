@@ -35,8 +35,7 @@ typedef Jaeger__Model__KeyValue jaeger_tag;
 
 #define JAEGERTRACINGC_TAG_INIT JAEGER__MODEL__KEY_VALUE__INIT
 
-#define JAEGERTRACINGC_TAG_TYPE(type) \
-    JAEGERTRACING__PROTOBUF__TAG__VALUE_##type##_VALUE
+#define JAEGERTRACINGC_TAG_TYPE(type) JAEGER__MODEL__VALUE_TYPE__##type
 
 void jaeger_tag_destroy(jaeger_tag* tag);
 

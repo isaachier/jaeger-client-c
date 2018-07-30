@@ -26,42 +26,42 @@ void test_tag()
     TEST_ASSERT_TRUE(result);
 
     for (int i = 0; i < 10; i++) {
-        jaeger_tag tag = (jaeger_tag) JAEGERTRACING__PROTOBUF__TAG__INIT;
+        jaeger_tag tag = JAEGERTRACINGC_TAG_INIT;
         tag.key = "test1";
-        tag.value_case = JAEGERTRACING__PROTOBUF__TAG__VALUE_BOOL_VALUE;
-        tag.bool_value = true;
+        tag.v_type = JAEGER__MODEL__VALUE_TYPE__BOOL;
+        tag.v_bool = true;
         result = jaeger_tag_vector_append(&list, &tag);
         TEST_ASSERT_TRUE(result);
 
         tag.key = "test2";
-        tag.value_case = JAEGERTRACING__PROTOBUF__TAG__VALUE_DOUBLE_VALUE;
-        tag.double_value = 0.12;
+        tag.v_type = JAEGER__MODEL__VALUE_TYPE__FLOAT64;
+        tag.v_float64 = 0.12;
         result = jaeger_tag_vector_append(&list, &tag);
         TEST_ASSERT_TRUE(result);
 
         tag.key = "test3";
-        tag.value_case = JAEGERTRACING__PROTOBUF__TAG__VALUE_LONG_VALUE;
-        tag.long_value = -1234567890;
+        tag.v_type = JAEGER__MODEL__VALUE_TYPE__INT64;
+        tag.v_int64 = -1234567890;
         result = jaeger_tag_vector_append(&list, &tag);
         TEST_ASSERT_TRUE(result);
 
         tag.key = "test4";
-        tag.value_case = JAEGERTRACING__PROTOBUF__TAG__VALUE_STR_VALUE;
+        tag.v_type = JAEGER__MODEL__VALUE_TYPE__STRING;
         char buffer[12] = "hello world";
-        tag.str_value = &buffer[0];
+        tag.v_str = &buffer[0];
         result = jaeger_tag_vector_append(&list, &tag);
         TEST_ASSERT_TRUE(result);
         memset(&buffer, 0, sizeof(buffer));
         TEST_ASSERT_EQUAL_STRING("hello world",
                                  ((jaeger_tag*) jaeger_vector_get(
                                       &list, jaeger_vector_length(&list) - 1))
-                                     ->str_value);
+                                     ->v_str);
 
         tag.key = "test5";
-        tag.value_case = JAEGERTRACING__PROTOBUF__TAG__VALUE_BINARY_VALUE;
+        tag.v_type = JAEGER__MODEL__VALUE_TYPE__BINARY;
         char binary_buffer[12] = "hello world";
-        tag.binary_value.data = (uint8_t*) &binary_buffer[0];
-        tag.binary_value.len = sizeof(binary_buffer);
+        tag.v_binary.data = (uint8_t*) &binary_buffer[0];
+        tag.v_binary.len = sizeof(binary_buffer);
         result = jaeger_tag_vector_append(&list, &tag);
         TEST_ASSERT_TRUE(result);
         memset(&binary_buffer, 0, sizeof(binary_buffer));
@@ -69,7 +69,7 @@ void test_tag()
             "hello world",
             (char*) ((jaeger_tag*) jaeger_vector_get(
                          &list, jaeger_vector_length(&list) - 1))
-                ->binary_value.data);
+                ->v_binary.data);
     }
 
     JAEGERTRACINGC_VECTOR_FOR_EACH(&list, jaeger_tag_destroy, jaeger_tag);

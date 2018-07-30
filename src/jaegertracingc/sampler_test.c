@@ -45,36 +45,35 @@
         TEST_ASSERT_NOT_NULL(tag);                                           \
         TEST_ASSERT_EQUAL_STRING(JAEGERTRACINGC_SAMPLER_TYPE_TAG_KEY,        \
                                  tag->key);                                  \
-        TEST_ASSERT_EQUAL(JAEGERTRACINGC_TAG_TYPE(STR), tag->value_case);    \
+        TEST_ASSERT_EQUAL(JAEGERTRACINGC_TAG_TYPE(STRING), tag->v_type);     \
         TEST_ASSERT_EQUAL_STRING(JAEGERTRACINGC_SAMPLER_TYPE_##sampler_type, \
-                                 tag->str_value);                            \
+                                 tag->v_str);                                \
         tag = jaeger_vector_get(&tag_list, 1);                               \
         TEST_ASSERT_NOT_NULL(tag);                                           \
         TEST_ASSERT_EQUAL_STRING(JAEGERTRACINGC_SAMPLER_PARAM_TAG_KEY,       \
                                  tag->key);                                  \
-        TEST_ASSERT_EQUAL(JAEGERTRACINGC_TAG_TYPE(param_type),               \
-                          tag->value_case);                                  \
+        TEST_ASSERT_EQUAL(JAEGERTRACINGC_TAG_TYPE(param_type), tag->v_type); \
         TEST_ASSERT_EQUAL((param_value), tag->value_member);                 \
     } while (0)
 
 #define CHECK_CONST_TAGS(sampler, tags) \
-    CHECK_TAGS(CONST, BOOL, bool_value, (sampler).decision, (tags))
+    CHECK_TAGS(CONST, BOOL, v_bool, (sampler).decision, (tags))
 
 #define CHECK_PROBABILISTIC_TAGS(sampler, tags) \
     CHECK_TAGS(                                 \
-        PROBABILISTIC, DOUBLE, double_value, (sampler).sampling_rate, (tags))
+        PROBABILISTIC, FLOAT64, v_float64, (sampler).sampling_rate, (tags))
 
 #define CHECK_RATE_LIMITING_TAGS(sampler, tags) \
     CHECK_TAGS(RATE_LIMITING,                   \
-               DOUBLE,                          \
-               double_value,                    \
+               FLOAT64,                         \
+               v_float64,                       \
                (sampler).max_traces_per_second, \
                (tags))
 
 #define CHECK_LOWER_BOUND_TAGS(sampler, tags)                       \
     CHECK_TAGS(LOWER_BOUND,                                         \
-               DOUBLE,                                              \
-               double_value,                                        \
+               FLOAT64,                                             \
+               v_float64,                                           \
                (sampler).lower_bound_sampler.max_traces_per_second, \
                (tags))
 
@@ -216,22 +215,11 @@ static inline void test_adaptive_sampler()
     TEST_ASSERT_NOT_NULL(strategies.per_operation_strategy);
     strategies.n_per_operation_strategy = 1;
     strategies.per_operation_strategy[0] =
-        jaeger_malloc(sizeof(jaeger_operation_sampler));
-    TEST_ASSERT_NOT_NULL(strategies.per_operation_strategy[0]);
-    *strategies.per_operation_strategy[0] =
         (jaeger_operation_strategy) JAEGERTRACINGC_OPERATION_STRATEGY_INIT;
-    strategies.per_operation_strategy[0]->operation =
+    strategies.per_operation_strategy[0].operation =
         jaeger_strdup(operation_name);
-    TEST_ASSERT_NOT_NULL(strategies.per_operation_strategy[0]->operation);
-    strategies.per_operation_strategy[0]->strategy_case =
-        JAEGERTRACINGC_OPERATION_STRATEGY_TYPE(PROBABILISTIC);
-    strategies.per_operation_strategy[0]->probabilistic =
-        jaeger_malloc(sizeof(jaeger_probabilistic_strategy));
-    TEST_ASSERT_NOT_NULL(strategies.per_operation_strategy[0]->probabilistic);
-    *strategies.per_operation_strategy[0]->probabilistic =
-        (jaeger_probabilistic_strategy)
-            JAEGERTRACINGC_PROBABILISTIC_STRATEGY_INIT;
-    strategies.per_operation_strategy[0]->probabilistic->sampling_rate =
+    TEST_ASSERT_NOT_NULL(strategies.per_operation_strategy[0].operation);
+    strategies.per_operation_strategy[0].probabilistic.sampling_rate =
         TEST_DEFAULT_SAMPLING_PROBABILITY;
     strategies.default_lower_bound_traces_per_second = 1.0;
     strategies.default_sampling_probability = TEST_DEFAULT_SAMPLING_PROBABILITY;

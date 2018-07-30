@@ -174,15 +174,14 @@ void test_reporter()
     TEST_ASSERT_EQUAL(
         0, jaeger_thread_init(&thread, &flush_reporter, &remote_reporter));
     const int num_read = recv(server_fd, buffer, sizeof(buffer), 0);
-    Jaegertracing__Protobuf__Batch* batch =
-        jaegertracing__protobuf__batch__unpack(
-            NULL, num_read, (const uint8_t*) buffer);
+    Jaeger__Model__Batch* batch =
+        jaeger__model__batch__unpack(NULL, num_read, (const uint8_t*) buffer);
     TEST_ASSERT_NOT_NULL(batch);
     void* success = NULL;
     jaeger_thread_join(thread, &success);
     TEST_ASSERT_NOT_NULL(success);
     TEST_ASSERT_EQUAL(true, *(bool*) success);
-    jaegertracing__protobuf__batch__free_unpacked(batch, NULL);
+    jaeger__model__batch__free_unpacked(batch, NULL);
     ((jaeger_destructible*) r)->destroy((jaeger_destructible*) r);
     jaeger_free(success);
 

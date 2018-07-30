@@ -295,7 +295,7 @@ samplers_from_strategies(const jaeger_per_operation_strategy* strategies,
     for (size_t i = 0; i < strategies->n_per_operation_strategy; i++) {
         const jaeger_operation_strategy* strategy =
             &strategies->per_operation_strategy[i];
-        if (strategy == NULL || strategy->probabilistic == NULL) {
+        if (strategy == NULL) {
             continue;
         }
         jaeger_operation_sampler* op_sampler = jaeger_vector_append(vec);
@@ -309,7 +309,7 @@ samplers_from_strategies(const jaeger_per_operation_strategy* strategies,
         jaeger_guaranteed_throughput_probabilistic_sampler_init(
             &op_sampler->sampler,
             strategies->default_lower_bound_traces_per_second,
-            strategy->probabilistic->sampling_rate);
+            strategy->probabilistic.sampling_rate);
         index++;
     }
 
@@ -459,10 +459,6 @@ jaeger_adaptive_sampler_update(jaeger_adaptive_sampler* sampler,
             jaeger_log_warn("Encountered null operation strategy");
             continue;
         }
-        if (strategy->probabilistic == NULL) {
-            jaeger_log_warn("Encountered null probabilistic strategy");
-            continue;
-        }
 
         jaeger_operation_sampler* op_sampler =
             jaeger_adaptive_sampler_find_sampler(sampler, strategy->operation);
@@ -470,7 +466,7 @@ jaeger_adaptive_sampler_update(jaeger_adaptive_sampler* sampler,
             jaeger_guaranteed_throughput_probabilistic_sampler_update(
                 &op_sampler->sampler,
                 lower_bound,
-                strategy->probabilistic->sampling_rate);
+                strategy->probabilistic.sampling_rate);
             found_match = true;
         }
 
@@ -499,7 +495,7 @@ jaeger_adaptive_sampler_update(jaeger_adaptive_sampler* sampler,
             jaeger_guaranteed_throughput_probabilistic_sampler_init(
                 &op_sampler_ptr->sampler,
                 lower_bound,
-                strategy->probabilistic->sampling_rate);
+                strategy->probabilistic.sampling_rate);
         }
     }
     jaeger_mutex_unlock(&sampler->mutex);
@@ -836,16 +832,7 @@ static inline bool parse_per_operation_sampling_json(
         jaeger_operation_strategy* op_strategy =
             &strategy->per_operation_strategy[i];
 
-        op_strategy->probabilistic =
-            jaeger_malloc(sizeof(jaeger_probabilistic_strategy));
-        if (op_strategy->probabilistic == NULL) {
-            jaeger_log_error("Cannot allocate probabilistic strategy, num "
-                             "operation strategies = %zu",
-                             strategy->n_per_operation_strategy);
-            success = false;
-            break;
-        }
-        *op_strategy->probabilistic = (jaeger_probabilistic_strategy)
+        op_strategy->probabilistic = (jaeger_probabilistic_strategy)
             JAEGERTRACINGC_PROBABILISTIC_STRATEGY_INIT;
 
         /* Borrow reference */
@@ -876,7 +863,7 @@ static inline bool parse_per_operation_sampling_json(
             break;
         }
         if (!parse_probabilistic_sampling_json(
-                op_strategy->probabilistic, probabilistic_json, source)) {
+                &op_strategy->probabilistic, probabilistic_json, source)) {
             success = false;
             break;
         }
@@ -934,61 +921,24 @@ static inline bool jaeger_http_sampling_manager_parse_response_json(
 
     if (probabilistic_json != NULL) {
         response->strategy_case = jaeger_probabilistic_strategy_type;
-        response->probabilistic =
-            jaeger_malloc(sizeof(jaeger_probabilistic_strategy));
-        if (response->probabilistic == NULL) {
-            jaeger_log_error("Cannot allocate probabilistic strategy for HTTP "
-                             "sampling response");
-            success = false;
-        }
-        else {
-            *response->probabilistic = (jaeger_probabilistic_strategy)
-                JAEGERTRACINGC_PROBABILISTIC_STRATEGY_INIT;
-            success = parse_probabilistic_sampling_json(
-                response->probabilistic,
-                probabilistic_json,
-                jaeger_vector_get(&manager->response, 0));
-        }
+        success = parse_probabilistic_sampling_json(
+            &response->strategy.probabilistic,
+            probabilistic_json,
+            jaeger_vector_get(&manager->response, 0));
     }
     else if (rate_limiting_json != NULL) {
         response->strategy_case = jaeger_rate_limiting_strategy_type;
-        response->rate_limiting =
-            jaeger_malloc(sizeof(jaeger_rate_limiting_strategy));
-        if (response->rate_limiting == NULL) {
-            jaeger_log_error("Cannot allocate rate limiting strategy for HTTP "
-                             "sampling response");
-            success = false;
-        }
-        else {
-            success = parse_rate_limiting_sampling_json(
-                response->rate_limiting,
-                rate_limiting_json,
-                jaeger_vector_get(&manager->response, 0));
-        }
+        success = parse_rate_limiting_sampling_json(
+            &response->strategy.rate_limiting,
+            rate_limiting_json,
+            jaeger_vector_get(&manager->response, 0));
     }
     else {
-        if (per_operation_json == NULL) {
-            jaeger_log_warn(
-                "JSON response contains no strategies, response = \"%s\"",
-                (char*) jaeger_vector_get(&manager->response, 0));
-            success = false;
-            goto cleanup;
-        }
-
         response->strategy_case = jaeger_per_operation_strategy_type;
-        response->per_operation =
-            jaeger_malloc(sizeof(jaeger_per_operation_strategy));
-        if (response->per_operation == NULL) {
-            jaeger_log_error("Cannot allocate per operation strategy for HTTP "
-                             "sampling response");
-            success = false;
-        }
-        else {
-            success = parse_per_operation_sampling_json(
-                response->per_operation,
-                per_operation_json,
-                jaeger_vector_get(&manager->response, 0));
-        }
+        success = parse_per_operation_sampling_json(
+            &response->strategy.per_operation,
+            per_operation_json,
+            jaeger_vector_get(&manager->response, 0));
     }
 
 cleanup:
@@ -1127,7 +1077,7 @@ bool jaeger_remotely_controlled_sampler_update(
     jaeger_remotely_controlled_sampler* sampler)
 {
     assert(sampler != NULL);
-    jaeger_strategy_response response = JAEGERTRACINGC_STRATEGY_RESPONSE_INIT;
+    jaeger_strategy_response response;
     const bool result = jaeger_http_sampling_manager_get_sampling_strategies(
         &sampler->manager, &response);
     if (!result) {
@@ -1153,7 +1103,7 @@ bool jaeger_remotely_controlled_sampler_update(
     switch (response.strategy_case) {
     case jaeger_per_operation_strategy_type: {
         if (!jaeger_remotely_controlled_sampler_update_adaptive_sampler(
-                sampler, response.per_operation)) {
+                sampler, &response.strategy.per_operation)) {
             jaeger_log_error("Cannot update adaptive sampler in remotely "
                              "controlled "
                              "sampler");
@@ -1161,34 +1111,24 @@ bool jaeger_remotely_controlled_sampler_update(
         }
     } break;
     case jaeger_probabilistic_strategy_type: {
-        success = (response.probabilistic != NULL);
-        if (success) {
-            jaeger_sampler_choice_destroy(&sampler->sampler);
-            sampler->sampler.type = jaeger_probabilistic_sampler_type;
-            jaeger_probabilistic_sampler_init(
-                &sampler->sampler.probabilistic_sampler,
-                JAEGERTRACINGC_CLAMP(
-                    response.probabilistic->sampling_rate, 0, 1));
-        }
-        else {
-            jaeger_log_error("Received null probabilistic strategy");
-        }
+        jaeger_sampler_choice_destroy(&sampler->sampler);
+        sampler->sampler.type = jaeger_probabilistic_sampler_type;
+        jaeger_probabilistic_sampler_init(
+            &sampler->sampler.probabilistic_sampler,
+            JAEGERTRACINGC_CLAMP(
+                response.strategy.probabilistic.sampling_rate, 0, 1));
     } break;
     default: {
         success =
-            (response.strategy_case == jaeger_rate_limiting_strategy_type &&
-             response.rate_limiting != NULL);
+            (response.strategy_case == jaeger_rate_limiting_strategy_type);
         if (response.strategy_case != jaeger_rate_limiting_strategy_type) {
             jaeger_log_error("Invalid strategy type in response, type = %d",
                              response.strategy_case);
         }
-        else if (response.rate_limiting == NULL) {
-            jaeger_log_error("Received null rate limiting strategy");
-        }
         else {
             jaeger_sampler_choice_destroy(&sampler->sampler);
             size_t max_traces_per_second =
-                response.rate_limiting->max_traces_per_second;
+                response.strategy.rate_limiting.max_traces_per_second;
             sampler->sampler.type = jaeger_rate_limiting_sampler_type;
             jaeger_rate_limiting_sampler_init(
                 &sampler->sampler.rate_limiting_sampler, max_traces_per_second);
