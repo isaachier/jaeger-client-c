@@ -1090,7 +1090,6 @@ bool jaeger_remotely_controlled_sampler_update(
         }
         return false;
     }
-    printf("response: \"%s\"\n", sampler->manager.response.data);
 
     bool success = true;
     jaeger_mutex_lock(&sampler->mutex);
@@ -1130,7 +1129,6 @@ bool jaeger_remotely_controlled_sampler_update(
             jaeger_sampler_choice_destroy(&sampler->sampler);
             const double max_traces_per_second =
                 response.strategy.rate_limiting.max_traces_per_second;
-            printf("MAX: %.2f\n\n", max_traces_per_second);
             sampler->sampler.type = jaeger_rate_limiting_sampler_type;
             jaeger_rate_limiting_sampler_init(
                 &sampler->sampler.rate_limiting_sampler, max_traces_per_second);
