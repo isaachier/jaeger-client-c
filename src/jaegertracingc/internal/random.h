@@ -19,7 +19,9 @@
 
 #include <errno.h>
 
+#ifdef USE_PCG
 #include "pcg_variants.h"
+#endif
 
 #include "jaegertracingc/common.h"
 #include "jaegertracingc/random.h"

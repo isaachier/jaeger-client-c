@@ -5,8 +5,6 @@ addons:
   apt:
     update: true
     packages: &1
-    - libhttp-parser-dev
-    - libjansson-dev
     - pkg-config
     - autoconf
     - automake
@@ -22,7 +20,7 @@ matrix:
   - os: linux
     addons:
       apt:
-        update: true
+        update: false
         packages:
         - *1
         - g++-4.8
@@ -32,35 +30,54 @@ matrix:
     addons:
       apt:
         update: true
-        sources:
-        - ubuntu-toolchain-r-test
         packages:
         - *1
-        - g++-4.9
+        - cmake
+        - g++-4.8
+        - libhttp-parser-dev
+        - libjansson-dev
+        #Can't use these, no suitable package source (see scripts/install-deps.sh
+        #and ppa:maarten-fonville/protobuf
+        #- libprotobuf-c-dev
+        #- protobuf-c-compiler
     env:
-    - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
-  - os: linux
-    addons:
-      apt:
-        update: true
-        sources:
-        - ubuntu-toolchain-r-test
-        packages:
-        - *1
-        - g++-5
-    env:
-    - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
-  - os: linux
-    addons:
-      apt:
-        update: true
-        sources:
-        - ubuntu-toolchain-r-test
-        packages:
-        - *1
-        - g++-6
-    env:
-    - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
+    - MATRIX_EVAL="CC=gcc-4.8 && CXX=g++-4.8"
+    - USE_HUNTER=off
+    - USE_LOCAL_CMAKE=on
+#DISABLED to reduce the matrix a bit
+#  - os: linux
+#    addons:
+#      apt:
+#        update: true
+#        sources:
+#        - ubuntu-toolchain-r-test
+#        packages:
+#        - *1
+#        - g++-4.9
+#    env:
+#    - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
+#  - os: linux
+#    addons:
+#      apt:
+#        update: true
+#        sources:
+#        - ubuntu-toolchain-r-test
+#        packages:
+#        - *1
+#        - g++-5
+#    env:
+#    - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
+#  - os: linux
+#    addons:
+#      apt:
+#        update: true
+#        sources:
+#        - ubuntu-toolchain-r-test
+#        packages:
+#        - *1
+#        - g++-6
+#    env:
+#    - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
   - os: linux
     addons:
       apt:
@@ -84,41 +101,43 @@ matrix:
         - clang-3.6
     env:
     - MATRIX_EVAL="CC=clang-3.6 && CXX=clang++-3.6"
-  - os: linux
-    addons:
-      apt:
-        update: true
-        sources:
-        - ubuntu-toolchain-r-test
-        - llvm-toolchain-precise-3.7
-        packages:
-        - *1
-        - clang-3.7
-    env:
-    - MATRIX_EVAL="CC=clang-3.7 && CXX=clang++-3.7"
-  - os: linux
-    addons:
-      apt:
-        update: true
-        sources:
-        - ubuntu-toolchain-r-test
-        - llvm-toolchain-precise-3.8
-        packages:
-        - *1
-        - clang-3.8
-    env:
-    - MATRIX_EVAL="CC=clang-3.8 && CXX=clang++-3.8"
-  - os: linux
-    addons:
-      apt:
-        update: true
-        sources:
-        - llvm-toolchain-trusty-4.0
-        packages:
-        - *1
-        - clang-4.0
-    env:
-    - MATRIX_EVAL="CC=clang-4.0 && CXX=clang++-4.0"
+#DISABLED to reduce the matrix a bit
+#  - os: linux
+#    addons:
+#      apt:
+#        update: true
+#        sources:
+#        - ubuntu-toolchain-r-test
+#        - llvm-toolchain-precise-3.7
+#        packages:
+#        - *1
+#        - clang-3.7
+#    env:
+#    - MATRIX_EVAL="CC=clang-3.7 && CXX=clang++-3.7"
+#  - os: linux
+#    addons:
+#      apt:
+#        update: true
+#        sources:
+#        - ubuntu-toolchain-r-test
+#        - llvm-toolchain-precise-3.8
+#        packages:
+#        - *1
+#        - clang-3.8
+#    env:
+#    - MATRIX_EVAL="CC=clang-3.8 && CXX=clang++-3.8"
+#DISABLED to reduce the matrix a bit
+#  - os: linux
+#    addons:
+#      apt:
+#        update: true
+#        sources:
+#        - llvm-toolchain-trusty-4.0
+#        packages:
+#        - *1
+#        - clang-4.0
+#    env:
+#    - MATRIX_EVAL="CC=clang-4.0 && CXX=clang++-4.0"
   - os: linux
     addons:
       apt:
@@ -144,6 +163,8 @@ script:
 - ./scripts/build.sh "$HOME/install"
 after_success:
 - ./scripts/upload-coverage.sh
+after_failure:
+- cat CMakeCache.txt
 env:
   global:
   - LANG="en_US.UTF-8"

@@ -26,7 +26,7 @@
 #
 # and the following imported targets::
 #
-# Jansson::Jansson    - The Jansson library
+# jansson::jansson    - The Jansson library
 #
 # Based on https://cmake.org/cmake/help/v3.10/manual/cmake-developer.7.html#a-sample-find-module
 
@@ -55,9 +55,9 @@ if(JANSSON_FOUND)
   set(JANSSON_DEFINITIONS ${PC_JANSSON_CFLAGS_OTHER})
 endif()
 
-if(JANSSON_FOUND AND NOT TARGET Jansson::Jansson)
-  add_library(Jansson::Jansson UNKNOWN IMPORTED)
-  set_target_properties(Jansson::Jansson PROPERTIES
+if(JANSSON_FOUND AND NOT TARGET jansson::jansson)
+  add_library(jansson::jansson UNKNOWN IMPORTED)
+  set_target_properties(jansson::jansson PROPERTIES
     IMPORTED_LOCATION "${JANSSON_LIBRARY}"
     INTERFACE_COMPILE_OPTIONS "${PC_JANSSON_CFLAGS_OTHER}"
     INTERFACE_INCLUDE_DIRECTORIES "${JANSSON_INCLUDE_DIR}")

@@ -41,25 +41,51 @@ function main() {
     project_dir=$(git rev-parse --show-toplevel)
     cd "$project_dir" || exit 1
 
+    echo "using $(cmake -version) at $(which cmake)"
+
     mkdir -p build
     cd build || exit 1
-    working "Building project"
+
     local prefix_arg
     prefix_arg=$1
-    prefix_arg=${prefix_arg:+"-DCMAKE_INSTALL_PREFIX=$prefix_arg"}
-    cmake -DCMAKE_BUILD_TYPE=Debug ${prefix_arg} -DJAEGERTRACINGC_COVERAGE=${COVERAGE:OFF} ..
+
+    if [ "${USE_HUNTER:-}" == "off" ]; then
+        # We won't be using Hunter so we need to get opentracing's c library
+        # installed too.
+        working "Building opentracing-c"
+        mkdir -p "build-opentracing-c"
+        pushd "build-opentracing-c"
+        cmake -DCMAKE_BUILD_TYPE=Debug \
+            -DCMAKE_INSTALL_PREFIX=${prefix_arg} \
+            ../../third_party/opentracing-c/
+        make all -j3
+        make install
+        working "Done building opentracing-c"
+        popd
+
+        EXTRA_CMAKE_OPTS="-DHUNTER_ENABLED=0 -DJAEGERTRACINGC_USE_PCG=0"
+    fi
+
+    working "Building project"
+    cmake -DCMAKE_BUILD_TYPE=Debug \
+        -DCMAKE_INSTALL_PREFIX="$prefix_arg" \
+        -DCMAKE_PREFIX_PATH=${prefix_arg} \
+        -DJAEGERTRACINGC_COVERAGE=${COVERAGE:-OFF} \
+        ${EXTRA_CMAKE_OPTS:-} \
+        ..
 
     if make all -j3; then
         if valgrind --error-exitcode=1 --track-origins=yes \
             --leak-check=full ./default_test; then
             info "All tests compiled and passed"
+            make install
+            info "Install test run successful"
         else
             error "Tests failed"
             exit 1
         fi
     else
         error "Failed to build project"
-        exit 1
         exit 1
     fi
 }

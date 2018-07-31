@@ -26,7 +26,7 @@
 #
 # and the following imported targets::
 #
-# http-parser::http-parser    - The http-parser library
+# http-parser::http_parser    - The http-parser library
 #
 # Based on https://cmake.org/cmake/help/v3.10/manual/cmake-developer.7.html#a-sample-find-module
 
@@ -55,9 +55,9 @@ if(HTTP_PARSER_FOUND)
   set(HTTP_PARSER_DEFINITIONS ${PC_HTTP_PARSER_CFLAGS_OTHER})
 endif()
 
-if(HTTP_PARSER_FOUND AND NOT TARGET http-parser::http-parser)
-  add_library(http-parser::http-parser UNKNOWN IMPORTED)
-  set_target_properties(http-parser::http-parser PROPERTIES
+if(HTTP_PARSER_FOUND AND NOT TARGET http-parser::http_parser)
+  add_library(http-parser::http_parser UNKNOWN IMPORTED)
+  set_target_properties(http-parser::http_parser PROPERTIES
     IMPORTED_LOCATION "${HTTP_PARSER_LIBRARY}"
     INTERFACE_COMPILE_OPTIONS "${PC_HTTP_PARSER_CFLAGS_OTHER}"
     INTERFACE_INCLUDE_DIRECTORIES "${HTTP_PARSER_INCLUDE_DIR}")
