@@ -763,7 +763,7 @@ static inline bool parse_rate_limiting_sampling_json(
     const int result = json_unpack_ex(json,
                                       &err,
                                       0,
-                                      "{si}",
+                                      "{sf}",
                                       "maxTracesPerSecond",
                                       &strategy->max_traces_per_second);
     if (result != 0) {
@@ -1077,7 +1077,7 @@ bool jaeger_remotely_controlled_sampler_update(
     jaeger_remotely_controlled_sampler* sampler)
 {
     assert(sampler != NULL);
-    jaeger_strategy_response response;
+    jaeger_strategy_response response = {.strategy = {}};
     const bool result = jaeger_http_sampling_manager_get_sampling_strategies(
         &sampler->manager, &response);
     if (!result) {
@@ -1090,6 +1090,7 @@ bool jaeger_remotely_controlled_sampler_update(
         }
         return false;
     }
+    printf("response: \"%s\"\n", sampler->manager.response.data);
 
     bool success = true;
     jaeger_mutex_lock(&sampler->mutex);
@@ -1127,8 +1128,9 @@ bool jaeger_remotely_controlled_sampler_update(
         }
         else {
             jaeger_sampler_choice_destroy(&sampler->sampler);
-            size_t max_traces_per_second =
+            const double max_traces_per_second =
                 response.strategy.rate_limiting.max_traces_per_second;
+            printf("MAX: %.2f\n\n", max_traces_per_second);
             sampler->sampler.type = jaeger_rate_limiting_sampler_type;
             jaeger_rate_limiting_sampler_init(
                 &sampler->sampler.rate_limiting_sampler, max_traces_per_second);

@@ -211,7 +211,7 @@ static inline void test_adaptive_sampler()
     jaeger_per_operation_strategy strategies =
         JAEGERTRACINGC_PER_OPERATION_STRATEGY_INIT;
     strategies.per_operation_strategy =
-        jaeger_malloc(sizeof(jaeger_operation_strategy*));
+        jaeger_malloc(sizeof(jaeger_operation_strategy));
     TEST_ASSERT_NOT_NULL(strategies.per_operation_strategy);
     strategies.n_per_operation_strategy = 1;
     strategies.per_operation_strategy[0] =
@@ -288,7 +288,7 @@ static inline void test_remotely_controlled_sampler()
         {.service_name = "test-service",
          .json_format = "{\n"
                         "  \"rateLimitingSampling\": {\n"
-                        "      \"maxTracesPerSecond\": %0.0f\n"
+                        "      \"maxTracesPerSecond\": %f\n"
                         "    }\n"
                         "}\n",
          .arg_value = TEST_DEFAULT_MAX_TRACES_PER_SECOND},

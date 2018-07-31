@@ -356,13 +356,14 @@ static inline bool
 span_inherit_from_parent(jaeger_tracer* tracer,
                          jaeger_span* span,
                          const opentracing_span_reference* span_refs,
-                         int num_span_refs)
+                         int num_span_refs,
+                         bool* has_parent)
 {
     assert(tracer != NULL);
     assert(span != NULL);
     assert(span_refs != NULL);
     const jaeger_span_context* parent = NULL;
-    bool has_parent = false;
+    *has_parent = false;
     for (int i = 0; i < num_span_refs; i++) {
         const opentracing_span_reference* span_ref = &span_refs[i];
         const jaeger_span_context* ctx =
@@ -386,25 +387,25 @@ span_inherit_from_parent(jaeger_tracer* tracer,
         }
         if (parent == NULL) {
             parent = ctx;
-            has_parent =
+            *has_parent =
                 (span_ref->type == opentracing_span_reference_child_of);
         }
     }
 
-    if (!has_parent && parent != NULL && jaeger_span_context_is_valid(parent)) {
-        has_parent = true;
+    if (!*has_parent && parent != NULL &&
+        jaeger_span_context_is_valid(parent)) {
+        *has_parent = true;
     }
 
-    if (!has_parent || parent == NULL ||
+    if (!*has_parent || parent == NULL ||
         !jaeger_span_context_is_valid(parent)) {
         span->context.trace_id.low = jaeger_random64();
         if (tracer->options.gen_128_bit) {
             span->context.trace_id.high = jaeger_random64();
         }
         span->context.span_id = span->context.trace_id.low;
-        span->context.parent_id = 0;
         span->context.flags = 0;
-        if (has_parent &&
+        if (*has_parent &&
             jaeger_span_context_is_debug_id_container_only(parent)) {
             span->context.flags |= ((uint8_t) jaeger_sampling_flag_sampled |
                                     (uint8_t) jaeger_sampling_flag_debug);
@@ -421,11 +422,10 @@ span_inherit_from_parent(jaeger_tracer* tracer,
     else {
         span->context.trace_id = parent->trace_id;
         span->context.span_id = jaeger_random64();
-        span->context.parent_id = parent->span_id;
         span->context.flags = parent->flags;
     }
 
-    if (has_parent) {
+    if (*has_parent) {
         assert(parent != NULL);
         if (!jaeger_hashtable_copy(&span->context.baggage, &parent->baggage)) {
             return false;
@@ -436,7 +436,8 @@ span_inherit_from_parent(jaeger_tracer* tracer,
 }
 
 static inline void update_metrics_for_new_span(jaeger_metrics* metrics,
-                                               const jaeger_span* span)
+                                               const jaeger_span* span,
+                                               const bool is_new_trace)
 {
 #define COUNTER_INCREMENT(counter) (counter)->inc((counter), 1)
 
@@ -448,7 +449,6 @@ static inline void update_metrics_for_new_span(jaeger_metrics* metrics,
 
     jaeger_mutex_lock((jaeger_mutex*) &span->mutex);
     const bool is_sampled = jaeger_span_is_sampled(span);
-    const bool is_new_trace = (span->context.parent_id == 0);
     jaeger_mutex_unlock((jaeger_mutex*) &span->mutex);
     if (is_sampled) {
         COUNTER_INCREMENT(metrics->spans_sampled);
@@ -498,9 +498,13 @@ opentracing_span* jaeger_tracer_start_span_with_options(
                          operation_name);
         return NULL;
     }
+    bool has_parent;
     if (!jaeger_span_init(span) ||
-        !span_inherit_from_parent(
-            t, span, options->references, options->num_references)) {
+        !span_inherit_from_parent(t,
+                                  span,
+                                  options->references,
+                                  options->num_references,
+                                  &has_parent)) {
         goto cleanup;
     }
 
@@ -545,7 +549,7 @@ opentracing_span* jaeger_tracer_start_span_with_options(
         span->start_time_steady = options->start_time_steady;
     }
 
-    update_metrics_for_new_span(t->metrics, span);
+    update_metrics_for_new_span(t->metrics, span, !has_parent);
 
     return (opentracing_span*) span;
 

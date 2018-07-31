@@ -256,7 +256,6 @@ static inline void test_text_map()
     TEST_ASSERT_NOT_NULL(ctx);
     TEST_ASSERT_EQUAL(0xab, ctx->trace_id.low);
     TEST_ASSERT_EQUAL(0xcd, ctx->span_id);
-    TEST_ASSERT_EQUAL(0, ctx->parent_id);
     TEST_ASSERT_EQUAL(0, ctx->flags);
     TEST_ASSERT_EQUAL(2, ctx->baggage.size);
     const jaeger_key_value* kv = jaeger_hashtable_find(&ctx->baggage, "k1");
@@ -275,7 +274,6 @@ static inline void test_text_map()
     ctx->trace_id.high = 0;
     ctx->trace_id.low = 0xab;
     ctx->span_id = 0xcd;
-    ctx->parent_id = 0xef;
     ctx->flags = jaeger_sampling_flag_sampled;
     jaeger_hashtable_clear(&ctx->baggage);
     TEST_ASSERT_TRUE(jaeger_hashtable_put(&ctx->baggage, "k1", "v1"));
@@ -297,7 +295,6 @@ static inline void test_text_map()
     TEST_ASSERT_EQUAL(ctx->trace_id.high, ctx_copy->trace_id.high);
     TEST_ASSERT_EQUAL(ctx->trace_id.low, ctx_copy->trace_id.low);
     TEST_ASSERT_EQUAL(ctx->span_id, ctx_copy->span_id);
-    TEST_ASSERT_EQUAL(ctx->parent_id, ctx_copy->parent_id);
     TEST_ASSERT_EQUAL(ctx->flags, ctx_copy->flags);
     TEST_ASSERT_EQUAL(ctx->baggage.size, ctx_copy->baggage.size);
     kv = jaeger_hashtable_find(&ctx->baggage, "k1");
@@ -340,7 +337,6 @@ static inline void test_http_headers()
     TEST_ASSERT_NOT_NULL(ctx);
     TEST_ASSERT_EQUAL(0xab, ctx->trace_id.low);
     TEST_ASSERT_EQUAL(0xcd, ctx->span_id);
-    TEST_ASSERT_EQUAL(0, ctx->parent_id);
     TEST_ASSERT_EQUAL(0, ctx->flags);
     TEST_ASSERT_EQUAL(2, ctx->baggage.size);
     const jaeger_key_value* kv = jaeger_hashtable_find(&ctx->baggage, "k1");
@@ -365,7 +361,6 @@ static inline void test_http_headers()
     TEST_ASSERT_NOT_NULL(ctx);
     TEST_ASSERT_EQUAL(0xab, ctx->trace_id.low);
     TEST_ASSERT_EQUAL(0xcd, ctx->span_id);
-    TEST_ASSERT_EQUAL(0, ctx->parent_id);
     TEST_ASSERT_EQUAL(0, ctx->flags);
     TEST_ASSERT_EQUAL(2, ctx->baggage.size);
     kv = jaeger_hashtable_find(&ctx->baggage, "k3");
@@ -390,7 +385,6 @@ static inline void test_http_headers()
     TEST_ASSERT_NOT_NULL(ctx);
     TEST_ASSERT_EQUAL(0xab, ctx->trace_id.low);
     TEST_ASSERT_EQUAL(0xcd, ctx->span_id);
-    TEST_ASSERT_EQUAL(0, ctx->parent_id);
     TEST_ASSERT_EQUAL(jaeger_sampling_flag_debug | jaeger_sampling_flag_sampled,
                       ctx->flags);
     TEST_ASSERT_EQUAL_STRING(ctx->debug_id, "test-debug-header");
@@ -463,7 +457,6 @@ static inline void test_binary()
     jaeger_span_context ctx;
     TEST_ASSERT_TRUE(jaeger_span_context_init(&ctx));
     ctx.trace_id = (jaeger_trace_id){.high = 0x1234, .low = 0x5678};
-    ctx.parent_id = 0xEF00;
     ctx.span_id = 0xABCD;
     enum {
         max_baggage_items = 15,
@@ -494,7 +487,6 @@ static inline void test_binary()
     TEST_ASSERT_EQUAL(ctx.trace_id.high, ctx_copy->trace_id.high);
     TEST_ASSERT_EQUAL(ctx.trace_id.low, ctx_copy->trace_id.low);
     TEST_ASSERT_EQUAL(ctx.span_id, ctx_copy->span_id);
-    TEST_ASSERT_EQUAL(ctx.parent_id, ctx_copy->parent_id);
     TEST_ASSERT_EQUAL(ctx.baggage.size, ctx_copy->baggage.size);
 
     jaeger_span_context_destroy((jaeger_destructible*) &ctx);

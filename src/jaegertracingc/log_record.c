@@ -73,11 +73,11 @@ cleanup:
 
 void jaeger_log_record_protobuf_destroy(Jaeger__Model__Log* log_record)
 {
-    if (log_record == NULL || log_record->fields == NULL) {
+    if (log_record == NULL) {
         return;
     }
 
-    for (int i = 0; i < (int) log_record->n_fields; i++) {
+    for (size_t i = 0; i < log_record->n_fields; i++) {
         if (log_record->fields[i] != NULL) {
             jaeger_tag_destroy(log_record->fields[i]);
             jaeger_free(log_record->fields[i]);
@@ -98,6 +98,8 @@ bool jaeger_log_record_to_protobuf(Jaeger__Model__Log* restrict dst,
     if (dst->timestamp == NULL) {
         goto cleanup;
     }
+    *dst->timestamp =
+        (Google__Protobuf__Timestamp) GOOGLE__PROTOBUF__TIMESTAMP__INIT;
     dst->timestamp->seconds = src->timestamp.value.tv_sec;
     dst->timestamp->nanos = src->timestamp.value.tv_nsec;
     if (!jaeger_vector_protobuf_copy((void***) &dst->fields,

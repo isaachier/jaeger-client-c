@@ -75,7 +75,6 @@ bool jaeger_span_context_copy(jaeger_span_context* restrict dst,
     }
     dst->trace_id = src->trace_id;
     dst->span_id = src->span_id;
-    dst->parent_id = src->parent_id;
     dst->flags = src->flags;
     jaeger_mutex_unlock((jaeger_mutex*) &src->mutex);
     jaeger_mutex_unlock(&dst->mutex);
@@ -135,12 +134,14 @@ bool jaeger_span_ref_copy(void* arg,
 
 void jaeger_span_ref_protobuf_destroy(Jaeger__Model__SpanRef* span_ref)
 {
-    if (span_ref == NULL || span_ref->trace_id.data == NULL) {
+    if (span_ref == NULL) {
         return;
     }
 
     jaeger_free(span_ref->trace_id.data);
     span_ref->trace_id = (ProtobufCBinaryData){.data = NULL, .len = 0};
+    jaeger_free(span_ref->span_id.data);
+    span_ref->span_id = (ProtobufCBinaryData){.data = NULL, .len = 0};
 }
 
 bool jaeger_span_ref_to_protobuf(Jaeger__Model__SpanRef* restrict dst,
@@ -149,6 +150,7 @@ bool jaeger_span_ref_to_protobuf(Jaeger__Model__SpanRef* restrict dst,
     assert(dst != NULL);
     assert(src != NULL);
     *dst = (Jaeger__Model__SpanRef) JAEGER__MODEL__SPAN_REF__INIT;
+
     dst->trace_id =
         (ProtobufCBinaryData){.len = sizeof(uint64_t) * 2,
                               .data = jaeger_malloc(sizeof(uint64_t) * 2)};
@@ -156,18 +158,23 @@ bool jaeger_span_ref_to_protobuf(Jaeger__Model__SpanRef* restrict dst,
         jaeger_log_error("Cannot allocate trace ID for span ref message");
         return false;
     }
+
     dst->span_id = (ProtobufCBinaryData){
         .len = sizeof(src->context.span_id),
         .data = jaeger_malloc(sizeof(src->context.span_id))};
     if (dst->span_id.data == NULL) {
-        jaeger_log_error("Cannot allocate trace ID for span ref message");
+        jaeger_log_error("Cannot allocate span ID for span ref message");
         jaeger_free(dst->trace_id.data);
         dst->trace_id = (ProtobufCBinaryData){.data = NULL, .len = 0};
         dst->span_id = (ProtobufCBinaryData){.data = NULL, .len = 0};
         return false;
     }
+
     jaeger_mutex_lock((jaeger_mutex*) &src->context.mutex);
     jaeger_trace_id_to_protobuf(&dst->trace_id, &src->context.trace_id);
+    memcpy(
+        dst->span_id.data, &src->context.span_id, sizeof(src->context.span_id));
+    dst->span_id.len = sizeof(src->context.span_id);
     jaeger_mutex_unlock((jaeger_mutex*) &src->context.mutex);
     dst->ref_type = (Jaeger__Model__SpanRefType) src->type;
     return true;
@@ -513,32 +520,23 @@ void jaeger_span_protobuf_destroy(Jaeger__Model__Span* span)
     if (span == NULL) {
         return;
     }
-    if (span->trace_id.data != NULL) {
-        jaeger_free(span->trace_id.data);
-        span->trace_id = (ProtobufCBinaryData){.data = NULL, .len = 0};
-    }
-    if (span->operation_name != NULL) {
-        jaeger_free(span->operation_name);
-        span->operation_name = NULL;
-    }
-    if (span->references != NULL) {
-        jaeger_protobuf_list_destroy((void**) span->references,
-                                     span->n_references,
-                                     &jaeger_span_ref_protobuf_destroy_wrapper);
-        span->references = NULL;
-    }
-    if (span->logs != NULL) {
-        jaeger_protobuf_list_destroy(
-            (void**) span->logs,
-            span->n_logs,
-            &jaeger_log_record_protobuf_destroy_wrapper);
-        span->logs = NULL;
-    }
-    if (span->tags != NULL) {
-        jaeger_protobuf_list_destroy(
-            (void**) span->tags, span->n_tags, &jaeger_tag_destroy_wrapper);
-        span->tags = NULL;
-    }
+    jaeger_free(span->trace_id.data);
+    span->trace_id = (ProtobufCBinaryData){.data = NULL, .len = 0};
+    jaeger_free(span->span_id.data);
+    span->span_id = (ProtobufCBinaryData){.data = NULL, .len = 0};
+    jaeger_free(span->operation_name);
+    span->operation_name = NULL;
+    jaeger_protobuf_list_destroy((void**) span->references,
+                                 span->n_references,
+                                 &jaeger_span_ref_protobuf_destroy_wrapper);
+    span->references = NULL;
+    jaeger_protobuf_list_destroy((void**) span->logs,
+                                 span->n_logs,
+                                 &jaeger_log_record_protobuf_destroy_wrapper);
+    span->logs = NULL;
+    jaeger_protobuf_list_destroy(
+        (void**) span->tags, span->n_tags, &jaeger_tag_destroy_wrapper);
+    span->tags = NULL;
 }
 
 bool jaeger_span_to_protobuf(Jaeger__Model__Span* restrict dst,
@@ -555,7 +553,7 @@ bool jaeger_span_to_protobuf(Jaeger__Model__Span* restrict dst,
     }
     dst->span_id = (ProtobufCBinaryData){
         .data = jaeger_malloc(sizeof(src->context.span_id)),
-        .len = sizeof(src->context.trace_id)};
+        .len = sizeof(src->context.span_id)};
     if (dst->span_id.data == NULL) {
         goto cleanup;
     }
@@ -564,17 +562,7 @@ bool jaeger_span_to_protobuf(Jaeger__Model__Span* restrict dst,
     jaeger_trace_id_to_protobuf(&dst->trace_id, &src->context.trace_id);
     memcpy(
         dst->span_id.data, &src->context.span_id, sizeof(src->context.span_id));
-    dst->references = jaeger_malloc(sizeof(*dst->references));
-    if (dst->references == NULL) {
-        goto cleanup;
-    }
-    dst->n_references = 1;
-    dst->references[0] = jaeger_malloc(sizeof(*dst->references[0]));
-    if (dst->references[0] == NULL) {
-        goto cleanup;
-    }
-    *dst->references[0] =
-        (Jaeger__Model__SpanRef) JAEGER__MODEL__SPAN_REF__INIT;
+
     dst->operation_name = jaeger_strdup(src->operation_name);
     if (dst->operation_name == NULL) {
         goto cleanup;
@@ -589,6 +577,7 @@ bool jaeger_span_to_protobuf(Jaeger__Model__Span* restrict dst,
                                      NULL)) {
         goto cleanup;
     }
+
     if (!jaeger_vector_protobuf_copy(
             (void***) &dst->logs,
             &dst->n_logs,
@@ -599,6 +588,7 @@ bool jaeger_span_to_protobuf(Jaeger__Model__Span* restrict dst,
             NULL)) {
         goto cleanup;
     }
+
     if (!jaeger_vector_protobuf_copy((void***) &dst->references,
                                      &dst->n_references,
                                      &src->refs,
@@ -633,18 +623,13 @@ int jaeger_span_context_format(const jaeger_span_context* ctx,
     const uint8_t flags = ctx->flags;
     jaeger_mutex_unlock((jaeger_mutex*) &ctx->mutex);
     if (trace_id_len > buffer_len) {
-        return trace_id_len + snprintf(NULL,
-                                       0,
-                                       ":%" PRIx64 ":%" PRIx64 ":%" PRIx8,
-                                       ctx->span_id,
-                                       ctx->parent_id,
-                                       flags);
+        return trace_id_len +
+               snprintf(NULL, 0, ":%" PRIx64 ":%" PRIx8, ctx->span_id, flags);
     }
     return snprintf(&buffer[trace_id_len],
                     buffer_len - trace_id_len,
-                    ":%" PRIx64 ":%" PRIx64 ":%" PRIx8,
+                    ":%" PRIx64 ":%" PRIx8,
                     ctx->span_id,
-                    ctx->parent_id,
                     flags);
 }
 
@@ -658,14 +643,13 @@ bool jaeger_span_context_scan(jaeger_span_context* ctx, const char* str)
     memcpy(buffer, str, len);
     buffer[len] = '\0';
     uint64_t span_id = 0;
-    uint64_t parent_id = 0;
     uint8_t flags = 0;
     char* token = buffer;
     char* token_context = NULL;
     char* token_end = NULL;
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 4; i++) {
         token = strtok_r(i == 0 ? token : NULL, ":", &token_context);
-        if (token == NULL && i != 4) {
+        if (token == NULL && i != 3) {
             return false;
         }
         token_end = NULL;
@@ -679,13 +663,10 @@ bool jaeger_span_context_scan(jaeger_span_context* ctx, const char* str)
             span_id = strtoull(token, &token_end, 16);
             break;
         case 2:
-            parent_id = strtoull(token, &token_end, 16);
-            break;
-        case 3:
             flags = strtoull(token, &token_end, 16);
             break;
         default:
-            assert(i == 4);
+            assert(i == 3);
             break;
         }
         if (token_end != NULL && *token_end != '\0') {
@@ -696,7 +677,6 @@ bool jaeger_span_context_scan(jaeger_span_context* ctx, const char* str)
     jaeger_mutex_lock(&ctx->mutex);
     ctx->trace_id = trace_id;
     ctx->span_id = span_id;
-    ctx->parent_id = parent_id;
     ctx->flags = flags;
     jaeger_mutex_unlock(&ctx->mutex);
     return true;

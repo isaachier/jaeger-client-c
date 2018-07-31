@@ -68,9 +68,6 @@ typedef struct jaeger_span_context {
      */
     uint64_t span_id;
 
-    /** Span ID of parent span. Parent ID of zero represents root span. */
-    uint64_t parent_id;
-
     /** Sampling flags. */
     uint8_t flags;
 
@@ -95,17 +92,17 @@ static const char jaeger_span_context_type_descriptor[] = "jaeger_span_context";
 static const int jaeger_span_context_type_descriptor_length =
     sizeof(jaeger_span_context_type_descriptor);
 
-#define JAEGERTRACINGC_SPAN_CONTEXT_INIT                                      \
-    {                                                                         \
-        .base = {.base = {.destroy = &jaeger_span_context_destroy},           \
-                 .foreach_baggage_item =                                      \
-                     &jaeger_span_context_foreach_baggage_item,               \
-                 .type_descriptor = jaeger_span_context_type_descriptor,      \
-                 .type_descriptor_length =                                    \
-                     jaeger_span_context_type_descriptor_length},             \
-        .trace_id = JAEGERTRACINGC_TRACE_ID_INIT, .span_id = 0,               \
-        .parent_id = 0, .flags = 0, .baggage = JAEGERTRACINGC_HASHTABLE_INIT, \
-        .debug_id = NULL, .mutex = JAEGERTRACINGC_MUTEX_INIT                  \
+#define JAEGERTRACINGC_SPAN_CONTEXT_INIT                                    \
+    {                                                                       \
+        .base = {.base = {.destroy = &jaeger_span_context_destroy},         \
+                 .foreach_baggage_item =                                    \
+                     &jaeger_span_context_foreach_baggage_item,             \
+                 .type_descriptor = jaeger_span_context_type_descriptor,    \
+                 .type_descriptor_length =                                  \
+                     jaeger_span_context_type_descriptor_length},           \
+        .trace_id = JAEGERTRACINGC_TRACE_ID_INIT, .span_id = 0, .flags = 0, \
+        .baggage = JAEGERTRACINGC_HASHTABLE_INIT, .debug_id = NULL,         \
+        .mutex = JAEGERTRACINGC_MUTEX_INIT                                  \
     }
 
 void jaeger_span_context_destroy(jaeger_destructible* d);

@@ -21,9 +21,10 @@ void jaeger_trace_id_to_protobuf(ProtobufCBinaryData* dst,
 {
     assert(dst != NULL);
     assert(dst->data != NULL);
+    assert(dst->len == (sizeof(src->high) + sizeof(src->low)));
     assert(src != NULL);
     memcpy(dst->data, &src->high, sizeof(src->high));
-    memcpy(dst->data, &src->low, sizeof(src->low));
+    memcpy(&dst->data[sizeof(src->high)], &src->low, sizeof(src->low));
 }
 
 int jaeger_trace_id_format(const jaeger_trace_id* trace_id,

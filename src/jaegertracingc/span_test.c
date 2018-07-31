@@ -50,12 +50,11 @@ void test_span()
     } test_case;
     const test_case cases[] = {
         {"abcd", false},
-        {"x:1:1:1", false},
-        {"1:x:1:1", false},
-        {"1:1:x:1", false},
-        {"1:1:1:x", false},
-        {"01234567890123456789012345678901234:1:1:1", false},
-        {"01234567890123456789012345678901:1:1:1", true}};
+        {"x:1:1", false},
+        {"1:x:1", false},
+        {"1:1:x", false},
+        {"01234567890123456789012345678901234:1:1", false},
+        {"01234567890123456789012345678901:1:1", true}};
     const int num_cases = sizeof(cases) / sizeof(cases[0]);
     for (int i = 0; i < num_cases; i++) {
         const test_case test = cases[i];

@@ -270,7 +270,6 @@ jaeger_extract_from_binary(int (*callback)(void*, char*, size_t),
     READ_BINARY((*ctx)->trace_id.high);
     READ_BINARY((*ctx)->trace_id.low);
     READ_BINARY((*ctx)->span_id);
-    READ_BINARY((*ctx)->parent_id);
     READ_BINARY((*ctx)->flags);
 
 #undef READ_BINARY
@@ -399,7 +398,6 @@ jaeger_inject_into_binary(int (*callback)(void*, const char*, size_t),
     WRITE_BINARY(ctx->trace_id.high, 64);
     WRITE_BINARY(ctx->trace_id.low, 64);
     WRITE_BINARY(ctx->span_id, 64);
-    WRITE_BINARY(ctx->parent_id, 64);
 
     char buffer[1];
     buffer[0] = (char) ctx->flags;

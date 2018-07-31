@@ -94,7 +94,6 @@ void test_reporter()
     span_ref_ptr->context =
         (jaeger_span_context){.trace_id = {.high = 0xDEAD, .low = 0xBEEF},
                               .span_id = 0xCAFE,
-                              .parent_id = 0,
                               .flags = 0};
     span_ref_ptr->type = opentracing_span_reference_child_of;
 
