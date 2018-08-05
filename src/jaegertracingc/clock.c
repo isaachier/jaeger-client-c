@@ -25,14 +25,6 @@ void jaeger_timestamp_now(jaeger_timestamp* timestamp)
     timestamp->value.tv_nsec = t.tv_nsec;
 }
 
-int64_t jaeger_timestamp_microseconds(const jaeger_timestamp* const timestamp)
-{
-    assert(timestamp != NULL);
-    return timestamp->value.tv_sec * JAEGERTRACINGC_MICROSECONDS_PER_SECOND +
-           timestamp->value.tv_nsec *
-               JAEGERTRACINGC_NANOSECONDS_PER_MICROSECOND;
-}
-
 #define JAEGERTRACINGC_DURATION_INIT JAEGERTRACINGC_TIMESTAMP_INIT
 
 void jaeger_duration_now(jaeger_duration* duration)
