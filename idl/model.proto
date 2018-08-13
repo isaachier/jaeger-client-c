@@ -12,12 +12,43 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-syntax = "proto3";
+syntax="proto3";
 
 package jaeger.model;
 
 import "timestamp.proto";
 import "duration.proto";
+import "annotations.proto";
+import "swagger_annotations.proto";
+import "gogo.proto";
+// import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+// TODO: document all types and fields
+
+option go_package = "model";
+option java_package = "io.jaegertracing.model";
+
+option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
+  info: {
+    version: "1.0";
+  };
+  external_docs: {
+    url: "https://github.com/jaegertracing/jaeger";
+    description: "Jaeger API";
+  }
+  schemes: HTTP;
+  schemes: HTTPS;
+};
+
+// Enable gogoprotobuf extensions (https://github.com/gogo/protobuf/blob/master/extensions.md).
+// Enable custom Marshal method.
+option (gogoproto.marshaler_all) = true;
+// Enable custom Unmarshal method.
+option (gogoproto.unmarshaler_all) = true;
+// Enable custom Size method (Required by Marshal and Unmarshal).
+option (gogoproto.sizer_all) = true;
+// Enable registration with golang/protobuf for the grpc-gateway.
+option (gogoproto.goproto_registration) = true;
 
 enum ValueType {
   STRING  = 0;
@@ -28,6 +59,9 @@ enum ValueType {
 };
 
 message KeyValue {
+  option (gogoproto.equal) = true;
+  option (gogoproto.compare) = true;
+
   string    key      = 1;
   ValueType v_type    = 2;
   string    v_str     = 3;
@@ -38,8 +72,13 @@ message KeyValue {
 }
 
 message Log {
-  google.protobuf.Timestamp timestamp = 1;
-  repeated KeyValue fields = 2;
+  google.protobuf.Timestamp timestamp = 1 [
+    (gogoproto.stdtime) = true,
+    (gogoproto.nullable) = false
+  ];
+  repeated KeyValue fields = 2 [
+    (gogoproto.nullable) = false
+  ];
 }
 
 enum SpanRefType {
@@ -48,44 +87,87 @@ enum SpanRefType {
 };
 
 message SpanRef {
-  bytes trace_id = 1;
-  bytes span_id = 2;
+  bytes trace_id = 1 [
+    (gogoproto.nullable) = false,
+    (gogoproto.customtype) = "TraceID",
+    (gogoproto.customname) = "TraceID"
+  ];
+  bytes span_id = 2 [
+    (gogoproto.nullable) = false,
+    (gogoproto.customtype) = "SpanID",
+    (gogoproto.customname) = "SpanID"
+  ];
   SpanRefType ref_type = 3;
 }
 
 message Process {
   string service_name = 1;
-  repeated KeyValue tags = 2;
+  repeated KeyValue tags = 2 [
+    (gogoproto.nullable) = false
+  ];
 }
 
 message Span {
-  bytes trace_id = 1;
-  bytes span_id = 2;
+  bytes trace_id = 1 [
+    (gogoproto.nullable) = false,
+    (gogoproto.customtype) = "TraceID",
+    (gogoproto.customname) = "TraceID"
+  ];
+  bytes span_id = 2 [
+    (gogoproto.nullable) = false,
+    (gogoproto.customtype) = "SpanID",
+    (gogoproto.customname) = "SpanID"
+  ];
   string operation_name = 3;
-  repeated SpanRef references = 4;
-  uint32 flags = 5;
-  google.protobuf.Timestamp start_time = 6;
-  google.protobuf.Duration duration = 7;
-  repeated KeyValue tags = 8;
-  repeated Log logs = 9;
+  repeated SpanRef references = 4 [
+    (gogoproto.nullable) = false
+  ];
+  uint32 flags = 5 [
+    (gogoproto.nullable) = false,
+    (gogoproto.customtype) = "Flags"
+  ];
+  google.protobuf.Timestamp start_time = 6 [
+    (gogoproto.stdtime) = true,
+    (gogoproto.nullable) = false
+  ];
+  google.protobuf.Duration duration = 7 [
+    (gogoproto.stdduration) = true,
+    (gogoproto.nullable) = false
+  ];
+  repeated KeyValue tags = 8 [
+    (gogoproto.nullable) = false
+  ];
+  repeated Log logs = 9 [
+    (gogoproto.nullable) = false
+  ];
   Process process = 10;
-  string process_id = 11;
+  string process_id = 11 [
+    (gogoproto.customname) = "ProcessID"
+  ];
   repeated string warnings = 12;
 }
 
 message Trace {
   message ProcessMapping {
-      string process_id = 1;
-      Process process = 2;
+      string process_id = 1 [
+        (gogoproto.customname) = "ProcessID"
+      ];
+      Process process = 2 [
+        (gogoproto.nullable) = false
+      ];
   }
   repeated Span spans = 1;
-  repeated ProcessMapping process_map = 2;
+  repeated ProcessMapping process_map = 2 [
+    (gogoproto.nullable) = false
+  ];
   repeated string warnings = 3;
 }
 
 message Batch {
     repeated Span spans = 1;
-    Process process = 2;
+    Process process = 2 [
+      (gogoproto.nullable) = false
+    ];
 }
 
 message PostSpansRequest {
@@ -98,7 +180,12 @@ message PostSpansResponse {
 
 // TODO: move services to another proto file.
 service CollectorServiceV2 {
-    rpc PostSpans(PostSpansRequest) returns (PostSpansResponse);
+    rpc PostSpans(PostSpansRequest) returns (PostSpansResponse) {
+        option (google.api.http) = {
+            post: "/api/v2/spans"
+            body: "*"
+        };
+    }
 }
 
 message GetTraceRequest {
@@ -110,5 +197,9 @@ message GetTraceResponse {
 }
 
 service QueryServiceV2 {
-    rpc GetTrace(GetTraceRequest) returns (GetTraceResponse);
+    rpc GetTrace(GetTraceRequest) returns (GetTraceResponse) {
+        option (google.api.http) = {
+            get: "/api/v2/traces/{id}"
+        };
+    }
 }

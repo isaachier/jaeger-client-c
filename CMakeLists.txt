@@ -223,8 +223,15 @@ endfunction()
 
 generate_protobuf_c(
   protoc_gen_src
+  "${CMAKE_CURRENT_SOURCE_DIR}/idl/annotations.proto"
+  "${CMAKE_CURRENT_SOURCE_DIR}/idl/any.proto"
+  "${CMAKE_CURRENT_SOURCE_DIR}/idl/descriptor.proto"
   "${CMAKE_CURRENT_SOURCE_DIR}/idl/duration.proto"
+  "${CMAKE_CURRENT_SOURCE_DIR}/idl/gogo.proto"
+  "${CMAKE_CURRENT_SOURCE_DIR}/idl/http.proto"
   "${CMAKE_CURRENT_SOURCE_DIR}/idl/model.proto"
+  "${CMAKE_CURRENT_SOURCE_DIR}/idl/openapiv2.proto"
+  "${CMAKE_CURRENT_SOURCE_DIR}/idl/swagger_annotations.proto"
   "${CMAKE_CURRENT_SOURCE_DIR}/idl/timestamp.proto")
 
 add_library(jaegertracingc ${src} ${protoc_gen_src})
