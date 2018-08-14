@@ -19,11 +19,11 @@
 #include "unity.h"
 
 #include "jaegertracingc/hashtable.h"
-#include "jaegertracingc/internal/strings.h"
-#include "jaegertracingc/internal/test_helpers.h"
 #include "jaegertracingc/metrics.h"
 #include "jaegertracingc/options.h"
 #include "jaegertracingc/span.h"
+#include "jaegertracingc/strings.h"
+#include "jaegertracingc/test_helpers.h"
 #include "jaegertracingc/tracer.h"
 #include "jaegertracingc/vector.h"
 

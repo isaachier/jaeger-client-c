@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#include "logging.h"
-#include "unit_test_driver.h"
+#include "jaegertracingc/logging.h"
+#include "jaegertracingc/unit_test_driver.h"
 
 int main()
 {

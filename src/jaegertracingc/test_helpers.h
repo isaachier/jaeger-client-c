@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef JAEGERTRACINGC_INTERNAL_TEST_HELPERS_H
-#define JAEGERTRACINGC_INTERNAL_TEST_HELPERS_H
+#ifndef JAEGERTRACINGC_TEST_HELPERS_H
+#define JAEGERTRACINGC_TEST_HELPERS_H
 
 #include <stdlib.h>
 
@@ -47,4 +47,4 @@ static inline void random_string(char* buffer, size_t len)
 } /* extern C */
 #endif /* __cplusplus */
 
-#endif /* JAEGERTRACINGC_INTERNAL_TEST_HELPERS_H */
+#endif /* JAEGERTRACINGC_TEST_HELPERS_H */

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-#include "jaegertracingc/internal/random.h"
 #include "jaegertracingc/random.h"
 
 #include "unity.h"

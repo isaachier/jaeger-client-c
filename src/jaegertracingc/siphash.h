@@ -19,8 +19,8 @@
  * Siphash implementation.
  */
 
-#ifndef JAEGERTRACINGC_INTERNAL_SIPHASH_H
-#define JAEGERTRACINGC_INTERNAL_SIPHASH_H
+#ifndef JAEGERTRACINGC_SIPHASH_H
+#define JAEGERTRACINGC_SIPHASH_H
 
 #include "jaegertracingc/common.h"
 
@@ -35,4 +35,4 @@ jaeger_siphash(const uint8_t* buffer, size_t size, const uint8_t seed[16]);
 } /* extern C */
 #endif /* __cplusplus */
 
-#endif /* JAEGERTRACINGC_INTERNAL_SIPHASH_H */
+#endif /* JAEGERTRACINGC_SIPHASH_H */

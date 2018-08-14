@@ -264,10 +264,10 @@ configure_file(
   src/jaegertracingc/config.h.in
   "${generated_src_dir}/config.h"
   @ONLY)
+set(CMAKE_INCLUDE_CURRENT_DIR OFF)
 target_include_directories(jaegertracingc PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/src>
-  $<INSTALL_INTERFACE:include>)
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/src>)
 
 target_link_libraries(jaegertracingc PUBLIC
   opentracing-c::opentracingc
@@ -370,7 +370,7 @@ if(BUILD_TESTING)
       @ONLY)
 
     set(unit_test_driver_includes
-        "${unit_test_driver_includes}\n#include \"${test_component}_test.h\"")
+        "${unit_test_driver_includes}\n#include \"jaegertracingc/${test_component}_test.h\"")
     set(unit_test_driver_impl
         "${unit_test_driver_impl}\n    RUN_TEST(test_${test_component});")
   endforeach()
@@ -382,19 +382,17 @@ if(BUILD_TESTING)
     ${test_src}
     src/jaegertracingc/mock_agent.c
     src/jaegertracingc/mock_agent.h)
-  target_include_directories(jaegertracingc_test PUBLIC
-    "src/jaegertracingc" $<BUILD_INTERFACE:${generated_src_dir}>)
   target_link_libraries(jaegertracingc_test PUBLIC jaegertracingc unity)
   target_compile_definitions(jaegertracingc_test PUBLIC
     UNITY_USE_COMMAND_LINE_ARGS ${private_defs})
   target_compile_options(jaegertracingc_test PUBLIC ${jaegertracingc_flags})
   target_link_libraries(jaegertracingc_test PUBLIC ${sanitizer_flags})
 
-	foreach(driver default)
-	  add_executable(${driver}_test "src/jaegertracingc/${driver}_test_driver.c")
-	  target_link_libraries(${driver}_test PUBLIC jaegertracingc_test)
-  	add_test(${driver}_test ${driver}_test)
-	endforeach()
+  foreach(driver default)
+    add_executable(${driver}_test "src/jaegertracingc/${driver}_test_driver.c")
+    target_link_libraries(${driver}_test PUBLIC jaegertracingc_test)
+    add_test(${driver}_test ${driver}_test)
+  endforeach()
 
   if(JAEGERTRACINGC_COVERAGE)
     setup_target_for_coverage(
@@ -472,8 +470,6 @@ configure_package_config_file(
 
 # Targets:
 #   * <prefix>/lib/libjaegertracingc.a
-#   * header location after install: <prefix>/include/jaegertracingc/tracer.h
-#   * headers can be included by C++ code `#include <jaegertracingc/tracer.h>`
 install(
     TARGETS jaegertracingc
     EXPORT "${TARGETS_EXPORT_NAME}"
@@ -481,24 +477,6 @@ install(
     ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
     INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
-)
-
-# Headers:
-#   * src/jaegertracingc/tracer.h -> <prefix>/include/jaegertracingc/tracer.h
-#   * src/jaegertracingc/span.h -> <prefix>/include/jaegertracingc/span.h
-install(
-    DIRECTORY "src/jaegertracingc"
-    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
-    FILES_MATCHING PATTERN "*.h"
-                   PATTERN "mock_agent.h" EXCLUDE
-                   PATTERN "internal" EXCLUDE
-)
-
-# Export headers:
-#   * ${CMAKE_CURRENT_BINARY_DIR}/.../visibility.h -> <prefix>/include/jaegertracingc/visibility.h
-install(
-    FILES "${generated_src_dir}/visibility.h"
-    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/jaegertracingc"
 )
 
 # Config

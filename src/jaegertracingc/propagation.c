@@ -20,11 +20,11 @@
  */
 
 #include "jaegertracingc/propagation.h"
-#include "jaegertracingc/internal/endian.h"
-#include "jaegertracingc/internal/strings.h"
+#include "jaegertracingc/endian.h"
 #include "jaegertracingc/metrics.h"
 #include "jaegertracingc/options.h"
 #include "jaegertracingc/span.h"
+#include "jaegertracingc/strings.h"
 #include "jaegertracingc/tracer.h"
 
 typedef struct extract_text_map_arg {

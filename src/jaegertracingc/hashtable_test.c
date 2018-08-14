@@ -18,7 +18,7 @@
 
 #include "unity.h"
 
-#include "jaegertracingc/internal/test_helpers.h"
+#include "jaegertracingc/test_helpers.h"
 
 void test_hashtable()
 {

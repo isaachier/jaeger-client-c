@@ -16,14 +16,14 @@
 
 #include "jaegertracingc/hashtable.h"
 
-#include "jaegertracingc/internal/random.h"
+#include "jaegertracingc/random.h"
 #include "jaegertracingc/siphash.h"
 
 static uint8_t seed[16];
 
 static inline void fill_seed()
 {
-    RANDOM_SEED(seed, sizeof(seed));
+    random_seed(seed, sizeof(seed));
 }
 
 static uint8_t* hash_seed()

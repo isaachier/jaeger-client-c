@@ -20,8 +20,8 @@
  * String utilities.
  */
 
-#ifndef JAEGERTRACINGC_INTERNAL_ENDIAN_H
-#define JAEGERTRACINGC_INTERNAL_ENDIAN_H
+#ifndef JAEGERTRACINGC_ENDIAN_H
+#define JAEGERTRACINGC_ENDIAN_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -55,4 +55,4 @@ extern "C" {
 }
 #endif
 
-#endif /* JAEGERTRACINGC_INTERNAL_ENDIAN_H */
+#endif /* JAEGERTRACINGC_ENDIAN_H */

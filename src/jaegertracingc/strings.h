@@ -20,13 +20,14 @@
  * String utilities.
  */
 
-#ifndef JAEGERTRACINGC_INTERNAL_STRINGS_H
-#define JAEGERTRACINGC_INTERNAL_STRINGS_H
+#ifndef JAEGERTRACINGC_STRINGS_H
+#define JAEGERTRACINGC_STRINGS_H
 
 #include <assert.h>
 #include <ctype.h>
 #include <string.h>
 
+#include "jaegertracingc/config.h"
 #include "jaegertracingc/hashtable.h"
 
 #ifdef __cplusplus
@@ -236,4 +237,4 @@ parse_comma_separated_map(jaeger_hashtable* baggage, char* str)
 }
 #endif
 
-#endif /* JAEGERTRACINGC_INTERNAL_STRINGS_H */
+#endif /* JAEGERTRACINGC_STRINGS_H */

@@ -16,8 +16,6 @@
 
 #include "jaegertracingc/random.h"
 
-#include "jaegertracingc/internal/random.h"
-
 jaeger_thread_local rng_storage = {.initialized = false};
 
 static jaeger_once once = JAEGERTRACINGC_ONCE_INIT;
