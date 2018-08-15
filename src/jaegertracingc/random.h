@@ -33,30 +33,9 @@
 #include "jaegertracingc/threading.h"
 
 #if defined(HAVE_GETRANDOM)
-
 #include <linux/random.h>
 #include <sys/syscall.h>
 #include <unistd.h>
-
-static inline void random_seed(void* seed, size_t size)
-{
-    syscall(SYS_getrandom, (seed), (size), GRND_NONBLOCK);
-}
-
-#elif defined(HAVE_ARC4RANDOM_BUF)
-
-static inline void random_seed(void* seed, size_t size)
-{
-    arc4random_buf((seed), (size));
-}
-
-#else
-
-static inline void random_seed(void* seed, size_t size)
-{
-   read_random_seed((seed), (size), "/dev/random");
-}
-
 #endif /* HAVE_GETRANDOM */
 
 #ifdef __cplusplus
@@ -111,6 +90,38 @@ static void rng_destroy(jaeger_destructible* d)
 
 #define NUM_UINT64_IN_SEED 2
 
+static inline jaeger_rng* jaeger_rng_alloc(void)
+{
+    jaeger_rng* rng = (jaeger_rng*) jaeger_malloc(sizeof(jaeger_rng));
+    if (rng == NULL) {
+        jaeger_log_error("Cannot allocate random number generator");
+    }
+    return rng;
+}
+
+#if defined(HAVE_GETRANDOM)
+
+static inline void random_seed(void* seed, size_t size)
+{
+    syscall(SYS_getrandom, (seed), (size), GRND_NONBLOCK);
+}
+
+#elif defined(HAVE_ARC4RANDOM_BUF)
+
+static inline void random_seed(void* seed, size_t size)
+{
+    arc4random_buf((seed), (size));
+}
+
+#else
+
+static inline void random_seed(void* seed, size_t size)
+{
+    read_random_seed((seed), (size), "/dev/random");
+}
+
+#endif /* HAVE_GETRANDOM */
+
 static inline void jaeger_rng_init(jaeger_rng* rng)
 {
     assert(rng != NULL);
@@ -123,15 +134,6 @@ static inline void jaeger_rng_init(jaeger_rng* rng)
 #else
     random_seed(&rng->state, sizeof(rng->state));
 #endif /* USE_PCG */
-}
-
-static inline jaeger_rng* jaeger_rng_alloc(void)
-{
-    jaeger_rng* rng = (jaeger_rng*) jaeger_malloc(sizeof(jaeger_rng));
-    if (rng == NULL) {
-        jaeger_log_error("Cannot allocate random number generator");
-    }
-    return rng;
 }
 
 int64_t jaeger_random64(void);
