@@ -49,15 +49,9 @@ int64_t jaeger_random64(void)
     }
 
     assert(rng != NULL);
-#ifdef USE_PCG
-    uint64_t result = pcg32_random_r(&rng->state);
-    result <<= 32u;
-    result |= pcg32_random_r(&rng->state);
-#else
     uint64_t result = rand_r(&rng->state);
     result <<= 32u;
     result |= rand_r(&rng->state);
-#endif /* USE_PCG */
     return (int64_t) result;
 
 cleanup:

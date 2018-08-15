@@ -126,13 +126,6 @@ hunter_add_package(protobuf-c)
 find_package(protobuf-c ${hunter_config} REQUIRED)
 list(APPEND package_deps protobuf-c)
 
-option(JAEGERTRACINGC_USE_PCG "Use pcg random number generation" ON)
-if(JAEGERTRACINGC_USE_PCG)
-  hunter_add_package(pcg)
-  find_package(pcg ${hunter_config} REQUIRED)
-  list(APPEND package_deps pcg)
-endif()
-
 option(JAEGERTRACINGC_MT "Enable multithreading support" ON)
 if(JAEGERTRACINGC_MT)
   set(CMAKE_THREAD_PREFER_PTHREAD ON)
@@ -274,9 +267,6 @@ target_link_libraries(jaegertracingc PUBLIC
   http-parser::http_parser
   jansson::jansson
   protobuf-c::protobuf-c)
-if(JAEGERTRACINGC_USE_PCG)
-  target_link_libraries(jaegertracingc PUBLIC pcg::pcg_random)
-endif()
 if(JAEGERTRACINGC_MT)
   target_link_libraries(jaegertracingc PUBLIC Threads::Threads)
   target_compile_definitions(jaegertracingc PUBLIC JAEGERTRACINGC_MT)
@@ -288,9 +278,6 @@ if(have_atomics)
 else()
 endif()
 
-if(JAEGERTRACINGC_USE_PCG)
-  list(APPEND private_defs USE_PCG)
-endif()
 check_symbol_exists(
   "SYS_getrandom" "linux/random.h;sys/syscall.h;unistd.h" have_getrandom)
 if(have_getrandom)

@@ -25,10 +25,6 @@
 #include <errno.h>
 #include <stdint.h>
 
-#ifdef USE_PCG
-#include "pcg_variants.h"
-#endif /* USE_PCG */
-
 #include "jaegertracingc/common.h"
 #include "jaegertracingc/threading.h"
 
@@ -46,11 +42,7 @@ extern jaeger_thread_local rng_storage;
 
 typedef struct jaeger_rng {
     jaeger_destructible base;
-#ifdef USE_PCG
-    struct pcg_state_setseq_64 state;
-#else
     unsigned int state;
-#endif /* USE_PCG */
 } jaeger_rng;
 
 static inline void
@@ -126,14 +118,7 @@ static inline void jaeger_rng_init(jaeger_rng* rng)
 {
     assert(rng != NULL);
     ((jaeger_destructible*) rng)->destroy = &rng_destroy;
-#ifdef USE_PCG
-    uint64_t seed[NUM_UINT64_IN_SEED];
-    memset(seed, 0, sizeof(seed));
-    random_seed(seed, sizeof(seed));
-    pcg32_srandom_r(&rng->state, seed[0], seed[1]);
-#else
     random_seed(&rng->state, sizeof(rng->state));
-#endif /* USE_PCG */
 }
 
 int64_t jaeger_random64(void);
