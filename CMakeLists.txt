@@ -22,9 +22,6 @@ set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/toolchain.cmake"
 
 include(CMakeDependentOption)
 option(HUNTER_KEEP_PACKAGE_SOURCES "Keep source code for dependencies" OFF)
-cmake_dependent_option(HUNTER_BUILD_SHARED_LIBS
-  "Build shared libraries for Hunter packages" OFF
-  "NOT BUILD_SHARED_LIBS" ON)
 
 include(HunterGate)
 HunterGate(
