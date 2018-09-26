@@ -58,7 +58,7 @@ bool jaeger_trace_id_scan(jaeger_trace_id* trace_id, const char* str)
     if (len > JAEGERTRACINGC_UINT64_MAX_STR_LEN) {
         const char* low_start = str + len - JAEGERTRACINGC_UINT64_MAX_STR_LEN;
         const int high_len = low_start - str;
-        char buffer[high_len + 1];
+        char buffer[JAEGERTRACINGC_UINT64_MAX_STR_LEN + 1];
         memcpy(buffer, str, high_len);
         buffer[high_len] = '\0';
         high = strtoull(buffer, &iter, JAEGERTRACINGC_HEX_BASE);

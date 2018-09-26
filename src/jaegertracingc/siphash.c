@@ -103,6 +103,8 @@ jaeger_siphash(const uint8_t* buffer, size_t size, const uint8_t seed[16])
         break;
     case 0:
         break;
+    default:
+        assert(!"Unreachable code");
     }
 
     v[3] ^= b;

@@ -50,16 +50,20 @@ include(Sanitizers)
 
 if(CMAKE_C_COMPILER_ID STREQUAL "GNU" AND
    CMAKE_C_COMPILER_VERSION VERSION_GREATER_EQUAL "5.0")
- set(advanced_flags "-Wextra")
+  set(advanced_flags "-Wextra")
 endif()
 
-foreach(flag "-Wall" "-Werror" ${advanced_flags})
-  string(MAKE_C_IDENTIFIER "HAVE${flag}" flag_var)
-  check_c_compiler_flag(${flag} ${flag_var})
-  if(${flag_var})
-    list(APPEND jaegertracingc_flags ${flag})
-  endif()
-endforeach()
+function(add_flags flags_var)
+  foreach(flag ${ARGN})
+    string(MAKE_C_IDENTIFIER "HAVE${flag}" flag_test_var)
+    check_c_compiler_flag(${flag} ${flag_test_var})
+    if(${flag_test_var})
+      list(APPEND ${flags_var} ${flag})
+    endif()
+  endforeach()
+endfunction()
+
+add_flags(jaegertracingc_flags "-Wall" "-Werror" ${advanced_flags})
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   set(debug_build ON)
@@ -225,6 +229,8 @@ generate_protobuf_c(
   "${CMAKE_CURRENT_SOURCE_DIR}/idl/timestamp.proto")
 
 add_library(jaegertracingc ${src} ${protoc_gen_src})
+add_flags(jaegertracingc_private_flags -Wvla)
+target_compile_options(jaegertracingc PRIVATE ${jaegertracingc_private_flags})
 if(BUILD_SHARED_LIBS AND NOT BUILD_TESTING)
   set_target_properties(jaegertracingc PROPERTIES
     C_VISIBILITY_PRESET hidden
@@ -288,7 +294,7 @@ endif()
 
 test_big_endian(big_endian)
 if(NOT big_endian)
-  list(APPEND private_defs LITTLE_ENDIAN)
+  list(APPEND private_defs JAEGERTRACINGC_LITTLE_ENDIAN)
 
   if(WIN32)
     set(swap_func "_byteswap_uint64")
@@ -315,6 +321,14 @@ endif()
 
 if(JAEGERTRACINGC_VERBOSE_ALLOC)
   list(APPEND private_defs VERBOSE_ALLOC)
+endif()
+
+execute_process(COMMAND getconf HOST_NAME_MAX
+                OUTPUT_VARIABLE host_name_max
+                RESULT_VARIABLE result
+                OUTPUT_STRIP_TRAILING_WHITESPACE)
+if(result EQUAL 0 AND host_name_max)
+  list(APPEND private_defs "HOST_NAME_MAX=${host_name_max}")
 endif()
 
 target_compile_definitions(jaegertracingc PRIVATE ${private_defs})

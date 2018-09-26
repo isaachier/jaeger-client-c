@@ -515,7 +515,8 @@ static bool remote_reporter_flush_batch(jaeger_remote_reporter* reporter)
         return false;
     }
 
-    uint8_t buffer[reporter->max_packet_size];
+#define INIT_PACKET_SIZE 1024
+    uint8_t buffer[INIT_PACKET_SIZE];
     ProtobufCBufferSimple simple = PROTOBUF_C_BUFFER_SIMPLE_INIT(buffer);
     jaeger__model__batch__pack_to_buffer(&batch, (ProtobufCBuffer*) &simple);
     assert((int) simple.len <= reporter->max_packet_size);
@@ -580,7 +581,7 @@ bool jaeger_remote_reporter_init(jaeger_remote_reporter* reporter,
 {
     assert(reporter != NULL);
 
-    const int fd = socket(AF_INET, SOCK_DGRAM, 0);
+    const int fd = open_socket(AF_INET, SOCK_DGRAM);
     if (fd < 0) {
         return false;
     }

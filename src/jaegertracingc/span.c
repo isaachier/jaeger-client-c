@@ -381,12 +381,16 @@ bool jaeger_span_set_sampling_priority(jaeger_span* span,
     if ((value->type == opentracing_value_int64 && value->value.int64_value) ||
         (value->type == opentracing_value_uint64 &&
          value->value.uint64_value)) {
-        span->context.flags |= ((uint8_t) jaeger_sampling_flag_debug) |
-                               ((uint8_t) jaeger_sampling_flag_sampled);
+        span->context.flags =
+            (uint8_t)(span->context.flags |
+                      ((uint8_t) jaeger_sampling_flag_debug)) |
+            ((uint8_t) jaeger_sampling_flag_sampled);
         success = true;
     }
     else {
-        span->context.flags &= (~((uint8_t) jaeger_sampling_flag_sampled));
+        span->context.flags =
+            (uint8_t)(span->context.flags &
+                      ((uint8_t) ~(uint8_t) jaeger_sampling_flag_sampled));
     }
     jaeger_mutex_unlock(&span->mutex);
     jaeger_mutex_unlock(&span->context.mutex);
@@ -637,11 +641,12 @@ bool jaeger_span_context_scan(jaeger_span_context* ctx, const char* str)
 {
     assert(ctx != NULL);
     assert(str != NULL);
+    bool result = true;
     jaeger_trace_id trace_id = JAEGERTRACINGC_TRACE_ID_INIT;
-    const int len = strlen(str);
-    char buffer[len + 1];
-    memcpy(buffer, str, len);
-    buffer[len] = '\0';
+    char* buffer = jaeger_strdup(str);
+    if (buffer == NULL) {
+        return false;
+    }
     uint64_t span_id = 0;
     uint8_t flags = 0;
     char* token = buffer;
@@ -650,13 +655,15 @@ bool jaeger_span_context_scan(jaeger_span_context* ctx, const char* str)
     for (int i = 0; i < 4; i++) {
         token = strtok_r(i == 0 ? token : NULL, ":", &token_context);
         if (token == NULL && i != 3) {
-            return false;
+            result = false;
+            goto cleanup;
         }
         token_end = NULL;
         switch (i) {
         case 0:
             if (!jaeger_trace_id_scan(&trace_id, token)) {
-                return false;
+                result = false;
+                goto cleanup;
             }
             break;
         case 1:
@@ -670,7 +677,8 @@ bool jaeger_span_context_scan(jaeger_span_context* ctx, const char* str)
             break;
         }
         if (token_end != NULL && *token_end != '\0') {
-            return false;
+            result = false;
+            goto cleanup;
         }
     }
 
@@ -679,5 +687,8 @@ bool jaeger_span_context_scan(jaeger_span_context* ctx, const char* str)
     ctx->span_id = span_id;
     ctx->flags = flags;
     jaeger_mutex_unlock(&ctx->mutex);
-    return true;
+
+cleanup:
+    jaeger_free(buffer);
+    return result;
 }

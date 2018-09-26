@@ -85,6 +85,8 @@ bool jaeger_host_port_resolve(const jaeger_host_port* host_port,
                               int socket_type,
                               struct addrinfo** host_addrs);
 
+int open_socket(int domain, int type);
+
 #ifdef __cplusplus
 } /* extern C */
 #endif /* __cplusplus */

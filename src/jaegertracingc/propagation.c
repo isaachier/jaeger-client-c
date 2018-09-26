@@ -44,34 +44,51 @@ extract_text_map_callback(void* arg, const char* key, const char* value)
         ((extract_text_map_arg*) arg)->normalize_key;
     void (*decode_value)(char*, const char*) =
         ((extract_text_map_arg*) arg)->decode_value;
-    char key_buffer[strlen(key) + 1];
-
+    char* key_buffer = jaeger_malloc(strlen(key) + 1);
+    char* suffix = NULL;
+    char* value_buffer = NULL;
+    if (key_buffer == NULL) {
+        return opentracing_propagation_error_code_unknown;
+    }
+    opentracing_propagation_error_code error_code =
+        opentracing_propagation_error_code_success;
     normalize_key(key_buffer, key);
     assert(ctx != NULL);
     if (strcmp(key_buffer, config->trace_context_header) == 0) {
-        char value_buffer[strlen(value) + 1];
+        value_buffer = jaeger_malloc(strlen(value) + 1);
+        if (value_buffer == NULL) {
+            error_code = opentracing_propagation_error_code_unknown;
+            goto cleanup;
+        }
         decode_value(value_buffer, value);
         if (!jaeger_span_context_scan(ctx, value_buffer)) {
-            return opentracing_propagation_error_code_span_context_corrupted;
+            error_code =
+                opentracing_propagation_error_code_span_context_corrupted;
+            goto cleanup;
         }
     }
     else if (strcmp(key_buffer, config->debug_header) == 0) {
-        char value_buffer[strlen(value) + 1];
+        value_buffer = jaeger_malloc(strlen(value) + 1);
+        if (value_buffer == NULL) {
+            error_code = opentracing_propagation_error_code_unknown;
+            goto cleanup;
+        }
         decode_value(value_buffer, value);
         ctx->debug_id = jaeger_strdup(value_buffer);
         if (ctx->debug_id == NULL) {
-            return opentracing_propagation_error_code_unknown;
+            error_code = opentracing_propagation_error_code_unknown;
+            goto cleanup;
         }
-        ctx->flags |= ((uint8_t) jaeger_sampling_flag_debug) |
-                      ((uint8_t) jaeger_sampling_flag_sampled);
+        ctx->flags =
+            ((uint8_t)(ctx->flags | ((uint8_t) jaeger_sampling_flag_debug)) |
+             ((uint8_t) jaeger_sampling_flag_sampled));
     }
     else if (strcmp(key_buffer, config->baggage_header) == 0) {
-        char value_buffer[strlen(value) + 1];
+        value_buffer = jaeger_malloc(strlen(value) + 1);
         decode_value(value_buffer, value);
-        const opentracing_propagation_error_code result =
-            parse_comma_separated_map(&ctx->baggage, value_buffer);
-        if (result != opentracing_propagation_error_code_success) {
-            return result;
+        error_code = parse_comma_separated_map(&ctx->baggage, value_buffer);
+        if (error_code != opentracing_propagation_error_code_success) {
+            goto cleanup;
         }
     }
     else {
@@ -80,52 +97,68 @@ extract_text_map_callback(void* arg, const char* key, const char* value)
         if (key_len > prefix_len && memcmp(key_buffer,
                                            config->trace_baggage_header_prefix,
                                            prefix_len) == 0) {
-            char suffix[key_len - prefix_len + 1];
-            strncpy(suffix, key_buffer + prefix_len, sizeof(suffix));
+            const size_t suffix_len = key_len - prefix_len;
+            suffix = jaeger_malloc(suffix_len + 1);
+            if (suffix == NULL) {
+                error_code = opentracing_propagation_error_code_unknown;
+                goto cleanup;
+            }
+            strncpy(suffix, key_buffer + prefix_len, suffix_len + 1);
 
-            char value_buffer[strlen(value) + 1];
+            value_buffer = jaeger_malloc(strlen(value) + 1);
+            if (value_buffer == NULL) {
+                error_code = opentracing_propagation_error_code_unknown;
+                goto cleanup;
+            }
             decode_value(value_buffer, value);
 
             if (!jaeger_hashtable_put(&ctx->baggage, suffix, value_buffer)) {
-                return opentracing_propagation_error_code_unknown;
+                error_code = opentracing_propagation_error_code_unknown;
+                goto cleanup;
             }
         }
     }
-    return opentracing_propagation_error_code_success;
+
+cleanup:
+    jaeger_free(key_buffer);
+    jaeger_free(suffix);
+    jaeger_free(value_buffer);
+    return error_code;
 }
 
 static inline opentracing_propagation_error_code
 extract_from_text_map_helper(opentracing_text_map_reader* reader,
                              extract_text_map_arg* arg)
 {
-    opentracing_propagation_error_code result =
+    opentracing_propagation_error_code error_code =
         opentracing_propagation_error_code_success;
     arg->ctx = jaeger_malloc(sizeof(*arg->ctx));
     if (arg->ctx == NULL || !jaeger_span_context_init(arg->ctx)) {
-        result = opentracing_propagation_error_code_unknown;
+        error_code = opentracing_propagation_error_code_unknown;
         goto cleanup;
     }
-    result = reader->foreach_key(reader, &extract_text_map_callback, arg);
-    if (result != opentracing_propagation_error_code_success) {
+    error_code = reader->foreach_key(reader, &extract_text_map_callback, arg);
+    if (error_code != opentracing_propagation_error_code_success) {
         goto cleanup;
     }
     if (arg->ctx->trace_id.high == 0 && arg->ctx->trace_id.low == 0 &&
         arg->ctx->debug_id == NULL && arg->ctx->baggage.size == 0) {
         /* Successfully decoded an empty span context. */
-        result = opentracing_propagation_error_code_success;
+        error_code = opentracing_propagation_error_code_success;
         goto cleanup;
     }
     return opentracing_propagation_error_code_success;
 
 cleanup:
-    if (result == opentracing_propagation_error_code_span_context_corrupted &&
+    if (error_code ==
+            opentracing_propagation_error_code_span_context_corrupted &&
         arg->metrics != NULL) {
         arg->metrics->decoding_errors->inc(arg->metrics->decoding_errors, 1);
     }
     jaeger_span_context_destroy((jaeger_destructible*) arg->ctx);
     jaeger_free(arg->ctx);
     arg->ctx = NULL;
-    return result;
+    return error_code;
 }
 
 opentracing_propagation_error_code
@@ -141,10 +174,10 @@ jaeger_extract_from_text_map(opentracing_text_map_reader* reader,
                                 .metrics = metrics,
                                 .normalize_key = &copy_str,
                                 .decode_value = &copy_str};
-    const opentracing_propagation_error_code result =
+    const opentracing_propagation_error_code error_code =
         extract_from_text_map_helper(reader, &arg);
     *ctx = arg.ctx;
-    return result;
+    return error_code;
 }
 
 opentracing_propagation_error_code
@@ -160,19 +193,19 @@ jaeger_extract_from_http_headers(opentracing_http_headers_reader* reader,
                                 .metrics = metrics,
                                 .normalize_key = &to_lowercase,
                                 .decode_value = &decode_uri_value};
-    const opentracing_propagation_error_code result =
+    const opentracing_propagation_error_code error_code =
         extract_from_text_map_helper((opentracing_text_map_reader*) reader,
                                      &arg);
     *ctx = arg.ctx;
-    return result;
+    return error_code;
 }
 
 static inline bool read_binary(int (*callback)(void*, char*, size_t),
                                void* arg,
-                               void* result,
+                               char* buffer,
+                               void* error_code,
                                int result_size)
 {
-    char buffer[result_size];
     const int num_read = callback(arg, buffer, sizeof(buffer));
     if (num_read != result_size) {
         return false;
@@ -182,19 +215,19 @@ static inline bool read_binary(int (*callback)(void*, char*, size_t),
         uint64_t value;
         memcpy(&value, buffer, sizeof(value));
         /* NOLINTNEXTLINE(hicpp-signed-bitwise) */
-        *(uint64_t*) result = BIG_ENDIAN_64_TO_HOST(value);
+        *(uint64_t*) error_code = BIG_ENDIAN_64_TO_HOST(value);
     } break;
     case sizeof(uint32_t): {
         uint32_t value;
         memcpy(&value, buffer, sizeof(value));
         /* NOLINTNEXTLINE(hicpp-signed-bitwise) */
-        *(uint32_t*) result = BIG_ENDIAN_32_TO_HOST(value);
+        *(uint32_t*) error_code = BIG_ENDIAN_32_TO_HOST(value);
     } break;
     default: {
         assert(result_size == sizeof(uint8_t));
         uint8_t value;
         memcpy(&value, buffer, sizeof(value));
-        *(uint8_t*) result = value;
+        *(uint8_t*) error_code = value;
     } break;
     }
     return true;
@@ -203,42 +236,68 @@ static inline bool read_binary(int (*callback)(void*, char*, size_t),
 static opentracing_propagation_error_code parse_baggage_binary(
     int (*callback)(void*, char*, size_t), void* arg, jaeger_hashtable* baggage)
 {
-#define READ_BINARY(x)                                                        \
-    do {                                                                      \
-        if (!read_binary(callback, arg, &(x), sizeof((x)))) {                 \
-            return opentracing_propagation_error_code_span_context_corrupted; \
-        }                                                                     \
+#define READ_BINARY(x)                                                     \
+    do {                                                                   \
+        if (!read_binary(callback, arg, buffer, &(x), sizeof((x)))) {      \
+            error_code =                                                   \
+                opentracing_propagation_error_code_span_context_corrupted; \
+            goto cleanup;                                                  \
+        }                                                                  \
     } while (0)
 
-#define READ_BUFFER(buffer, len)                                              \
-    do {                                                                      \
-        if (callback(arg, (buffer), (len)) != (int) (len)) {                  \
-            return opentracing_propagation_error_code_span_context_corrupted; \
-        }                                                                     \
-        (buffer)[len] = '\0';                                                 \
+#define READ_BUFFER(buffer, len)                                           \
+    do {                                                                   \
+        if (callback(arg, (buffer), (len)) != (int) (len)) {               \
+            error_code =                                                   \
+                opentracing_propagation_error_code_span_context_corrupted; \
+            goto cleanup;                                                  \
+        }                                                                  \
+        (buffer)[len] = '\0';                                              \
     } while (0)
 
+    char buffer[sizeof(uint64_t)];
     uint32_t num_baggage_items;
+    char* key_buffer = NULL;
+    char* value_buffer = NULL;
+    opentracing_propagation_error_code error_code =
+        opentracing_propagation_error_code_success;
     READ_BINARY(num_baggage_items);
     for (int i = 0; i < (int) num_baggage_items; i++) {
         uint32_t key_len;
         READ_BINARY(key_len);
-        char key_buffer[key_len + 1];
+        key_buffer = jaeger_malloc(key_len + 1);
+        if (key_buffer == NULL) {
+            error_code = opentracing_propagation_error_code_unknown;
+            goto cleanup;
+        }
         READ_BUFFER(key_buffer, key_len);
 
         uint32_t value_len;
         READ_BINARY(value_len);
-        char value_buffer[value_len + 1];
+        value_buffer = jaeger_malloc(value_len + 1);
+        if (value_buffer == NULL) {
+            error_code = opentracing_propagation_error_code_unknown;
+            goto cleanup;
+        }
         READ_BUFFER(value_buffer, value_len);
         if (!jaeger_hashtable_put(baggage, key_buffer, value_buffer)) {
-            return opentracing_propagation_error_code_unknown;
+            error_code = opentracing_propagation_error_code_unknown;
+            goto cleanup;
         }
+
+        jaeger_free(key_buffer);
+        jaeger_free(value_buffer);
     }
+
+    return opentracing_propagation_error_code_success;
+
+cleanup:
+    jaeger_free(key_buffer);
+    jaeger_free(value_buffer);
+    return error_code;
 
 #undef READ_BINARY
 #undef READ_BUFFER
-
-    return opentracing_propagation_error_code_success;
 }
 
 opentracing_propagation_error_code
@@ -250,23 +309,24 @@ jaeger_extract_from_binary(int (*callback)(void*, char*, size_t),
     assert(callback != NULL);
     assert(ctx != NULL);
 
-    opentracing_propagation_error_code result =
+    opentracing_propagation_error_code error_code =
         opentracing_propagation_error_code_success;
     *ctx = (jaeger_span_context*) jaeger_malloc(sizeof(jaeger_span_context));
     if (*ctx == NULL || !jaeger_span_context_init(*ctx)) {
-        result = opentracing_propagation_error_code_unknown;
+        error_code = opentracing_propagation_error_code_unknown;
         goto cleanup;
     }
 
 #define READ_BINARY(x)                                                     \
     do {                                                                   \
-        if (!read_binary(callback, arg, &(x), sizeof((x)))) {              \
-            result =                                                       \
+        if (!read_binary(callback, arg, buffer, &(x), sizeof((x)))) {      \
+            error_code =                                                   \
                 opentracing_propagation_error_code_span_context_corrupted; \
             goto cleanup;                                                  \
         }                                                                  \
     } while (0)
 
+    char buffer[sizeof(uint64_t)];
     READ_BINARY((*ctx)->trace_id.high);
     READ_BINARY((*ctx)->trace_id.low);
     READ_BINARY((*ctx)->span_id);
@@ -274,22 +334,23 @@ jaeger_extract_from_binary(int (*callback)(void*, char*, size_t),
 
 #undef READ_BINARY
 
-    result = parse_baggage_binary(callback, arg, &(*ctx)->baggage);
-    if (result != opentracing_propagation_error_code_success) {
+    error_code = parse_baggage_binary(callback, arg, &(*ctx)->baggage);
+    if (error_code != opentracing_propagation_error_code_success) {
         goto cleanup;
     }
 
     return opentracing_propagation_error_code_success;
 
 cleanup:
-    if (result == opentracing_propagation_error_code_span_context_corrupted &&
+    if (error_code ==
+            opentracing_propagation_error_code_span_context_corrupted &&
         metrics != NULL) {
         metrics->decoding_errors->inc(metrics->decoding_errors, 1);
     }
     jaeger_span_context_destroy((jaeger_destructible*) *ctx);
     jaeger_free(*ctx);
     *ctx = NULL;
-    return result;
+    return error_code;
 }
 
 opentracing_propagation_error_code
@@ -301,13 +362,14 @@ jaeger_extract_from_custom(opentracing_custom_carrier_reader* reader,
     assert(reader != NULL);
     assert(tracer != NULL);
     assert(ctx != NULL);
-    const opentracing_propagation_error_code result = reader->extract(
+    const opentracing_propagation_error_code error_code = reader->extract(
         reader, (opentracing_tracer*) tracer, (opentracing_span_context**) ctx);
-    if (result == opentracing_propagation_error_code_span_context_corrupted &&
+    if (error_code ==
+            opentracing_propagation_error_code_span_context_corrupted &&
         metrics != NULL) {
         metrics->decoding_errors->inc(metrics->decoding_errors, 1);
     }
-    return result;
+    return error_code;
 }
 
 static inline opentracing_propagation_error_code inject_text_map_helper(
@@ -324,12 +386,12 @@ static inline opentracing_propagation_error_code inject_text_map_helper(
         ctx, trace_context_buffer, sizeof(trace_context_buffer));
     assert(trace_context_len <= JAEGERTRACINGC_SPAN_CONTEXT_MAX_STR_LEN);
     (void) trace_context_len;
-    opentracing_propagation_error_code result =
+    opentracing_propagation_error_code error_code =
         writer->set(writer, config->trace_context_header, trace_context_buffer);
-    /* Loop will not execute if result is not
+    /* Loop will not execute if error_code is not
      * opentracing_propagation_error_code_success. */
     for (size_t i = 0; i < ((size_t) 1 << ctx->baggage.order) &&
-                       result == opentracing_propagation_error_code_success;
+                       error_code == opentracing_propagation_error_code_success;
          i++) {
         for (const jaeger_list_node* node = ctx->baggage.buckets[i].head;
              node != NULL;
@@ -338,7 +400,12 @@ static inline opentracing_propagation_error_code inject_text_map_helper(
                 &((const jaeger_key_value_node*) node)->data;
             const int prefix_len = strlen(config->trace_baggage_header_prefix);
             const int key_len = strlen(kv->key);
-            char key_buffer[prefix_len + key_len + 1];
+            char* value_buffer = NULL;
+            char* key_buffer = jaeger_malloc(prefix_len + key_len + 1);
+            if (key_buffer == NULL) {
+                error_code = opentracing_propagation_error_code_unknown;
+                goto cleanup;
+            }
             strncpy(
                 key_buffer, config->trace_baggage_header_prefix, prefix_len);
             strncpy(&key_buffer[prefix_len], kv->key, key_len + 1);
@@ -348,13 +415,22 @@ static inline opentracing_propagation_error_code inject_text_map_helper(
              * large as the input. For example, "xyz" becomes "%78%79%80".
              */
             const int max_encode_factor = 3;
-            char value_buffer[strlen(kv->value) * max_encode_factor + 1];
+            value_buffer =
+                jaeger_malloc(strlen(kv->value) * max_encode_factor + 1);
+            if (value_buffer == NULL) {
+                error_code = opentracing_propagation_error_code_unknown;
+                goto cleanup;
+            }
             encode_value(value_buffer, kv->value);
 
-            result = writer->set(writer, key_buffer, value_buffer);
+            error_code = writer->set(writer, key_buffer, value_buffer);
+
+        cleanup:
+            jaeger_free(key_buffer);
+            jaeger_free(value_buffer);
         }
     }
-    return result;
+    return error_code;
 }
 
 opentracing_propagation_error_code

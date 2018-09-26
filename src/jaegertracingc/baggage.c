@@ -82,10 +82,14 @@ void jaeger_baggage_setter_set_baggage(jaeger_baggage_setter* setter,
         jaeger_hashtable_find(&span->context.baggage, key);
     prev_item = (kv != NULL);
     if (truncated) {
-        char value_copy[restriction.max_value_len + 1];
-        strncpy(value_copy, value, sizeof(value_copy) - 1);
+        char* value_copy = jaeger_malloc(restriction.max_value_len + 1);
+        if (value_copy == NULL) {
+            return;
+        }
+        strncpy(value_copy, value, restriction.max_value_len);
         value_copy[restriction.max_value_len] = '\0';
         jaeger_hashtable_put(&span->context.baggage, key, value_copy);
+        jaeger_free(value_copy);
     }
     else {
         jaeger_hashtable_put(&span->context.baggage, key, value);

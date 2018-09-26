@@ -121,7 +121,7 @@ static inline void jaeger_rng_init(jaeger_rng* rng)
     random_seed(&rng->state, sizeof(rng->state));
 }
 
-int64_t jaeger_random64(void);
+uint64_t jaeger_random64(void);
 
 #ifdef __cplusplus
 } /* extern C */

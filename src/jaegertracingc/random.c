@@ -31,7 +31,26 @@ void init_rng(void)
     atexit(&cleanup_rng);
 }
 
-int64_t jaeger_random64(void)
+#ifdef HAVE_ARC4RANDOM
+
+static inline uint64_t random64(const unsigned int* state)
+{
+    (void) state;
+    uint64_t result;
+    arc4random_buf(&result, sizeof(result));
+    return result;
+}
+
+#else
+
+static inline uint64_t random64(unsigned int* state)
+{
+    return (((uint64_t) rand_r(state)) << 32u) | rand_r(state);
+}
+
+#endif /* HAVE_ARC4RANDOM */
+
+uint64_t jaeger_random64(void)
 {
     jaeger_do_once(&once, init_rng);
     assert(rng_storage.initialized);
@@ -49,10 +68,7 @@ int64_t jaeger_random64(void)
     }
 
     assert(rng != NULL);
-    uint64_t result = rand_r(&rng->state);
-    result <<= 32u;
-    result |= rand_r(&rng->state);
-    return (int64_t) result;
+    return random64(&rng->state);
 
 cleanup:
     jaeger_free(rng);

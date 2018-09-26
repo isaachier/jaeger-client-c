@@ -87,25 +87,22 @@ static inline char* local_ip_str()
     }
     char* result = NULL;
     if (best_addr != NULL && best_addr->ifa_addr != NULL) {
-        int max_host = 0;
         int port = 0;
         const void* src = NULL;
         if (best_addr->ifa_addr->sa_family == AF_INET) {
-            max_host = INET_ADDRSTRLEN;
             const struct sockaddr_in* addr =
                 (const struct sockaddr_in*) best_addr->ifa_addr;
             src = (const void*) &addr->sin_addr;
             port = htons(addr->sin_port);
         }
         else {
-            max_host = INET6_ADDRSTRLEN;
             const struct sockaddr_in6* addr =
                 (const struct sockaddr_in6*) best_addr->ifa_addr;
             src = (const void*) &addr->sin6_addr;
             port = htons(addr->sin6_port);
         }
 
-        char buffer[max_host + 1 + JAEGERTRACINGC_MAX_PORT_STR_LEN];
+        char buffer[HOST_NAME_MAX + 1 + JAEGERTRACINGC_MAX_PORT_STR_LEN];
         if (inet_ntop(
                 best_addr->ifa_addr->sa_family, src, buffer, sizeof(buffer)) ==
             NULL) {
@@ -407,8 +404,8 @@ span_inherit_from_parent(jaeger_tracer* tracer,
         span->context.flags = 0;
         if (*has_parent &&
             jaeger_span_context_is_debug_id_container_only(parent)) {
-            span->context.flags |= ((uint8_t) jaeger_sampling_flag_sampled |
-                                    (uint8_t) jaeger_sampling_flag_debug);
+            span->context.flags |=
+                jaeger_sampling_flag_sampled | jaeger_sampling_flag_debug;
             append_tag(
                 &span->tags, JAEGERTRACINGC_DEBUG_HEADER, parent->debug_id);
         }

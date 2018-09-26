@@ -16,6 +16,8 @@
 
 #include "jaegertracingc/net.h"
 
+#include <fcntl.h>
+
 bool jaeger_host_port_init(jaeger_host_port* host_port,
                            const char* host,
                            int port)
@@ -115,10 +117,24 @@ bool jaeger_host_port_from_url(jaeger_host_port* host_port,
         return jaeger_host_port_init(host_port, "localhost", port);
     }
 
-    char host_buffer[host_segment.len + 1];
+    char host_stack_buffer[HOST_NAME_MAX + 1];
+    char* host_buffer;
+    if (host_segment.len > HOST_NAME_MAX) {
+        host_buffer = jaeger_malloc(host_segment.len + 1);
+        if (host_buffer == NULL) {
+            return false;
+        }
+    }
+    else {
+        host_buffer = host_stack_buffer;
+    }
     memcpy(host_buffer, &url->str[host_segment.off], host_segment.len);
     host_buffer[host_segment.len] = '\0';
-    return jaeger_host_port_init(host_port, host_buffer, port);
+    const bool result = jaeger_host_port_init(host_port, host_buffer, port);
+    if (host_buffer != host_stack_buffer) {
+        jaeger_free(host_buffer);
+    }
+    return result;
 }
 
 bool jaeger_host_port_scan(jaeger_host_port* host_port, const char* str)
@@ -132,16 +148,19 @@ bool jaeger_host_port_scan(jaeger_host_port* host_port, const char* str)
         return false;
     }
 
-    char str_copy[len + 1];
-    strncpy(str_copy, str, len);
-    str_copy[len] = '\0';
+    char* str_copy = jaeger_strdup(str);
+    if (str_copy == NULL) {
+        return false;
+    }
+    bool result = true;
     char* token_context = NULL;
     const char* token = strtok_r(str_copy, ":", &token_context);
     if (token == NULL) {
         jaeger_log_error("Null token for host in host port string, "
                          "host port string = \"%s\"",
                          str);
-        return false;
+        result = false;
+        goto cleanup;
     }
     /* When host is omitted, first character is ':'. The first consumed token
      * will be the port, which must not be consumed as the host. */
@@ -152,7 +171,8 @@ bool jaeger_host_port_scan(jaeger_host_port* host_port, const char* str)
     }
     host_port->host = jaeger_strdup(token);
     if (host_port->host == NULL) {
-        return false;
+        result = false;
+        goto cleanup;
     }
 
     /* If the host port started with a port string, we must use the previously
@@ -165,7 +185,8 @@ bool jaeger_host_port_scan(jaeger_host_port* host_port, const char* str)
         token = strtok_r(NULL, ":", &token_context);
         if (token == NULL) {
             host_port->port = 0;
-            return true;
+            result = true;
+            goto cleanup;
         }
     }
     char* end = NULL;
@@ -178,10 +199,14 @@ bool jaeger_host_port_scan(jaeger_host_port* host_port, const char* str)
                          str);
         jaeger_free(host_port->host);
         host_port->host = NULL;
-        return false;
+        result = false;
+        goto cleanup;
     }
     host_port->port = port;
-    return true;
+
+cleanup:
+    jaeger_free(str_copy);
+    return result;
 }
 
 int jaeger_host_port_format(const jaeger_host_port* host_port,
@@ -220,4 +245,24 @@ bool jaeger_host_port_resolve(const jaeger_host_port* host_port,
         return false;
     }
     return true;
+}
+
+int open_socket(int domain, int type)
+{
+#ifdef SOCK_CLOEXEC
+    return socket(domain, type | SOCK_CLOEXEC, 0);
+#else
+    /* NOLINTNEXTLINE(android-cloexec-socket) */
+    const int fd = socket(domain, type, 0);
+    if (fd < 0) {
+        return fd;
+    }
+    int flags = fcntl(fd, F_GETFD, 0);
+    if (flags < 0) {
+        return fd;
+    }
+    flags = (unsigned) flags | (unsigned) FD_CLOEXEC;
+    fcntl(fd, F_SETFD, flags);
+    return fd;
+#endif
 }

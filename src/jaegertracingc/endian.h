@@ -40,13 +40,13 @@ extern "C" {
 #define BYTESWAP32(x) be32toh((x))
 #endif /* _WIN32 */
 
-#ifdef LITTLE_ENDIAN
+#ifdef JAEGERTRACINGC_LITTLE_ENDIAN
 #define BIG_ENDIAN_64_TO_HOST(x) BYTESWAP64(x)
 #define BIG_ENDIAN_32_TO_HOST(x) BYTESWAP32(x)
 #else
 #define BIG_ENDIAN_64_TO_HOST(x) (x)
 #define BIG_ENDIAN_32_TO_HOST(x) (x)
-#endif /* LITTLE_ENDIAN */
+#endif /* JAEGERTRACINGC_LITTLE_ENDIAN */
 
 #define HOST_TO_BIG_ENDIAN_64(x) BIG_ENDIAN_64_TO_HOST(x)
 #define HOST_TO_BIG_ENDIAN_32(x) BIG_ENDIAN_32_TO_HOST(x)

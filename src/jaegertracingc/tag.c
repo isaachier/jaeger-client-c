@@ -110,9 +110,7 @@ bool jaeger_tag_from_key_value(jaeger_tag* restrict dst,
                                const opentracing_value* value)
 {
     jaeger_tag src = JAEGERTRACINGC_TAG_INIT;
-    char key_copy[strlen(key) + 1];
-    strncpy(key_copy, key, sizeof(key_copy));
-    src.key = key_copy;
+    src.key = (char*) key;
     if (src.key == NULL) {
         return false;
     }

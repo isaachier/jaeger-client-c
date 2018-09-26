@@ -76,7 +76,7 @@ jaeger_probabilistic_sampler_is_sampled(jaeger_sampler* sampler,
     (void) operation_name;
     jaeger_probabilistic_sampler* s = (jaeger_probabilistic_sampler*) sampler;
     const long double random_value =
-        ((long double) ((uint64_t) jaeger_random64())) / UINT64_MAX;
+        ((long double) jaeger_random64()) / UINT64_MAX;
     const bool decision = (s->sampling_rate >= random_value);
     if (tags != NULL &&
         jaeger_vector_reserve(tags, jaeger_vector_length(tags) + 2)) {
@@ -329,11 +329,16 @@ static inline jaeger_operation_sampler*
 jaeger_adaptive_sampler_find_sampler(jaeger_adaptive_sampler* sampler,
                                      const char* operation_name)
 {
-    char operation_name_copy[strlen(operation_name) + 1];
-    strncpy(operation_name_copy, operation_name, sizeof(operation_name_copy));
+    char* operation_name_copy = jaeger_strdup(operation_name);
+    if (operation_name_copy == NULL) {
+        return NULL;
+    }
     const jaeger_operation_sampler key = {.operation_name =
                                               operation_name_copy};
-    return jaeger_vector_bsearch(&sampler->op_samplers, &key, &op_name_cmp);
+    jaeger_operation_sampler* result =
+        jaeger_vector_bsearch(&sampler->op_samplers, &key, &op_name_cmp);
+    jaeger_free(operation_name_copy);
+    return result;
 }
 
 static bool jaeger_adaptive_sampler_is_sampled(jaeger_sampler* sampler,
@@ -522,21 +527,28 @@ static inline bool jaeger_http_sampling_manager_format_request(
                                      .len = url->parts.field_data[UF_PATH].len};
     }
     const int path_len = path_segment.len;
-    char path_buffer[path_len + 1];
-    path_buffer[path_len] = '\0';
+    if (path_len > _PC_PATH_MAX) {
+        jaeger_log_error("Cannot write entire sampling server path to buffer, "
+                         "buffer size = %d, path size = %d",
+                         _PC_PATH_MAX + 1,
+                         path_len);
+        return false;
+    }
+    char path_buffer[_PC_PATH_MAX + 1];
     if (path_len > 0) {
         memcpy(&path_buffer[0], &url->str[path_segment.off], path_segment.len);
     }
+    path_buffer[path_len] = '\0';
 
-    char host_port_buffer[256];
+    char host_port_buffer[HOST_NAME_MAX + JAEGERTRACINGC_MAX_PORT_STR_LEN + 1];
     int result = jaeger_host_port_format(
         sampling_host_port, &host_port_buffer[0], sizeof(host_port_buffer));
     if (result > (int) sizeof(host_port_buffer)) {
         jaeger_log_error(
             "Cannot write entire sampling server host port to buffer, "
             "buffer size = %zu, host port string length = %d",
-            sizeof(manager->request_buffer),
-            manager->request_length);
+            sizeof(host_port_buffer),
+            result);
         return false;
     }
 
@@ -621,7 +633,7 @@ jaeger_http_sampling_manager_connect(jaeger_http_sampling_manager* manager,
     bool success = false;
     for (struct addrinfo* addr_iter = host_addrs; addr_iter != NULL;
          addr_iter = addr_iter->ai_next) {
-        const int fd = socket(AF_INET, SOCK_STREAM, 0);
+        const int fd = open_socket(AF_INET, SOCK_STREAM);
         if (fd < 0) {
             continue;
         }
