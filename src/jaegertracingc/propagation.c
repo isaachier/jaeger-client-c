@@ -203,10 +203,10 @@ jaeger_extract_from_http_headers(opentracing_http_headers_reader* reader,
 static inline bool read_binary(int (*callback)(void*, char*, size_t),
                                void* arg,
                                char* buffer,
-                               void* error_code,
+                               void* result,
                                int result_size)
 {
-    const int num_read = callback(arg, buffer, sizeof(buffer));
+    const int num_read = callback(arg, buffer, result_size);
     if (num_read != result_size) {
         return false;
     }
@@ -215,19 +215,19 @@ static inline bool read_binary(int (*callback)(void*, char*, size_t),
         uint64_t value;
         memcpy(&value, buffer, sizeof(value));
         /* NOLINTNEXTLINE(hicpp-signed-bitwise) */
-        *(uint64_t*) error_code = BIG_ENDIAN_64_TO_HOST(value);
+        *(uint64_t*) result = BIG_ENDIAN_64_TO_HOST(value);
     } break;
     case sizeof(uint32_t): {
         uint32_t value;
         memcpy(&value, buffer, sizeof(value));
         /* NOLINTNEXTLINE(hicpp-signed-bitwise) */
-        *(uint32_t*) error_code = BIG_ENDIAN_32_TO_HOST(value);
+        *(uint32_t*) result = BIG_ENDIAN_32_TO_HOST(value);
     } break;
     default: {
         assert(result_size == sizeof(uint8_t));
         uint8_t value;
         memcpy(&value, buffer, sizeof(value));
-        *(uint8_t*) error_code = value;
+        *(uint8_t*) result = value;
     } break;
     }
     return true;

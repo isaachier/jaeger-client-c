@@ -480,10 +480,9 @@ static inline void test_binary()
                                                 (void*) &binary_buffer,
                                                 &ctx));
     jaeger_span_context* ctx_copy;
-    TEST_ASSERT_EQUAL(
-        opentracing_propagation_error_code_success,
-        jaeger_extract_from_binary(
-            &binary_reader_callback, &binary_buffer, &ctx_copy, &metrics));
+    opentracing_propagation_error_code error_code = jaeger_extract_from_binary(
+        &binary_reader_callback, &binary_buffer, &ctx_copy, &metrics);
+    TEST_ASSERT_EQUAL(opentracing_propagation_error_code_success, error_code);
     TEST_ASSERT_EQUAL(ctx.trace_id.high, ctx_copy->trace_id.high);
     TEST_ASSERT_EQUAL(ctx.trace_id.low, ctx_copy->trace_id.low);
     TEST_ASSERT_EQUAL(ctx.span_id, ctx_copy->span_id);
