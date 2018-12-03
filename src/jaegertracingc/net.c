@@ -250,7 +250,7 @@ bool jaeger_host_port_resolve(const jaeger_host_port* host_port,
 int open_socket(int domain, int type)
 {
 #ifdef SOCK_CLOEXEC
-    return socket(domain, type | SOCK_CLOEXEC, 0);
+    return socket(domain, (unsigned) type | (unsigned) SOCK_CLOEXEC, 0);
 #else
     /* NOLINTNEXTLINE(android-cloexec-socket) */
     const int fd = socket(domain, type, 0);

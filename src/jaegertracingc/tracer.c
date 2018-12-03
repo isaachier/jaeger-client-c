@@ -404,8 +404,8 @@ span_inherit_from_parent(jaeger_tracer* tracer,
         span->context.flags = 0;
         if (*has_parent &&
             jaeger_span_context_is_debug_id_container_only(parent)) {
-            span->context.flags |=
-                jaeger_sampling_flag_sampled | jaeger_sampling_flag_debug;
+            span->context.flags |= (unsigned) jaeger_sampling_flag_sampled |
+                                   (unsigned) jaeger_sampling_flag_debug;
             append_tag(
                 &span->tags, JAEGERTRACINGC_DEBUG_HEADER, parent->debug_id);
         }
@@ -413,7 +413,7 @@ span_inherit_from_parent(jaeger_tracer* tracer,
                                              &span->context.trace_id,
                                              span->operation_name,
                                              &span->tags)) {
-            span->context.flags |= jaeger_sampling_flag_sampled;
+            span->context.flags |= (unsigned) jaeger_sampling_flag_sampled;
         }
     }
     else {

@@ -45,7 +45,7 @@ static inline uint64_t random64(const unsigned int* state)
 
 static inline uint64_t random64(unsigned int* state)
 {
-    return (((uint64_t) rand_r(state)) << 32u) | rand_r(state);
+    return (((uint64_t) rand_r(state)) << 32u) | (uint64_t) rand_r(state);
 }
 
 #endif /* HAVE_ARC4RANDOM */
